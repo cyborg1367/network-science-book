@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Network Science Quarto Template
 
 This is a Quarto **book** project designed to produce both:
@@ -38,3 +39,7 @@ tinytex::install_tinytex()
 1.  Create a new file in `chapters/`, for example `04-small-world.qmd`
 2.  Add it to `_quarto.yml` under `book: chapters:`
 3.  Render again
+=======
+# network-science-book
+Quarto book for the Network Science course
+>>>>>>> a4230ad7aed7f1a8c182bed494ca2f515f98d768
