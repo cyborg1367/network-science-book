@@ -1070,9 +1070,15 @@ ggplot(compare_tbl, aes(x = k, y = probability, color = distribution)) +
 
 ## Clustering coefficient
 
-The clustering coefficient measures how strongly the neighbors of a node are connected to one another.
+The clustering coefficient measures how strongly the neighbors of a node are connected to one another. In other words, once a node is chosen, clustering asks whether its neighbors also tend to be neighbors of each other.
 
-Suppose node $i$ has degree $k_i$. Then it has $k_i$ neighbors. Among those neighbors, the maximum possible number of edges is
+This idea is important because two graphs can have similar size, similar average degree, and even similar degree distributions, while still differing strongly in how much local triangle structure they contain. The clustering coefficient is one of the main quantities used to capture that local structure.
+
+### Local clustering coefficient
+
+Suppose node $i$ has degree $k_i$. Then node $i$ has exactly $k_i$ neighbors.
+
+Among those $k_i$ neighbors, the maximum possible number of edges is
 
 $$
 L_i^{\max} = \binom{k_i}{2} = \frac{k_i(k_i-1)}{2}.
@@ -1085,31 +1091,282 @@ C_i = \frac{L_i}{L_i^{\max}}
 = \frac{2L_i}{k_i(k_i-1)}.
 $$
 
-The average clustering coefficient of the graph is
+This formula compares:
+
+- the number of neighbor-neighbor edges that actually exist
+- the maximum number of neighbor-neighbor edges that could exist
+
+So $C_i$ is always between $0$ and $1$:
+
+- $C_i = 0$ means none of the neighbors of $i$ are connected to each other
+- $C_i = 1$ means all neighbors of $i$ are mutually connected
+- intermediate values indicate partial local connectivity
+
+### A fixed node with three different neighborhood structures
+
+To see how this works clearly, keep the same central node $A$ and the same three neighbors $B$, $C$, and $D$, and only change the edges among the neighbors.
+
+In all three examples below:
+
+- the focal node is $A$
+- the neighbors of $A$ are $B$, $C$, and $D$
+- therefore $k_A = 3$
+- the maximum possible number of edges among the neighbors is
+
+$$
+L_A^{\max} = \binom{3}{2} = 3
+$$
+
+So the only question is: how many of the three possible neighbor-neighbor edges actually exist?
+
+```{r}
+#| label: clustering-examples
+#| echo: false
+#| fig-cap: "Three example neighborhoods for the same focal node A. Teal edges connect A to its neighbors; gold edges connect neighbors to each other and contribute to clustering."
+
+layout_clust <- matrix(
+  c(
+    0, 0,
+   -1.0, 0.9,
+   -0.2, -1.0,
+    1.0, 0.9
+  ),
+  ncol = 2,
+  byrow = TRUE
+)
+
+plot_clustering_example <- function(edges_center, edges_neighbor, title_text) {
+  g <- make_empty_graph(n = 4, directed = FALSE)
+  V(g)$name <- c("A", "B", "C", "D")
+  all_edges <- c(edges_center, edges_neighbor)
+  if (length(all_edges) > 0) {
+    g <- add_edges(g, all_edges)
+  }
+
+  edge_pairs <- ends(g, es = E(g), names = TRUE)
+
+  edge_cols <- apply(edge_pairs, 1, function(x) {
+    if ("A" %in% x) course_cols$teal else course_cols$gold
+  })
+
+  edge_widths <- apply(edge_pairs, 1, function(x) {
+    if ("A" %in% x) 3.2 else 3.8
+  })
+
+  plot(
+    g,
+    layout = layout_clust,
+    vertex.size = c(34, 30, 30, 30),
+    vertex.color = c(course_cols$coral, course_cols$blue, course_cols$blue, course_cols$blue),
+    vertex.frame.color = "white",
+    vertex.label.color = "white",
+    vertex.label.cex = 1,
+    edge.color = edge_cols,
+    edge.width = edge_widths,
+    main = title_text
+  )
+}
+
+old_par <- par(no.readonly = TRUE)
+par(mfrow = c(1, 3), mar = c(1, 1, 3, 1))
+
+plot_clustering_example(
+  edges_center = c("A","B", "A","C", "A","D"),
+  edges_neighbor = c(),
+  title_text = "Example 1\nNo neighbor-neighbor edges"
+)
+
+plot_clustering_example(
+  edges_center = c("A","B", "A","C", "A","D"),
+  edges_neighbor = c("B","C"),
+  title_text = "Example 2\nOne neighbor-neighbor edge"
+)
+
+plot_clustering_example(
+  edges_center = c("A","B", "A","C", "A","D"),
+  edges_neighbor = c("B","C", "B","D", "C","D"),
+  title_text = "Example 3\nAll neighbor-neighbor edges"
+)
+
+par(old_par)
+```
+
+In these figures:
+
+- the **teal edges** connect the focal node $A$ to its neighbors
+- the **gold edges** connect neighbors to each other
+- only the gold edges count in the value of $L_A$
+
+### Example 1
+
+In the first graph, node $A$ has neighbors $B$, $C$, and $D$, but none of those neighbors are connected to each other.
+
+So
+
+$$
+L_A = 0
+\qquad \text{and} \qquad
+L_A^{\max} = 3.
+$$
+
+Therefore,
+
+$$
+C_A = \frac{L_A}{L_A^{\max}} = \frac{0}{3} = 0.
+$$
+
+This is the smallest possible clustering value. The neighbors of $A$ form no local triangle structure at all.
+
+### Example 2
+
+In the second graph, the same three neighbors are present, but now one edge exists among them, namely between $B$ and $C$.
+
+So
+
+$$
+L_A = 1
+\qquad \text{and} \qquad
+L_A^{\max} = 3.
+$$
+
+Therefore,
+
+$$
+C_A = \frac{L_A}{L_A^{\max}} = \frac{1}{3}.
+$$
+
+This means that only one-third of the possible neighbor-neighbor edges are present.
+
+### Example 3
+
+In the third graph, all three neighbor-neighbor edges are present:
+
+$$
+(B,C), \qquad (B,D), \qquad (C,D).
+$$
+
+So
+
+$$
+L_A = 3
+\qquad \text{and} \qquad
+L_A^{\max} = 3.
+$$
+
+Therefore,
+
+$$
+C_A = \frac{L_A}{L_A^{\max}} = \frac{3}{3} = 1.
+$$
+
+This is the largest possible clustering value. The neighbors of $A$ form a complete subgraph, so the local neighborhood is maximally clustered.
+
+### Summary table for the three examples
+
+| Example | Degree of focal node $k_A$ | Maximum possible neighbor-neighbor edges $L_A^{\max}$ | Actual neighbor-neighbor edges $L_A$ | Clustering coefficient $C_A$ |
+|:------:|:--------------------------:|:-----------------------------------------------------:|:------------------------------------:|:----------------------------:|
+| 1 | $3$ | $3$ | $0$ | $0$ |
+| 2 | $3$ | $3$ | $1$ | $\frac{1}{3}$ |
+| 3 | $3$ | $3$ | $3$ | $1$ |
+
+This table makes the logic of the formula very explicit. The degree stays the same in all three examples. What changes is only the number of links among the neighbors.
+
+### What clustering is really measuring
+
+These examples show an important point:
+
+- degree counts how many neighbors a node has
+- clustering measures how tightly those neighbors are connected to each other
+
+So two nodes can have the same degree but very different clustering coefficients.
+
+For example, in all three graphs above, node $A$ has degree $3$. But its clustering coefficient changes from
+
+$$
+0 \quad \text{to} \quad \frac{1}{3} \quad \text{to} \quad 1.
+$$
+
+So clustering reveals local structural information that degree alone cannot capture.
+
+### Average clustering coefficient of a graph
+
+Once the local clustering coefficient has been defined for every node, the average clustering coefficient of the graph is
 
 $$
 \bar{C} = \frac{1}{N}\sum_{i=1}^{N} C_i.
 $$
 
-### Interpreting clustering
+This quantity measures the overall tendency of the graph to form locally connected neighborhoods.
 
-Clustering is often explained in social terms:
+It should be interpreted carefully:
 
-> If two nodes are both neighbors of the same node, how likely are they to be connected to each other?
+- $C_i$ is a node-level quantity
+- $\bar{C}$ is a graph-level average
 
-In real social networks, clustering is often fairly high because friendships tend to close triangles.
+The local quantity tells how clustered one neighborhood is. The average quantity summarizes the graph as a whole.
 
-In an Erdős--Rényi graph, however, edges are placed independently. That means there is no special mechanism that encourages triangle closure. Once the neighbors of a node are fixed, the chance that two of those neighbors are connected is still just $p$.
+### Why clustering is important in network science
 
-Therefore, in $G(N,p)$, the expected clustering coefficient is
+Clustering is especially important because many real networks are rich in triangle structure.
+
+In social networks, for example, if one person knows two others, there is often an elevated chance that those two people also know each other. This kind of local closure is one of the characteristic patterns of social graphs.
+
+Random graphs of the Erdős--Rényi type behave differently. Since edges are placed independently, there is no special mechanism that encourages triangle closure beyond the baseline edge probability itself.
+
+That is why clustering becomes an important comparison point between random graphs and real-world networks.
+
+### Expected clustering in $G(N,p)$
+
+Now consider the model $G(N,p)$.
+
+Suppose node $i$ has some set of neighbors. To compute its clustering coefficient, the question is whether pairs among those neighbors are connected.
+
+In the Erdős--Rényi model, every possible edge appears independently with probability $p$. Therefore, once two neighbors of node $i$ are chosen, the probability that they are connected is simply $p$.
+
+So the expected fraction of connected neighbor-neighbor pairs is
+
+$$
+\mathbb{E}[C_i] = p.
+$$
+
+As a consequence, the expected average clustering coefficient is also
+
+$$
+\mathbb{E}[\bar{C}] = p.
+$$
+
+This is a very simple and very important result.
+
+::: {.callout-note title="Key result for Erdős--Rényi graphs"}
+In the model $G(N,p)$, the expected clustering coefficient is
 
 $$
 \mathbb{E}[C] = p.
 $$
 
-This is a very simple result, but it also highlights a limitation of the ER model: when $p$ is small, clustering is small. Many real social networks are much more clustered than this.
+So clustering is directly controlled by the edge probability.
+:::
 
-### Class example: repeated simulations
+### Why this result matters
+
+This formula shows that Erdős--Rényi graphs usually have low clustering when $p$ is small.
+
+That is one of the main reasons why Erdős--Rényi graphs are useful as a baseline but often unrealistic as full models of social networks:
+
+- they capture random edge formation well
+- but they do not create unusually strong local triangle closure
+
+So if a real network has clustering much larger than $p$, that indicates structure beyond independent random linking.
+
+### Numerical check by simulation
+
+The theoretical prediction in $G(N,p)$ is
+
+$$
+\mathbb{E}[\bar{C}] = p.
+$$
+
+This can be checked numerically by simulating many graphs and computing the average clustering coefficient in each one.
 
 ```{r}
 #| label: simulation-summary
@@ -1138,7 +1395,7 @@ summary_tbl
 
 ```{r}
 #| label: clustering-plot
-#| fig-cap: "Empirical clustering across repeated simulations with the theoretical value shown as a dashed line."
+#| fig-cap: "Average clustering across repeated simulations with the theoretical value shown as a dashed line."
 
 ggplot(sim_tbl, aes(x = avg_clustering)) +
   geom_histogram(bins = 24, fill = course_cols$teal, alpha = 0.65, color = "white") +
@@ -1151,6 +1408,33 @@ ggplot(sim_tbl, aes(x = avg_clustering)) +
   )
 ```
 
+The histogram shows how the observed average clustering varies across realizations of the model, while the dashed line marks the theoretical value $p$.
+
+### Summary
+
+The clustering coefficient adds information that degree alone cannot provide.
+
+The main points are:
+
+- for a node $i$ with degree $k_i$, the maximum number of possible edges among its neighbors is
+  $$
+  \binom{k_i}{2}
+  $$
+- the local clustering coefficient is
+  $$
+  C_i = \frac{2L_i}{k_i(k_i-1)}
+  $$
+- it measures how strongly the neighbors of a node are connected to one another
+- the graph-level average is
+  $$
+  \bar{C} = \frac{1}{N}\sum_{i=1}^{N} C_i
+  $$
+- in the Erdős--Rényi model $G(N,p)$,
+  $$
+  \mathbb{E}[C] = p
+  $$
+
+So clustering is a local structural measure that becomes especially useful when comparing random graphs with more realistic network models.
 ## Core formulas to remember
 
 ::: {.callout-important title="Summary"}
@@ -1348,70 +1632,354 @@ if (knitr::is_latex_output()) {
 
 ## End-of-chapter exercises
 
-### Exercise 1
+The exercises below are divided into three groups:
 
-In the model $G(N,L)$, derive the probability that $M$ independent people generate exactly the same graph. Then evaluate your result numerically for:
+1. mathematical exercises,
+2. conceptual and analytical exercises,
+3. simulation and coding exercises.
 
--   $M = 2$
--   $N = 20$
--   $L = 5$
+They are designed to move from formal derivation to interpretation and numerical verification.
 
-### Exercise 2
+### Part I. Mathematical exercises
 
-In the model $G(N,p)$, derive the probability that $M$ independent people generate exactly the same graph. Then evaluate your result numerically for:
+#### Exercise 1. Counting graphs in $G(N,L)$
 
--   $M = 2$
--   $N = 20$
--   $p = 0.3$
--   a graph with $L = 5$ links
+Let $G(N,L)$ be the Erdős--Rényi ensemble with $N$ vertices and exactly $L$ edges.
 
-### Exercise 3
+1. Show that the number of possible undirected edges is
+   $$
+   K=\binom{N}{2}.
+   $$
+2. Prove that the number of labeled simple graphs in the ensemble is
+   $$
+   \Omega(N,L)=\binom{K}{L}.
+   $$
+3. Deduce that the probability of any one graph in the ensemble is
+   $$
+   P(G)=\frac{1}{\binom{K}{L}}.
+   $$
 
-In the model $G(N,L)$, calculate the probability that two randomly selected nodes are connected by an edge.
+---
 
-### Exercise 4
+#### Exercise 2. Counting graphs in $G(N,p)$
 
-For a graph in the ensemble $G(N,p)$ with exactly $L$ links, determine the value of $p$ that makes that graph most probable.
+Let $G(N,p)$ be the Erdős--Rényi ensemble in which every possible edge is present independently with probability $p$.
 
-### Exercise 5
+1. Let a graph $G$ contain exactly $L$ edges. Show that its probability is
+   $$
+   P(G)=p^L(1-p)^{K-L},
+   \qquad
+   K=\binom{N}{2}.
+   $$
+2. Prove that all graphs with the same number of edges have the same probability.
+3. Explain why graphs with different numbers of edges generally do not have the same probability.
 
-Take a specific adjacency matrix and discuss whether the corresponding graph is always more probable in $G(N,L)$ than in $G(N,p)$ for arbitrary $p$. Justify your answer carefully.
+---
 
-### Exercise 6
+#### Exercise 3. Edge probability in $G(N,L)$
 
-Generalize the definitions of $G(N,L)$ and $G(N,p)$ to directed graphs. Then derive the probability of a directed graph in each case.
+In the ensemble $G(N,L)$, compute the probability that two fixed distinct vertices are connected by an edge.
 
-## Suggested coding tasks
+Your derivation should start from combinatorial counting and end with a simplified formula in terms of $N$ and $L$.
 
-1.  Simulate $1000$ graphs from $G(N,p)$ and estimate the empirical degree distribution.
-2.  Compare one graph from $G(N,p)$ with one graph from $G(N,L)$ having approximately the same expected number of links.
-3.  Investigate how average path length changes as $p$ increases.
-4.  Verify numerically that average clustering is close to $p$ across repeated simulations.
-5.  Study how the degree distribution changes as $N$ becomes larger while $p$ becomes smaller.
+---
 
-## Reusable helper functions
+#### Exercise 4. Average degree in $G(N,L)$
 
-```{r}
-#| label: helper-functions
+Let $\bar{k}$ denote the average degree of a graph.
 
-er_degree_table <- function(n, p, max_k = n - 1) {
-  tibble(
-    k = 0:max_k,
-    prob = dbinom(0:max_k, size = n - 1, prob = p)
-  )
-}
+1. Prove that for every graph with $N$ vertices and $L$ edges,
+   $$
+   \bar{k}=\frac{2L}{N}.
+   $$
+2. Deduce that in the ensemble $G(N,L)$,
+   $$
+   \mathbb{E}[\bar{k}] = \frac{2L}{N}.
+   $$
+3. Explain why this quantity is not random in the ensemble $G(N,L)$.
 
-simulate_er_summary <- function(n, p, reps = 100) {
-  map_dfr(seq_len(reps), function(i) {
-    g <- sample_gnp(n = n, p = p, directed = FALSE, loops = FALSE)
-    tibble(
-      sim = i,
-      avg_degree = mean(degree(g)),
-      avg_clustering = transitivity(g, type = "average")
-    )
-  })
-}
-```
+---
+
+#### Exercise 5. Average degree in $G(N,p)$
+
+In the ensemble $G(N,p)$:
+
+1. Show that the total number of edges satisfies
+   $$
+   L \sim B\!\left(\binom{N}{2},\,p\right).
+   $$
+2. Deduce that
+   $$
+   \mathbb{E}[L]=p\binom{N}{2}.
+   $$
+3. Prove that
+   $$
+   \mathbb{E}[\bar{k}] = p(N-1).
+   $$
+
+---
+
+#### Exercise 6. Degree distribution in $G(N,p)$
+
+Fix a vertex $v$ in the model $G(N,p)$.
+
+1. Show that the degree of $v$ is a binomial random variable.
+2. Derive the formula
+   $$
+   P(k)=\binom{N-1}{k}p^k(1-p)^{N-1-k}.
+   $$
+3. Compute its mean and variance.
+
+---
+
+#### Exercise 7. Poisson approximation
+
+Assume that $N$ is large, $p$ is small, and
+
+$$
+\lambda = p(N-1)
+$$
+
+remains finite.
+
+1. Starting from the exact degree distribution in $G(N,p)$,
+   $$
+   P(k)=\binom{N-1}{k}p^k(1-p)^{N-1-k},
+   $$
+   derive the Poisson approximation
+   $$
+   P(k)\approx e^{-\lambda}\frac{\lambda^k}{k!}.
+   $$
+2. State clearly which approximations you use.
+3. Explain why this approximation is natural in the sparse regime.
+
+---
+
+#### Exercise 8. Clustering coefficient in $G(N,p)$
+
+Let $i$ be a vertex of degree $k_i$.
+
+1. Show that the maximum possible number of edges among the neighbors of $i$ is
+   $$
+   \binom{k_i}{2}.
+   $$
+2. Starting from the definition of local clustering coefficient, show that in $G(N,p)$,
+   $$
+   \mathbb{E}[C_i]=p.
+   $$
+3. Deduce that
+   $$
+   \mathbb{E}[\bar{C}] = p.
+   $$
+
+---
+
+#### Exercise 9. Directed version of the models
+
+Generalize the definitions of $G(N,L)$ and $G(N,p)$ to directed graphs without self-loops.
+
+1. Determine the total number of possible directed edges.
+2. Write the probability of a directed graph in the $G(N,L)$ version.
+3. Write the probability of a directed graph in the $G(N,p)$ version.
+4. Derive the expected in-degree and expected out-degree.
+
+---
+
+#### Exercise 10. Most probable graph size in $G(N,p)$
+
+For fixed $N$ and fixed $p$, the probability that a graph has exactly $L$ edges is
+
+$$
+P(L)=\binom{K}{L}p^L(1-p)^{K-L},
+\qquad
+K=\binom{N}{2}.
+$$
+
+Determine the value(s) of $L$ that maximize this probability.
+
+---
+
+### Part II. Conceptual and analytical exercises
+
+#### Exercise 11. $G(N,L)$ versus $G(N,p)$
+
+Write a short analytical comparison between the two models. Your answer should address:
+
+- what is fixed in each model,
+- what is random in each model,
+- what it means for graphs to be equiprobable,
+- why the two models are related but not identical.
+
+---
+
+#### Exercise 12. Same average degree, different structure
+
+Construct two labeled graphs on the same number of vertices such that they have the same average degree but visibly different structure.
+
+Discuss why average degree alone is insufficient to characterize a graph.
+
+---
+
+#### Exercise 13. Degree distribution versus average degree
+
+Explain why knowing only $\mathbb{E}[\bar{k}]$ does not determine the degree distribution.
+
+Your answer should include:
+- one statement about what average degree measures,
+- one statement about what the degree distribution measures,
+- one example showing that different degree distributions may have the same average degree.
+
+---
+
+#### Exercise 14. Why Erdős--Rényi clustering is small
+
+Give a mathematical and conceptual explanation of why clustering in an Erdős--Rényi graph is usually low when $p$ is small.
+
+Your answer should distinguish between:
+- independent edge formation,
+- local triangle closure,
+- the behavior of social networks.
+
+---
+
+#### Exercise 15. Sparse versus dense regimes
+
+Discuss the difference between the sparse and dense regimes in $G(N,p)$.
+
+Your answer should address:
+- how $p$ scales with $N$,
+- how $\mathbb{E}[k]$ behaves,
+- why the Poisson approximation belongs to the sparse regime.
+
+---
+
+#### Exercise 16. Why the Poisson law is only an approximation
+
+The degree distribution in $G(N,p)$ is exactly binomial, but often approximated by a Poisson law.
+
+Explain why the Poisson distribution is not exact in general, and state clearly the regime in which it becomes accurate.
+
+---
+
+### Part III. Simulation and coding exercises
+
+#### Exercise 17. Simulating $G(N,p)$ and estimating the degree distribution
+
+Write an `R` function that:
+
+1. generates $m$ independent graphs from $G(N,p)$,
+2. computes the empirical degree distribution across all simulated graphs,
+3. compares it with the theoretical binomial distribution.
+
+Use the function for several values of $N$ and $p$.
+
+---
+
+#### Exercise 18. Binomial versus Poisson comparison
+
+For a sequence of values of $N$ and $p$ such that $\lambda=p(N-1)$ remains approximately constant:
+
+1. compute the exact binomial degree distribution,
+2. compute the Poisson approximation,
+3. plot both on the same axes,
+4. discuss how the agreement changes as $N$ increases.
+
+---
+
+#### Exercise 19. Comparing $G(N,L)$ and $G(N,p)$ numerically
+
+Choose values of $N$, $L$, and $p$ such that
+
+$$
+L \approx p\binom{N}{2}.
+$$
+
+Then:
+
+1. generate one graph from $G(N,L)$,
+2. generate one graph from $G(N,p)$,
+3. compare their edge counts, average degree, and clustering,
+4. repeat this many times and summarize the differences.
+
+---
+
+#### Exercise 20. Empirical verification of expected average degree
+
+For several values of $N$ and $p$, generate many graphs from $G(N,p)$ and compute the empirical mean of the average degree.
+
+Then compare it with the theoretical value
+
+$$
+p(N-1).
+$$
+
+Discuss the effect of the number of repetitions on the accuracy of the estimate.
+
+---
+
+#### Exercise 21. Empirical verification of expected clustering
+
+For several values of $N$ and $p$, generate many graphs from $G(N,p)$ and compute the empirical mean of the average clustering coefficient.
+
+Then compare it with the theoretical value
+
+$$
+p.
+$$
+
+Explain why small discrepancies may remain in finite simulations.
+
+---
+
+#### Exercise 22. Degree table and empirical distribution from one graph
+
+Generate one graph from $G(N,p)$ and produce:
+
+1. a table of vertex degrees,
+2. a table of degree counts,
+3. the empirical degree distribution,
+4. a plot of the empirical distribution.
+
+Then compare the empirical plot with the theoretical binomial curve.
+
+---
+
+#### Exercise 23. Sensitivity to parameter changes
+
+Fix $N$ and vary $p$ over a grid of values.
+
+For each value of $p$, compute:
+
+- average degree,
+- empirical clustering,
+- largest observed degree.
+
+Plot each quantity against $p$ and discuss the trends.
+
+---
+
+#### Exercise 24. Simulation report
+
+Prepare a short report of approximately two pages containing:
+
+- one derivation from the theory part of the chapter,
+- at least two simulation figures,
+- one comparison of empirical and theoretical degree distributions,
+- one discussion of average degree and clustering in $G(N,p)$.
+
+## Suggested mini-project
+
+A strong mini-project for this chapter is the following:
+
+> Compare the theoretical and empirical behavior of the Erdős--Rényi model under several parameter regimes.
+
+A complete submission should include:
+
+- mathematical derivations,
+- simulation code,
+- figures,
+- interpretation of the results,
+- a short concluding discussion.
 
 ## Concluding remarks
 

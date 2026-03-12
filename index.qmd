@@ -28,22 +28,22 @@ theme_set(
 set.seed(1234)
 ```
 
-# Welcome
+## Welcome
 
 This Quarto book is designed as a single, well-structured version of a Network Science course.
 
 Each chapter follows the same pattern:
 
-1.  **Theory and intuition**
-2.  **Worked examples in R**
-3.  **Exercises and coding tasks**
+1. **Theory and intuition**
+2. **Worked examples in R**
+3. **Exercises and coding tasks**
 
 The same source files produce both:
 
--   an **HTML course website**
--   a **PDF course handout**
+- an HTML course website
+- a PDF course handout
 
-# Required packages
+## Required packages
 
 Install the packages below once:
 
@@ -55,25 +55,21 @@ install.packages(c(
 tinytex::install_tinytex()
 ```
 
-# Design principles
+## Design principles
 
 This template is built around a few teaching priorities:
 
--   explanations should be readable and beginner-friendly
--   formulas should be introduced with intuition, not only stated
--   code should be clean enough to use directly in class
--   plots should be visually clear and consistent
--   HTML pages may contain interactivity, while PDF remains clean and stable
+- explanations should be readable and beginner-friendly
+- formulas should be introduced with intuition, not only stated
+- code should be clean enough to use directly in class
+- plots should be visually clear and consistent
+- HTML pages may contain interactivity, while PDF remains clean and stable
 
-# Current chapter
+## Current chapters
 
-The first chapter is **Random Graphs**. It introduces:
+The current book contains these chapters:
 
--   graph ensembles
--   the Erdős--Rényi models $G(N,L)$ and $G(N,p)$
--   average degree
--   degree distribution
--   the Poisson approximation
--   clustering coefficient
--   static and interactive examples
--   end-of-chapter exercises
+1. **Random Graphs**
+2. **The Evolution of Random Graphs**
+
+The first chapter introduces random graph ensembles and their basic structural properties. The second chapter studies how global connectivity emerges as a random graph evolves.

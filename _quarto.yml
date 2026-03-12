@@ -10,6 +10,7 @@ book:
   chapters:
     - index.qmd
     - chapters/03-random-graphs.qmd
+    - chapters/04-random-graph-evolution.qmd
   page-navigation: true
   search: true
 
