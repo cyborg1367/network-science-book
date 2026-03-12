@@ -1,0 +1,1428 @@
+---
+title: "Random Graphs"
+---
+
+```{r}
+#| label: chapter-setup
+#| include: false
+
+library(igraph)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(purrr)
+library(plotly)
+
+course_cols <- list(
+  teal  = "#0F766E",
+  blue  = "#2563EB",
+  gold  = "#F59E0B",
+  coral = "#E76F51",
+  ink   = "#1F2937",
+  grid  = "#E5E7EB"
+)
+
+theme_set(
+  theme_minimal(base_size = 13) +
+    theme(
+      plot.title.position = "plot",
+      panel.grid.minor = element_blank(),
+      panel.grid.major.x = element_line(color = course_cols$grid, linewidth = 0.35),
+      panel.grid.major.y = element_line(color = course_cols$grid, linewidth = 0.35),
+      axis.title = element_text(color = course_cols$ink),
+      axis.text = element_text(color = course_cols$ink),
+      plot.title = element_text(face = "bold", color = course_cols$ink),
+      plot.subtitle = element_text(color = "#475569"),
+      legend.position = "top"
+    )
+)
+
+set.seed(1234)
+```
+
+## Introduction
+
+Random graphs are one of the most important starting points in network science. In ordinary graph theory, the usual starting point is a fixed graph: the nodes and links are already given, and the goal is to analyse the structure that is already there. In random graph theory, the viewpoint changes. Instead of starting from one fixed graph, the starting point is a rule for generating graphs.
+
+This change is conceptually important. It means that the object of interest is not one network, but a whole collection of possible networks that could be produced by the same random mechanism. Some of these graphs are more likely than others, and many questions are no longer about one exact object. Instead, the natural questions become:
+
+-   What is the expected number of links?
+-   What is the expected average degree?
+-   What does the degree distribution typically look like?
+-   How likely is it that triangles or large connected pieces appear?
+
+This is why random graphs are such a useful first model. They provide a clean probabilistic baseline and a simple reference point for later network models.
+
+## Learning goals
+
+By the end of this chapter, it should be possible to:
+
+-   explain what a graph ensemble is
+-   distinguish between the models $G(N,L)$ and $G(N,p)$
+-   compute expected average degree
+-   derive the degree distribution in $G(N,p)$
+-   explain why a Poisson approximation appears in sparse large graphs
+-   define clustering and interpret what it means
+-   connect the formulas to simulations in `R`
+
+## A beginner-friendly motivation
+
+A simple way to build intuition is to think about a classroom during the first week of a semester.
+
+Suppose there are $N$ students in a class. At the beginning, not everyone knows everyone else. Over the first few days, pairs of students may talk, exchange contact information, or work together in small activities. If a graph is drawn in which:
+
+-   each student is a node
+-   a link appears when two students become acquainted
+
+then the resulting network depends on chance. Some pairs talk, some do not. Some classes become highly connected, while others remain sparse.
+
+Now imagine that this process is repeated many times with different classes of the same size and under roughly similar conditions. The exact same acquaintance network should not be expected every time. But certain patterns may still be stable:
+
+-   the average number of acquaintances per student may be similar
+-   the probability of observing a student with degree $k$ may follow a predictable distribution
+-   the network may be denser when the chance of interaction is higher
+
+This is the core idea of a random graph model. The claim is not that real social interaction is random in every detail. Rather, randomness is used as a baseline model. If a simple random rule already explains some feature, that is informative. If a real network differs strongly from the random baseline, that is informative too.
+
+::: {.callout-note title="Main idea"}
+A random graph is not a single graph. It is a probability model that generates many possible graphs.
+:::
+
+## Why the binomial distribution appears
+
+Before defining the Erdős--Rényi models, it helps to recall the binomial distribution, because it appears naturally in this chapter.
+
+If a random variable $X$ counts the number of successes in $n$ independent trials, where each trial succeeds with probability $p$, then
+
+$$
+X \sim B(n,p)
+$$
+
+and
+
+$$
+P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}.
+$$
+
+Its mean is
+
+$$
+\mathbb{E}[X] = np
+$$
+
+and its variance is
+
+$$
+\mathrm{Var}(X) = np(1-p).
+$$
+
+This matters because in the model $G(N,p)$, every possible edge is treated as an independent trial:
+
+-   success = the edge is present
+-   failure = the edge is absent
+
+As a result, both the number of edges and the degree of a node can be described using binomial ideas.
+
+## The Erdős--Rényi models
+
+There are two classical random graph models that are closely related but conceptually different.
+
+### The model $G(N,L)$
+
+In the model $G(N,L)$:
+
+-   the number of nodes is fixed and equal to $N$
+-   the number of links is fixed and equal to $L$
+-   all simple graphs with exactly those values are equally likely
+
+The word *simple* means that self-loops and multiple edges are excluded.
+
+If there are $N$ nodes, then the total number of possible undirected edges is
+
+$$
+K = \binom{N}{2} = \frac{N(N-1)}{2}.
+$$
+
+To construct a graph with exactly $L$ links, $L$ edges must be chosen out of these $K$ possible ones. Therefore, the number of distinct graphs in this ensemble is
+
+$$
+\Omega(N,L) = \binom{K}{L}.
+$$
+
+Since each such graph is equally likely, the probability of any one graph $G$ is
+
+$$
+P(G) = \frac{1}{\binom{K}{L}}.
+$$
+
+#### Intuition for $G(N,L)$
+
+This model keeps the density tightly controlled because the final graph always has exactly $L$ links. The randomness lies only in **where** those links are placed.
+
+So $G(N,L)$ is useful when all graphs with the same size and the same number of links are being compared.
+
+#### Example: the ensemble $G(3,2)$
+
+Take three labeled nodes: $1$, $2$, and $3$.
+
+For $N=3$, the total number of possible undirected edges is
+
+$$
+K = \binom{3}{2} = 3.
+$$
+
+These three possible edges are
+
+$$
+(1,2), \qquad (1,3), \qquad (2,3).
+$$
+
+Now consider the model $G(3,2)$. Since exactly two edges must be present, the number of possible labeled graphs is
+
+$$
+\Omega(3,2) = \binom{3}{2} = 3.
+$$
+
+So there are exactly three distinct labeled graphs in this ensemble, and each one has probability
+
+$$
+P(G) = \frac{1}{3}.
+$$
+
+```{r}
+#| label: g32-example-graphs
+#| echo: false
+#| fig-cap: "The three labeled graphs in the ensemble G(3,2)."
+
+layout_triangle <- matrix(
+  c(
+    0, 1,
+   -0.95, -0.85,
+    0.95, -0.85
+  ),
+  ncol = 2,
+  byrow = TRUE
+)
+
+g_32_a <- graph_from_edgelist(
+  matrix(c("1","2","1","3"), ncol = 2, byrow = TRUE),
+  directed = FALSE
+)
+
+g_32_b <- graph_from_edgelist(
+  matrix(c("1","2","2","3"), ncol = 2, byrow = TRUE),
+  directed = FALSE
+)
+
+g_32_c <- graph_from_edgelist(
+  matrix(c("1","3","2","3"), ncol = 2, byrow = TRUE),
+  directed = FALSE
+)
+
+g32_list <- list(g_32_a, g_32_b, g_32_c)
+g32_titles <- c(
+  "Edges: (1,2), (1,3)",
+  "Edges: (1,2), (2,3)",
+  "Edges: (1,3), (2,3)"
+)
+
+old_par <- par(no.readonly = TRUE)
+par(mfrow = c(1, 3), mar = c(1, 1, 3, 1))
+
+for (i in seq_along(g32_list)) {
+  g_tmp <- g32_list[[i]]
+  V(g_tmp)$label <- V(g_tmp)$name
+
+  plot(
+    g_tmp,
+    layout = layout_triangle,
+    vertex.size = 32,
+    vertex.color = course_cols$teal,
+    vertex.frame.color = "white",
+    vertex.label.color = "white",
+    vertex.label.cex = 1.05,
+    edge.color = course_cols$ink,
+    edge.width = 2.8,
+    main = g32_titles[i]
+  )
+}
+
+par(old_par)
+```
+
+This example makes the structure of $G(N,L)$ very concrete:
+
+-   the node set is fixed
+-   the number of edges is fixed
+-   the only randomness is which $L$ edges are chosen
+
+### The model $G(N,p)$
+
+In the model $G(N,p)$:
+
+-   the number of nodes is fixed and equal to $N$
+-   each possible edge is included independently with probability $p$
+
+Again, the number of possible undirected edges is
+
+$$
+K = \binom{N}{2}.
+$$
+
+Now suppose a generated graph ends up with exactly $L$ links. Then:
+
+-   each present edge contributes a factor of $p$
+-   each absent edge contributes a factor of $(1-p)$
+
+Since there are $L$ present edges and $K-L$ absent edges, the probability of that graph is
+
+$$
+P(G) = p^L (1-p)^{K-L}.
+$$
+
+#### Intuition for $G(N,p)$
+
+This model does **not** fix the total number of links in advance. Instead, every possible pair of nodes gets its own independent chance to be connected.
+
+That makes $G(N,p)$ especially natural for situations like:
+
+-   random failure of communication links
+-   random activation of pathways
+-   random acquaintance formation in a large group
+-   a baseline model where every pair has the same connection probability
+
+#### Example: the ensemble $G(3,p)$
+
+Again take three labeled nodes: $1$, $2$, and $3$.
+
+There are still exactly three possible edges:
+
+$$
+(1,2), \qquad (1,3), \qquad (2,3).
+$$
+
+In the model $G(3,p)$, each of these three edges may be either:
+
+-   present, with probability $p$
+-   absent, with probability $1-p$
+
+Since each edge has two possibilities and the three edge decisions are independent, the total number of distinct labeled graphs is
+
+$$
+2^3 = 8.
+$$
+
+So the ensemble $G(3,p)$ contains eight labeled graphs.
+
+```{r}
+#| label: g3p-example-graphs
+#| echo: false
+#| fig-cap: "The eight labeled graphs in the ensemble G(3,p)."
+
+possible_edges <- matrix(
+  c(
+    "1","2",
+    "1","3",
+    "2","3"
+  ),
+  ncol = 2,
+  byrow = TRUE
+)
+
+make_g3p_graph <- function(bits) {
+  chosen <- possible_edges[as.logical(bits), , drop = FALSE]
+
+  if (nrow(chosen) == 0) {
+    g <- make_empty_graph(n = 3, directed = FALSE)
+    V(g)$name <- c("1", "2", "3")
+  } else {
+    g <- graph_from_edgelist(chosen, directed = FALSE)
+    missing_nodes <- setdiff(c("1", "2", "3"), V(g)$name)
+    if (length(missing_nodes) > 0) {
+      g <- add_vertices(g, nv = length(missing_nodes), name = missing_nodes)
+    }
+  }
+
+  g <- induced_subgraph(g, vids = c("1", "2", "3"))
+  g
+}
+
+bit_patterns <- expand_grid(
+  e12 = c(0, 1),
+  e13 = c(0, 1),
+  e23 = c(0, 1)
+) |>
+  mutate(
+    graph_id = row_number(),
+    L = e12 + e13 + e23,
+    edge_label = pmap_chr(
+      list(e12, e13, e23),
+      function(e12, e13, e23) {
+        labs <- c()
+        if (e12 == 1) labs <- c(labs, "(1,2)")
+        if (e13 == 1) labs <- c(labs, "(1,3)")
+        if (e23 == 1) labs <- c(labs, "(2,3)")
+        if (length(labs) == 0) return("∅")
+        paste(labs, collapse = ", ")
+      }
+    )
+  )
+
+g3p_list <- pmap(
+  list(bit_patterns$e12, bit_patterns$e13, bit_patterns$e23),
+  function(e12, e13, e23) make_g3p_graph(c(e12, e13, e23))
+)
+
+g3p_titles <- paste0(
+  "Edges: ", bit_patterns$edge_label,
+  "\nL = ", bit_patterns$L
+)
+
+old_par <- par(no.readonly = TRUE)
+par(mfrow = c(2, 4), mar = c(1, 1, 3, 1))
+
+for (i in seq_along(g3p_list)) {
+  g_tmp <- g3p_list[[i]]
+  V(g_tmp)$label <- V(g_tmp)$name
+
+  plot(
+    g_tmp,
+    layout = layout_triangle,
+    vertex.size = 28,
+    vertex.color = course_cols$blue,
+    vertex.frame.color = "white",
+    vertex.label.color = "white",
+    vertex.label.cex = 1,
+    edge.color = course_cols$ink,
+    edge.width = 2.2,
+    main = g3p_titles[i]
+  )
+}
+
+par(mfrow = c(2, 4), mar = c(1.2, 1.2, 3.2, 1.2))
+```
+
+In this case, the number of edges is not fixed. Some of the eight graphs have:
+
+-   $L=0$ edges
+-   $L=1$ edge
+-   $L=2$ edges
+-   $L=3$ edges
+
+What matters is that each possible edge is decided independently.
+
+#### Probability table for $G(3,p)$
+
+Since each graph is determined by the presence or absence of the three possible edges, its probability depends only on how many edges it contains.
+
+| Graph | Present edges         | Number of edges $L$ | Probability |
+|:-----:|:----------------------|:-------------------:|:-----------:|
+|   1   | $\varnothing$         |         $0$         |  $(1-p)^3$  |
+|   2   | $(1,2)$               |         $1$         | $p(1-p)^2$  |
+|   3   | $(1,3)$               |         $1$         | $p(1-p)^2$  |
+|   4   | $(2,3)$               |         $1$         | $p(1-p)^2$  |
+|   5   | $(1,2), (1,3)$        |         $2$         | $p^2(1-p)$  |
+|   6   | $(1,2), (2,3)$        |         $2$         | $p^2(1-p)$  |
+|   7   | $(1,3), (2,3)$        |         $2$         | $p^2(1-p)$  |
+|   8   | $(1,2), (1,3), (2,3)$ |         $3$         |    $p^3$    |
+
+This shows that in $G(3,p)$ all eight labeled graphs are allowed, but they are not equally likely. Their probabilities depend on how many edges are present.
+
+### Comparing $G(N,L)$ and $G(N,p)$
+
+The two models are often confused at first, so it is worth separating them clearly.
+
+-   In $G(N,L)$, the number of edges is fixed.
+-   In $G(N,p)$, the number of edges is random.
+-   In $G(N,L)$, all allowed graphs are equally likely.
+-   In $G(N,p)$, graphs with the same number of links have the same probability, but graphs with different numbers of links generally do not.
+
+::: {.callout-important title="Conceptual difference"}
+The model $G(N,L)$ is a uniform choice among graphs with exactly $L$ edges.
+
+The model $G(N,p)$ is an independent decision process for each possible edge.
+:::
+
+## Average degree
+
+Average degree is one of the first global quantities used to summarize a network. It gives a single number that describes, on average, how many neighbors each node has.
+
+If a graph has $N$ nodes and $L$ links, then the average degree is
+
+$$
+\bar{k} = \frac{1}{N}\sum_{i=1}^{N} k_i,
+$$
+
+where $k_i$ is the degree of node $i$.
+
+Using the handshake identity,
+
+$$
+\sum_{i=1}^{N} k_i = 2L,
+$$
+
+it follows that
+
+$$
+\bar{k} = \frac{2L}{N}.
+$$
+
+This formula is fundamental. It says that the average degree is determined entirely by the number of nodes and the number of links.
+
+A useful interpretation is the following:
+
+-   each link contributes $1$ to the degree of one endpoint
+-   and also contributes $1$ to the degree of the other endpoint
+-   so each link contributes a total of $2$ to the sum of all node degrees
+
+That is why the numerator is $2L$ rather than $L$.
+
+### A quick numerical example
+
+Suppose a graph has
+
+$$
+N = 10
+\qquad \text{and} \qquad
+L = 15.
+$$
+
+Then the average degree is
+
+$$
+\bar{k} = \frac{2L}{N} = \frac{2\times 15}{10} = 3.
+$$
+
+This does **not** mean that every node has degree $3$. It only means that the average over all node degrees is $3$.
+
+For example, one graph could have degrees
+
+$$
+(1,2,2,3,3,3,4,4,4,4),
+$$
+
+whose average is $3$. Another graph with a very different structure might still have the same average degree. So average degree is useful, but it does not capture the full shape of the degree distribution.
+
+### Why average degree matters in random graphs
+
+In a fixed graph, $\bar{k}$ is a property of that one graph. In a random graph model, the situation is different because the graph itself is random. That means the number of links may vary from one realization to another, and therefore the average degree may also vary.
+
+So in a random graph ensemble, the natural quantity to study is the **expected average degree**,
+
+$$
+\mathbb{E}[\bar{k}].
+$$
+
+This is the average value of $\bar{k}$ over all graphs generated by the model.
+
+Starting from
+
+$$
+\bar{k} = \frac{2L}{N},
+$$
+
+and taking expectation on both sides gives
+
+$$
+\mathbb{E}[\bar{k}] = \mathbb{E}\left[\frac{2L}{N}\right].
+$$
+
+Since $N$ is fixed in both Erdős--Rényi models, the constant $\frac{2}{N}$ can be taken outside the expectation:
+
+$$
+\mathbb{E}[\bar{k}] = \frac{2\,\mathbb{E}[L]}{N}.
+$$
+
+This relation is extremely useful. It says that once the expected number of links is known, the expected average degree follows immediately.
+
+::: {.callout-note title="Key relation"}
+For any random graph ensemble with fixed number of nodes $N$,
+
+$$
+\mathbb{E}[\bar{k}] = \frac{2\,\mathbb{E}[L]}{N}.
+$$
+
+So the problem of expected average degree reduces to the problem of expected number of links.
+:::
+
+### Average degree in $G(N,L)$
+
+In the model $G(N,L)$, the number of links is fixed from the beginning. Every graph in the ensemble has exactly $L$ links.
+
+That means there is no randomness in the value of $L$ itself:
+
+$$
+\mathbb{E}[L] = L.
+$$
+
+Substituting this into the general relation gives
+
+$$
+\mathbb{E}[\bar{k}] = \frac{2L}{N}.
+$$
+
+So in $G(N,L)$, the average degree is not only expected to equal $\frac{2L}{N}$; in fact every graph in the ensemble has that same average degree.
+
+This is an important distinction. The detailed arrangement of edges changes from one graph to another, but the total number of edges does not. Therefore, the average degree is fixed across the whole ensemble.
+
+#### Interpretation in $G(N,L)$
+
+The model $G(N,L)$ allows randomness in **structure**, but not in **density**.
+
+-   which nodes are connected is random
+-   how many total links exist is fixed
+-   therefore the average degree is fixed
+
+For example, in $G(6,4)$ the average degree is always
+
+$$
+\bar{k} = \frac{2\times 4}{6} = \frac{8}{6} = \frac{4}{3}.
+$$
+
+Different realizations may have very different shapes, but all of them must share this same average degree.
+
+### Average degree in $G(N,p)$
+
+The model $G(N,p)$ is different because the total number of links is no longer fixed in advance.
+
+There are
+
+$$
+K = \binom{N}{2}
+$$
+
+possible undirected edges, and each one is included independently with probability $p$.
+
+So the total number of links $L$ is a binomial random variable:
+
+$$
+L \sim B(K,p).
+$$
+
+This immediately gives
+
+$$
+\mathbb{E}[L] = pK.
+$$
+
+Substituting into the general relation,
+
+$$
+\mathbb{E}[\bar{k}] = \frac{2\,\mathbb{E}[L]}{N}
+= \frac{2pK}{N}.
+$$
+
+Now replace $K$ by $\binom{N}{2}$:
+
+$$
+\mathbb{E}[\bar{k}] = \frac{2p}{N}\binom{N}{2}.
+$$
+
+Since
+
+$$
+\binom{N}{2} = \frac{N(N-1)}{2},
+$$
+
+this simplifies to
+
+$$
+\mathbb{E}[\bar{k}] = \frac{2p}{N}\cdot \frac{N(N-1)}{2} = p(N-1).
+$$
+
+So the expected average degree in $G(N,p)$ is
+
+$$
+\mathbb{E}[\bar{k}] = p(N-1).
+$$
+
+### A second way to understand the formula
+
+The formula
+
+$$
+\mathbb{E}[\bar{k}] = p(N-1)
+$$
+
+can also be understood directly, without first going through $\mathbb{E}[L]$.
+
+Take one node. It has $N-1$ possible neighbors. For each of those possible neighbors, an edge is present with probability $p$.
+
+So the expected number of neighbors of that node is simply
+
+$$
+(N-1)\times p = p(N-1).
+$$
+
+Because all nodes are statistically equivalent in the Erdős--Rényi model, this is also the expected average degree of the whole graph.
+
+This second interpretation is very useful because it makes the formula intuitive:
+
+-   $N-1$ = number of possible neighbors
+-   $p$ = chance that each possible link exists
+-   expected degree = “number of opportunities” times “probability of success”
+
+### A quick numerical example in $G(N,p)$
+
+Suppose
+
+$$
+N = 50
+\qquad \text{and} \qquad
+p = 0.10.
+$$
+
+Then
+
+$$
+\mathbb{E}[\bar{k}] = p(N-1) = 0.10 \times 49 = 4.9.
+$$
+
+So a typical graph in this ensemble should have an average degree close to $4.9$, although the exact value will vary from one realization to another.
+
+This illustrates an important contrast with $G(N,L)$:
+
+-   in $G(N,L)$ the average degree is exactly fixed
+-   in $G(N,p)$ the average degree fluctuates, but its expected value is fixed
+
+### Dense and sparse regimes
+
+The formula
+
+$$
+\mathbb{E}[\bar{k}] = p(N-1)
+$$
+
+also helps explain how the graph changes when $N$ or $p$ changes.
+
+If $p$ is fixed and $N$ increases, then the expected average degree grows roughly linearly with $N$. In that case the graph becomes denser as the system grows.
+
+On the other hand, many real network settings are better modeled by keeping the expected degree moderate even when $N$ becomes large. To do that, $p$ must decrease as $N$ grows. This is exactly the sparse regime that later leads to the Poisson approximation for the degree distribution.
+
+So the average degree is not just a descriptive quantity. It also helps identify whether the graph is sparse or dense.
+
+### Comparing the two models
+
+The formulas for the two Erdős--Rényi models are:
+
+$$
+\mathbb{E}[\bar{k}] = \frac{2L}{N}
+\qquad \text{for } G(N,L),
+$$
+
+and
+
+$$
+\mathbb{E}[\bar{k}] = p(N-1)
+\qquad \text{for } G(N,p).
+$$
+
+These two expressions describe the same idea in two different parameterizations:
+
+-   in $G(N,L)$ the model is controlled by the number of links $L$
+-   in $G(N,p)$ the model is controlled by the edge probability $p$
+
+They are closely related. In fact, if a graph from $G(N,p)$ has expected number of links
+
+$$
+\mathbb{E}[L] = p\binom{N}{2},
+$$
+
+then it is natural to compare it with a graph from $G(N,L)$ using approximately that same value of $L$.
+
+### Summary
+
+The average degree is one of the simplest and most useful global quantities in random graph theory.
+
+The main points are:
+
+-   in any graph with $N$ nodes and $L$ links, $$
+    \bar{k} = \frac{2L}{N}
+    $$
+-   in a random graph ensemble, $$
+    \mathbb{E}[\bar{k}] = \frac{2\,\mathbb{E}[L]}{N}
+    $$
+-   in $G(N,L)$, $$
+    \mathbb{E}[\bar{k}] = \frac{2L}{N}
+    $$
+-   in $G(N,p)$, $$
+    \mathbb{E}[\bar{k}] = p(N-1)
+    $$
+
+So the expected average degree gives a first measure of how densely connected a random graph is, and it provides a natural bridge between the combinatorial description of the model and its probabilistic behavior.
+
+## Degree distribution
+
+The degree distribution describes how node degrees are distributed across a graph. In this chapter, the important point is not the definition of degree itself, but how a random graph model gives rise to a distribution of degrees across nodes.
+
+A useful way to introduce this idea is to move in three steps:
+
+1. start from one concrete graph
+2. record the degree of each node
+3. transform those degree values into a distribution
+
+### A small example
+
+Consider the following graph.
+
+```{r}
+#| label: demo-degree-prep
+#| include: false
+
+demo_edges <- matrix(
+  c(
+    "1","2",
+    "1","3",
+    "1","4",
+    "2","3",
+    "2","5",
+    "3","6",
+    "4","6",
+    "4","7",
+    "5","6",
+    "6","8"
+  ),
+  byrow = TRUE,
+  ncol = 2
+)
+
+g_demo <- graph_from_edgelist(demo_edges, directed = FALSE)
+deg_demo <- degree(g_demo)
+```
+
+```{r}
+#| label: demo-degree-graph
+#| echo: false
+#| fig-cap: "A small graph used to build the degree distribution step by step."
+
+layout_demo <- layout_with_fr(g_demo)
+
+V(g_demo)$label <- V(g_demo)$name
+
+plot(
+  g_demo,
+  layout = layout_demo,
+  vertex.size = 30,
+  vertex.color = course_cols$teal,
+  vertex.frame.color = "white",
+  vertex.label.color = "white",
+  vertex.label.cex = 0.9,
+  edge.color = scales::alpha(course_cols$ink, 0.35),
+  edge.width = 2.2,
+  main = "Example graph"
+)
+```
+
+For this graph, the degree of each node is:
+
+| Node | Degree |
+|:----:|:------:|
+| 1 | 3 |
+| 2 | 3 |
+| 3 | 3 |
+| 4 | 3 |
+| 5 | 2 |
+| 6 | 4 |
+| 7 | 1 |
+| 8 | 1 |
+
+This table contains node-level information. It tells the degree of each specific node, but it does not yet summarize how the degree values are distributed across the graph.
+
+### From node degrees to degree counts
+
+The next step is to count how many nodes share each degree value.
+
+| Degree $k$ | Number of nodes $N_k$ | Proportion $p_k = \frac{N_k}{N}$ |
+|:----------:|:---------------------:|:--------------------------------:|
+| 0 | 0 | 0 |
+| 1 | 2 | 0.25 |
+| 2 | 1 | 0.125 |
+| 3 | 4 | 0.50 |
+| 4 | 1 | 0.125 |
+
+This table is the key transition from node-level data to a graph-level summary.
+
+- the first column gives the degree value $k$
+- the second column gives the number of nodes having that degree
+- the third column gives the fraction of nodes having that degree
+
+If the graph has $N$ nodes in total and $N_k$ nodes of degree $k$, then the empirical degree distribution is
+
+$$
+p_k = \frac{N_k}{N}.
+$$
+
+So $p_k$ is the proportion of nodes whose degree is exactly $k$.
+
+### Plotting the degree distribution
+
+The same information can be shown visually.
+
+```{r}
+#| label: demo-degree-distribution-plot
+#| echo: false
+#| fig-cap: "Degree distribution of the example graph."
+
+degree_count_table <- tibble(
+  degree = c(0, 1, 2, 3, 4),
+  count = c(0, 2, 1, 4, 1),
+  proportion = c(0, 0.25, 0.125, 0.50, 0.125)
+)
+
+ggplot(degree_count_table, aes(x = degree, y = proportion)) +
+  geom_col(fill = course_cols$blue, alpha = 0.55, width = 0.8) +
+  geom_point(color = course_cols$gold, size = 2.8) +
+  geom_line(color = course_cols$teal, linewidth = 1.0) +
+  scale_x_continuous(breaks = degree_count_table$degree) +
+  labs(
+    title = "Degree distribution of the example graph",
+    subtitle = "Fraction of nodes having each degree value",
+    x = "Degree $k$",
+    y = "Proportion of nodes"
+  )
+```
+
+This plot shows the degree distribution in its most direct form:
+
+- the horizontal axis gives the degree value $k$
+- the vertical axis gives the proportion of nodes with that degree
+
+The distinction between two ideas is now clear:
+
+- the **degree table** records the degree of each node
+- the **degree distribution** records how common each degree value is in the graph
+
+### Degree distribution in the random graph model $G(N,p)$
+
+Now move from one fixed graph to the random graph model $G(N,p)$.
+
+Take one node. It has $N-1$ possible neighbors. For each possible neighbor, an edge is present with probability $p$ and absent with probability $1-p$. Because these edge decisions are independent, the degree of that node is the number of successes in $N-1$ Bernoulli trials. Therefore,
+
+$$
+k \sim B(N-1,p).
+$$
+
+Hence the probability that a node has degree exactly $k$ is
+
+$$
+P(k) = \binom{N-1}{k} p^k (1-p)^{N-1-k}.
+$$
+
+This is the degree distribution of the Erdős--Rényi model $G(N,p)$.
+
+### Interpreting the formula
+
+Each factor in the formula has a clear meaning.
+
+To obtain degree $k$ for a chosen node:
+
+1. exactly $k$ of the $N-1$ possible edges must be present
+2. the remaining $N-1-k$ edges must be absent
+3. there are $\binom{N-1}{k}$ different ways to choose which $k$ neighbors are connected
+
+Therefore,
+
+$$
+P(k) = \binom{N-1}{k} p^k (1-p)^{N-1-k}.
+$$
+
+The three parts of this expression play different roles:
+
+- $\binom{N-1}{k}$ counts the possible choices of the $k$ neighbors
+- $p^k$ gives the probability that those $k$ edges are present
+- $(1-p)^{N-1-k}$ gives the probability that the remaining edges are absent
+
+The expected value of this distribution is
+
+$$
+\mathbb{E}[k] = p(N-1),
+$$
+
+which agrees with the expected average degree derived earlier.
+
+### Comparing one realization with the theoretical distribution
+
+The formula above describes the degree distribution predicted by the model. A single simulated graph from $G(N,p)$ will fluctuate around that prediction.
+
+```{r}
+#| label: degree-distribution-simulation
+#| fig-cap: "Observed degree frequencies in one simulated graph compared with the theoretical degree distribution in G(N,p)."
+
+n <- 80
+p <- 0.08
+
+g <- sample_gnp(n = n, p = p, directed = FALSE, loops = FALSE)
+obs_deg <- degree(g)
+
+obs_tbl <- tibble(k = obs_deg) |>
+  count(k, name = "observed") |>
+  complete(k = 0:(n - 1), fill = list(observed = 0)) |>
+  mutate(observed_prob = observed / sum(observed))
+
+theory_tbl <- tibble(k = 0:(n - 1)) |>
+  mutate(theory_prob = dbinom(k, size = n - 1, prob = p))
+
+plot_tbl <- left_join(obs_tbl, theory_tbl, by = "k")
+
+ggplot(plot_tbl, aes(x = k)) +
+  geom_col(aes(y = observed_prob), fill = course_cols$blue, alpha = 0.45, width = 0.82) +
+  geom_line(aes(y = theory_prob), color = course_cols$teal, linewidth = 1.1) +
+  geom_point(aes(y = theory_prob), color = course_cols$gold, size = 2.2) +
+  labs(
+    title = "Observed and theoretical degree distribution",
+    subtitle = sprintf("Single realization of G(%d, %.2f)", n, p),
+    x = "Degree $k$",
+    y = "Probability"
+  )
+```
+
+The bars show the empirical degree distribution of one generated graph. The line and points show the theoretical distribution
+
+$$
+P(k) = \binom{N-1}{k} p^k (1-p)^{N-1-k}.
+$$
+
+The two are not expected to coincide perfectly in one realization. The figure shows how the observed degree frequencies of a random graph relate to the probability law defined by the model.
+
+::: {.callout-important title="Summary"}
+In this chapter, the degree distribution can be read at three connected levels:
+
+1. a graph has nodes with different degree values
+2. those degree values can be summarized by the empirical distribution
+   $$
+   p_k = \frac{N_k}{N}
+   $$
+3. in the model $G(N,p)$, the degree of a node follows the binomial law
+   $$
+   P(k) = \binom{N-1}{k} p^k (1-p)^{N-1-k}
+   $$
+:::
+
+## Poisson approximation in sparse large graphs
+
+The exact binomial formula is correct, but in many network settings the focus is on large graphs that are relatively sparse.
+
+A graph is called **sparse** when the number of links grows much more slowly than the maximum possible number of links. In the Erdős--Rényi setting, a common sparse regime is:
+
+-   $N$ is large
+-   $p$ is small
+-   the mean degree remains finite
+
+Let
+
+$$
+\lambda = p(N-1).
+$$
+
+If $N$ is large and $p$ is small in such a way that $\lambda$ stays finite, then the binomial degree distribution is well approximated by a Poisson distribution:
+
+$$
+P(k) \approx e^{-\lambda}\frac{\lambda^k}{k!}.
+$$
+
+### Why this approximation appears
+
+This approximation reflects a common probabilistic pattern:
+
+-   each individual edge is unlikely
+-   there are many possible edges
+-   the total number of successes remains moderate
+
+That is exactly the setting in which Poisson limits naturally appear.
+
+This is an important modeling lesson. The Poisson distribution is not introduced here as a completely different idea. It appears as a limit of the binomial degree distribution in the sparse large-$N$ regime.
+
+::: {.callout-tip title="Interpretation"}
+In a large sparse Erdős--Rényi graph, most nodes have relatively small degree, and the degree distribution becomes sharply concentrated around a finite mean.
+:::
+
+### Class example: binomial distribution and Poisson approximation
+
+```{r}
+#| label: poisson-approximation
+#| fig-cap: "Comparison between the exact binomial degree distribution and its Poisson approximation."
+
+n <- 300
+p <- 0.02
+lambda <- p * (n - 1)
+k_vals <- 0:24
+
+compare_tbl <- tibble(
+  k = k_vals,
+  binomial = dbinom(k_vals, size = n - 1, prob = p),
+  poisson = dpois(k_vals, lambda = lambda)
+) |>
+  pivot_longer(cols = c(binomial, poisson), names_to = "distribution", values_to = "probability") |>
+  mutate(distribution = recode(distribution, binomial = "Binomial", poisson = "Poisson"))
+
+ggplot(compare_tbl, aes(x = k, y = probability, color = distribution)) +
+  geom_line(linewidth = 1.1) +
+  geom_point(size = 2.2) +
+  scale_color_manual(values = c("Binomial" = course_cols$teal, "Poisson" = course_cols$coral)) +
+  labs(
+    title = "Binomial and Poisson degree distributions",
+    subtitle = sprintf("n = %d, p = %.3f, mean degree = %.2f", n, p, lambda),
+    x = "Degree $k$",
+    y = "Probability",
+    color = NULL
+  )
+```
+
+## Clustering coefficient
+
+The clustering coefficient measures how strongly the neighbors of a node are connected to one another.
+
+Suppose node $i$ has degree $k_i$. Then it has $k_i$ neighbors. Among those neighbors, the maximum possible number of edges is
+
+$$
+L_i^{\max} = \binom{k_i}{2} = \frac{k_i(k_i-1)}{2}.
+$$
+
+If the actual number of edges among those neighbors is $L_i$, then the local clustering coefficient of node $i$ is
+
+$$
+C_i = \frac{L_i}{L_i^{\max}}
+= \frac{2L_i}{k_i(k_i-1)}.
+$$
+
+The average clustering coefficient of the graph is
+
+$$
+\bar{C} = \frac{1}{N}\sum_{i=1}^{N} C_i.
+$$
+
+### Interpreting clustering
+
+Clustering is often explained in social terms:
+
+> If two nodes are both neighbors of the same node, how likely are they to be connected to each other?
+
+In real social networks, clustering is often fairly high because friendships tend to close triangles.
+
+In an Erdős--Rényi graph, however, edges are placed independently. That means there is no special mechanism that encourages triangle closure. Once the neighbors of a node are fixed, the chance that two of those neighbors are connected is still just $p$.
+
+Therefore, in $G(N,p)$, the expected clustering coefficient is
+
+$$
+\mathbb{E}[C] = p.
+$$
+
+This is a very simple result, but it also highlights a limitation of the ER model: when $p$ is small, clustering is small. Many real social networks are much more clustered than this.
+
+### Class example: repeated simulations
+
+```{r}
+#| label: simulation-summary
+
+n <- 100
+p <- 0.07
+reps <- 250
+
+sim_tbl <- map_dfr(seq_len(reps), function(i) {
+  g <- sample_gnp(n = n, p = p, directed = FALSE, loops = FALSE)
+  tibble(
+    sim = i,
+    avg_degree = mean(degree(g)),
+    avg_clustering = transitivity(g, type = "average")
+  )
+})
+
+summary_tbl <- tibble(
+  quantity = c("Average degree", "Average clustering"),
+  empirical_mean = c(mean(sim_tbl$avg_degree), mean(sim_tbl$avg_clustering)),
+  theoretical_value = c(p * (n - 1), p)
+)
+
+summary_tbl
+```
+
+```{r}
+#| label: clustering-plot
+#| fig-cap: "Empirical clustering across repeated simulations with the theoretical value shown as a dashed line."
+
+ggplot(sim_tbl, aes(x = avg_clustering)) +
+  geom_histogram(bins = 24, fill = course_cols$teal, alpha = 0.65, color = "white") +
+  geom_vline(xintercept = p, color = course_cols$gold, linewidth = 1.1, linetype = 2) +
+  labs(
+    title = "Average clustering across simulations",
+    subtitle = sprintf("Dashed line = theoretical value p = %.2f", p),
+    x = "Average clustering",
+    y = "Count"
+  )
+```
+
+## Core formulas to remember
+
+::: {.callout-important title="Summary"}
+For Erdős--Rényi random graphs:
+
+1.  Number of possible undirected edges: $$
+    K = \binom{N}{2}
+    $$
+
+2.  Probability of a graph in $G(N,L)$: $$
+    P(G) = \frac{1}{\binom{K}{L}}
+    $$
+
+3.  Probability of a graph with $L$ links in $G(N,p)$: $$
+    P(G) = p^L(1-p)^{K-L}
+    $$
+
+4.  Expected average degree in $G(N,p)$: $$
+    \mathbb{E}[\bar{k}] = p(N-1)
+    $$
+
+5.  Degree distribution in $G(N,p)$: $$
+    P(k) = \binom{N-1}{k}p^k(1-p)^{N-1-k}
+    $$
+
+6.  Poisson approximation in the sparse regime: $$
+    P(k) \approx e^{-\lambda}\frac{\lambda^k}{k!},
+    \qquad \lambda = p(N-1)
+    $$
+
+7.  Expected clustering in $G(N,p)$: $$
+    \mathbb{E}[C] = p
+    $$
+:::
+
+## Class example: generate and plot a random graph
+
+```{r}
+#| label: er-graph-example
+#| fig-cap: "One realization of an Erdős--Rényi graph."
+
+n <- 20
+p <- 0.12
+
+g_er <- sample_gnp(n = n, p = p, directed = FALSE, loops = FALSE)
+
+plot(
+  g_er,
+  layout = layout_with_fr(g_er),
+  vertex.size = 22,
+  vertex.color = course_cols$teal,
+  vertex.frame.color = "white",
+  vertex.label.color = "white",
+  edge.color = scales::alpha(course_cols$ink, 0.32),
+  vertex.label.cex = 0.8,
+  main = sprintf("A realization of G(%d, %.2f)", n, p)
+)
+```
+
+## Interactive explorer
+
+```{r}
+#| label: interactive-helper
+#| echo: false
+
+degree_dist_df <- function(n_value, p_value) {
+  tibble(
+    k = 0:(n_value - 1),
+    prob = dbinom(0:(n_value - 1), size = n_value - 1, prob = p_value)
+  )
+}
+
+make_degree_static <- function(n_value, p_value) {
+  df <- degree_dist_df(n_value, p_value)
+
+  ggplot(df, aes(x = k, y = prob)) +
+    geom_col(fill = course_cols$blue, alpha = 0.45, width = 0.82) +
+    geom_line(color = course_cols$teal, linewidth = 1.1) +
+    geom_point(color = course_cols$gold, size = 2.2) +
+    labs(
+      title = sprintf("Degree distribution for G(%d, %.2f)", n_value, p_value),
+      subtitle = sprintf("Expected degree = p(N-1) = %.2f", p_value * (n_value - 1)),
+      x = "Degree k",
+      y = "Probability"
+    )
+}
+
+make_degree_interactive <- function(n_value, p_values = c(0.04, 0.08, 0.12, 0.16, 0.20)) {
+  df <- expand_grid(
+    p = p_values,
+    k = 0:(n_value - 1)
+  ) |>
+    mutate(
+      prob = dbinom(k, size = n_value - 1, prob = p),
+      frame_lab = paste0("p = ", sprintf("%.2f", p)),
+      hover_lab = paste0(
+        "N = ", n_value,
+        "<br>p = ", sprintf("%.2f", p),
+        "<br>k = ", k,
+        "<br>P(K = k) = ", sprintf("%.4f", prob),
+        "<br>Expected degree = ", sprintf("%.2f", p * (n_value - 1))
+      )
+    )
+
+  plot_ly(
+    df,
+    x = ~k,
+    y = ~prob,
+    frame = ~frame_lab,
+    type = "scatter",
+    mode = "lines+markers",
+    text = ~hover_lab,
+    hoverinfo = "text",
+    line = list(color = course_cols$teal, width = 3),
+    marker = list(color = course_cols$blue, size = 7)
+  ) |>
+    layout(
+      title = list(text = paste0("Interactive degree distribution for N = ", n_value)),
+      xaxis = list(title = "Degree k", rangemode = "tozero"),
+      yaxis = list(title = "Probability", rangemode = "tozero"),
+      plot_bgcolor = "#FCFCFD",
+      paper_bgcolor = "#FCFCFD",
+      showlegend = FALSE
+    ) |>
+    animation_opts(frame = 1100, transition = 0, redraw = FALSE) |>
+    animation_slider(currentvalue = list(prefix = "Current setting: ")) |>
+    config(displayModeBar = FALSE)
+}
+```
+
+::: {.content-visible when-format="html"}
+This section is interactive in the HTML version. Use the tabs and animation slider to see how the degree distribution changes as $p$ changes.
+
+### Explore the effect of $p$ {.panel-tabset}
+
+#### $N = 30$
+
+```{r}
+#| echo: false
+
+if (knitr::is_html_output()) {
+  make_degree_interactive(30)
+}
+```
+
+#### $N = 60$
+
+```{r}
+#| echo: false
+
+if (knitr::is_html_output()) {
+  make_degree_interactive(60)
+}
+```
+
+#### $N = 100$
+
+```{r}
+#| echo: false
+
+if (knitr::is_html_output()) {
+  make_degree_interactive(100)
+}
+```
+
+As $p$ increases:
+
+-   the center of the distribution moves to the right
+-   the expected degree increases because $\mathbb{E}[k] = p(N-1)$
+-   higher-degree values become more likely
+-   for larger $N$, the same value of $p$ produces a larger expected degree
+:::
+
+::: {.content-visible unless-format="html"}
+In the PDF version, the interactive widget is replaced by a static plot.
+
+```{r}
+#| echo: false
+
+if (knitr::is_latex_output()) {
+  make_degree_static(60, 0.12)
+}
+```
+:::
+
+## In-class questions
+
+1.  Why is a random graph a model rather than a single graph?
+2.  What is the main conceptual difference between $G(N,L)$ and $G(N,p)$?
+3.  Why does the total number of edges follow a binomial distribution in $G(N,p)$?
+4.  Why does the degree of a single node also follow a binomial distribution?
+5.  What does sparse mean in this chapter?
+6.  Why does the Poisson approximation appear in sparse large graphs?
+7.  Why is clustering in Erdős--Rényi graphs usually lower than in social networks?
+
+## End-of-chapter exercises
+
+### Exercise 1
+
+In the model $G(N,L)$, derive the probability that $M$ independent people generate exactly the same graph. Then evaluate your result numerically for:
+
+-   $M = 2$
+-   $N = 20$
+-   $L = 5$
+
+### Exercise 2
+
+In the model $G(N,p)$, derive the probability that $M$ independent people generate exactly the same graph. Then evaluate your result numerically for:
+
+-   $M = 2$
+-   $N = 20$
+-   $p = 0.3$
+-   a graph with $L = 5$ links
+
+### Exercise 3
+
+In the model $G(N,L)$, calculate the probability that two randomly selected nodes are connected by an edge.
+
+### Exercise 4
+
+For a graph in the ensemble $G(N,p)$ with exactly $L$ links, determine the value of $p$ that makes that graph most probable.
+
+### Exercise 5
+
+Take a specific adjacency matrix and discuss whether the corresponding graph is always more probable in $G(N,L)$ than in $G(N,p)$ for arbitrary $p$. Justify your answer carefully.
+
+### Exercise 6
+
+Generalize the definitions of $G(N,L)$ and $G(N,p)$ to directed graphs. Then derive the probability of a directed graph in each case.
+
+## Suggested coding tasks
+
+1.  Simulate $1000$ graphs from $G(N,p)$ and estimate the empirical degree distribution.
+2.  Compare one graph from $G(N,p)$ with one graph from $G(N,L)$ having approximately the same expected number of links.
+3.  Investigate how average path length changes as $p$ increases.
+4.  Verify numerically that average clustering is close to $p$ across repeated simulations.
+5.  Study how the degree distribution changes as $N$ becomes larger while $p$ becomes smaller.
+
+## Reusable helper functions
+
+```{r}
+#| label: helper-functions
+
+er_degree_table <- function(n, p, max_k = n - 1) {
+  tibble(
+    k = 0:max_k,
+    prob = dbinom(0:max_k, size = n - 1, prob = p)
+  )
+}
+
+simulate_er_summary <- function(n, p, reps = 100) {
+  map_dfr(seq_len(reps), function(i) {
+    g <- sample_gnp(n = n, p = p, directed = FALSE, loops = FALSE)
+    tibble(
+      sim = i,
+      avg_degree = mean(degree(g)),
+      avg_clustering = transitivity(g, type = "average")
+    )
+  })
+}
+```
+
+## Concluding remarks
+
+The Erdős--Rényi model is not meant to reproduce every feature of real networks. Its value lies in its clarity.
+
+It gives a first probabilistic language for talking about networks:
+
+-   a graph can be generated by a random rule
+-   many graph properties can be studied through expectations
+-   independent edge formation leads naturally to binomial laws
+-   sparse large graphs often produce Poisson-like degree distributions
+-   independent wiring tends to create low clustering
+
+That is why Erdős--Rényi graphs remain such an important first benchmark in network science.

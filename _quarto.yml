@@ -1,0 +1,64 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "Network Science"
+  subtitle: "Concepts, Examples, and Exercises"
+  author: "Your Name"
+  date: today
+  chapters:
+    - index.qmd
+    - chapters/03-random-graphs.qmd
+  page-navigation: true
+  search: true
+
+execute:
+  echo: true
+  warning: false
+  message: false
+  freeze: auto
+
+format:
+  html:
+    theme:
+      - cosmo
+      - styles.scss
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    number-sections: true
+    number-depth: 2
+    code-copy: true
+    code-overflow: wrap
+    code-tools:
+      source: true
+      toggle: false
+      caption: none
+    smooth-scroll: true
+    anchor-sections: true
+    html-math-method: katex
+    fig-align: center
+    fig-width: 7
+    fig-height: 4.6
+    fig-cap-location: bottom
+    format-links:
+      - pdf
+
+  pdf:
+    documentclass: report
+    pdf-engine: xelatex
+    latex-auto-install: true
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    colorlinks: true
+    geometry:
+      - margin=1in
+    fig-align: center
+    fig-width: 6.5
+    fig-height: 4.2
+    fig-cap-location: bottom
+
+
+editor: visual

@@ -1,0 +1,95 @@
+/*-- scss:defaults --*/
+$body-bg: #fcfcfd;
+$body-color: #1f2937;
+$link-color: #2563eb;
+$primary: #0f766e;
+$secondary: #334155;
+$code-bg: #f4f7fb;
+$code-color: #0f172a;
+$border-color: #e5e7eb;
+$font-size-root: 17px;
+
+/*-- scss:rules --*/
+body {
+  line-height: 1.78;
+}
+
+h1, h2, h3, h4 {
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+h1.title {
+  color: #0f172a;
+}
+
+.quarto-title-block .quarto-title-banner {
+  background: linear-gradient(135deg, #0f766e 0%, #2563eb 100%);
+}
+
+.callout {
+  border-radius: 14px;
+  border-width: 1px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+}
+
+.cell-output-display,
+.cell-output-stdout,
+.cell-output-stderr,
+div.sourceCode,
+pre.sourceCode {
+  border-radius: 12px;
+}
+
+pre.sourceCode {
+  border: 1px solid #e5e7eb;
+}
+
+code {
+  padding: 0.12rem 0.32rem;
+  border-radius: 6px;
+}
+
+.table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.math.display {
+  overflow-x: auto;
+}
+
+.sidebar nav[role="doc-toc"] ul > li > a.active {
+  font-weight: 700;
+}
+
+.panel-tabset [role="tablist"] .nav-link {
+  border-radius: 10px 10px 0 0;
+  font-weight: 600;
+}
+
+.panel-tabset .tab-content {
+  border: 1px solid #e5e7eb;
+  border-radius: 0 12px 12px 12px;
+  padding: 1rem 1rem 0.2rem 1rem;
+  background: #ffffff;
+}
+
+.quarto-figure {
+  margin-bottom: 1.2rem;
+}
+
+.quarto-figure figcaption,
+figure figcaption,
+.figure-caption {
+  text-align: center !important;
+  margin: 0.55rem auto 0 auto;
+  max-width: 90%;
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+p {
+  margin-bottom: 0.95rem;
+}

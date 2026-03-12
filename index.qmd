@@ -1,0 +1,79 @@
+---
+title: "Course Overview"
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(ggplot2)
+
+knitr::opts_chunk$set(
+  fig.width = 7,
+  fig.height = 4.6,
+  out.width = "100%",
+  dpi = 160,
+  fig.retina = 2,
+  comment = NA
+)
+
+theme_set(
+  theme_minimal(base_size = 13) +
+    theme(
+      plot.title.position = "plot",
+      panel.grid.minor = element_blank()
+    )
+)
+
+set.seed(1234)
+```
+
+# Welcome
+
+This Quarto book is designed as a single, well-structured version of a Network Science course.
+
+Each chapter follows the same pattern:
+
+1.  **Theory and intuition**
+2.  **Worked examples in R**
+3.  **Exercises and coding tasks**
+
+The same source files produce both:
+
+-   an **HTML course website**
+-   a **PDF course handout**
+
+# Required packages
+
+Install the packages below once:
+
+```{r}
+#| eval: false
+install.packages(c(
+  "igraph", "dplyr", "ggplot2", "tidyr", "purrr", "plotly", "tinytex", "quarto"
+))
+tinytex::install_tinytex()
+```
+
+# Design principles
+
+This template is built around a few teaching priorities:
+
+-   explanations should be readable and beginner-friendly
+-   formulas should be introduced with intuition, not only stated
+-   code should be clean enough to use directly in class
+-   plots should be visually clear and consistent
+-   HTML pages may contain interactivity, while PDF remains clean and stable
+
+# Current chapter
+
+The first chapter is **Random Graphs**. It introduces:
+
+-   graph ensembles
+-   the Erdős--Rényi models $G(N,L)$ and $G(N,p)$
+-   average degree
+-   degree distribution
+-   the Poisson approximation
+-   clustering coefficient
+-   static and interactive examples
+-   end-of-chapter exercises
