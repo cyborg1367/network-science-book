@@ -11,6 +11,8 @@ book:
     - index.qmd
     - chapters/03-random-graphs.qmd
     - chapters/04-random-graph-evolution.qmd
+    - chapters/05-small-world-graphs.qmd
+    - chapters/06-scale-free-graphs.qmd
   page-navigation: true
   search: true
 

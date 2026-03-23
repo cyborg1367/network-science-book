@@ -1,0 +1,1239 @@
+---
+title: "Small-World Networks"
+---
+
+```{r}
+#| label: chapter-setup-smallworld
+#| include: false
+
+library(igraph)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(purrr)
+
+course_cols <- list(
+  teal  = "#0F766E",
+  blue  = "#2563EB",
+  gold  = "#F59E0B",
+  coral = "#E76F51",
+  ink   = "#1F2937",
+  grid  = "#E5E7EB"
+)
+
+theme_set(
+  theme_minimal(base_size = 13) +
+    theme(
+      plot.title.position = "plot",
+      panel.grid.minor = element_blank(),
+      panel.grid.major.x = element_line(color = course_cols$grid, linewidth = 0.35),
+      panel.grid.major.y = element_line(color = course_cols$grid, linewidth = 0.35),
+      axis.title = element_text(color = course_cols$ink),
+      axis.text = element_text(color = course_cols$ink),
+      plot.title = element_text(face = "bold", color = course_cols$ink),
+      plot.subtitle = element_text(color = "#475569"),
+      legend.position = "top"
+    )
+)
+
+set.seed(2031)
+```
+
+## Introduction
+
+The small-world phenomenon is one of the most widely discussed ideas in network science. In popular language it often appears through the phrase *six degrees of separation*: two individuals, even if they live very far apart, may still be connected through only a short chain of acquaintances.
+
+From the viewpoint of graph theory, however, the important issue is not whether the number is exactly six. The real content of the statement is structural. It says that the distance between two randomly chosen vertices in a large network is often surprisingly small.
+
+This immediately raises two mathematical questions:
+
+1.  What does *small* mean?
+2.  Relative to what benchmark is this smallness surprising?
+
+The first question leads to the concepts of distance, diameter, and average path length. The second leads to a comparison between random graphs and regular lattices. A random graph typically has distances that grow only logarithmically with system size, whereas regular lattices exhibit polynomial growth. That contrast is the mathematical source of the small-world effect.
+
+A further question then appears. Random graphs can have short distances, but they usually have low clustering. Many real systems, by contrast, display both:
+
+-   short path lengths,
+-   high clustering.
+
+The final goal of the chapter is therefore to understand how these two properties can coexist. The Watts--Strogatz model provides one of the first and most influential answers to that question.
+
+## Learning goals
+
+By the end of this chapter, it should be possible to:
+
+-   define graph distance, diameter, and average path length precisely
+-   explain the small-world property in mathematical terms
+-   derive the logarithmic distance estimate for random networks
+-   explain why small worlds are surprising when compared with regular lattices
+-   define the Watts--Strogatz model
+-   explain how shortcuts reduce path length while preserving clustering
+-   identify the small-world regime numerically in `R`
+-   discuss why small-world structure is relevant in applications
+
+## Distance, diameter, and average path length
+
+### Distance
+
+::: {#def-sw-distance}
+Let $G=(V,E)$ be a connected undirected graph. For vertices $u,v \in V$, the **distance** between $u$ and $v$, denoted by
+
+$$
+d(u,v),
+$$
+
+is the length of a shortest path from $u$ to $v$.
+:::
+
+This is the fundamental metric quantity in a graph. It counts the minimum number of edges that must be traversed in order to move from $u$ to $v$.
+
+If $u$ and $v$ are adjacent, then $d(u,v)=1$. If they are not adjacent but share a common neighbor, then $d(u,v)=2$, and so on.
+
+### Diameter
+
+::: {#def-sw-diameter}
+Let $G=(V,E)$ be a connected graph. The **diameter** of $G$ is
+
+$$
+D(G)=\max_{u,v \in V} d(u,v).
+$$
+:::
+
+The diameter measures the largest distance between any pair of vertices in the graph. It is therefore a metric measure of the size of the network.
+
+Because it depends on the most extreme pair of vertices, the diameter is often sensitive to rare structural features.
+
+### Average path length
+
+::: {#def-sw-average-path}
+Let $G=(V,E)$ be a connected graph with $N=|V|$ vertices. The **average path length** of $G$ is
+
+$$
+L(G)
+=
+\frac{1}{N(N-1)}
+\sum_{\substack{u,v \in V \\ u \neq v}}
+d(u,v).
+$$
+:::
+
+This quantity measures the typical separation between two vertices in the graph.
+
+It is usually more stable than the diameter, because it averages distances over all ordered pairs. In teaching and in applications, it is often the more informative quantity, since it describes typical rather than extreme reachability.
+
+### Why averaging suppresses fluctuations
+
+The distinction between diameter and average path length is important.
+
+-   The diameter is controlled by a few extreme paths.
+-   The average path length is computed over all vertex pairs.
+
+As a consequence, the averaging process suppresses fluctuations. This is one reason why logarithmic distance estimates are often closer to the average path length than to the diameter.
+
+### Clustering coefficient
+
+::: {#def-sw-clustering}
+Let $G=(V,E)$ be an undirected graph. The **average clustering coefficient** of $G$ is
+
+$$
+\bar{C}(G)
+=
+\frac{1}{N}
+\sum_{i=1}^{N} C_i,
+$$
+
+where $C_i$ denotes the local clustering coefficient of vertex $i$.
+:::
+
+Clustering is a local quantity. It measures how strongly neighborhoods close into triangles.
+
+The central question of this chapter is whether a network can have simultaneously:
+
+-   small global distances,
+-   strong local clustering.
+
+That coexistence is the essence of the small-world property.
+
+## The small-world property in random networks
+
+A first explanation of short distances comes from a simple random-network calculation.
+
+### A branching approximation
+
+Suppose a network has average degree $\langle k \rangle$, and suppose its local neighborhoods are approximately tree-like.
+
+Start from one vertex. Then, at a crude homogeneous level:
+
+-   there are about $\langle k \rangle$ vertices at distance $1$,
+-   about $\langle k \rangle^2$ vertices at distance $2$,
+-   about $\langle k \rangle^3$ vertices at distance $3$,
+-   and more generally about $\langle k \rangle^d$ vertices at distance $d$.
+
+This approximation ignores overlap between neighborhoods and therefore is not exact. But it captures the main mechanism: the number of reachable vertices grows exponentially with distance.
+
+A more refined branching-process argument would replace $\langle k \rangle$ by an effective branching factor. The central conclusion, however, is the same: exponential neighborhood growth leads to logarithmic distances.
+
+### Number of vertices within distance $d$
+
+Under the same approximation, the number of vertices reachable within distance at most $d$ is
+
+$$
+N(d)
+\approx
+1+\langle k \rangle+\langle k \rangle^2+\cdots+\langle k \rangle^d.
+$$
+
+This is a finite geometric series, so
+
+$$
+N(d)
+\approx
+\frac{\langle k \rangle^{d+1}-1}{\langle k \rangle-1}.
+$$
+
+The significance of this formula is that reachability expands very quickly when $\langle k \rangle > 1$.
+
+### Logarithmic estimate for distances
+
+The quantity $N(d)$ cannot exceed the total number of vertices $N$. So the largest relevant distance scale must satisfy approximately
+
+$$
+N(d_{\max}) \approx N.
+$$
+
+If $\langle k \rangle$ is larger than one and $N$ is large, the dominant term in the geometric sum is the last one, giving the simplified relation
+
+$$
+\langle k \rangle^{d_{\max}} \approx N.
+$$
+
+Taking logarithms yields
+
+$$
+d_{\max}
+\approx
+\frac{\ln N}{\ln \langle k \rangle}.
+$$
+
+This is the first mathematical form of the small-world phenomenon.
+
+### Average path length in random networks
+
+In many networks, the expression
+
+$$
+\frac{\ln N}{\ln \langle k \rangle}
+$$
+
+gives a better approximation to the average path length than to the diameter. Hence one often writes
+
+$$
+L(G)
+\approx
+\frac{\ln N}{\ln \langle k \rangle}.
+$$
+
+This formula has a clear interpretation.
+
+1.  The dependence on $N$ is logarithmic.
+2.  The dependence on degree is through the factor $1/\ln \langle k \rangle$.
+
+Since $\ln N \ll N$, the logarithmic law means that distances grow extremely slowly with system size. This is what *small* means in the expression *small world*: the distance scale is proportional to $\ln N$, not to $N$ or to a power of $N$.
+
+### A social-network illustration
+
+Take approximate values
+
+$$
+N \approx 7\times 10^9,
+\qquad
+\langle k \rangle \approx 10^3.
+$$
+
+Then
+
+$$
+L(G)
+\approx
+\frac{\ln(7\times 10^9)}{\ln(10^3)}
+\approx 3.28.
+$$
+
+This rough estimate suggests that the typical social separation scale is only a few steps. The exact numerical value should not be taken literally, but the order of magnitude is the key message: logarithmic scaling leads to surprisingly short paths even in extremely large systems.
+
+## Why small worlds are surprising
+
+The small-world effect is surprising because our geometric intuition is often shaped by regular lattices, and regular lattices do **not** display logarithmic distance growth.
+
+### Distance scaling in regular lattices
+
+In a one-dimensional lattice,
+
+$$
+L(G)\sim D(G)\sim N.
+$$
+
+In a two-dimensional square lattice,
+
+$$
+L(G)\sim D(G)\sim N^{1/2}.
+$$
+
+In a three-dimensional cubic lattice,
+
+$$
+L(G)\sim D(G)\sim N^{1/3}.
+$$
+
+More generally, in a $d$-dimensional regular lattice,
+
+$$
+L(G)\sim D(G)\sim N^{1/d}.
+$$
+
+These are polynomial growth laws, not logarithmic ones.
+
+### Why the contrast matters
+
+This contrast is mathematically significant. Polynomial growth is much faster than logarithmic growth when $N$ is large.
+
+For example, if a population-scale network were arranged like a two-dimensional lattice, then the characteristic separation scale would be of order $N^{1/2}$, which is vastly larger than the logarithmic random-network estimate.
+
+So the small-world effect is not simply the fact that distances are finite. It is the much stronger fact that they are drastically smaller than what regular lattice geometry would suggest.
+
+### Simulated scaling of average path length
+
+The purpose of this subsection is to compare the *growth laws* of average path length across several network families. For this reason, the values of $N$ do not need to be identical across all models. What matters is that each family is sampled on a sufficiently fine size grid so that its scaling trend is visible.
+
+This is especially important for lattice models. In three dimensions, for example, the natural graph sizes are cubes, so forcing one common set of $N$ values creates large gaps and produces visually poor scaling plots. It is therefore more informative to let each family use its own sequence of system sizes.
+
+The observable is the average path length rather than the diameter. This is a deliberate methodological choice. The diameter is determined by a few extreme vertex pairs and is therefore more irregular, while the average path length is computed over all vertex pairs, so the averaging process suppresses fluctuations and provides a much more stable quantity for scaling analysis.
+
+The simulated models are:
+
+-   a one-dimensional lattice,
+-   a two-dimensional lattice,
+-   a three-dimensional lattice,
+-   a connected Erdős--Rényi random graph with expected degree approximately equal to $8$.
+
+```{r}
+#| label: distance-scaling-simulation
+#| echo: fenced
+
+simulate_connected_er_apl <- function(n, mean_degree = 8, reps = 20) {
+  p <- mean_degree / (n - 1)
+  vals <- numeric(reps)
+
+  for (r in seq_len(reps)) {
+    repeat {
+      g <- sample_gnp(n = n, p = p, directed = FALSE, loops = FALSE)
+      if (components(g)$no == 1) break
+    }
+    vals[r] <- mean_distance(g, directed = FALSE, unconnected = FALSE)
+  }
+
+  mean(vals)
+}
+
+apl_line <- function(n) {
+  g <- make_lattice(c(n), circular = FALSE)
+  mean_distance(g, directed = FALSE, unconnected = FALSE)
+}
+
+apl_rectangle <- function(a, b) {
+  g <- make_lattice(c(a, b), circular = FALSE)
+  mean_distance(g, directed = FALSE, unconnected = FALSE)
+}
+
+apl_cube <- function(L) {
+  g <- make_lattice(c(L, L, L), circular = FALSE)
+  mean_distance(g, directed = FALSE, unconnected = FALSE)
+}
+
+line_sizes <- c(20, 30, 40, 50, 60, 80, 100)
+
+rect_dims <- tribble(
+  ~a, ~b,
+   4,  4,
+   5,  5,
+   6,  6,
+   7,  7,
+   8,  8,
+   9, 9,
+  10, 10,
+  10, 12,
+  12, 12,
+  12, 15,
+  15, 15,
+  15, 18,
+  18, 18,
+  20, 20
+)
+
+cube_side <- c(3, 4, 5, 6, 7, 8)
+
+random_sizes <- c(20, 30, 40, 50, 60, 80, 100, 120, 150, 180, 220, 260, 320, 400)
+
+distance_scaling_tbl <- bind_rows(
+  tibble(
+    N = line_sizes,
+    avg_distance = map_dbl(line_sizes, apl_line),
+    model = "1D lattice"
+  ),
+  tibble(
+    N = rect_dims$a * rect_dims$b,
+    avg_distance = map2_dbl(rect_dims$a, rect_dims$b, apl_rectangle),
+    model = "2D lattice"
+  ),
+  tibble(
+    N = cube_side^3,
+    avg_distance = map_dbl(cube_side, apl_cube),
+    model = "3D lattice"
+  ),
+  tibble(
+    N = random_sizes,
+    avg_distance = map_dbl(random_sizes, \(n) simulate_connected_er_apl(n, mean_degree = 8, reps = 8)),
+    model = "Random graph"
+  )
+) |>
+  mutate(
+    logN = log(N),
+    logd = log(avg_distance)
+  )
+```
+
+```{r}
+#| label: distance-scaling-linear
+#| echo: fenced
+#| fig-cap: "Average path length as a function of system size for 1D, 2D, 3D lattices, and random graphs."
+
+ggplot(distance_scaling_tbl, aes(x = N, y = avg_distance, color = model)) +
+  geom_line(linewidth = 1.1) +
+  geom_point(size = 2.1) +
+  scale_color_manual(
+    values = c(
+      "1D lattice" = course_cols$blue,
+      "2D lattice" = course_cols$teal,
+      "3D lattice" = course_cols$gold,
+      "Random graph" = course_cols$coral
+    )
+  ) +
+  labs(
+    title = "Average path length versus system size",
+    subtitle = "Each graph family is sampled on its own size grid to reveal the scaling trend clearly",
+    x = "Number of vertices N",
+    y = "Average path length <d>",
+    color = NULL
+  )
+```
+
+The linear-scale plot already shows the main contrast. The one-dimensional lattice grows fastest, the two-dimensional and three-dimensional lattices grow more slowly, and the random graph grows much more slowly still.
+
+To interpret the scaling laws more clearly, it is useful to look at the logarithms directly.
+
+```{r}
+#| label: distance-scaling-loglog
+#| echo: fenced
+#| fig-cap: The same simulated data displayed as a plot of ln N versus ln <d>.
+ggplot(distance_scaling_tbl, aes(x = logN, y = logd, color = model)) +
+  geom_line(linewidth = 1.1) +
+  geom_point(size = 2.1) +
+  scale_color_manual(
+    values = c(
+      "1D lattice" = course_cols$blue,
+      "2D lattice" = course_cols$teal,
+      "3D lattice" = course_cols$gold,
+      "Random graph" = course_cols$coral
+    )
+  ) +
+  labs(
+    title = "Logarithmic view of distance scaling",
+    subtitle = "Lattice growth is polynomial, while random-network growth is much slower",
+    x = "ln N",
+    y = "ln <d>",
+    color = NULL
+  )
+```
+
+These simulations reflect the expected asymptotic trends:
+
+-   the one-dimensional lattice grows approximately linearly in $N$,
+-   the two-dimensional lattice grows approximately like $N^{1/2}$,
+-   the three-dimensional lattice grows approximately like $N^{1/3}$,
+-   the random graph grows much more slowly and is consistent with logarithmic scaling.
+
+This is the precise structural meaning of the small-world effect. In a random network, the typical separation between vertices increases so slowly with system size that even very large systems can remain metrically compact.
+
+## The Watts--Strogatz model
+
+The random-network estimate above explains why short distances can occur, but it does not explain how a network can retain high clustering at the same time. That question is addressed by the Watts--Strogatz model.
+
+### Motivation
+
+Two empirical observations often appear together in real networks:
+
+1.  the average distance between vertices is small and grows roughly logarithmically with system size,
+2.  the clustering coefficient is much higher than in a comparable random graph.
+
+These two observations point in different structural directions.
+
+-   A **regular lattice** has strong local order and therefore high clustering, but it does not have short path lengths.
+-   A **random graph** has short path lengths, but its clustering is typically much smaller.
+
+The Watts--Strogatz model was introduced to interpolate between these two extremes. Its purpose is to show that a graph can maintain strong local clustering while acquiring short global distances after only a small amount of random rewiring.
+
+### Parameters of the model
+
+The standard parameters of the Watts--Strogatz model are:
+
+-   $N$: the number of vertices,
+-   $K$: the mean degree, assumed to be an even integer,
+-   $\beta \in [0,1]$: the rewiring probability.
+
+The parameter $K$ must satisfy
+
+$$
+2 \le K < N,
+\qquad
+K \text{ even}.
+$$
+
+In asymptotic discussions one often assumes
+
+$$
+N \gg K \gg \ln N \gg 1,
+$$
+
+because this is the regime in which the graph is sparse relative to the complete graph but still sufficiently connected to exhibit the small-world transition clearly.
+
+### Regular ring lattice
+
+::: {#def-watts-ring}
+Let $N$ and $K$ be as above, with $K$ even. The **regular ring lattice** is the graph on vertex set
+
+$$
+V=\{0,1,\dots,N-1\}
+$$
+
+in which each vertex is connected to its $K/2$ nearest neighbors on each side around the ring.
+
+Equivalently, vertices $i$ and $j$ are adjacent if and only if their cyclic distance on the ring is at most $K/2$.
+:::
+
+Thus every vertex has degree exactly $K$, so the average degree of the lattice is
+
+$$
+\langle k \rangle = K.
+$$
+
+This graph is highly ordered. It has strong local structure and large clustering, but its average path length remains relatively large because travel across the graph requires many local steps.
+
+### Definition of the Watts--Strogatz model
+
+In the original Watts--Strogatz construction, the rewiring probability is usually denoted by $\beta$.
+
+::: {#def-watts-strogatz}
+The **Watts--Strogatz model** with parameters $(N,K,\beta)$ is constructed as follows.
+
+1.  Start from the regular ring lattice on $N$ vertices with degree $K$.
+2.  For each vertex $$
+    i=0,1,\dots,N-1,
+    $$ consider the $K/2$ edges from $i$ to its clockwise neighbors.
+3.  For each such edge, independently with probability $\beta$, rewire it by replacing its endpoint with a uniformly chosen new vertex.
+4.  During rewiring, self-loops and multiple edges are forbidden.
+
+The parameter $\beta$ is the **rewiring probability**.
+:::
+
+A more explicit version of Step 2 is the following. For each vertex $i$, one considers the edges
+
+$$
+(i,j)
+\qquad \text{such that} \qquad
+0 < (j-i)\bmod N \le \frac{K}{2}.
+$$
+
+These are exactly the $K/2$ clockwise edges from $i$. Each one is then rewired independently with probability $\beta$.
+
+### Why only the clockwise edges are considered
+
+It is important to notice that each undirected edge appears twice in the full ring description: once from each endpoint. To avoid treating the same undirected edge twice, the rewiring algorithm acts only on one oriented half of the local edges, namely the clockwise ones.
+
+This makes the algorithm well defined while preserving the undirected nature of the final graph.
+
+### Interpretation of the parameter $\beta$
+
+The parameter $\beta$ controls the amount of randomness introduced into the graph.
+
+-   If $$
+    \beta = 0,
+    $$ then no edge is rewired, so the graph remains the original regular lattice.
+
+-   If $$
+    0 < \beta \ll 1,
+    $$ then only a small fraction of edges is rewired. Most local neighborhoods remain almost unchanged, but a few long-range shortcut edges appear.
+
+-   If $$
+    \beta = 1,
+    $$ then every eligible edge has been rewired, so the graph becomes highly randomized.
+
+Because rewiring preserves the total number of edges, the mean degree remains equal to $K$ throughout the whole interpolation from order to randomness.
+
+### Ring-lattice benchmarks
+
+For the regular ring lattice, one has
+
+$$
+\langle k \rangle = K.
+$$
+
+Its average path length grows approximately linearly with system size:
+
+$$
+L(0) \approx \frac{N}{2K}.
+$$
+
+Its clustering coefficient is also known explicitly:
+
+$$
+C(0)=\frac{3(K-2)}{4(K-1)}.
+$$
+
+This formula shows that the lattice has clustering of order one when $K$ is fixed.
+
+So the regular ring lattice has:
+
+-   large clustering,
+-   large average path length.
+
+This is precisely why it is a useful starting point for the model.
+
+```{r}
+#| label: ws-progressive-helpers
+#| include: false
+
+make_ring_edges_K <- function(n, K) {
+  stopifnot(K %% 2 == 0)
+  tibble(
+    from = rep(seq_len(n), each = K / 2),
+    shift = rep(seq_len(K / 2), times = n)
+  ) |>
+    mutate(
+      to = ((from + shift - 1) %% n) + 1
+    ) |>
+    select(from, to)
+}
+
+build_progressive_ws_graph_K <- function(n, K, beta, meta) {
+  base_edges <- meta$base_edges
+  adj <- matrix(FALSE, n, n)
+
+  for (i in seq_len(nrow(base_edges))) {
+    from <- base_edges$from[i]
+    original_to <- base_edges$to[i]
+
+    if (meta$u[i] <= beta) {
+      candidates <- meta$candidates[[i]]
+      idx <- which(!adj[from, candidates] & candidates != from)
+      if (length(idx) == 0) {
+        to <- original_to
+      } else {
+        to <- candidates[idx[1]]
+      }
+    } else {
+      to <- original_to
+    }
+
+    adj[from, to] <- TRUE
+    adj[to, from] <- TRUE
+  }
+
+  graph_from_adjacency_matrix(adj, mode = "undirected", diag = FALSE)
+}
+```
+
+### Visual interpolation from order to randomness
+
+The next figure uses a fixed circular layout and a progressive rewiring construction so that the sequence looks like a genuine evolution from a regular lattice toward a random network.
+
+Local lattice edges are shown in teal. Rewired long-range edges are shown in gold.
+
+```{r}
+#| label: ws-regular-to-random
+#| echo: false
+#| fig-cap: "From regular lattice to random network in the Watts--Strogatz model. The same vertex positions are used throughout. Local edges are teal and rewired shortcut edges are gold."
+
+set.seed(2032)
+
+n_vis <- 32
+K_vis <- 4
+beta_vis <- c(0, 0.01, 0.05, 0.20, 1.00)
+
+base_edges_vis <- make_ring_edges_K(n_vis, K_vis)
+
+ws_meta_vis <- list(
+  base_edges = base_edges_vis,
+  u = runif(nrow(base_edges_vis)),
+  candidates = lapply(
+    seq_len(nrow(base_edges_vis)),
+    function(i) sample(setdiff(seq_len(n_vis), base_edges_vis$from[i]))
+  )
+)
+
+g_layout <- build_progressive_ws_graph_K(n_vis, K_vis, 0, ws_meta_vis)
+layout_ws <- layout_in_circle(g_layout)
+
+plot_progressive_ws <- function(beta_value, title_text) {
+  g <- build_progressive_ws_graph_K(n_vis, K_vis, beta_value, ws_meta_vis)
+
+  edge_pairs <- ends(g, E(g), names = FALSE)
+  cyclic_dist <- apply(edge_pairs, 1, function(x) {
+    d <- abs(x[1] - x[2])
+    min(d, n_vis - d)
+  })
+
+  is_local <- cyclic_dist <= K_vis / 2
+  edge_cols <- ifelse(is_local, course_cols$teal, course_cols$gold)
+  edge_widths <- ifelse(is_local, 2.0, 2.7)
+  edge_curved <- ifelse(is_local, 0.05, 0.28)
+
+  plot(
+    g,
+    layout = layout_ws,
+    vertex.size = 15,
+    vertex.color = course_cols$blue,
+    vertex.frame.color = "white",
+    vertex.label = NA,
+    edge.color = edge_cols,
+    edge.width = edge_widths,
+    edge.curved = edge_curved,
+    main = title_text
+  )
+}
+
+old_par <- par(no.readonly = TRUE)
+par(mfrow = c(1, 5), mar = c(1, 1, 3, 1))
+
+for (b in beta_vis) {
+  plot_progressive_ws(b, bquote(beta == .(sprintf("%.2f", b))))
+}
+
+par(old_par)
+```
+
+This figure makes the mechanism of the model visually transparent.
+
+-   At $\beta=0$, every edge is local and the graph is completely ordered.
+-   For small $\beta$, only a few edges are rewired, but they already connect distant parts of the ring.
+-   As $\beta$ increases further, the number of shortcuts rises and the graph loses its regular geometric appearance.
+-   At $\beta=1$, the graph is highly randomized.
+
+The transition from order to randomness is therefore controlled continuously by the single parameter $\beta$.
+
+### Why shortcuts are so effective
+
+A shortcut edge has a disproportionate effect on distance. In a ring lattice, moving from one side of the graph to the other requires many local steps. A single long-range edge can bypass a large segment of that travel.
+
+So the reduction in path length is not proportional to the number of rewired edges. Even a very small rewiring probability can introduce enough shortcuts to lower distances dramatically.
+
+By contrast, clustering is local. If only a small fraction of edges is rewired, then most neighborhoods still look almost like the original lattice, so clustering remains high.
+
+This asymmetry is the key mathematical idea behind the small-world effect:
+
+-   **distance is highly sensitive to shortcuts**,
+-   **clustering is much less sensitive to a small amount of rewiring**.
+
+```{r}
+#| label: ws-connected-helper
+#| include: false
+
+sample_connected_ws_K <- function(size, K, beta, max_iter = 100) {
+  stopifnot(K %% 2 == 0)
+  for (i in seq_len(max_iter)) {
+    g <- sample_smallworld(dim = 1, size = size, nei = K / 2, p = beta)
+    if (components(g)$no == 1) return(g)
+  }
+  stop("Could not generate a connected Watts-Strogatz graph.")
+}
+```
+
+### Quantitative transition
+
+To study the transition from order to randomness, one usually compares the average path length and clustering coefficient to their values at $\beta=0$.
+
+Define
+
+$$
+\frac{L(\beta)}{L(0)},
+\qquad
+\frac{C(\beta)}{C(0)}.
+$$
+
+These normalized quantities are especially useful because they show how far the network has moved away from the regular lattice.
+
+For a true small-world regime, one expects:
+
+-   a rapid decrease in $L(\beta)/L(0)$,
+-   while $C(\beta)/C(0)$ remains close to $1$ over a substantially wider interval.
+
+### Numerical experiment
+
+The next simulation follows a classical setup by using
+
+$$
+N=1000,
+\qquad
+K=10.
+$$
+
+```{r}
+#| label: ws-scan
+#| echo: false
+
+set.seed(2033)
+
+n_ws <- 1000
+K_ws <- 10
+beta_grid <- unique(c(0, 10^seq(-4, 0, length.out = 24)))
+reps <- 15
+
+ws_tbl <- map_dfr(beta_grid, function(beta) {
+  map_dfr(seq_len(reps), function(rep_id) {
+    g <- sample_connected_ws_K(size = n_ws, K = K_ws, beta = beta)
+
+    tibble(
+      beta = beta,
+      rep = rep_id,
+      clustering = transitivity(g, type = "average"),
+      avg_distance = mean_distance(g, directed = FALSE, unconnected = FALSE)
+    )
+  })
+})
+
+ws_summary <- ws_tbl |>
+  group_by(beta) |>
+  summarise(
+    clustering = mean(clustering),
+    avg_distance = mean(avg_distance),
+    .groups = "drop"
+  )
+
+C0 <- ws_summary$clustering[ws_summary$beta == 0]
+L0 <- ws_summary$avg_distance[ws_summary$beta == 0]
+
+ws_summary <- ws_summary |>
+  mutate(
+    clustering_norm = clustering / C0,
+    distance_norm = avg_distance / L0
+  ) |>
+  pivot_longer(
+    cols = c(clustering_norm, distance_norm),
+    names_to = "quantity",
+    values_to = "value"
+  ) |>
+  mutate(
+    quantity = recode(
+      quantity,
+      clustering_norm = "<C(beta)> / <C(0)>",
+      distance_norm = "<d(beta)> / <d(0)>"
+    )
+  )
+```
+
+```{r}
+#| label: ws-normalized-plot
+#| echo: false
+#| fig-cap: "Normalized average path length and normalized clustering coefficient in the Watts--Strogatz model. The rapid drop in <d(beta)> marks the onset of the small-world regime."
+
+ggplot(ws_summary, aes(x = beta, y = value, color = quantity)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 2.0) +
+  scale_x_log10() +
+  scale_color_manual(
+    values = c(
+      "<C(beta)> / <C(0)>" = course_cols$teal,
+      "<d(beta)> / <d(0)>" = course_cols$coral
+    )
+  ) +
+  labs(
+    title = "The Watts--Strogatz transition",
+    subtitle = "Average distance falls rapidly, while clustering remains high over a broader range of beta",
+    x = "Rewiring probability beta",
+    y = "Normalized quantity",
+    color = NULL
+  )
+```
+
+This figure contains the main quantitative message of the model.
+
+-   The normalized average path length drops sharply even when $\beta$ is still very small.
+-   The normalized clustering coefficient remains relatively high over a much wider range.
+
+So there is an interval of rewiring probabilities for which the network has already acquired short path lengths, but still retains strong local clustering.
+
+That interval is the **small-world regime**.
+
+In many simulations of this type, that regime lies roughly between very small and moderate rewiring probabilities, often in a range comparable to
+
+$$
+10^{-3} \lesssim \beta \lesssim 10^{-1},
+$$
+
+although the precise interval depends on $N$ and $K$.
+
+## Small-world regime
+
+::: {#def-small-world-regime}
+In the Watts--Strogatz model, the **small-world regime** is the range of rewiring probabilities $\beta$ for which
+
+1.  the average path length is significantly smaller than in the regular lattice, and
+2.  the clustering coefficient remains substantially larger than in a comparable random graph.
+:::
+
+This is not a single universal numerical threshold. It is a structural regime characterized by the simultaneous coexistence of:
+
+-   short global distances,
+-   strong local clustering.
+
+That coexistence is what distinguishes a small-world network from both a regular lattice and a random graph.
+
+## What the Watts--Strogatz model explains and what it does not
+
+The Watts--Strogatz model successfully explains one specific empirical coexistence:
+
+-   high clustering,
+-   short average path length.
+
+This is a major achievement. But the model does **not** explain all structural properties observed in real networks.
+
+In particular, its degree distribution remains relatively narrow. The rewiring mechanism preserves the number of edges and introduces only limited degree heterogeneity, so the model does not naturally generate hub-dominated, heavy-tailed degree distributions.
+
+Therefore:
+
+-   the model captures the coexistence of clustering and short paths,
+-   but it does not explain the emergence of highly connected hubs.
+
+Nor does it naturally reproduce the strong degree dependence of clustering often observed in hierarchical or scale-free empirical networks.
+
+This limitation is conceptually important. The Watts--Strogatz model explains one aspect of real network structure, but not the full combination of features seen in many data sets.
+
+## Applications of small-world networks
+
+The small-world concept is important not only as a mathematical idea, but also because many real systems appear to balance local organization with global reachability.
+
+### Social systems
+
+In social networks, high clustering reflects the tendency of acquaintances of the same person to know one another. At the same time, short path lengths facilitate rapid information flow, rumor spreading, and social search.
+
+So small-world structure helps explain how local communities can coexist with short global separation.
+
+### Neural systems
+
+In neural and brain networks, local clustering is associated with local specialization and dense intra-regional processing, while short path lengths support efficient long-range communication across distant regions.
+
+This combination is often interpreted as a compromise between segregation and integration.
+
+### Transportation and infrastructure
+
+Airline networks, road systems with hubs, and infrastructure networks often require efficient travel between distant points while maintaining strong local substructure. Shortcut-like edges can reduce travel time significantly without eliminating regional organization.
+
+### Communication and information systems
+
+In communication networks and technological networks, short path lengths support efficient routing, synchronization, and dissemination. At the same time, local clustering may reflect modular architecture or design constraints.
+
+### Why applications matter
+
+The practical importance of small-world structure is rooted in a trade-off:
+
+-   purely local systems are well organized but globally slow,
+-   purely random systems are globally efficient but may lack local coherence,
+-   small-world systems can combine the advantages of both.
+
+This is why the Watts--Strogatz model remains one of the most influential models in network science.
+
+## In-class questions
+
+1.  What does “small” mean mathematically in the phrase *small-world*?
+2.  Why is the estimate $\ln N / \ln \langle k \rangle$ associated with random networks?
+3.  Why is the small-world effect surprising from the viewpoint of lattice geometry?
+4.  Why do shortcuts affect path length more strongly than clustering?
+5.  Why is the Watts--Strogatz model structurally different from an Erdős--Rényi random graph?
+6.  Why is average path length usually more stable than diameter?
+7.  What does the Watts--Strogatz model explain successfully, and what does it fail to explain?
+8.  Why are small-world structures useful in applications?
+
+## End-of-chapter exercises
+
+The exercises below are divided into three groups:
+
+1.  mathematical exercises,
+2.  conceptual and analytical exercises,
+3.  simulation and coding exercises.
+
+### Part I. Mathematical exercises
+
+#### Exercise 1. Geometric-series derivation
+
+Starting from the branching approximation
+
+$$
+N(d)\approx 1+\langle k \rangle+\langle k \rangle^2+\cdots+\langle k \rangle^d,
+$$
+
+derive the closed-form expression
+
+$$
+N(d)\approx \frac{\langle k \rangle^{d+1}-1}{\langle k \rangle-1}.
+$$
+
+State clearly the assumption under which this approximation is meaningful.
+
+------------------------------------------------------------------------
+
+#### Exercise 2. Logarithmic distance estimate
+
+Starting from
+
+$$
+N(d_{\max})\approx N,
+$$
+
+derive the estimate
+
+$$
+d_{\max}\approx \frac{\ln N}{\ln \langle k \rangle}.
+$$
+
+Explain each algebraic step carefully.
+
+------------------------------------------------------------------------
+
+#### Exercise 3. Why the estimate is not exact
+
+The relation
+
+$$
+L(G)\approx \frac{\ln N}{\ln \langle k \rangle}
+$$
+
+is only an approximation.
+
+Explain why it is not exact. Your answer should discuss:
+
+-   overlap between neighborhoods,
+-   loops and finite-size effects,
+-   the difference between average distance and diameter.
+
+------------------------------------------------------------------------
+
+#### Exercise 4. Lattice scaling laws
+
+Show that in a $d$-dimensional regular lattice with $N$ vertices, the characteristic linear size of the system is of order
+
+$$
+N^{1/d}.
+$$
+
+Explain why this leads to the scaling
+
+$$
+L(G)\sim D(G)\sim N^{1/d}.
+$$
+
+------------------------------------------------------------------------
+
+#### Exercise 5. Average degree in the ring lattice
+
+Let $G$ be the regular ring lattice with parameters $(N,K)$.
+
+1.  Prove that every vertex has degree $K$.
+2.  Deduce that $$
+    |E|=\frac{NK}{2}.
+    $$
+3.  Compute the average degree.
+
+------------------------------------------------------------------------
+
+#### Exercise 6. Normalized observables
+
+Let $C(\beta)$ and $L(\beta)$ be the clustering coefficient and average path length in the Watts--Strogatz model.
+
+1.  Define the normalized quantities $$
+    \frac{C(\beta)}{C(0)},
+    \qquad
+    \frac{L(\beta)}{L(0)}.
+    $$
+2.  Explain why these ratios are useful when studying the transition from order to randomness.
+3.  State the behavior expected in the small-world regime.
+
+------------------------------------------------------------------------
+
+#### Exercise 7. Ring-lattice path length
+
+Give a heuristic derivation of the estimate
+
+$$
+L_{\text{lattice}} \approx \frac{N}{2K}
+$$
+
+for the regular ring lattice.
+
+------------------------------------------------------------------------
+
+#### Exercise 8. Ring-lattice clustering
+
+Using the ring lattice with parameter $K$, derive the formula
+
+$$
+C(0)=\frac{3(K-2)}{4(K-1)}.
+$$
+
+### Part II. Conceptual and analytical exercises
+
+#### Exercise 9. Six degrees and logarithmic scaling
+
+Explain why the statement “all vertices are separated by only a few steps” should not be interpreted as a fixed constant independent of system size.
+
+Your answer should explain the difference between: - a constant bound, - logarithmic growth.
+
+------------------------------------------------------------------------
+
+#### Exercise 10. Why small worlds are surprising
+
+Write a short mathematical discussion comparing the growth laws
+
+$$
+\ln N, \qquad N^{1/3}, \qquad N^{1/2}, \qquad N.
+$$
+
+Explain why the logarithmic law is fundamentally different from polynomial lattice scaling.
+
+------------------------------------------------------------------------
+
+#### Exercise 11. Random graph versus small-world network
+
+A random graph and a Watts--Strogatz network can both have short average path length.
+
+Explain why they should still be considered structurally different models.
+
+Your answer should address: - clustering, - local order, - global reachability.
+
+------------------------------------------------------------------------
+
+#### Exercise 12. Why shortcuts are powerful
+
+Explain why a small number of long-range edges can drastically reduce average path length.
+
+Your answer should use the language of graph distance and should distinguish between local and long-range edges.
+
+------------------------------------------------------------------------
+
+#### Exercise 13. Limitations of the Watts--Strogatz model
+
+Discuss why the Watts--Strogatz model does not naturally explain hub-dominated degree distributions or strong degree-dependent clustering.
+
+------------------------------------------------------------------------
+
+#### Exercise 14. Applications of small-world structure
+
+Choose two application domains from the chapter and explain why the coexistence of high clustering and short path lengths is useful in each one.
+
+### Part III. Simulation and coding exercises
+
+#### Exercise 15. Distance scaling in random networks
+
+For several values of $N$ and fixed average degree, simulate random graphs and estimate the average path length.
+
+Compare the empirical results with the prediction
+
+$$
+L(G)\approx \frac{\ln N}{\ln \langle k \rangle}.
+$$
+
+Discuss the quality of the approximation.
+
+------------------------------------------------------------------------
+
+#### Exercise 16. Simulated scaling across network families
+
+Reproduce the comparison of average path length for:
+
+-   1D lattices,
+-   2D lattices,
+-   3D lattices,
+-   random graphs.
+
+Display the results both:
+
+-   on ordinary axes,
+-   on logarithmic axes.
+
+Then interpret the observed scaling.
+
+------------------------------------------------------------------------
+
+#### Exercise 17. Small-world transition plot
+
+For fixed $N$ and $K$, simulate the Watts--Strogatz model over a logarithmic grid of $\beta$ values.
+
+1.  compute $C(\beta)$ and $L(\beta)$,
+2.  normalize both by their values at $\beta=0$,
+3.  plot the normalized quantities on the same axes,
+4.  identify the approximate small-world regime.
+
+------------------------------------------------------------------------
+
+#### Exercise 18. Lattice versus random versus small-world
+
+Generate three graphs with comparable average degree:
+
+1.  a ring lattice,
+2.  a Watts--Strogatz graph with small rewiring probability,
+3.  an Erdős--Rényi random graph.
+
+For each graph, compute: - average degree, - clustering coefficient, - average path length.
+
+Compare the results and discuss the structural differences.
+
+------------------------------------------------------------------------
+
+#### Exercise 19. Fixed-layout visualization
+
+Construct a fixed-layout sequence of Watts--Strogatz graphs for increasing values of $\beta$.
+
+1.  Use identical vertex positions in all figures.
+2.  Highlight shortcut edges differently from local edges.
+3.  Describe how the graph changes visually.
+4.  Explain where the small-world effect becomes visible.
+
+------------------------------------------------------------------------
+
+#### Exercise 20. Finite-size comparison
+
+Repeat the normalized-clustering and normalized-path-length simulation for several values of $N$.
+
+Discuss how the location and width of the small-world regime change, or remain stable, as the system size increases.
+
+### Suggested mini-project
+
+A strong mini-project for this chapter is the following:
+
+> Compare the distance structure of regular lattices, random graphs, and Watts--Strogatz networks under matched average degree.
+
+A complete submission should contain:
+
+-   mathematical derivations,
+-   simulation code,
+-   at least two figures,
+-   one discussion of logarithmic versus polynomial distance scaling,
+-   one discussion of the Watts--Strogatz transition,
+-   a concluding discussion of the small-world effect.
+
+## Concluding remarks
+
+The small-world phenomenon means that the typical distance between vertices in a large network can be unexpectedly small. In random networks this behavior is explained by logarithmic distance scaling. In regular lattices it is absent, because distances grow polynomially with system size.
+
+The Watts--Strogatz model shows how these two worlds can be connected. A small amount of random rewiring introduces shortcuts that rapidly reduce path lengths while leaving most local clustering intact.
+
+The central lesson of the chapter is therefore this: short global separation and strong local order can coexist in the same network, and the small-world model provides a concrete mechanism for that coexistence.
