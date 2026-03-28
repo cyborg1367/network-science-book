@@ -3,9 +3,7 @@
   "result": {
     "engine": "knitr",
     "markdown": "---\ntitle: \"Course Overview\"\n---\n\n\n\n## Welcome\n\nThis Quarto book is designed as a single, well-structured version of a Network Science course.\n\nEach chapter follows the same pattern:\n\n1. **Theory and intuition**\n2. **Worked examples in R**\n3. **Exercises and coding tasks**\n\nThe same source files produce both:\n\n- an HTML course website\n- a PDF course handout\n\n## Required packages\n\nInstall the packages below once:\n\n\n::: {.cell}\n\n```{.r .cell-code}\ninstall.packages(c(\n  \"igraph\", \"dplyr\", \"ggplot2\", \"tidyr\", \"purrr\", \"plotly\", \"tinytex\", \"quarto\"\n))\ntinytex::install_tinytex()\n```\n:::\n\n\n## Design principles\n\nThis template is built around a few teaching priorities:\n\n- explanations should be readable and beginner-friendly\n- formulas should be introduced with intuition, not only stated\n- code should be clean enough to use directly in class\n- plots should be visually clear and consistent\n- HTML pages may contain interactivity, while PDF remains clean and stable\n\n## Current chapters\n\nThe current book contains these chapters:\n\n1. **Random Graphs**\n2. **The Evolution of Random Graphs**\n\nThe first chapter introduces random graph ensembles and their basic structural properties. The second chapter studies how global connectivity emerges as a random graph evolves.",
-    "supporting": [
-      "index_files"
-    ],
+    "supporting": [],
     "filters": [
       "rmarkdown/pagebreak.lua"
     ],
