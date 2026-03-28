@@ -1428,7 +1428,9 @@ The main points are:
     \mathbb{E}[C] = p
     $$
 
-So clustering is a local structural measure that becomes especially useful when comparing random graphs with more realistic network models. \## Core formulas to remember
+So clustering is a local structural measure that becomes especially useful when comparing random graphs with more realistic network models.
+
+## Core formulas to remember
 
 ::: {.callout-important title="Summary"}
 For Erdős--Rényi random graphs:

@@ -241,6 +241,16 @@ This formula has a clear interpretation.
 
 Since $\ln N \ll N$, the logarithmic law means that distances grow extremely slowly with system size. This is what *small* means in the expression *small world*: the distance scale is proportional to $\ln N$, not to $N$ or to a power of $N$.
 
+::: {.callout-note title="Key result: logarithmic distance scaling"}
+In a random network with $N$ vertices and average degree $\langle k \rangle > 1$, the average path length satisfies
+
+$$
+L(G) \approx \frac{\ln N}{\ln \langle k \rangle}.
+$$
+
+Distances grow only logarithmically with system size — far slower than the polynomial growth $N^{1/d}$ seen in $d$-dimensional regular lattices.
+:::
+
 ### A social-network illustration
 
 Take approximate values
@@ -744,6 +754,15 @@ This asymmetry is the key mathematical idea behind the small-world effect:
 -   **distance is highly sensitive to shortcuts**,
 -   **clustering is much less sensitive to a small amount of rewiring**.
 
+::: {.callout-important title="Core asymmetry of the Watts--Strogatz model"}
+A small amount of random rewiring ($\beta \ll 1$) has a **disproportionate effect on path length** but leaves clustering largely intact.
+
+- Path length drops sharply because a few long-range shortcuts bypass large ring segments.
+- Clustering changes slowly because most local neighborhoods remain lattice-like.
+
+This asymmetry is the structural source of the small-world regime.
+:::
+
 ```{r}
 #| label: ws-connected-helper
 #| include: false
@@ -898,6 +917,16 @@ This is not a single universal numerical threshold. It is a structural regime ch
 
 That coexistence is what distinguishes a small-world network from both a regular lattice and a random graph.
 
+::: {.callout-tip title="Structural comparison"}
+| Model | Average path length | Clustering coefficient |
+|:------|:-------------------:|:----------------------:|
+| Regular lattice | large ($\sim N/2K$) | high ($\sim 3/4$) |
+| Random graph ($G(N,p)$) | small ($\sim \ln N / \ln \langle k\rangle$) | low ($\sim p$) |
+| Watts--Strogatz (small-world) | small | high |
+
+Only the small-world model achieves both properties simultaneously.
+:::
+
 ## What the Watts--Strogatz model explains and what it does not
 
 The Watts--Strogatz model successfully explains one specific empirical coexistence:
@@ -951,6 +980,24 @@ The practical importance of small-world structure is rooted in a trade-off:
 -   small-world systems can combine the advantages of both.
 
 This is why the Watts--Strogatz model remains one of the most influential models in network science.
+
+## Core formulas to remember
+
+::: {.callout-important title="Summary"}
+For small-world networks and the Watts--Strogatz model:
+
+1. **Average path length (random network):** $$L(G) \approx \frac{\ln N}{\ln \langle k \rangle}$$
+
+2. **Lattice distance scaling** ($d$-dimensional): $$L(G) \sim D(G) \sim N^{1/d}$$
+
+3. **Ring-lattice average path length:** $$L(0) \approx \frac{N}{2K}$$
+
+4. **Ring-lattice clustering coefficient:** $$C(0) = \frac{3(K-2)}{4(K-1)}$$
+
+5. **Small-world regime** ($\beta$ small but nonzero): $$\frac{L(\beta)}{L(0)} \ll 1, \qquad \frac{C(\beta)}{C(0)} \approx 1$$
+
+6. **Expected clustering in $G(N,p)$:** $$\mathbb{E}[C] = p \ll C(0)$$
+:::
 
 ## In-class questions
 

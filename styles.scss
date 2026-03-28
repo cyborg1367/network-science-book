@@ -1,319 +1,643 @@
+/* ============================================================ */
+/*   Network Science — Modern Minimal Professional Theme        */
+/* ============================================================ */
+
 /*-- scss:defaults --*/
-$body-bg: #f5f7fb;
-$body-color: #0f172a;
-$link-color: #2563eb;
-$primary: #2563eb;
-$secondary: #334155;
-$code-bg: #f8fafc;
-$code-color: #0b1220;
-$border-color: #dbe4f3;
-$font-size-root: 17px;
-$headings-font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-$font-family-sans-serif: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-$font-family-monospace: "JetBrains Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+
+/* ── Color palette ─────────────────────────────────────── */
+$primary:           #1D4ED8;
+$primary-dark:      #1E3A8A;
+$primary-light:     #DBEAFE;
+$secondary:         #475569;
+$accent:            #0D9488;
+$accent-light:      #CCFBF1;
+$gold:              #D97706;
+$gold-light:        #FEF3C7;
+$danger:            #DC2626;
+$danger-light:      #FEE2E2;
+
+/* ── Surface & text ────────────────────────────────────── */
+$body-bg:           #F7F9FC;
+$surface:           #FFFFFF;
+$border:            #E2E8F0;
+$border-subtle:     #F1F5F9;
+$body-color:        #0F172A;
+$text-muted:        #64748B;
+$link-color:        $primary;
+
+/* ── Typography ────────────────────────────────────────── */
+$font-family-base:        "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+$font-family-monospace:   "JetBrains Mono", "Fira Code", Consolas, monospace;
+$font-size-root:          16.5px;
+$line-height-base:        1.78;
+$headings-font-weight:    660;
+$headings-line-height:    1.22;
 
 /*-- scss:rules --*/
-html,
-body {
-  background:
-    radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.12) 0%, rgba(59, 130, 246, 0) 36%),
-    radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.09) 0%, rgba(16, 185, 129, 0) 32%),
-    $body-bg;
-}
 
-body {
+/* ═══════════════════════════════════════════════════════════ */
+/* 0.  FONT IMPORT                                             */
+/* ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 1.  BASE                                                    */
+/* ═══════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  background: $body-bg;
   color: $body-color;
-  line-height: 1.78;
+  font-family: $font-family-base;
+  font-size: $font-size-root;
+  line-height: $line-height-base;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
 
+/* ═══════════════════════════════════════════════════════════ */
+/* 2.  TYPOGRAPHY                                              */
+/* ═══════════════════════════════════════════════════════════ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-family-base;
+  font-weight: $headings-font-weight;
+  letter-spacing: -0.022em;
+  color: $body-color;
+  line-height: $headings-line-height;
+  margin-top: 2.2rem;
+  margin-bottom: 0.7rem;
+}
+
+h1 {
+  font-size: clamp(1.85rem, 3.2vw, 2.4rem);
+  font-weight: 720;
+  letter-spacing: -0.03em;
+}
+
+h2 {
+  font-size: clamp(1.28rem, 2.1vw, 1.58rem);
+  border-bottom: 2px solid $border-subtle;
+  padding-bottom: 0.35rem;
+  margin-top: 3rem;
+}
+
+h3 {
+  font-size: clamp(1.06rem, 1.5vw, 1.2rem);
+  color: $primary-dark;
+  font-weight: 620;
+}
+
+h4 {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: $secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 1.6rem;
+}
+
+p { margin-bottom: 1.1rem; }
+
 a {
-  text-decoration-thickness: 0.09em;
-  text-underline-offset: 0.14em;
-  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+  color: $link-color;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.2em;
+  transition: color 0.2s;
+  &:hover { color: $primary-dark; }
 }
 
-h1, h2, h3, h4 {
-  color: #081225;
-  letter-spacing: -0.02em;
-  font-weight: 700;
-  line-height: 1.22;
+strong { font-weight: 620; }
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 3.  LAYOUT                                                  */
+/* ═══════════════════════════════════════════════════════════ */
+
+/*
+ * Symmetric 1fr on both edges keeps the layout centered.
+ * The TOC column uses minmax so it scales gracefully but
+ * never collapses below 230px (prevents text-wrap).
+ */
+@media (min-width: 992px) {
+  body.floating .page-columns {
+    display: grid;
+    gap: 0;
+    grid-template-columns:
+      [screen-start]          1fr
+      [screen-start-inset]    minmax(10px, 36px)
+      [page-start]            minmax(8px, 18px)
+      [page-start-inset]      minmax(195px, 220px)
+      [body-start-outset]     14px
+      [body-start]            4px
+      [body-content-start]    minmax(580px, 1100px)
+      [body-content-end]      8px
+      [body-end]              minmax(8px, 18px)
+      [body-end-outset]       minmax(10px, 28px)
+      [page-end-inset]        10px
+      [page-end]              minmax(230px, 270px)
+      [screen-end-inset]      minmax(10px, 36px)
+      [screen-end]            1fr;
+  }
 }
 
-h1.title {
-  font-size: clamp(2rem, 3vw, 2.7rem);
-  margin-bottom: 0.4rem;
+@media (min-width: 1400px) {
+  body.floating .page-columns {
+    grid-template-columns:
+      [screen-start]          1fr
+      [screen-start-inset]    minmax(14px, 48px)
+      [page-start]            minmax(12px, 24px)
+      [page-start-inset]      minmax(205px, 230px)
+      [body-start-outset]     16px
+      [body-start]            4px
+      [body-content-start]    minmax(620px, 1160px)
+      [body-content-end]      8px
+      [body-end]              minmax(10px, 22px)
+      [body-end-outset]       minmax(12px, 32px)
+      [page-end-inset]        12px
+      [page-end]              minmax(240px, 290px)
+      [screen-end-inset]      minmax(14px, 48px)
+      [screen-end]            1fr;
+  }
 }
 
-.quarto-title-banner {
-  border-radius: 18px;
-  margin: 1rem 0 1.5rem 0;
-  box-shadow: 0 24px 50px -28px rgba(15, 23, 42, 0.55);
-}
-
-.quarto-title-block .quarto-title-banner,
-#title-block-header.quarto-title-block.default {
-  background:
-    linear-gradient(125deg, rgba(37, 99, 235, 0.97) 0%, rgba(14, 116, 144, 0.95) 55%, rgba(30, 64, 175, 0.97) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 1.7rem 2rem;
-}
-
-#title-block-header.quarto-title-block.default .title,
-#title-block-header.quarto-title-block.default .subtitle,
-#title-block-header.quarto-title-block.default .quarto-title-meta-heading,
-#title-block-header.quarto-title-block.default .quarto-title-meta-contents {
-  color: #f8fbff;
-}
+/* ═══════════════════════════════════════════════════════════ */
+/* 4.  MAIN CONTENT CARD                                       */
+/* ═══════════════════════════════════════════════════════════ */
 
 #quarto-content main.content {
-  background: rgba(255, 255, 255, 0.86);
-  border: 1px solid rgba(148, 163, 184, 0.24);
-  border-radius: 18px;
-  box-shadow: 0 20px 40px -34px rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(2.5px);
-  padding: 1.55rem 1.75rem;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 16px;
+  box-shadow:
+    0 1px 3px rgba(15, 23, 42, 0.05),
+    0 8px 28px -12px rgba(15, 23, 42, 0.11),
+    0 20px 48px -20px rgba(15, 23, 42, 0.09);
+  padding: 2.6rem 3rem 3.2rem;
+  margin: 1.4rem 0 3.2rem;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 16px; right: 16px;
+    height: 3px;
+    background: linear-gradient(90deg, $primary 0%, $accent 65%, transparent 100%);
+    border-radius: 0 0 3px 3px;
+    opacity: 0.65;
+  }
 }
 
-#quarto-content.quarto-container {
-  max-width: 1720px;
-}
+/* ═══════════════════════════════════════════════════════════ */
+/* 5.  SIDEBAR                                                 */
+/* ═══════════════════════════════════════════════════════════ */
 
 #quarto-sidebar {
-  width: clamp(260px, 18vw, 320px);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(244, 248, 255, 0.86) 100%);
-  border-right: 1px solid rgba(148, 163, 184, 0.24);
-  backdrop-filter: blur(8px);
-  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.45), 8px 0 34px -30px rgba(15, 23, 42, 0.6);
-  transition: background-color 0.35s ease, box-shadow 0.35s ease;
+  background: rgba(255, 255, 255, 0.97);
+  border-right: 1px solid $border;
+  backdrop-filter: blur(16px);
+  padding-top: 1.6rem;
 }
 
 #quarto-sidebar .sidebar-menu-container {
-  padding: 0.5rem 0.6rem 0.9rem 0.45rem;
+  padding: 0.4rem 0.65rem 1rem 0.5rem;
 }
 
 #quarto-sidebar .sidebar-item {
-  margin: 0.18rem 0 0.32rem 0;
-  padding: 0.08rem;
-  border-radius: 14px;
-  transition: transform 0.24s ease, background-color 0.24s ease, box-shadow 0.28s ease;
+  margin: 0.06rem 0 0.18rem;
+  border-radius: 9px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-#quarto-sidebar .sidebar-item-container {
-  border-radius: 12px;
-}
-
-#quarto-sidebar .sidebar-item .sidebar-item-text {
-  border-radius: 12px;
-  border: 1px solid transparent;
-  color: #34475e;
-  display: block;
-  padding: 0.56rem 0.78rem 0.58rem 0.94rem;
-  text-decoration: none;
-  transition: background-color 0.24s ease, color 0.24s ease, border-color 0.24s ease, transform 0.24s ease, box-shadow 0.28s ease;
+#quarto-sidebar .sidebar-item-text {
+  border-radius: 7px;
+  padding: 0.5rem 0.85rem;
+  color: $secondary;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #quarto-sidebar .sidebar-item:hover .sidebar-item-text {
-  background: rgba(37, 99, 235, 0.08);
-  border-color: rgba(37, 99, 235, 0.25);
-  color: #1e3a8a;
-  transform: translateX(4px);
-}
-
-#quarto-sidebar .sidebar-item .sidebar-item-text .chapter-number {
-  color: #64748b;
-  font-weight: 700;
-  transition: color 0.24s ease;
-}
-
-#quarto-sidebar .sidebar-item .sidebar-item-text .chapter-title {
-  font-weight: 560;
-}
-
-#quarto-sidebar .sidebar-item:has(> .sidebar-item-container > .sidebar-item-text.active) {
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.2) 0%, rgba(59, 130, 246, 0.08) 100%);
-  box-shadow: 0 12px 26px -22px rgba(37, 99, 235, 0.8);
+  background: $primary-light;
+  color: $primary-dark;
+  transform: translateX(3px);
 }
 
 #quarto-sidebar .sidebar-item .sidebar-item-text.active,
 #quarto-sidebar .sidebar-item .sidebar-item-text[aria-current="page"] {
-  background: linear-gradient(120deg, rgba(37, 99, 235, 0.2) 0%, rgba(16, 185, 129, 0.11) 100%);
-  border-color: rgba(37, 99, 235, 0.35);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.56), 0 10px 24px -20px rgba(37, 99, 235, 0.95);
-  color: #0f2f77;
-  font-weight: 700;
-  transform: translateX(5px);
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.12) 0%, rgba(13, 148, 136, 0.06) 100%);
+  color: $primary-dark;
+  font-weight: 650;
+  box-shadow: inset 3px 0 0 $primary;
 }
 
-#quarto-sidebar .sidebar-item .sidebar-item-text.active .chapter-number,
-#quarto-sidebar .sidebar-item .sidebar-item-text[aria-current="page"] .chapter-number {
-  color: #1d4ed8;
+#quarto-sidebar .sidebar-item .sidebar-item .sidebar-item-text {
+  font-size: 0.81rem;
+  font-weight: 400;
+  padding: 0.35rem 0.85rem 0.35rem 1.35rem;
+  color: $text-muted;
 }
+
+#quarto-sidebar .sidebar-item .sidebar-item:hover .sidebar-item-text {
+  color: $primary;
+  background: rgba(29, 78, 216, 0.05);
+  transform: translateX(2px);
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 6.  TITLE BLOCK                                             */
+/* ═══════════════════════════════════════════════════════════ */
+
+.quarto-title-banner {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+#title-block-header.quarto-title-block.default {
+  background: linear-gradient(135deg, #1D4ED8 0%, #0D9488 55%, #1E3A8A 100%);
+  padding: 2.2rem 2.8rem;
+  border: none;
+}
+
+#title-block-header .title,
+#title-block-header .subtitle,
+#title-block-header .author,
+#title-block-header .date {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+#title-block-header .subtitle {
+  color: rgba(255, 255, 255, 0.76);
+  font-weight: 400;
+  font-size: 1.05rem;
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 7.  CALLOUT BOXES                                           */
+/* ═══════════════════════════════════════════════════════════ */
 
 .callout {
-  border-radius: 14px !important;
-  border-width: 1px !important;
-  border-left-width: 6px !important;
-  background: #ffffff;
-  box-shadow: 0 12px 30px -28px rgba(15, 23, 42, 0.45);
-}
-
-.callout .callout-header {
-  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
-  font-weight: 700;
-}
-
-#quarto-sidebar .sidebar-title a {
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-}
-
-#quarto-margin-sidebar .toc-active {
-  position: sticky;
-  top: 5.4rem;
-  max-height: calc(100vh - 6.1rem);
-  overflow-y: auto;
-}
-
-.sidebar nav[role="doc-toc"] {
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  border-radius: 12px;
-  padding: 0.8rem 0.9rem;
-}
-
-.sidebar nav[role="doc-toc"] ul > li > a {
-  border-radius: 8px;
-  color: #64748b;
-  border-left: 2px solid transparent;
-  padding: 0.2rem 0.45rem;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.cell-output-display,
-.cell-output-stdout,
-.cell-output-stderr,
-div.sourceCode,
-pre.sourceCode {
-  border-radius: 13px;
-  border: 1px solid #d9e3f2;
-}
-
-pre.sourceCode {
-  padding: 0.85rem 1rem;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
-}
-
-code {
-  padding: 0.15rem 0.35rem;
-  border-radius: 6px;
-  font-size: 0.9em;
-  font-weight: 500;
-}
-
-.table {
-  border: 1px solid #dde6f3;
-  border-radius: 12px;
+  border-radius: 11px;
+  border: 1px solid $border;
+  border-left-width: 4px;
+  box-shadow: 0 2px 12px -6px rgba(15, 23, 42, 0.14);
+  margin: 1.6rem 0;
   overflow: hidden;
-  box-shadow: 0 10px 30px -30px rgba(15, 23, 42, 0.5);
 }
 
-.table > :not(caption) > * > * {
-  padding: 0.72rem 0.88rem;
+/* note — blue */
+.callout-note {
+  background: linear-gradient(135deg, #EFF6FF 0%, #F0FDFA 100%);
+  border-left-color: $primary;
+}
+.callout-note .callout-title-container { color: $primary-dark; font-weight: 650; }
+
+/* important — red */
+.callout-important {
+  background: linear-gradient(135deg, #FFF7ED 0%, $danger-light 100%);
+  border-left-color: $danger;
+}
+.callout-important .callout-title-container { color: darken($danger, 6%); font-weight: 650; }
+
+/* tip — teal */
+.callout-tip {
+  background: linear-gradient(135deg, $accent-light 0%, #F0FDF4 100%);
+  border-left-color: $accent;
+}
+.callout-tip .callout-title-container { color: darken($accent, 8%); font-weight: 650; }
+
+/* warning — amber */
+.callout-warning {
+  background: linear-gradient(135deg, $gold-light 0%, #FFFBEB 100%);
+  border-left-color: $gold;
+}
+.callout-warning .callout-title-container { color: darken($gold, 10%); font-weight: 650; }
+
+.callout-body { padding: 0.75rem 1.1rem 0.9rem; }
+.callout-title { padding: 0.6rem 1.1rem 0.45rem; font-size: 0.875rem; letter-spacing: 0.01em; }
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 8.  DEFINITION / THEOREM BLOCKS                             */
+/* ═══════════════════════════════════════════════════════════ */
+
+div.definition, div.theorem, div.lemma, div.remark, div.corollary, div.proof {
+  background: $border-subtle;
+  border: 1px solid $border;
+  border-left: 4px solid $accent;
+  border-radius: 10px;
+  padding: 0.9rem 1.15rem 1rem;
+  margin: 1.5rem 0;
+
+  &::before {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 660;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: $accent;
+    margin-bottom: 0.42rem;
+  }
 }
 
-.table-striped > tbody > tr:nth-of-type(odd) > * {
-  background-color: rgba(59, 130, 246, 0.04);
+div.definition::before  { content: "Definition"; }
+div.theorem::before     { content: "Theorem"; }
+div.lemma::before       { content: "Lemma"; }
+div.remark::before      { content: "Remark"; color: $secondary; }
+div.proof::before       { content: "Proof"; color: $secondary; }
+div.corollary::before   { content: "Corollary"; }
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 9.  CODE                                                    */
+/* ═══════════════════════════════════════════════════════════ */
+
+code, kbd {
+  font-family: $font-family-monospace;
+  font-size: 0.865em;
+  background: $border-subtle;
+  border: 1px solid $border;
+  border-radius: 5px;
+  padding: 0.11em 0.36em;
+  color: darken($primary, 5%);
 }
 
-.math.display {
+pre {
+  font-family: $font-family-monospace;
+  font-size: 0.85em;
+  line-height: 1.62;
+  border-radius: 12px;
+  border: 1px solid $border;
+  background: #F8FAFC;
+  padding: 1.1rem 1.25rem;
   overflow-x: auto;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 2px 8px -4px rgba(15, 23, 42, 0.07);
+
+  code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 1em;
+    color: inherit;
+    border-radius: 0;
+  }
 }
 
-.sidebar nav[role="doc-toc"] ul > li > a.active {
-  color: #1d4ed8;
-  background: rgba(37, 99, 235, 0.11);
-  border-left-color: #2563eb;
-  font-weight: 700;
+.cell-output-display, .cell-output-stdout {
+  border: 1px solid $border;
+  border-radius: 10px;
+  background: #FAFBFC;
+  padding: 0.65rem 0.95rem;
+  margin-top: 0.5rem;
+  font-size: 0.875em;
+  font-family: $font-family-monospace;
+  line-height: 1.56;
 }
 
-.sidebar nav[role="doc-toc"] ul > li > a[aria-current="true"] {
-  color: #1d4ed8;
-  background: rgba(37, 99, 235, 0.11);
-  border-left-color: #2563eb;
-  font-weight: 700;
+/* ═══════════════════════════════════════════════════════════ */
+/* 10.  TABLES                                                 */
+/* ═══════════════════════════════════════════════════════════ */
+
+.table, table {
+  border-radius: 11px;
+  overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid $border;
+  width: 100%;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 10px -6px rgba(15, 23, 42, 0.1);
+  margin: 1.4rem 0;
 }
 
-.panel-tabset [role="tablist"] .nav-link {
-  border-radius: 10px 10px 0 0 !important;
-  font-weight: 600;
-  color: #334155;
+.table thead th, table thead th {
+  background: linear-gradient(180deg, #F1F5F9 0%, #E9EFF7 100%);
+  color: $primary-dark;
+  font-weight: 650;
+  font-size: 0.81rem;
+  text-transform: uppercase;
+  letter-spacing: 0.045em;
+  padding: 0.7rem 1rem;
+  border-bottom: 2px solid $border;
 }
 
-.panel-tabset [role="tablist"] .nav-link.active {
-  color: #1d4ed8;
-  background: #f8fbff;
+.table tbody tr:nth-child(even), table tbody tr:nth-child(even) {
+  background: $border-subtle;
+}
+
+.table tbody tr:hover, table tbody tr:hover {
+  background: $primary-light;
+}
+
+.table td, .table th, table td, table th {
+  padding: 0.58rem 1rem;
+  vertical-align: middle;
+  border-top: 1px solid $border-subtle;
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 11.  TABSET PANELS                                          */
+/* ═══════════════════════════════════════════════════════════ */
+
+.panel-tabset .nav-tabs {
+  border-bottom: 2px solid $border;
+  gap: 0.2rem;
+}
+
+.panel-tabset .nav-link {
+  border-radius: 8px 8px 0 0;
+  font-weight: 540;
+  font-size: 0.875rem;
+  color: $secondary;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  transition: all 0.18s;
+
+  &:hover {
+    background: $primary-light;
+    color: $primary;
+  }
+
+  &.active {
+    background: $surface;
+    color: $primary-dark;
+    font-weight: 650;
+    border-color: $border $border $surface;
+    border-bottom: 2px solid $primary;
+  }
 }
 
 .panel-tabset .tab-content {
-  border: 1px solid #dce6f3;
-  border-radius: 0 12px 12px 12px;
-  padding: 1rem 1rem 0.2rem 1rem;
-  background: #ffffff;
+  border: 1px solid $border;
+  border-top: none;
+  border-radius: 0 8px 8px 8px;
+  padding: 1.4rem 1.5rem;
+  background: $surface;
 }
 
-.quarto-figure {
-  margin-bottom: 1.2rem;
+/* ═══════════════════════════════════════════════════════════ */
+/* 12.  TOC (right margin sidebar)                             */
+/* ═══════════════════════════════════════════════════════════ */
+
+#quarto-margin-sidebar {
+  /* Never let Quarto collapse the sidebar below a readable width */
+  min-width: 210px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  padding-left: 0.6rem;
+  padding-right: 0.4rem;
 }
 
-.quarto-figure figcaption,
-figure figcaption,
-.figure-caption {
-  text-align: center !important;
-  margin: 0.55rem auto 0 auto;
-  max-width: 90%;
-  color: #475569;
-  font-size: 0.95rem;
+#quarto-margin-sidebar .toc-title {
+  font-size: 0.73rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: $text-muted;
+  margin-bottom: 0.5rem;
+}
+
+#quarto-margin-sidebar nav#TOC a {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  /* allow long section titles to break cleanly */
+  white-space: normal;
+  word-break: break-word;
+  hyphens: auto;
+  display: block;
+  padding: 0.18rem 0;
+  color: $text-muted;
+  transition: color 0.18s;
+
+  &:hover { color: $primary; text-decoration: none; }
+}
+
+#quarto-margin-sidebar nav#TOC li {
+  margin: 0;
+  padding: 0;
+}
+
+/* Active TOC link */
+#quarto-margin-sidebar .toc-active > a {
+  color: $primary;
+  font-weight: 600;
+  border-left: 2px solid $primary;
+  padding-left: calc(0.5rem - 2px);
+}
+
+/* Nested TOC items — slightly indented, smaller */
+#quarto-margin-sidebar nav#TOC ul ul a {
+  font-size: 0.76rem;
+  color: lighten($text-muted, 8%);
+  padding-left: 0.75rem;
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 13.  PAGE NAVIGATION                                        */
+/* ═══════════════════════════════════════════════════════════ */
+
+.page-navigation {
+  margin-top: 2.8rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid $border;
+}
+
+.page-navigation .nav-page a {
+  background: $border-subtle;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 0.7rem 1.1rem;
+  color: $secondary;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  text-decoration: none;
+
+  &:hover {
+    background: $primary-light;
+    border-color: rgba(29, 78, 216, 0.28);
+    color: $primary-dark;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 14.  FIGURES                                                */
+/* ═══════════════════════════════════════════════════════════ */
+
+figure { margin: 1.8rem 0; }
+
+figcaption, .figure-caption {
+  color: $text-muted;
+  font-size: 0.835rem;
+  text-align: center;
+  margin-top: 0.6rem;
   line-height: 1.5;
+  font-style: italic;
 }
 
-p {
-  margin-bottom: 0.95rem;
+/* ═══════════════════════════════════════════════════════════ */
+/* 15.  SECTION NUMBER LABELS                                  */
+/* ═══════════════════════════════════════════════════════════ */
+
+.header-section-number {
+  color: $primary;
+  opacity: 0.6;
+  font-weight: 500;
+  margin-right: 0.42em;
 }
 
-blockquote {
-  border-left: 5px solid rgba(37, 99, 235, 0.42);
-  background: rgba(248, 250, 252, 0.9);
-  border-radius: 0 10px 10px 0;
-  padding: 0.75rem 1rem;
+/* ═══════════════════════════════════════════════════════════ */
+/* 16.  HR                                                     */
+/* ═══════════════════════════════════════════════════════════ */
+
+hr {
+  border: none;
+  border-top: 1px solid $border;
+  margin: 2rem 0;
+  opacity: 1;
 }
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 17.  EXERCISE HEADINGS                                      */
+/* ═══════════════════════════════════════════════════════════ */
+
+h4[id^="exercise-"] {
+  background: $border-subtle;
+  border-left: 3px solid $gold;
+  border-radius: 0 6px 6px 0;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.875rem;
+  font-weight: 640;
+  color: darken($gold, 14%);
+  text-transform: none;
+  letter-spacing: 0;
+  margin-top: 1.6rem;
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 18.  RESPONSIVE                                             */
+/* ═══════════════════════════════════════════════════════════ */
 
 @media (max-width: 991.98px) {
-  #quarto-sidebar {
-    width: auto;
-    box-shadow: none;
-  }
-
-  #quarto-sidebar .sidebar-menu-container {
-    padding: 0.4rem 0.25rem 0.75rem 0.2rem;
-  }
-
-  #quarto-sidebar .sidebar-item .sidebar-item-text.active,
-  #quarto-sidebar .sidebar-item .sidebar-item-text[aria-current="page"] {
-    transform: none;
-  }
-
-  #quarto-margin-sidebar .toc-active {
-    position: static;
-    max-height: none;
-    overflow-y: visible;
-  }
-
   #quarto-content main.content {
+    padding: 1.5rem 1.25rem 2rem;
     border-radius: 12px;
-    padding: 1.1rem 1rem;
+    margin: 0.8rem 0 2rem;
+  }
+
+  #quarto-content main.content::before {
+    left: 10px;
+    right: 10px;
+  }
+
+  h2 { font-size: 1.28rem; }
+  pre { font-size: 0.82em; }
+}
+
+@media (max-width: 575.98px) {
+  #quarto-content main.content {
+    padding: 1.1rem 1rem 1.5rem;
   }
 }

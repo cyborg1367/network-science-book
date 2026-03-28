@@ -27,12 +27,12 @@ format:
     theme:
       - cosmo
       - styles.scss
+    page-layout: full           # Full width layout
     grid:
-      sidebar-width: 300px
-      body-width: 980px
-      margin-width: 280px
-      gutter-width: 1.5rem
-    toc: true
+      sidebar-width: 200px      # Sidebar width
+      body-width: 1000px        # Main content width
+      margin-width: 300px        # Right margin
+      gutter-width: 1rem      # Space between sections    toc: true
     toc-depth: 3
     toc-location: right
     number-sections: true

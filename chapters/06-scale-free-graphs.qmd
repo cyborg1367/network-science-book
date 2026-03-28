@@ -247,6 +247,16 @@ Preferential attachment is not merely a mathematical trick. It encodes a plausib
 
 So preferential attachment captures a cumulative-advantage mechanism.
 
+::: {.callout-note title="Key result: preferential attachment rule"}
+In a growing network with preferential attachment, the probability that a new vertex connects to existing vertex $i$ is
+
+$$
+\Pi_i(t) = \frac{k_i(t)}{\displaystyle\sum_j k_j(t)}.
+$$
+
+Since $\sum_j k_j(t) = 2L(t)$, this simplifies to $\Pi_i(t) = k_i(t) / 2L(t)$. A vertex with twice the degree is twice as likely to receive a new edge.
+:::
+
 ### Why preferential attachment matters
 
 If edges were added uniformly at random to existing vertices, the graph would not generate strong hub structure in the same way. Preferential attachment amplifies pre-existing degree differences.
@@ -356,6 +366,16 @@ The power-law form has several important structural implications.
 4.  Hub structure becomes a natural outcome of the dynamics.
 
 This is what makes scale-free networks qualitatively different from Erdős--Rényi random graphs, whose degree distributions are much more concentrated.
+
+::: {.callout-important title="Classical result: BA degree distribution"}
+The Barabási--Albert model with parameter $m$ produces a power-law degree distribution with exponent $\gamma = 3$:
+
+$$
+P(k) \sim C k^{-3}, \qquad k \gg m.
+$$
+
+This result is independent of $m$. The parameter $m$ controls the density ($\langle k \rangle \approx 2m$) but not the tail exponent. Heavy tails are an inevitable consequence of the growth-plus-preferential-attachment mechanism.
+:::
 
 ## Numerical exploration
 
@@ -493,6 +513,30 @@ A network with hubs may be tolerant to random deletion of vertices, because most
 Infections, information, or cascades can spread differently in hub-dominated networks than in homogeneous graphs, because hubs can act as powerful transmission centers.
 
 So the shape of the degree distribution is not merely descriptive. It has dynamical consequences.
+
+## Core formulas to remember
+
+::: {.callout-important title="Summary"}
+For scale-free networks and the Barabási--Albert model:
+
+1. **Preferential attachment probability:** $$\Pi_i(t) = \frac{k_i(t)}{\displaystyle\sum_j k_j(t)} = \frac{k_i(t)}{2L(t)}$$
+
+2. **Average degree in the BA model:** $$\langle k \rangle \approx 2m$$
+
+3. **Power-law degree distribution:** $$P(k) \sim C k^{-\gamma}, \qquad \gamma = 3 \text{ for the BA model}$$
+
+4. **Scale-free property:** $$P(ak) = a^{-\gamma} P(k) \quad \text{for all } a > 0$$
+
+5. **Cumulative tail:** $$P(K \geq k) \sim C' k^{-(\gamma - 1)}$$
+
+6. **Degree distribution comparison:**
+
+| Model | Degree distribution | Typical form |
+|:------|:-------------------:|:------------:|
+| $G(N,p)$ | Binomial / Poisson | narrow, peaked |
+| Watts--Strogatz | Near-Poisson | narrow, peaked |
+| Barabási--Albert | Power law | heavy-tailed, hub-dominated |
+:::
 
 ## In-class questions
 

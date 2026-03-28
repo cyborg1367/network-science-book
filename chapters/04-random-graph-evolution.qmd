@@ -465,6 +465,16 @@ $$
 
 expresses the self-consistent probability that a vertex belongs to the giant structure.
 
+::: {.callout-note title="Key result: self-consistency equation"}
+The fraction $S$ of vertices in the giant component satisfies
+
+$$
+S = 1 - e^{-\langle k \rangle S}.
+$$
+
+This equation has no positive solution when $\langle k \rangle \leq 1$, and a unique positive solution when $\langle k \rangle > 1$.
+:::
+
 ### Near-threshold behavior
 
 When $\langle k \rangle$ is only slightly larger than $1$, the giant component is still small relative to its later size, but it is already macroscopic. In that near-threshold region,
@@ -483,6 +493,16 @@ N_G \sim 2(\langle k \rangle - 1)N.
 $$
 
 So near the transition, the giant component grows linearly with the distance from the threshold.
+
+::: {.callout-tip title="Near-threshold scaling"}
+Just above the threshold, the giant component size grows as
+
+$$
+S \approx 2(\langle k \rangle - 1), \qquad \langle k \rangle \downarrow 1^{+}.
+$$
+
+The transition is therefore continuous: the giant component emerges gradually, growing linearly with the excess degree.
+:::
 
 ### Structure in the supercritical regime
 
@@ -523,6 +543,15 @@ in which
 - the full graph is not yet connected.
 
 Only when the average degree reaches order $\ln N$ do these remaining disconnected pieces disappear with high probability.
+
+::: {.callout-important title="Two distinct thresholds"}
+The emergence of the giant component and the graph becoming fully connected are separate events:
+
+- **Giant component threshold:** $\langle k \rangle = 1$
+- **Connectedness threshold:** $\langle k \rangle \approx \ln N$
+
+Between these two thresholds, the graph has a macroscopic connected backbone but also retains isolated vertices and small disconnected pieces.
+:::
 
 ## Numerical exploration
 
@@ -674,6 +703,22 @@ This last plot makes the distinction between the two thresholds especially clear
 | Connected | $\langle k \rangle \approx \ln N$ | The full graph is connected with high probability |
 
 This table summarizes the evolution of the Erdős--Rényi random graph in terms of its component structure.
+
+## Core formulas to remember
+
+::: {.callout-important title="Summary"}
+For the evolution of Erdős--Rényi random graphs $G(N,p)$:
+
+1. **Expected degree:** $$\langle k \rangle = p(N-1)$$
+
+2. **Giant-component threshold:** $$\langle k \rangle = 1 \quad \Leftrightarrow \quad p_c \approx \frac{1}{N}$$
+
+3. **Giant-component fraction** (self-consistency equation): $$S = 1 - e^{-\langle k \rangle S}$$
+
+4. **Near-threshold size:** $$S \approx 2(\langle k \rangle - 1), \qquad \langle k \rangle \downarrow 1^{+}$$
+
+5. **Connectedness threshold:** $$\langle k \rangle \approx \ln N \quad \Leftrightarrow \quad p \approx \frac{\ln N}{N}$$
+:::
 
 ## In-class questions
 
