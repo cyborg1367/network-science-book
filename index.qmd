@@ -34,14 +34,14 @@ This Quarto book is designed as a single, well-structured version of a Network S
 
 Each chapter follows the same pattern:
 
-1. **Theory and intuition**
-2. **Worked examples in R**
-3. **Exercises and coding tasks**
+1.  **Theory and intuition**
+2.  **Worked examples in R**
+3.  **Exercises and coding tasks**
 
 The same source files produce both:
 
-- an HTML course website
-- a PDF course handout
+-   an HTML course website
+-   a PDF course handout
 
 ## Required packages
 
@@ -50,26 +50,18 @@ Install the packages below once:
 ```{r}
 #| eval: false
 install.packages(c(
-  "igraph", "dplyr", "ggplot2", "tidyr", "purrr", "plotly", "tinytex", "quarto"
+  "igraph", "dplyr", "ggplot2", "tidyr", "purrr", "plotly", "tinytex", "quarto", "ggraph"
 ))
 tinytex::install_tinytex()
 ```
-
-## Design principles
-
-This template is built around a few teaching priorities:
-
-- explanations should be readable and beginner-friendly
-- formulas should be introduced with intuition, not only stated
-- code should be clean enough to use directly in class
-- plots should be visually clear and consistent
-- HTML pages may contain interactivity, while PDF remains clean and stable
 
 ## Current chapters
 
 The current book contains these chapters:
 
-1. **Random Graphs**
-2. **The Evolution of Random Graphs**
+- [Random Graphs](chapters/03-random-graphs.qmd)
+- [Random Graph Evolution](chapters/04-random-graph-evolution.qmd)
+- [Small-World Graphs](chapters/05-small-world-graphs.qmd)
+- [Scale-free Graphs](chapters/06-scale-free-graphs.qmd)
 
-The first chapter introduces random graph ensembles and their basic structural properties. The second chapter studies how global connectivity emerges as a random graph evolves.
+

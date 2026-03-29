@@ -24,17 +24,7 @@
     "href": "index.html#required-packages",
     "title": "Network Science",
     "section": "0.2 Required packages",
-    "text": "0.2 Required packages\nInstall the packages below once:\n\n\nShow code\ninstall.packages(c(\n  \"igraph\", \"dplyr\", \"ggplot2\", \"tidyr\", \"purrr\", \"plotly\", \"tinytex\", \"quarto\"\n))\ntinytex::install_tinytex()",
-    "crumbs": [
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Course Overview</span>"
-    ]
-  },
-  {
-    "objectID": "index.html#design-principles",
-    "href": "index.html#design-principles",
-    "title": "Network Science",
-    "section": "0.3 Design principles",
-    "text": "0.3 Design principles\nThis template is built around a few teaching priorities:\n\nexplanations should be readable and beginner-friendly\nformulas should be introduced with intuition, not only stated\ncode should be clean enough to use directly in class\nplots should be visually clear and consistent\nHTML pages may contain interactivity, while PDF remains clean and stable",
+    "text": "0.2 Required packages\nInstall the packages below once:\n\n\nShow code\ninstall.packages(c(\n  \"igraph\", \"dplyr\", \"ggplot2\", \"tidyr\", \"purrr\", \"plotly\", \"tinytex\", \"quarto\", \"ggraph\"\n))\ntinytex::install_tinytex()",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Course Overview</span>"
     ]
@@ -43,8 +33,8 @@
     "objectID": "index.html#current-chapters",
     "href": "index.html#current-chapters",
     "title": "Network Science",
-    "section": "0.4 Current chapters",
-    "text": "0.4 Current chapters\nThe current book contains these chapters:\n\nRandom Graphs\nThe Evolution of Random Graphs\n\nThe first chapter introduces random graph ensembles and their basic structural properties. The second chapter studies how global connectivity emerges as a random graph evolves.",
+    "section": "0.3 Current chapters",
+    "text": "0.3 Current chapters\nThe current book contains these chapters:\n\nRandom Graphs\nRandom Graph Evolution\nSmall-World Graphs\nScale-free Graphs",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Course Overview</span>"
     ]

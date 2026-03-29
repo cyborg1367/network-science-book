@@ -1,13 +1,19 @@
 {
-  "hash": "42f0c7a414ac551866758dfb295b6221",
+  "hash": "e0fa6d9255b5d7609e221d92f8f82f7f",
   "result": {
     "engine": "knitr",
-    "markdown": "---\ntitle: \"Course Overview\"\n---\n\n\n\n## Welcome\n\nThis Quarto book is designed as a single, well-structured version of a Network Science course.\n\nEach chapter follows the same pattern:\n\n1. **Theory and intuition**\n2. **Worked examples in R**\n3. **Exercises and coding tasks**\n\nThe same source files produce both:\n\n- an HTML course website\n- a PDF course handout\n\n## Required packages\n\nInstall the packages below once:\n\n\n::: {.cell}\n\n```{.r .cell-code}\ninstall.packages(c(\n  \"igraph\", \"dplyr\", \"ggplot2\", \"tidyr\", \"purrr\", \"plotly\", \"tinytex\", \"quarto\"\n))\ntinytex::install_tinytex()\n```\n:::\n\n\n## Design principles\n\nThis template is built around a few teaching priorities:\n\n- explanations should be readable and beginner-friendly\n- formulas should be introduced with intuition, not only stated\n- code should be clean enough to use directly in class\n- plots should be visually clear and consistent\n- HTML pages may contain interactivity, while PDF remains clean and stable\n\n## Current chapters\n\nThe current book contains these chapters:\n\n1. **Random Graphs**\n2. **The Evolution of Random Graphs**\n\nThe first chapter introduces random graph ensembles and their basic structural properties. The second chapter studies how global connectivity emerges as a random graph evolves.",
-    "supporting": [],
+    "markdown": "---\ntitle: \"Course Overview\"\n---\n\n\n\n## Welcome\n\nThis Quarto book is designed as a single, well-structured version of a Network Science course.\n\nEach chapter follows the same pattern:\n\n1.  **Theory and intuition**\n2.  **Worked examples in R**\n3.  **Exercises and coding tasks**\n\nThe same source files produce both:\n\n-   an HTML course website\n-   a PDF course handout\n\n## Required packages\n\nInstall the packages below once:\n\n\n::: {.cell}\n\n```{.r .cell-code}\ninstall.packages(c(\n  \"igraph\", \"dplyr\", \"ggplot2\", \"tidyr\", \"purrr\", \"plotly\", \"tinytex\", \"quarto\", \"ggraph\"\n))\ntinytex::install_tinytex()\n```\n:::\n\n\n## Current chapters\n\nThe current book contains these chapters:\n\n- [Random Graphs](chapters/03-random-graphs.qmd)\n- [Random Graph Evolution](chapters/04-random-graph-evolution.qmd)\n- [Small-World Graphs](chapters/05-small-world-graphs.qmd)\n- [Scale-free Graphs](chapters/06-scale-free-graphs.qmd)\n\n\n",
+    "supporting": [
+      "index_files"
+    ],
     "filters": [
       "rmarkdown/pagebreak.lua"
     ],
-    "includes": {},
+    "includes": {
+      "include-in-header": [
+        "<link href=\"site_libs/pagedtable-1.1/css/pagedtable.css\" rel=\"stylesheet\" />\n<script src=\"site_libs/pagedtable-1.1/js/pagedtable.js\"></script>\n"
+      ]
+    },
     "engineDependencies": {},
     "preserve": {},
     "postProcess": true

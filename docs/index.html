@@ -107,6 +107,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
 
 
 </head>
@@ -189,8 +193,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#welcome" id="toc-welcome" class="nav-link active" data-scroll-target="#welcome"><span class="header-section-number">0.1</span> Welcome</a></li>
   <li><a href="#required-packages" id="toc-required-packages" class="nav-link" data-scroll-target="#required-packages"><span class="header-section-number">0.2</span> Required packages</a></li>
-  <li><a href="#design-principles" id="toc-design-principles" class="nav-link" data-scroll-target="#design-principles"><span class="header-section-number">0.3</span> Design principles</a></li>
-  <li><a href="#current-chapters" id="toc-current-chapters" class="nav-link" data-scroll-target="#current-chapters"><span class="header-section-number">0.4</span> Current chapters</a></li>
+  <li><a href="#current-chapters" id="toc-current-chapters" class="nav-link" data-scroll-target="#current-chapters"><span class="header-section-number">0.3</span> Current chapters</a></li>
   </ul>
 </nav>
     </div>
@@ -251,31 +254,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"igraph"</span>, <span class="st">"dplyr"</span>, <span class="st">"ggplot2"</span>, <span class="st">"tidyr"</span>, <span class="st">"purrr"</span>, <span class="st">"plotly"</span>, <span class="st">"tinytex"</span>, <span class="st">"quarto"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"igraph"</span>, <span class="st">"dplyr"</span>, <span class="st">"ggplot2"</span>, <span class="st">"tidyr"</span>, <span class="st">"purrr"</span>, <span class="st">"plotly"</span>, <span class="st">"tinytex"</span>, <span class="st">"quarto"</span>, <span class="st">"ggraph"</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>))</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>tinytex<span class="sc">::</span><span class="fu">install_tinytex</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 </section>
-<section id="design-principles" class="level2" data-number="0.3">
-<h2 data-number="0.3" class="anchored" data-anchor-id="design-principles"><span class="header-section-number">0.3</span> Design principles</h2>
-<p>This template is built around a few teaching priorities:</p>
-<ul>
-<li>explanations should be readable and beginner-friendly</li>
-<li>formulas should be introduced with intuition, not only stated</li>
-<li>code should be clean enough to use directly in class</li>
-<li>plots should be visually clear and consistent</li>
-<li>HTML pages may contain interactivity, while PDF remains clean and stable</li>
-</ul>
-</section>
-<section id="current-chapters" class="level2" data-number="0.4">
-<h2 data-number="0.4" class="anchored" data-anchor-id="current-chapters"><span class="header-section-number">0.4</span> Current chapters</h2>
+<section id="current-chapters" class="level2" data-number="0.3">
+<h2 data-number="0.3" class="anchored" data-anchor-id="current-chapters"><span class="header-section-number">0.3</span> Current chapters</h2>
 <p>The current book contains these chapters:</p>
-<ol type="1">
-<li><strong>Random Graphs</strong></li>
-<li><strong>The Evolution of Random Graphs</strong></li>
-</ol>
-<p>The first chapter introduces random graph ensembles and their basic structural properties. The second chapter studies how global connectivity emerges as a random graph evolves.</p>
+<ul>
+<li><a href="./chapters/03-random-graphs.html">Random Graphs</a></li>
+<li><a href="./chapters/04-random-graph-evolution.html">Random Graph Evolution</a></li>
+<li><a href="./chapters/05-small-world-graphs.html">Small-World Graphs</a></li>
+<li><a href="./chapters/06-scale-free-graphs.html">Scale-free Graphs</a></li>
+</ul>
 
 
 </section>
