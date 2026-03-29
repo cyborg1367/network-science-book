@@ -15,10 +15,11 @@ library(plotly)
 
 course_cols <- list(
   teal  = "#0F766E",
-  blue  = "#2563EB",
+  blue  = "#0EA5E9",
   gold  = "#F59E0B",
-  coral = "#E76F51",
+  warm  = "#D97706",
   ink   = "#1F2937",
+  slate = "#475569",
   grid  = "#E5E7EB"
 )
 
@@ -26,14 +27,25 @@ theme_set(
   theme_minimal(base_size = 13) +
     theme(
       plot.title.position = "plot",
+      plot.caption.position = "plot",
       panel.grid.minor = element_blank(),
       panel.grid.major.x = element_line(color = course_cols$grid, linewidth = 0.35),
       panel.grid.major.y = element_line(color = course_cols$grid, linewidth = 0.35),
-      axis.title = element_text(color = course_cols$ink),
+      axis.title = element_text(color = course_cols$ink, face = "plain"),
       axis.text = element_text(color = course_cols$ink),
-      plot.title = element_text(face = "bold", color = course_cols$ink),
-      plot.subtitle = element_text(color = "#475569"),
-      legend.position = "top"
+      axis.ticks = element_line(color = course_cols$grid, linewidth = 0.3),
+      plot.title = element_text(face = "bold", color = course_cols$ink, size = rel(1.12)),
+      plot.subtitle = element_text(color = course_cols$slate, margin = margin(b = 10)),
+      plot.caption = element_text(color = course_cols$slate, hjust = 1, size = rel(0.86)),
+      legend.position = "top",
+      legend.title = element_text(color = course_cols$ink, face = "bold"),
+      legend.text = element_text(color = course_cols$slate),
+      legend.key.width = unit(1.2, "lines"),
+      strip.text = element_text(face = "bold", color = course_cols$ink),
+      strip.background = element_rect(fill = scales::alpha(course_cols$blue, 0.08), color = NA),
+      plot.background = element_rect(fill = "white", color = NA),
+      panel.background = element_rect(fill = "white", color = NA),
+      plot.margin = margin(10, 12, 8, 6)
     )
 )
 
@@ -241,7 +253,7 @@ for (i in seq_along(g32_list)) {
     vertex.frame.color = "white",
     vertex.label.color = "white",
     vertex.label.cex = 1.05,
-    edge.color = course_cols$ink,
+    edge.color = course_cols$blue,
     edge.width = 2.8,
     main = g32_titles[i]
   )
@@ -331,7 +343,6 @@ possible_edges <- matrix(
 
 make_g3p_graph <- function(bits) {
   chosen <- possible_edges[as.logical(bits), , drop = FALSE]
-
   if (nrow(chosen) == 0) {
     g <- make_empty_graph(n = 3, directed = FALSE)
     V(g)$name <- c("1", "2", "3")
@@ -342,7 +353,6 @@ make_g3p_graph <- function(bits) {
       g <- add_vertices(g, nv = length(missing_nodes), name = missing_nodes)
     }
   }
-
   g <- induced_subgraph(g, vids = c("1", "2", "3"))
   g
 }
@@ -374,8 +384,7 @@ g3p_list <- pmap(
 )
 
 g3p_titles <- paste0(
-  "Edges: ", bit_patterns$edge_label,
-  "\nL = ", bit_patterns$L
+  "Edges: ", bit_patterns$edge_label, "\nL = ", bit_patterns$L
 )
 
 old_par <- par(no.readonly = TRUE)
@@ -389,17 +398,17 @@ for (i in seq_along(g3p_list)) {
     g_tmp,
     layout = layout_triangle,
     vertex.size = 28,
-    vertex.color = course_cols$blue,
+    vertex.color = course_cols$teal,
     vertex.frame.color = "white",
     vertex.label.color = "white",
     vertex.label.cex = 1,
-    edge.color = course_cols$ink,
+    edge.color = course_cols$blue,
     edge.width = 2.2,
     main = g3p_titles[i]
   )
 }
 
-par(mfrow = c(2, 4), mar = c(1.2, 1.2, 3.2, 1.2))
+par(old_par)
 ```
 
 In this case, the number of edges is not fixed. Some of the eight graphs have:
@@ -807,7 +816,7 @@ plot(
   vertex.frame.color = "white",
   vertex.label.color = "white",
   vertex.label.cex = 0.9,
-  edge.color = scales::alpha(course_cols$ink, 0.35),
+  edge.color = scales::alpha(course_cols$blue, 0.8),
   edge.width = 2.2,
   main = "Example graph"
 )
@@ -870,8 +879,8 @@ degree_count_table <- tibble(
 )
 
 ggplot(degree_count_table, aes(x = degree, y = proportion)) +
-  geom_col(fill = course_cols$blue, alpha = 0.55, width = 0.8) +
-  geom_point(color = course_cols$gold, size = 2.8) +
+  geom_col(fill = course_cols$gold, alpha = 0.55, width = 0.8) +
+  geom_point(color = course_cols$blue, size = 2.8) +
   geom_line(color = course_cols$teal, linewidth = 1.0) +
   scale_x_continuous(breaks = degree_count_table$degree) +
   labs(
@@ -965,9 +974,9 @@ theory_tbl <- tibble(k = 0:(n - 1)) |>
 plot_tbl <- left_join(obs_tbl, theory_tbl, by = "k")
 
 ggplot(plot_tbl, aes(x = k)) +
-  geom_col(aes(y = observed_prob), fill = course_cols$blue, alpha = 0.45, width = 0.82) +
-  geom_line(aes(y = theory_prob), color = course_cols$teal, linewidth = 1.1) +
-  geom_point(aes(y = theory_prob), color = course_cols$gold, size = 2.2) +
+  geom_col(aes(y = observed_prob), fill = course_cols$blue, alpha = 0.5, width = 0.82) +
+  geom_line(aes(y = theory_prob), color = course_cols$gold, linewidth = 1.1) +
+  geom_point(aes(y = theory_prob), color = course_cols$teal, size = 2.2) +
   labs(
     title = "Observed and theoretical degree distribution",
     subtitle = sprintf("Single realization of G(%d, %.2f)", n, p),
@@ -1040,7 +1049,7 @@ In a large sparse Erdős--Rényi graph, most nodes have relatively small degree,
 #| label: poisson-approximation
 #| fig-cap: "Comparison between the exact binomial degree distribution and its Poisson approximation."
 
-n <- 300
+n <- 500
 p <- 0.02
 lambda <- p * (n - 1)
 k_vals <- 0:24
@@ -1056,7 +1065,7 @@ compare_tbl <- tibble(
 ggplot(compare_tbl, aes(x = k, y = probability, color = distribution)) +
   geom_line(linewidth = 1.1) +
   geom_point(size = 2.2) +
-  scale_color_manual(values = c("Binomial" = course_cols$teal, "Poisson" = course_cols$coral)) +
+  scale_color_manual(values = c("Binomial" = course_cols$gold, "Poisson" = course_cols$teal)) +
   labs(
     title = "Binomial and Poisson degree distributions",
     subtitle = sprintf("n = %d, p = %.3f, mean degree = %.2f", n, p, lambda),
@@ -1120,7 +1129,7 @@ So the only question is: how many of the three possible neighbor-neighbor edges 
 ```{r}
 #| label: clustering-examples
 #| echo: false
-#| fig-cap: "Three example neighborhoods for the same focal node A. Teal edges connect A to its neighbors; gold edges connect neighbors to each other and contribute to clustering."
+#| fig-cap: "Three example neighborhoods for the same focal node A. dark green edges connect A to its neighbors; light green edges connect neighbors to each other and contribute to clustering."
 
 layout_clust <- matrix(
   c(
@@ -1155,7 +1164,7 @@ plot_clustering_example <- function(edges_center, edges_neighbor, title_text) {
     g,
     layout = layout_clust,
     vertex.size = c(34, 30, 30, 30),
-    vertex.color = c(course_cols$coral, course_cols$blue, course_cols$blue, course_cols$blue),
+    vertex.color = c(course_cols$gold, course_cols$blue, course_cols$blue, course_cols$blue),
     vertex.frame.color = "white",
     vertex.label.color = "white",
     vertex.label.cex = 1,
@@ -1191,9 +1200,9 @@ par(old_par)
 
 In these figures:
 
--   the **teal edges** connect the focal node $A$ to its neighbors
--   the **gold edges** connect neighbors to each other
--   only the gold edges count in the value of $L_A$
+-   the **dark green edges** connect the focal node $A$ to its neighbors
+-   the **light green edges** connect neighbors to each other
+-   only the light green edges count in the value of $L_A$
 
 ### Example 1
 
@@ -1396,8 +1405,8 @@ summary_tbl
 #| fig-cap: "Average clustering across repeated simulations with the theoretical value shown as a dashed line."
 
 ggplot(sim_tbl, aes(x = avg_clustering)) +
-  geom_histogram(bins = 24, fill = course_cols$teal, alpha = 0.65, color = "white") +
-  geom_vline(xintercept = p, color = course_cols$gold, linewidth = 1.1, linetype = 2) +
+  geom_histogram(bins = 24, fill = course_cols$gold, alpha = 0.65, color = "white") +
+  geom_vline(xintercept = p, color = course_cols$teal, linewidth = 1.1, linetype = 2) +
   labs(
     title = "Average clustering across simulations",
     subtitle = sprintf("Dashed line = theoretical value p = %.2f", p),
@@ -1507,8 +1516,8 @@ make_degree_static <- function(n_value, p_value) {
 
   ggplot(df, aes(x = k, y = prob)) +
     geom_col(fill = course_cols$blue, alpha = 0.45, width = 0.82) +
-    geom_line(color = course_cols$teal, linewidth = 1.1) +
-    geom_point(color = course_cols$gold, size = 2.2) +
+    geom_line(color = course_cols$gold, linewidth = 1.1) +
+    geom_point(color = course_cols$teal, size = 2.2) +
     labs(
       title = sprintf("Degree distribution for G(%d, %.2f)", n_value, p_value),
       subtitle = sprintf("Expected degree = p(N-1) = %.2f", p_value * (n_value - 1)),
@@ -1544,7 +1553,7 @@ make_degree_interactive <- function(n_value, p_values = c(0.04, 0.08, 0.12, 0.16
     text = ~hover_lab,
     hoverinfo = "text",
     line = list(color = course_cols$teal, width = 3),
-    marker = list(color = course_cols$blue, size = 7)
+    marker = list(color = course_cols$gold, size = 7)
   ) |>
     layout(
       title = list(text = paste0("Interactive degree distribution for N = ", n_value)),

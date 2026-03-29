@@ -28,11 +28,6 @@ format:
       - cosmo
       - styles.scss
     page-layout: full           # Full width layout
-    grid:
-      sidebar-width: 200px      # Sidebar width
-      body-width: 1000px        # Main content width
-      margin-width: 300px        # Right margin
-      gutter-width: 1rem      # Space between sections    toc: true
     toc-depth: 3
     toc-location: right
     number-sections: true

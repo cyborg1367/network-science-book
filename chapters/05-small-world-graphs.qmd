@@ -14,10 +14,11 @@ library(purrr)
 
 course_cols <- list(
   teal  = "#0F766E",
-  blue  = "#2563EB",
+  blue  = "#0EA5E9",
   gold  = "#F59E0B",
-  coral = "#E76F51",
+  warm  = "#D97706",
   ink   = "#1F2937",
+  slate = "#475569",
   grid  = "#E5E7EB"
 )
 
@@ -31,7 +32,7 @@ theme_set(
       axis.title = element_text(color = course_cols$ink),
       axis.text = element_text(color = course_cols$ink),
       plot.title = element_text(face = "bold", color = course_cols$ink),
-      plot.subtitle = element_text(color = "#475569"),
+      plot.subtitle = element_text(color = course_cols$slate),
       legend.position = "top"
     )
 )
@@ -426,7 +427,7 @@ ggplot(distance_scaling_tbl, aes(x = N, y = avg_distance, color = model)) +
       "1D lattice" = course_cols$blue,
       "2D lattice" = course_cols$teal,
       "3D lattice" = course_cols$gold,
-      "Random graph" = course_cols$coral
+      "Random graph" = course_cols$slate
     )
   ) +
   labs(
@@ -454,7 +455,7 @@ ggplot(distance_scaling_tbl, aes(x = logN, y = logd, color = model)) +
       "1D lattice" = course_cols$blue,
       "2D lattice" = course_cols$teal,
       "3D lattice" = course_cols$gold,
-      "Random graph" = course_cols$coral
+      "Random graph" = course_cols$slate
     )
   ) +
   labs(
@@ -872,7 +873,7 @@ ggplot(ws_summary, aes(x = beta, y = value, color = quantity)) +
   scale_color_manual(
     values = c(
       "<C(beta)> / <C(0)>" = course_cols$teal,
-      "<d(beta)> / <d(0)>" = course_cols$coral
+      "<d(beta)> / <d(0)>" = course_cols$gold
     )
   ) +
   labs(

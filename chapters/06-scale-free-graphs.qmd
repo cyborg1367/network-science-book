@@ -14,10 +14,11 @@ library(purrr)
 
 course_cols <- list(
   teal  = "#0F766E",
-  blue  = "#2563EB",
+  blue  = "#0EA5E9",
   gold  = "#F59E0B",
-  coral = "#E76F51",
+  warm  = "#D97706",
   ink   = "#1F2937",
+  slate = "#475569",
   grid  = "#E5E7EB"
 )
 
@@ -31,7 +32,7 @@ theme_set(
       axis.title = element_text(color = course_cols$ink),
       axis.text = element_text(color = course_cols$ink),
       plot.title = element_text(face = "bold", color = course_cols$ink),
-      plot.subtitle = element_text(color = "#475569"),
+      plot.subtitle = element_text(color = course_cols$slate),
       legend.position = "top"
     )
 )
@@ -120,7 +121,7 @@ plot_degree_colored <- function(g, main_text) {
     deg,
     breaks = unique(brks),
     include.lowest = TRUE,
-    labels = c(course_cols$blue, course_cols$teal, course_cols$coral)[seq_len(length(unique(brks)) - 1)]
+    labels = c(course_cols$blue, course_cols$teal, course_cols$gold)[seq_len(length(unique(brks)) - 1)]
   )
 
   plot(
@@ -312,7 +313,7 @@ plot_ba_growth <- function(g, main_text) {
     g,
     layout = layout_with_fr(g),
     vertex.size = 8 + 2.5 * sqrt(deg + 1),
-    vertex.color = course_cols$coral,
+    vertex.color = course_cols$gold,
     vertex.frame.color = "white",
     vertex.label = NA,
     edge.color = scales::alpha(course_cols$ink, 0.20),
@@ -435,7 +436,7 @@ cum_tbl <- deg_tbl |>
   arrange(k)
 
 ggplot(cum_tbl, aes(x = k, y = ccdf)) +
-  geom_point(color = course_cols$coral, size = 2.0, alpha = 0.8) +
+  geom_point(color = course_cols$gold, size = 2.0, alpha = 0.8) +
   scale_x_log10() +
   scale_y_log10() +
   labs(
@@ -479,7 +480,7 @@ ggplot(compare_tbl, aes(x = k, y = prob, color = model)) +
   geom_point(size = 2.0, alpha = 0.8) +
   scale_x_log10() +
   scale_y_log10() +
-  scale_color_manual(values = c("Barabasi-Albert" = course_cols$coral, "Erdos-Renyi" = course_cols$teal)) +
+  scale_color_manual(values = c("Barabasi-Albert" = course_cols$gold, "Erdos-Renyi" = course_cols$teal)) +
   labs(
     title = "Heavy-tailed versus homogeneous degree structure",
     subtitle = "The two models have similar average degree but very different tails",
