@@ -5,7 +5,7 @@ project:
 book:
   title: "Network Science"
   subtitle: "Concepts, Examples, and Exercises"
-  author: "Your Name"
+  author: "Zahra Rezaei"
   date: today
   chapters:
     - index.qmd
@@ -27,20 +27,19 @@ format:
     theme:
       - cosmo
       - styles.scss
-    page-layout: full           # Full width layout
+    page-layout: full           
     toc-depth: 3
     toc-location: right
     number-sections: true
     number-depth: 2
     code-copy: true
+    code-fold: true
+    code-summary: "Show code"
     code-overflow: wrap
-    code-tools:
-      source: true
-      toggle: false
-      caption: none
     smooth-scroll: true
     anchor-sections: true
     html-math-method: katex
+    df-print: paged
     fig-align: center
     fig-width: 7
     fig-height: 4.6
@@ -65,3 +64,6 @@ format:
 
 
 editor: visual
+knitr: 
+  opts_chunk: 
+    dev: "ragg_png"

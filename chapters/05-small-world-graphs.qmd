@@ -330,39 +330,36 @@ The simulated models are:
 
 ```{r}
 #| label: distance-scaling-simulation
-#| echo: fenced
+
+library(tidyverse)
+library(igraph)
+
+mean_apl <- function(g) {
+  mean_distance(g, directed = FALSE, unconnected = FALSE)
+}
 
 simulate_connected_er_apl <- function(n, mean_degree = 8, reps = 20) {
   p <- mean_degree / (n - 1)
-  vals <- numeric(reps)
 
-  for (r in seq_len(reps)) {
+  vals <- replicate(reps, {
     repeat {
-      g <- sample_gnp(n = n, p = p, directed = FALSE, loops = FALSE)
+      g <- sample_gnp(n, p, directed = FALSE, loops = FALSE)
       if (components(g)$no == 1) break
     }
-    vals[r] <- mean_distance(g, directed = FALSE, unconnected = FALSE)
-  }
+    mean_apl(g)
+  })
 
   mean(vals)
 }
 
-apl_line <- function(n) {
-  g <- make_lattice(c(n), circular = FALSE)
-  mean_distance(g, directed = FALSE, unconnected = FALSE)
+apl_lattice <- function(...) {
+  g <- make_lattice(dimvector = c(...), periodic = FALSE)
+  mean_apl(g)
 }
 
-apl_rectangle <- function(a, b) {
-  g <- make_lattice(c(a, b), circular = FALSE)
-  mean_distance(g, directed = FALSE, unconnected = FALSE)
-}
-
-apl_cube <- function(L) {
-  g <- make_lattice(c(L, L, L), circular = FALSE)
-  mean_distance(g, directed = FALSE, unconnected = FALSE)
-}
-
-line_sizes <- c(20, 30, 40, 50, 60, 80, 100)
+line_sizes   <- c(20, 30, 40, 50, 60, 80, 100)
+cube_sides   <- c(3, 4, 5, 6, 7, 8)
+random_sizes <- c(20, 30, 40, 50, 60, 80, 100, 120, 150, 180, 220, 260, 320, 400)
 
 rect_dims <- tribble(
   ~a, ~b,
@@ -371,7 +368,7 @@ rect_dims <- tribble(
    6,  6,
    7,  7,
    8,  8,
-   9, 9,
+   9,  9,
   10, 10,
   10, 12,
   12, 12,
@@ -382,60 +379,68 @@ rect_dims <- tribble(
   20, 20
 )
 
-cube_side <- c(3, 4, 5, 6, 7, 8)
-
-random_sizes <- c(20, 30, 40, 50, 60, 80, 100, 120, 150, 180, 220, 260, 320, 400)
-
 distance_scaling_tbl <- bind_rows(
   tibble(
     N = line_sizes,
-    avg_distance = map_dbl(line_sizes, apl_line),
+    avg_distance = map_dbl(line_sizes, ~ apl_lattice(.x)),
     model = "1D lattice"
   ),
   tibble(
     N = rect_dims$a * rect_dims$b,
-    avg_distance = map2_dbl(rect_dims$a, rect_dims$b, apl_rectangle),
+    avg_distance = map2_dbl(rect_dims$a, rect_dims$b, apl_lattice),
     model = "2D lattice"
   ),
   tibble(
-    N = cube_side^3,
-    avg_distance = map_dbl(cube_side, apl_cube),
+    N = cube_sides^3,
+    avg_distance = map_dbl(cube_sides, ~ apl_lattice(.x, .x, .x)),
     model = "3D lattice"
   ),
   tibble(
     N = random_sizes,
-    avg_distance = map_dbl(random_sizes, \(n) simulate_connected_er_apl(n, mean_degree = 8, reps = 8)),
+    avg_distance = map_dbl(random_sizes, ~ simulate_connected_er_apl(.x, mean_degree = 8, reps = 8)),
     model = "Random graph"
   )
 ) |>
   mutate(
+    model = factor(model, levels = c("1D lattice", "2D lattice", "3D lattice", "Random graph")),
     logN = log(N),
     logd = log(avg_distance)
   )
+
 ```
 
 ```{r}
 #| label: distance-scaling-linear
-#| echo: fenced
 #| fig-cap: "Average path length as a function of system size for 1D, 2D, 3D lattices, and random graphs."
+#| fig-width: 9
+#| fig-height: 5.6
+#| dpi: 320
 
 ggplot(distance_scaling_tbl, aes(x = N, y = avg_distance, color = model)) +
-  geom_line(linewidth = 1.1) +
-  geom_point(size = 2.1) +
+  geom_line(linewidth = 1.15) +
+  geom_point(size = 2.4) +
   scale_color_manual(
     values = c(
-      "1D lattice" = course_cols$blue,
-      "2D lattice" = course_cols$teal,
-      "3D lattice" = course_cols$gold,
+      "1D lattice"   = course_cols$blue,
+      "2D lattice"   = course_cols$teal,
+      "3D lattice"   = course_cols$gold,
       "Random graph" = course_cols$slate
     )
   ) +
   labs(
     title = "Average path length versus system size",
-    subtitle = "Each graph family is sampled on its own size grid to reveal the scaling trend clearly",
-    x = "Number of vertices N",
-    y = "Average path length <d>",
+    subtitle = "Scaling behavior across lattice dimensions and random graphs",
+    x = "Number of vertices (N)",
+    y = "Average path length",
     color = NULL
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold", size = 15),
+    plot.subtitle = element_text(size = 11, color = "grey30"),
+    axis.title = element_text(face = "bold"),
+    legend.position = "top",
+    panel.grid.minor = element_blank()
   )
 ```
 
@@ -445,8 +450,11 @@ To interpret the scaling laws more clearly, it is useful to look at the logarith
 
 ```{r}
 #| label: distance-scaling-loglog
-#| echo: fenced
 #| fig-cap: The same simulated data displayed as a plot of ln N versus ln <d>.
+#| fig-width: 9
+#| fig-height: 5.6
+#| dpi: 320
+
 ggplot(distance_scaling_tbl, aes(x = logN, y = logd, color = model)) +
   geom_line(linewidth = 1.1) +
   geom_point(size = 2.1) +
@@ -464,6 +472,14 @@ ggplot(distance_scaling_tbl, aes(x = logN, y = logd, color = model)) +
     x = "ln N",
     y = "ln <d>",
     color = NULL
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold", size = 15),
+    plot.subtitle = element_text(size = 11, color = "grey30"),
+    axis.title = element_text(face = "bold"),
+    legend.position = "top",
+    panel.grid.minor = element_blank()
   )
 ```
 
@@ -622,7 +638,13 @@ This is precisely why it is a useful starting point for the model.
 
 ```{r}
 #| label: ws-progressive-helpers
-#| include: false
+
+library(igraph)
+library(ggplot2)
+library(dplyr)
+library(purrr)
+library(patchwork)
+library(tibble)
 
 make_ring_edges_K <- function(n, K) {
   stopifnot(K %% 2 == 0)
@@ -672,8 +694,9 @@ Local lattice edges are shown in teal. Rewired long-range edges are shown in gol
 
 ```{r}
 #| label: ws-regular-to-random
-#| echo: false
 #| fig-cap: "From regular lattice to random network in the Watts--Strogatz model. The same vertex positions are used throughout. Local edges are teal and rewired shortcut edges are gold."
+#| fig-width: 14
+#| fig-height: 3
 
 set.seed(2032)
 
@@ -692,45 +715,100 @@ ws_meta_vis <- list(
   )
 )
 
-g_layout <- build_progressive_ws_graph_K(n_vis, K_vis, 0, ws_meta_vis)
-layout_ws <- layout_in_circle(g_layout)
+# fixed circular layout
+g0 <- build_progressive_ws_graph_K(n_vis, K_vis, 0, ws_meta_vis)
+layout_ws <- layout_in_circle(g0)
 
-plot_progressive_ws <- function(beta_value, title_text) {
+nodes_df <- tibble(
+  id = seq_len(n_vis),
+  x = layout_ws[, 1],
+  y = layout_ws[, 2]
+)
+
+make_edge_df <- function(g, K, nodes_df) {
+  edge_pairs <- ends(g, E(g), names = FALSE) |>
+    as.data.frame() |>
+    setNames(c("from", "to")) |>
+    as_tibble()
+
+  edge_pairs |>
+    mutate(
+      cyclic_dist = purrr::map2_dbl(from, to, \(a, b) {
+        d <- abs(a - b)
+        min(d, vcount(g) - d)
+      }),
+      edge_type = if_else(cyclic_dist <= K / 2, "local", "rewired")
+    ) |>
+    left_join(
+      nodes_df |>
+        rename(from = id, x = x, y = y),
+      by = "from"
+    ) |>
+    left_join(
+      nodes_df |>
+        rename(to = id, xend = x, yend = y),
+      by = "to"
+    )
+}
+
+plot_progressive_ws_explicit <- function(beta_value, title_text) {
   g <- build_progressive_ws_graph_K(n_vis, K_vis, beta_value, ws_meta_vis)
+  edges_df <- make_edge_df(g, K_vis, nodes_df)
 
-  edge_pairs <- ends(g, E(g), names = FALSE)
-  cyclic_dist <- apply(edge_pairs, 1, function(x) {
-    d <- abs(x[1] - x[2])
-    min(d, n_vis - d)
-  })
+  local_edges <- edges_df |> filter(edge_type == "local")
+  rewired_edges <- edges_df |> filter(edge_type == "rewired")
 
-  is_local <- cyclic_dist <= K_vis / 2
-  edge_cols <- ifelse(is_local, course_cols$teal, course_cols$gold)
-  edge_widths <- ifelse(is_local, 2.0, 2.7)
-  edge_curved <- ifelse(is_local, 0.05, 0.28)
-
-  plot(
-    g,
-    layout = layout_ws,
-    vertex.size = 15,
-    vertex.color = course_cols$blue,
-    vertex.frame.color = "white",
-    vertex.label = NA,
-    edge.color = edge_cols,
-    edge.width = edge_widths,
-    edge.curved = edge_curved,
-    main = title_text
-  )
+  ggplot() +
+    geom_curve(
+      data = local_edges,
+      aes(x = x, y = y, xend = xend, yend = yend),
+      curvature = 0.38,
+      linewidth = 0.55,
+      colour = course_cols$teal,
+      lineend = "round"
+    ) +
+    geom_curve(
+      data = rewired_edges,
+      aes(x = x, y = y, xend = xend, yend = yend),
+      curvature = -0.18,
+      linewidth = 0.8,
+      colour = course_cols$gold,
+      lineend = "round"
+    ) +
+    geom_point(
+      data = nodes_df,
+      aes(x = x, y = y),
+      size = 2.8,
+      shape = 21,
+      fill = course_cols$blue,
+      colour = "white",
+      stroke = 0.5
+    ) +
+    coord_equal(
+      xlim = c(-1.08, 1.08),
+      ylim = c(-1.08, 1.08),
+      expand = FALSE,
+      clip = "off"
+    ) +
+    labs(title = title_text) +
+    theme_void() +
+    theme(
+      plot.title = element_text(
+        hjust = 0.5,
+        size = 10.5,
+        face = "bold",
+        margin = margin(b = 2)
+      ),
+      plot.margin = margin(0, 0, 0, 0)
+    )
 }
 
-old_par <- par(no.readonly = TRUE)
-par(mfrow = c(1, 5), mar = c(1, 1, 3, 1))
+ws_plots <- map(
+  beta_vis,
+  ~ plot_progressive_ws_explicit(.x, paste0("\u03B2 = ", sprintf("%.2f", .x)))
+)
 
-for (b in beta_vis) {
-  plot_progressive_ws(b, bquote(beta == .(sprintf("%.2f", b))))
-}
-
-par(old_par)
+wrap_plots(ws_plots, nrow = 1)
 ```
 
 This figure makes the mechanism of the model visually transparent.
@@ -758,8 +836,8 @@ This asymmetry is the key mathematical idea behind the small-world effect:
 ::: {.callout-important title="Core asymmetry of the Watts--Strogatz model"}
 A small amount of random rewiring ($\beta \ll 1$) has a **disproportionate effect on path length** but leaves clustering largely intact.
 
-- Path length drops sharply because a few long-range shortcuts bypass large ring segments.
-- Clustering changes slowly because most local neighborhoods remain lattice-like.
+-   Path length drops sharply because a few long-range shortcuts bypass large ring segments.
+-   Clustering changes slowly because most local neighborhoods remain lattice-like.
 
 This asymmetry is the structural source of the small-world regime.
 :::
@@ -920,7 +998,7 @@ That coexistence is what distinguishes a small-world network from both a regular
 
 ::: {.callout-tip title="Structural comparison"}
 | Model | Average path length | Clustering coefficient |
-|:------|:-------------------:|:----------------------:|
+|:---------------|:------------------------:|:----------------------------:|
 | Regular lattice | large ($\sim N/2K$) | high ($\sim 3/4$) |
 | Random graph ($G(N,p)$) | small ($\sim \ln N / \ln \langle k\rangle$) | low ($\sim p$) |
 | Watts--Strogatz (small-world) | small | high |
@@ -987,17 +1065,17 @@ This is why the Watts--Strogatz model remains one of the most influential models
 ::: {.callout-important title="Summary"}
 For small-world networks and the Watts--Strogatz model:
 
-1. **Average path length (random network):** $$L(G) \approx \frac{\ln N}{\ln \langle k \rangle}$$
+1.  **Average path length (random network):** $$L(G) \approx \frac{\ln N}{\ln \langle k \rangle}$$
 
-2. **Lattice distance scaling** ($d$-dimensional): $$L(G) \sim D(G) \sim N^{1/d}$$
+2.  **Lattice distance scaling** ($d$-dimensional): $$L(G) \sim D(G) \sim N^{1/d}$$
 
-3. **Ring-lattice average path length:** $$L(0) \approx \frac{N}{2K}$$
+3.  **Ring-lattice average path length:** $$L(0) \approx \frac{N}{2K}$$
 
-4. **Ring-lattice clustering coefficient:** $$C(0) = \frac{3(K-2)}{4(K-1)}$$
+4.  **Ring-lattice clustering coefficient:** $$C(0) = \frac{3(K-2)}{4(K-1)}$$
 
-5. **Small-world regime** ($\beta$ small but nonzero): $$\frac{L(\beta)}{L(0)} \ll 1, \qquad \frac{C(\beta)}{C(0)} \approx 1$$
+5.  **Small-world regime** ($\beta$ small but nonzero): $$\frac{L(\beta)}{L(0)} \ll 1, \qquad \frac{C(\beta)}{C(0)} \approx 1$$
 
-6. **Expected clustering in $G(N,p)$:** $$\mathbb{E}[C] = p \ll C(0)$$
+6.  **Expected clustering in** $G(N,p)$: $$\mathbb{E}[C] = p \ll C(0)$$
 :::
 
 ## In-class questions
