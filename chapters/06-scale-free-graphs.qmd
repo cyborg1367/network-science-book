@@ -1,90 +1,78 @@
 ---
 title: "Scale-Free Networks"
+subtitle: "Power Laws, Hubs, and Generative Mechanisms"
 ---
 
 ```{r}
 #| label: chapter-setup-scalefree
 #| include: false
 
-library(igraph)
-library(dplyr)
-library(ggplot2)
-library(tidyr)
-library(purrr)
+setup_candidates <- c("R/book-setup.R", "../R/book-setup.R")
+setup_file <- setup_candidates[file.exists(setup_candidates)][1]
 
-course_cols <- list(
-  teal  = "#0F766E",
-  blue  = "#0EA5E9",
-  gold  = "#F59E0B",
-  warm  = "#D97706",
-  ink   = "#1F2937",
-  slate = "#475569",
-  grid  = "#E5E7EB"
+if (is.na(setup_file)) {
+  stop("Could not locate R/book-setup.R", call. = FALSE)
+}
+
+source(setup_file, local = knitr::knit_global())
+
+ns_book_setup(
+  preset = "advanced",
+  seed = 2040,
+  chunk_options = list(
+    echo = TRUE,
+    warning = FALSE,
+    message = FALSE,
+    fig.align = "center",
+    fig.width = 8.2,
+    fig.height = 5.2,
+    dpi = 350,
+    out.width = "100%"
+  )
 )
-
-theme_set(
-  theme_minimal(base_size = 13) +
-    theme(
-      plot.title.position = "plot",
-      panel.grid.minor = element_blank(),
-      panel.grid.major.x = element_line(color = course_cols$grid, linewidth = 0.35),
-      panel.grid.major.y = element_line(color = course_cols$grid, linewidth = 0.35),
-      axis.title = element_text(color = course_cols$ink),
-      axis.text = element_text(color = course_cols$ink),
-      plot.title = element_text(face = "bold", color = course_cols$ink),
-      plot.subtitle = element_text(color = course_cols$slate),
-      legend.position = "top"
-    )
-)
-
-set.seed(2040)
 ```
+
 
 ## Introduction
 
-The Erdős--Rényi model and the Watts--Strogatz model explain important aspects of network structure, but many real systems display a feature that neither model captures naturally: the existence of a small number of highly connected vertices, usually called **hubs**.
+Many real networks are dominated by degree heterogeneity. In citation systems, a small number of papers receive enormous attention while most receive few citations. In transportation systems, a small number of airports serve as major transfer hubs while most airports remain modest in connectivity. In the World Wide Web, some pages attract extraordinarily many links while the overwhelming majority remain comparatively peripheral. [@barabasi1999; @albert2002; @newman2010]
 
-Examples include:
+This chapter studies the mathematics of that phenomenon. Our goal is not merely to present the Barabási--Albert model, but to distinguish clearly between three different levels of description:
 
--   highly cited scientific papers,
--   very popular web pages,
--   airports with exceptionally high traffic,
--   social actors with unusually many connections.
+1.  the **structural signature** of a scale-free network,
+2.  the **statistical regularities** associated with heavy-tailed degree distributions,
+3.  the **generative mechanisms** that can produce such patterns.
 
-In such systems, degree is not concentrated around a typical value. Instead, the degree distribution is strongly heterogeneous. Most vertices have small degree, but a few vertices have extremely large degree. This broad distribution is one of the defining signatures of a scale-free network.
-
-The purpose of this chapter is to study the mathematical meaning of scale-free behavior and the mechanism by which it can arise. The central model is the **Barabási--Albert model**, which combines two key ingredients:
-
-1.  growth,
-2.  preferential attachment.
-
-Together they generate networks with heavy-tailed degree distributions and hub formation.
+The chapter therefore proceeds in two parts. We first study scale-free structure independently of any particular growth model. After that, we introduce growth and preferential attachment, and then present the Barabási--Albert model as one important mechanism that generates heavy-tailed degree distributions.
 
 ## Learning goals
 
 By the end of this chapter, it should be possible to:
 
--   define degree heterogeneity and hub structure
--   define a power-law degree distribution
--   explain what is meant by a scale-free network
--   define preferential attachment mathematically
--   describe the Barabási--Albert model
--   explain why preferential attachment leads to hub formation
--   verify scale-free behavior numerically in `R`
+-   explain what degree heterogeneity and hub structure mean
+-   define a power-law degree distribution and interpret its exponent
+-   explain why the term *scale-free* is used
+-   interpret degree distributions on log-log axes
+-   explain the ideas of universality and ultra-small distances in heavy-tailed networks
+-   generate a network with an arbitrary degree distribution using the configuration model
+-   describe growth and preferential attachment conceptually and mathematically
+-   define the Barabási--Albert model
+-   interpret degree dynamics in a growing preferential-attachment network
+-   evaluate the strengths and limitations of the BA model
 
-## Broad degree distributions and hubs
+## Roadmap
+
+The first half of the chapter develops the structural language of scale-free networks: hubs, heavy tails, power laws, universality, and the configuration model. The second half turns to growth-based explanations. There we introduce preferential attachment, the BA model, degree dynamics, and several empirical signatures of that model. This structure parallels the general organization used elsewhere in the book: structural property first, mechanistic model second, and numerical interpretation throughout.
+
+## Hubs, degree heterogeneity, and broad degree distributions
 
 ### Degree heterogeneity
 
-A first step toward scale-free structure is to understand that degree distributions need not be concentrated around one typical value.
-
-In a homogeneous network, most vertices have degree values of roughly the same order, and the distribution is relatively narrow. By contrast, in a heterogeneous network, degree values span many scales.
-
 ::: {#def-degree-heterogeneity}
-A network is said to exhibit **degree heterogeneity** if its degree distribution is broad, in the sense that vertices of very different degree coexist in significant numbers.
+A network exhibits **degree heterogeneity** when vertices with very different degrees coexist in substantial numbers, so that the degree distribution is broad rather than concentrated around a single typical value.
 :::
 
-This definition is qualitative, but it captures an essential structural distinction. In a heterogeneous network, one cannot meaningfully describe the graph using only a “typical” degree.
+In a homogeneous graph, most degrees lie in a relatively narrow band around the mean. In a heterogeneous graph, such a summary is inadequate: many vertices have small degree, a moderate number have intermediate degree, and a few may have extremely large degree. This broadness already suggests that the graph cannot be described adequately by average degree alone.
 
 ### Hubs
 
@@ -92,90 +80,102 @@ This definition is qualitative, but it captures an essential structural distinct
 A **hub** is a vertex whose degree is substantially larger than the degrees of most other vertices in the same network.
 :::
 
-The notion of a hub is relative to the graph under consideration. A vertex of degree $20$ may be a hub in one network and completely ordinary in another.
+Hubs matter because they can change the geometry and function of the network. They can shorten paths, centralize traffic, accelerate spreading processes, and create vulnerability under targeted removal. For this reason, the existence of hubs is not merely a visual feature; it is a structural fact with dynamical consequences.
 
-The significance of hubs is not merely visual. They strongly influence:
-
--   shortest paths,
--   robustness,
--   spreading processes,
--   centralization of connectivity.
-
-So the appearance of hubs is one of the main reasons why scale-free networks differ from more homogeneous random graphs.
-
-### Visual contrast: homogeneous and heterogeneous degree structure
+### Visual contrast: homogeneous and heterogeneous networks
 
 ```{r}
-#| label: heterogeneous-vs-homogeneous
-#| echo: false
-#| fig-cap: "A comparison between a homogeneous random graph and a heterogeneous preferential-attachment graph with approximately similar average degree."
+#| label: fig-heterogeneous-vs-homogeneous
+#| fig-cap: 'A visual comparison between a homogeneous Erdős--Rényi graph and a heterogeneous graph generated by preferential attachment. The two networks have roughly similar average degree, but the second contains a few much larger vertices, reflecting hub formation.'
 
-g_er <- sample_gnp(n = 50, p = 0.08, directed = FALSE, loops = FALSE)
-g_ba <- sample_pa(n = 50, power = 1, m = 2, directed = FALSE)
-
-plot_degree_colored <- function(g, main_text) {
-  deg <- degree(g)
-  brks <- quantile(deg, probs = c(0, 0.5, 0.8, 1), na.rm = TRUE)
-  brks[1] <- brks[1] - 1e-8
-  cols <- cut(
-    deg,
-    breaks = unique(brks),
-    include.lowest = TRUE,
-    labels = c(course_cols$blue, course_cols$teal, course_cols$gold)[seq_len(length(unique(brks)) - 1)]
+layout_tbl <- function(g, model_name) {
+  lay <- igraph::layout_with_fr(g)
+  nodes <- tibble(
+    id = seq_len(vcount(g)),
+    x = lay[, 1],
+    y = lay[, 2],
+    degree = igraph::degree(g),
+    model = model_name
   )
 
-  plot(
-    g,
-    layout = layout_with_fr(g),
-    vertex.size = 8 + 2.2 * sqrt(deg + 1),
-    vertex.color = as.character(cols),
-    vertex.frame.color = "white",
-    vertex.label = NA,
-    edge.color = scales::alpha(course_cols$ink, 0.20),
-    edge.width = 1.0,
-    main = main_text
-  )
+  edges <- igraph::as_data_frame(g, what = "edges") |>
+    transmute(from = from, to = to) |>
+    left_join(nodes |> select(from = id, x, y), by = "from") |>
+    rename(x_from = x, y_from = y) |>
+    left_join(nodes |> select(to = id, x, y), by = "to") |>
+    rename(x_to = x, y_to = y)
+
+  list(nodes = nodes, edges = edges)
 }
 
-old_par <- par(no.readonly = TRUE)
-par(mfrow = c(1, 2), mar = c(1, 1, 3, 1))
+g_er_small <- igraph::sample_gnp(n = 55, p = 0.08, directed = FALSE, loops = FALSE)
+g_ba_small <- igraph::sample_pa(n = 55, power = 1, m = 2, directed = FALSE)
 
-plot_degree_colored(g_er, "Homogeneous random graph")
-plot_degree_colored(g_ba, "Preferential-attachment graph")
+er_plot <- layout_tbl(g_er_small, "Homogeneous random graph")
+ba_plot <- layout_tbl(g_ba_small, "Heterogeneous network with hubs")
 
-par(old_par)
+nodes_tbl <- bind_rows(er_plot$nodes, ba_plot$nodes) |>
+  group_by(model) |>
+  mutate(degree_band = ntile(degree, 3)) |>
+  ungroup() |>
+  mutate(degree_band = factor(degree_band, levels = 1:3, labels = c("low", "middle", "high")))
+
+edges_tbl <- bind_rows(er_plot$edges, ba_plot$edges, .id = "panel") |>
+  mutate(model = c("Homogeneous random graph", "Heterogeneous network with hubs")[as.integer(panel)])
+
+ggplot() +
+  geom_segment(
+    data = edges_tbl,
+    aes(x = x_from, y = y_from, xend = x_to, yend = y_to),
+    color = alpha(course_cols$ink, 0.20), linewidth = 0.45
+  ) +
+  geom_point(
+    data = nodes_tbl,
+    aes(x = x, y = y, size = degree, fill = degree_band),
+    shape = 21, color = "white", stroke = 0.35, alpha = 0.95
+  ) +
+  scale_size_continuous(range = c(3.5, 12), guide = "none") +
+  scale_fill_manual(values = c(low = course_cols$blue, middle = course_cols$teal, high = course_cols$gold), guide = "none") +
+  facet_wrap(~model, nrow = 1) +
+  labs(
+    title = "Homogeneous versus heterogeneous degree structure",
+    subtitle = "Preferential attachment creates visibly dominant hubs",
+    x = NULL, y = NULL
+  ) +
+  theme(
+    axis.text = element_blank(),
+    axis.title = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank(),
+    strip.text = element_text(face = "bold", color = course_cols$ink)
+  )
 ```
 
-The comparison above illustrates the basic distinction:
+As shown in @fig-heterogeneous-vs-homogeneous, the contrast is qualitative before it is quantitative. In the Erdős--Rényi graph, vertex sizes remain relatively comparable. In the heterogeneous network, a small number of vertices dominate visually. This motivates the need for a more precise statistical description of broad degree structure.
 
--   in a homogeneous random graph, vertex degrees tend to lie in a relatively narrow range
--   in a preferential-attachment graph, a few vertices accumulate much larger degree and emerge as hubs
+## Power-law tails and the meaning of scale-free structure
 
-This does not yet prove a power law, but it motivates the need for a more precise mathematical description.
-
-## Power-law degree distributions
-
-### Definition of a power law
+### Power-law degree distributions
 
 ::: {#def-power-law}
-A degree distribution is said to follow a **power law** if, for sufficiently large degree $k$,
+A degree distribution follows a **power law** if, for sufficiently large degree $k$,
 
 $$
 P(k) \sim Ck^{-\gamma},
 $$
 
-where $C>0$ is a constant and $\gamma > 0$ is the degree exponent.
+where $C > 0$ and $\gamma > 0$.
 :::
 
-The notation $\sim$ means asymptotic proportionality. More precisely,
+The notation $\sim$ means asymptotic proportionality. In other words,
 
 $$
 \lim_{k \to \infty} \frac{P(k)}{Ck^{-\gamma}} = 1.
 $$
 
-So a power law describes the tail behavior of the degree distribution.
+So a power law is a statement about tail behavior. It does not claim that the full distribution must follow the same expression at all degrees.
 
-### Why the term “scale-free” is used
+### Why such networks are called scale-free
 
 Suppose
 
@@ -183,585 +183,856 @@ $$
 P(k) \sim Ck^{-\gamma}.
 $$
 
-Then for any scaling factor $a>0$,
+Then for any fixed scaling factor $a > 0$,
 
 $$
 P(ak) \sim C(ak)^{-\gamma} = a^{-\gamma} Ck^{-\gamma}.
 $$
 
-So changing the scale of $k$ only multiplies the distribution by a constant factor. There is no preferred characteristic scale in the tail. This is the reason for the term **scale-free**.
+So rescaling the degree changes the tail only by a multiplicative factor. There is no characteristic degree scale governing the tail. This is the basic reason for the term **scale-free**.
 
 ::: {#def-scale-free-network}
-A network is called **scale-free** if its degree distribution has a power-law tail over a substantial range of degrees.
+A network is called **scale-free** if its degree distribution has a power-law tail over a substantial range of degrees [@barabasi1999; @albert2002; @newman2010].
 :::
 
-This definition should be interpreted with care. In applications, one usually does not expect a perfect power law over all degrees. What matters is that the tail decays approximately as a power law over a meaningful interval.
+In practice, this definition should be interpreted carefully. Real finite networks rarely exhibit a perfect power law over all degrees. What matters is the approximate tail behavior over a meaningful scaling region [@clauset2009].
 
-### Cumulative distribution
+### Why the tail matters
 
-In empirical work it is often useful to consider the cumulative degree distribution
+Heavy tails differ sharply from binomial, Poisson, or exponential tails. In a heavy-tailed degree distribution:
 
-$$
-P(K \geq k).
-$$
+1.  low-degree vertices remain common,
+2.  high-degree vertices are rare but not negligible,
+3.  extreme degrees occur much more often than in narrow distributions.
 
-If
+This makes the second moment of the degree distribution especially important. When the tail is sufficiently heavy, quantities depending on $\langle k^2 \rangle$ can behave very differently from what one expects in homogeneous random graphs.
 
-$$
-P(k) \sim Ck^{-\gamma},
-$$
+## How to read degree distributions on ordinary and log-log scales
 
-then the cumulative distribution satisfies
+For empirical work, it is useful to distinguish three related objects:
 
-$$
-P(K \geq k) \sim C' k^{-(\gamma-1)}
-$$
+1.  the raw degree distribution $P(k)$,
+2.  its representation on log-log axes,
+3.  the complementary cumulative distribution function, or CCDF, $P(K \geq k)$.
 
-for large $k$, provided $\gamma > 1$.
-
-This representation is often smoother numerically and easier to visualize on a log-log scale.
-
-## Preferential attachment
-
-The central mechanism behind the Barabási--Albert model is preferential attachment.
-
-::: {#def-preferential-attachment}
-A growing network is said to evolve by **preferential attachment** if the probability that a new vertex connects to an existing vertex $i$ is proportional to the degree of $i$.
-:::
-
-If the degree of vertex $i$ at time $t$ is denoted by $k_i(t)$, then preferential attachment takes the form
-
-$$
-\Pi_i(t) = \frac{k_i(t)}{\sum_j k_j(t)}.
-$$
-
-This means that highly connected vertices are more likely to receive new links. In informal language, “the rich get richer.”
-
-### Interpretation
-
-Preferential attachment is not merely a mathematical trick. It encodes a plausible dynamic for many real systems.
-
--   a popular web page is more likely to attract new links,
--   a highly cited article is more likely to receive future citations,
--   a well-connected airport is more likely to gain new routes,
--   a socially visible person is more likely to form further connections.
-
-So preferential attachment captures a cumulative-advantage mechanism.
-
-::: {.callout-note title="Key result: preferential attachment rule"}
-In a growing network with preferential attachment, the probability that a new vertex connects to existing vertex $i$ is
-
-$$
-\Pi_i(t) = \frac{k_i(t)}{\displaystyle\sum_j k_j(t)}.
-$$
-
-Since $\sum_j k_j(t) = 2L(t)$, this simplifies to $\Pi_i(t) = k_i(t) / 2L(t)$. A vertex with twice the degree is twice as likely to receive a new edge.
-:::
-
-### Why preferential attachment matters
-
-If edges were added uniformly at random to existing vertices, the graph would not generate strong hub structure in the same way. Preferential attachment amplifies pre-existing degree differences.
-
-Once a vertex gains an advantage, it becomes more likely to gain future links, which can strengthen the advantage further. This feedback is the source of hub formation.
-
-## The Barabási--Albert model
-
-::: {#def-barabasi-albert}
-The **Barabási--Albert model** is defined by the following growth rule:
-
-1.  begin from a connected seed graph,
-2.  at each time step add one new vertex,
-3.  connect the new vertex to $m$ existing vertices,
-4.  choose each target vertex with probability proportional to its degree.
-:::
-
-The model therefore combines two ingredients:
-
--   **growth**: the number of vertices increases over time
--   **preferential attachment**: attachment probability is degree-proportional
-
-Both ingredients are essential. Growth alone does not produce scale-free structure, and preferential choice without growth does not generate the same degree dynamics.
-
-### Average degree in the BA model
-
-At each time step, one new vertex and $m$ new edges are added. For large network size, the average degree tends to
-
-$$
-\langle k \rangle \approx 2m.
-$$
-
-This follows from the fact that each new edge contributes $2$ to the total degree and that the number of edges grows linearly with the number of added vertices.
-
-So the parameter $m$ controls the density of the graph.
-
-## Growth of a preferential-attachment network
-
-The next figure illustrates the evolution of a Barabási--Albert network as new vertices are added.
+A raw histogram can obscure the tail because high-degree observations are rare. Log-log coordinates often make heavy-tailed behavior easier to inspect, but approximate linearity on log-log axes is only suggestive, not a mathematical proof of a power law. For this reason, cumulative representations are often preferred in practice.
 
 ```{r}
-#| label: ba-growth-snapshots
-#| echo: false
-#| fig-cap: "Growth of a preferential-attachment network. Older highly connected vertices begin to dominate as the network expands."
+#| label: fig-power-law-vs-poisson
+#| fig-cap: 'A comparison between a Poisson distribution and a power-law distribution on ordinary and log-log scales. On ordinary axes, the heavy tail is harder to interpret. On log-log axes, the slower tail decay becomes much clearer.'
 
-g1 <- sample_pa(n = 12, power = 1, m = 2, directed = FALSE)
-g2 <- sample_pa(n = 25, power = 1, m = 2, directed = FALSE)
-g3 <- sample_pa(n = 50, power = 1, m = 2, directed = FALSE)
+k_vals <- 1:80
+plot_tbl <- tibble(
+  k = rep(k_vals, 2),
+  prob = c(dpois(k_vals, lambda = 6), {
+    p <- k_vals^(-2.7)
+    p / sum(p)
+  }),
+  distribution = rep(c("Poisson", "Power law"), each = length(k_vals))
+)
 
-plot_ba_growth <- function(g, main_text) {
-  deg <- degree(g)
-  plot(
-    g,
-    layout = layout_with_fr(g),
-    vertex.size = 8 + 2.5 * sqrt(deg + 1),
-    vertex.color = course_cols$gold,
-    vertex.frame.color = "white",
-    vertex.label = NA,
-    edge.color = scales::alpha(course_cols$ink, 0.20),
-    edge.width = 1.1,
-    main = main_text
-  )
+p1 <- ggplot(plot_tbl, aes(x = k, y = prob, color = distribution)) +
+  geom_line(linewidth = 1.1) +
+  scale_color_manual(values = c("Poisson" = course_cols$teal, "Power law" = course_cols$gold)) +
+  labs(title = "Ordinary axes", x = "Degree k", y = "Probability", color = NULL) +
+  theme(legend.position = "top")
+
+p2 <- ggplot(plot_tbl, aes(x = k, y = prob, color = distribution)) +
+  geom_line(linewidth = 1.1) +
+  scale_color_manual(values = c("Poisson" = course_cols$teal, "Power law" = course_cols$gold)) +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(title = "Log-log axes", x = "Degree k", y = "Probability", color = NULL) +
+  theme(legend.position = "none")
+
+gridExtra::grid.arrange(p1, p2, ncol = 2)
+```
+
+Figure @fig-power-law-vs-poisson illustrates why log-log plots are so common in this literature. On ordinary axes, the mass near small degrees dominates the picture. On log-log axes, the difference in tail decay becomes much easier to see. At the same time, one should not over-interpret visual linearity. Finite-size noise, truncation, and sampling variability can all distort the tail [@clauset2009].
+
+## Universality and the scale-free viewpoint
+
+One reason scale-free networks attracted so much attention is that broad degree distributions appear in many systems that are otherwise very different: technological, biological, informational, and social networks can all exhibit strong degree heterogeneity. This led to the idea of **universality**: systems with very different microscopic details may display similar large-scale statistical signatures. [@albert2002; @barabasi2016]
+
+This does not mean that all real networks are power-law networks, nor that all heavy-tailed networks arise from the same mechanism. The point is more subtle. Similar tail behavior can emerge from very different domains, which suggests that some statistical regularities are more fundamental than the details of the underlying application.
+
+For a mathematical treatment, the important lesson is that scale-free structure should be studied first as a structural phenomenon. A generative model such as the BA model is then one explanation of that phenomenon, not the definition of the phenomenon itself.
+
+## Ultra-small distances
+
+```{r}
+#| label: code-ultra-small-helpers
+
+sample_powerlaw_degrees <- function(n, gamma, k_min = 2, k_max = 80) {
+  ks <- k_min:k_max
+  probs <- ks^(-gamma)
+  probs <- probs / sum(probs)
+  deg <- sample(ks, size = n, replace = TRUE, prob = probs)
+
+  if (sum(deg) %% 2 == 1) {
+    i <- sample(seq_len(n), 1)
+    deg[i] <- deg[i] + 1
+  }
+
+  deg
 }
 
-old_par <- par(no.readonly = TRUE)
-par(mfrow = c(1, 3), mar = c(1, 1, 3, 1))
+make_scale_free_cfg <- function(n, gamma, k_min = 2, k_max = 80) {
+  deg <- sample_powerlaw_degrees(n, gamma, k_min, k_max)
+  g <- igraph::sample_degseq(deg, method = "vl")
+  g <- igraph::simplify(g, remove.multiple = TRUE, remove.loops = TRUE)
+  comps <- igraph::components(g)
+  giant_id <- which.max(comps$csize)
+  igraph::induced_subgraph(g, which(comps$membership == giant_id))
+}
 
-plot_ba_growth(g1, "Early stage")
-plot_ba_growth(g2, "Intermediate stage")
-plot_ba_growth(g3, "Later stage")
-
-par(old_par)
+simulate_mean_distance_connected <- function(generator, sizes, reps = 8) {
+  map_dfr(sizes, function(n) {
+    vals <- numeric(reps)
+    for (r in seq_len(reps)) {
+      repeat {
+        g <- generator(n)
+        if (igraph::components(g)$no == 1) break
+      }
+      vals[r] <- igraph::mean_distance(g, directed = FALSE, unconnected = FALSE)
+    }
+    tibble(n = n, mean_distance = mean(vals))
+  })
+}
 ```
 
-This figure shows the central mechanism of the model:
+Scale-free degree heterogeneity can also affect the metric structure of a network. In many classical random graph models, average path length grows on the order of $\log N$. In sufficiently heavy-tailed networks, especially when $2 < \gamma < 3$, the growth can be even slower. This regime is often described as **ultra-small**, because distances may scale like $\log \log N$ rather than $\log N$ in the large-size limit [@newman2001; @dorogovtsev2003; @barabasi2016].
 
--   early fluctuations matter,
--   some vertices acquire an advantage early,
--   that advantage is amplified over time,
--   hubs gradually emerge.
+The exact asymptotics require care, but the central idea is intuitive: a small number of extremely connected hubs can create shortcuts across the graph. As a result, the network may remain globally close even as it becomes very large.
 
-So the model does not treat all vertices symmetrically across time. Age and accumulated degree both influence network structure.
+```{r}
+#| label: fig-ultra-small-comparison
+#| echo: true
+#| fig-cap: 'Average path length versus system size for Erdős--Rényi graphs and heavy-tailed configuration-model graphs. The heavy-tailed networks tend to maintain shorter distances, illustrating the qualitative idea behind ultra-small behavior.'
 
-## Degree distribution in the BA model
+sizes <- c(120, 180, 260, 380, 550, 800)
 
-A classical result for the Barabási--Albert model is that the degree distribution follows a power law with exponent
+er_path_tbl <- simulate_mean_distance_connected(
+  generator = function(n) igraph::sample_gnp(n = n, p = 6 / (n - 1), directed = FALSE, loops = FALSE),
+  sizes = sizes,
+  reps = 6
+) |>
+  mutate(model = "Erdos-Renyi")
 
-$$
-\gamma = 3.
-$$
+sf_path_tbl <- simulate_mean_distance_connected(
+  generator = function(n) make_scale_free_cfg(n = n, gamma = 2.5, k_min = 2, k_max = 70),
+  sizes = sizes,
+  reps = 6
+) |>
+  mutate(model = "Heavy-tailed configuration model")
 
-More precisely, in the asymptotic limit,
+path_tbl <- bind_rows(er_path_tbl, sf_path_tbl)
 
-$$
-P(k) \sim Ck^{-3}.
-$$
+ggplot(path_tbl, aes(x = n, y = mean_distance, color = model)) +
+  geom_line(linewidth = 1.1) +
+  geom_point(size = 2) +
+  scale_color_manual(values = c("Erdos-Renyi" = course_cols$teal,
+                                "Heavy-tailed configuration model" = course_cols$gold)) +
+  labs(
+    title = "Distance growth in homogeneous and heavy-tailed networks",
+    subtitle = "Heavy-tailed graphs tend to remain metrically closer",
+    x = "Number of vertices, N",
+    y = "Average path length",
+    color = NULL
+  )
+```
 
-This means that the degree distribution is heavy-tailed: high-degree vertices are rare, but much more common than in models with exponentially decaying tails.
+As shown in @fig-ultra-small-comparison, the heavy-tailed configuration-model networks tend to maintain shorter paths over the same range of system sizes. This finite simulation does not prove the asymptotic law $\log \log N$, but it supports the broader structural message: degree heterogeneity can compress distances very strongly.
 
-### Consequences of a heavy tail
+## Generating arbitrary degree distributions: the configuration model
 
-The power-law form has several important structural implications.
+```{r}
+#| label: code-configuration-model-helpers
 
-1.  Most vertices have small degree.
-2.  A few vertices may have very large degree.
-3.  There is no narrow characteristic degree scale in the tail.
-4.  Hub structure becomes a natural outcome of the dynamics.
+emp_degree_table <- function(g) {
+  tibble(k = igraph::degree(g)) |>
+    count(k, name = "count") |>
+    filter(k > 0) |>
+    arrange(k) |>
+    mutate(prob = count / sum(count))
+}
+```
 
-This is what makes scale-free networks qualitatively different from Erdős--Rényi random graphs, whose degree distributions are much more concentrated.
+The scale-free viewpoint is broader than any single growth model. If our objective is simply to construct a graph with a given degree sequence or degree distribution, we can do so without invoking growth or preferential attachment at all [@newman2001; @newman2010].
 
-::: {.callout-important title="Classical result: BA degree distribution"}
-The Barabási--Albert model with parameter $m$ produces a power-law degree distribution with exponent $\gamma = 3$:
-
-$$
-P(k) \sim C k^{-3}, \qquad k \gg m.
-$$
-
-This result is independent of $m$. The parameter $m$ controls the density ($\langle k \rangle \approx 2m$) but not the tail exponent. Heavy tails are an inevitable consequence of the growth-plus-preferential-attachment mechanism.
+::: {#def-configuration-model}
+The **configuration model** constructs a random graph from a prescribed degree sequence by assigning a number of half-edges to each vertex equal to its degree and then pairing those half-edges at random.
 :::
 
-## Numerical exploration
+This idea is important conceptually. It shows that a heavy-tailed degree distribution is not the same thing as a growth rule. One can impose the distribution first and randomize the rest of the structure [@newman2001; @molloy1995].
 
-### Degree distribution of a BA network
+### Why the configuration model matters
 
-```{r}
-#| label: ba-degree-distribution-data
+The configuration model is useful because it allows us to separate two questions:
 
-set.seed(2040)
+1.  What happens because of the degree distribution itself?
+2.  What happens because of the particular mechanism that generated the network?
 
-n_ba <- 3000
-m_ba <- 2
-
-g_ba_large <- sample_pa(n = n_ba, power = 1, m = m_ba, directed = FALSE)
-deg_ba <- degree(g_ba_large)
-
-deg_tbl <- tibble(k = deg_ba) |>
-  count(k, name = "count") |>
-  filter(k > 0) |>
-  mutate(
-    prob = count / sum(count)
-  )
-
-deg_tbl
-```
+If two networks share the same degree distribution but differ in clustering, age structure, or community organization, then the differences cannot be attributed to degree sequence alone.
 
 ```{r}
-#| label: ba-degree-distribution-plot
-#| fig-cap: "Empirical degree distribution of a Barabási--Albert network on log-log axes."
+#| label: fig-configuration-model-powerlaw
+#| echo: true
+#| fig-cap: 'Empirical degree distribution of a heavy-tailed network generated by the configuration model. The model reproduces a prescribed broad degree sequence without using growth or preferential attachment.'
 
-ggplot(deg_tbl, aes(x = k, y = prob)) +
-  geom_point(color = course_cols$teal, size = 2.0, alpha = 0.8) +
+g_cfg <- make_scale_free_cfg(n = 1800, gamma = 2.6, k_min = 2, k_max = 90)
+cfg_tbl <- emp_degree_table(g_cfg)
+
+ggplot(cfg_tbl, aes(x = k, y = prob)) +
+  geom_point(color = course_cols$violet, size = 1.8, alpha = 0.85) +
   scale_x_log10() +
   scale_y_log10() +
   labs(
-    title = "Degree distribution of a preferential-attachment network",
-    subtitle = "The heavy tail is visible on log-log axes",
+    title = "Heavy-tailed degree distribution from the configuration model",
+    subtitle = "The tail is imposed through the degree sequence rather than produced by growth",
     x = "Degree k",
     y = "P(k)"
   )
 ```
 
-This plot does not by itself prove a power law, but it shows the heavy-tailed structure clearly. The tail decays much more slowly than the binomial or Poisson degree distributions seen in homogeneous random graphs.
+Figure @fig-configuration-model-powerlaw makes the main point visible. A broad, approximately power-law degree distribution can be produced without any growth mechanism. This is why the configuration model is such a useful baseline in network science: it isolates the role of degree heterogeneity from other structural ingredients.
 
-### Cumulative degree distribution
+## From structural signature to generative mechanism
+
+We have now described scale-free networks as structural objects: they exhibit broad degree distributions, heavy tails, hubs, and often unusually short distances. The next question is different in character:
+
+> What dynamic mechanism can generate such structure?
+
+One influential answer is based on two ideas:
+
+1.  networks grow over time,
+2.  new vertices do not attach uniformly, but prefer already well-connected vertices.
+
+This is the logic of growth plus preferential attachment.
+
+## Growth and preferential attachment
+
+### Conceptual idea
+
+Preferential attachment is a cumulative-advantage mechanism. If a vertex has already accumulated many links, it becomes more likely to receive additional links in the future. This creates positive feedback: large degree tends to become even larger.
+
+In social and informational systems, this idea is often plausible. Popular pages attract more links. Well-cited papers attract more citations. Highly connected airports attract more routes. The phrase “the rich get richer” is informal, but it captures the intuition well.
+
+### Mathematical form
+
+::: {#def-preferential-attachment}
+A growing network evolves by **preferential attachment** if the probability that a new vertex connects to an existing vertex $i$ is proportional to the current degree of $i$.
+:::
+
+If vertex $i$ has degree $k_i(t)$ at time $t$, then the attachment probability is
+
+$$
+\Pi_i(t) = \frac{k_i(t)}{\sum_j k_j(t)}.
+$$
+
+Since $\sum_j k_j(t) = 2L(t)$, this can also be written as
+
+$$
+\Pi_i(t) = \frac{k_i(t)}{2L(t)}.
+$$
+
+::: {.callout-note title="Interpretation"}
+Preferential attachment does not say that only large-degree vertices receive new links. It says that they receive them with higher probability. The mechanism is probabilistic, not deterministic.
+:::
+
+## The Barabási--Albert model
+
+::: {#def-barabasi-albert}
+The **Barabási--Albert (BA) model** is defined by the following rule:
+
+1.  begin with a connected seed graph,
+2.  at each time step add one new vertex,
+3.  connect the new vertex to $m$ existing vertices,
+4.  choose each target with probability proportional to degree.
+:::
+
+The BA model therefore combines growth with preferential attachment. Neither ingredient alone is enough to produce the characteristic degree dynamics of the model.
+
+### Average degree
+
+At each time step, one new vertex and $m$ new edges are added. Therefore, for large system size,
+
+$$
+\langle k \rangle \approx 2m.
+$$
+
+So the parameter $m$ controls density, while the preferential-attachment rule controls the heavy-tailed structure.
+
+## Simulating BA growth
 
 ```{r}
-#| label: ba-cumulative-distribution
-#| echo: false
-#| fig-cap: "Empirical cumulative degree distribution of a Barabási--Albert network on log-log axes."
+#| label: fig-ba-growth-snapshots
+#| fig-cap: 'Snapshots of a Barabási--Albert network at three stages of growth. Older vertices with early degree advantage can accumulate disproportionately many links as the network expands.'
 
-cum_tbl <- deg_tbl |>
-  arrange(desc(k)) |>
-  mutate(
-    ccdf = cumsum(prob)
-  ) |>
-  arrange(k)
+layout_tbl <- function(g, stage_name) {
+  lay <- igraph::layout_with_fr(g)
+  nodes <- tibble(
+    id = seq_len(vcount(g)),
+    x = lay[, 1],
+    y = lay[, 2],
+    degree = igraph::degree(g),
+    stage = stage_name
+  )
+  edges <- igraph::as_data_frame(g, what = "edges") |>
+    left_join(nodes |> select(from = id, x, y), by = "from") |>
+    rename(x_from = x, y_from = y) |>
+    left_join(nodes |> select(to = id, x, y), by = "to") |>
+    rename(x_to = x, y_to = y) |>
+    mutate(stage = stage_name)
+  list(nodes = nodes, edges = edges)
+}
 
-ggplot(cum_tbl, aes(x = k, y = ccdf)) +
-  geom_point(color = course_cols$gold, size = 2.0, alpha = 0.8) +
+g1 <- igraph::sample_pa(n = 12, power = 1, m = 2, directed = FALSE)
+g2 <- igraph::sample_pa(n = 28, power = 1, m = 2, directed = FALSE)
+g3 <- igraph::sample_pa(n = 60, power = 1, m = 2, directed = FALSE)
+
+p1 <- layout_tbl(g1, "Early stage")
+p2 <- layout_tbl(g2, "Intermediate stage")
+p3 <- layout_tbl(g3, "Later stage")
+
+nodes_tbl <- bind_rows(p1$nodes, p2$nodes, p3$nodes)
+edges_tbl <- bind_rows(p1$edges, p2$edges, p3$edges)
+
+ggplot() +
+  geom_segment(
+    data = edges_tbl,
+    aes(x = x_from, y = y_from, xend = x_to, yend = y_to),
+    color = alpha(course_cols$ink, 0.20), linewidth = 0.45
+  ) +
+  geom_point(
+    data = nodes_tbl,
+    aes(x = x, y = y, size = degree),
+    fill = course_cols$gold, color = "white", shape = 21, stroke = 0.35, alpha = 0.95
+  ) +
+  scale_size_continuous(range = c(3.5, 12), guide = "none") +
+  facet_wrap(~stage, nrow = 1) +
+  labs(
+    title = "Growth snapshots in the BA model",
+    subtitle = "Early vertices can accumulate visible degree advantage over time",
+    x = NULL, y = NULL
+  ) +
+  theme(
+    axis.text = element_blank(),
+    axis.title = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank(),
+    strip.text = element_text(face = "bold", color = course_cols$ink)
+  )
+```
+
+As shown in @fig-ba-growth-snapshots, the BA model is intrinsically time-asymmetric. Vertices that enter early have more opportunities to accumulate links, and preferential attachment can amplify that early advantage. The emergence of hubs is therefore tied both to present degree and to time of arrival.
+
+## Degree dynamics in a growing network
+
+```{r}
+#| label: code-ba-degree-dynamics-helper
+
+track_ba_degree_dynamics <- function(n = 300, m = 2, tracked = c(1, 2, 5, 10, 30, 80)) {
+  tracked <- sort(unique(tracked))
+  tracked <- tracked[tracked <= n]
+
+  deg <- rep(0, n)
+  adj <- matrix(0, nrow = n, ncol = n)
+
+  active <- seq_len(m + 1)
+  for (i in active) {
+    for (j in active) {
+      if (i < j) {
+        adj[i, j] <- 1
+        adj[j, i] <- 1
+      }
+    }
+  }
+  deg[active] <- rowSums(adj[active, active, drop = FALSE])
+
+  record_step <- function(t) {
+    tibble(time = t, vertex = tracked, degree = deg[tracked])
+  }
+
+  out <- list(record_step(m + 1))
+
+  for (t in (m + 2):n) {
+    probs <- deg[1:(t - 1)] / sum(deg[1:(t - 1)])
+    targets <- sample(1:(t - 1), size = m, replace = FALSE, prob = probs)
+    adj[t, targets] <- 1
+    adj[targets, t] <- 1
+    deg[targets] <- deg[targets] + 1
+    deg[t] <- m
+    out[[length(out) + 1]] <- record_step(t)
+  }
+
+  bind_rows(out)
+}
+```
+
+One of the most instructive ways to understand preferential attachment is to follow a few vertices through time. Early vertices often accumulate degree much faster than later ones, because they have both temporal advantage and higher exposure to subsequent attachment events.
+
+```{r}
+#| label: fig-ba-degree-dynamics
+#| echo: true
+#| fig-cap: 'Degree trajectories for several vertices in a growing BA network. Earlier vertices tend to accumulate degree for longer and often remain ahead of later vertices.'
+
+dyn_tbl <- track_ba_degree_dynamics(
+  n = 320,
+  m = 2,
+  tracked = c(1, 2, 5, 10, 30, 80)
+) |>
+  mutate(vertex = paste0("v", vertex))
+
+ggplot(dyn_tbl, aes(x = time, y = degree, color = vertex)) +
+  geom_line(linewidth = 1.0) +
+  labs(
+    title = "Degree dynamics in the BA model",
+    subtitle = "Early arrival and preferential attachment reinforce one another",
+    x = "Time",
+    y = "Degree",
+    color = "Tracked vertex"
+  )
+```
+
+Figure @fig-ba-degree-dynamics highlights a central message: preferential attachment is not just a statement about the final degree distribution. It is a dynamic rule that shapes the entire history of the network. The trajectories also show that stochasticity remains important. Early arrival creates opportunity, but not every early vertex becomes a dominant hub.
+
+## Degree distribution in the BA model
+
+```{r}
+#| label: code-ba-degree-distribution-helpers
+
+emp_ccdf_table <- function(g) {
+  emp_degree_table(g) |>
+    arrange(desc(k)) |>
+    mutate(ccdf = cumsum(prob)) |>
+    arrange(k)
+}
+```
+
+A classical result for the BA model is that the degree distribution has asymptotic tail [@barabasi1999; @bollobas2001]
+
+$$
+P(k) \sim Ck^{-3}.
+$$
+
+So the BA model produces a scale-free network with exponent
+
+$$
+\gamma = 3.
+$$
+
+This is one of the reasons the model became so influential: a very simple growth rule produces hub-dominated degree structure automatically.
+
+### A note on finite-size effects
+
+In finite simulations, one should not expect a perfect straight line on a log-log plot. The extreme tail is sparse, noisy, and often truncated. This is why cumulative plots are also useful.
+
+```{r}
+#| label: ba-degree-distribution-data
+
+set.seed(2040)
+n_ba <- 3000
+m_ba <- 2
+
+g_ba_large <- igraph::sample_pa(n = n_ba, power = 1, m = m_ba, directed = FALSE)
+deg_tbl <- emp_degree_table(g_ba_large)
+cum_tbl <- emp_ccdf_table(g_ba_large)
+```
+
+```{r}
+#| label: fig-ba-degree-distribution-plot
+#| echo: true
+#| fig-cap: 'Empirical degree distribution of a Barabási--Albert network on log-log axes. The broad tail is clear, although the far tail is noisy because of finite-size effects.'
+
+ggplot(deg_tbl, aes(x = k, y = prob)) +
+  geom_point(color = course_cols$teal, size = 1.9, alpha = 0.82) +
   scale_x_log10() +
   scale_y_log10() +
   labs(
-    title = "Cumulative degree distribution",
-    subtitle = "A cumulative representation often gives a smoother view of the tail",
+    title = "Degree distribution of a BA network",
+    subtitle = "Heavy-tailed structure is visible on log-log axes",
+    x = "Degree k",
+    y = "P(k)"
+  )
+```
+
+```{r}
+#| label: fig-ba-cumulative-distribution
+#| echo: true
+#| fig-cap: 'Empirical complementary cumulative degree distribution of a Barabási--Albert network on log-log axes. The cumulative representation smooths the tail and often gives a more stable visual summary.'
+
+ggplot(cum_tbl, aes(x = k, y = ccdf)) +
+  geom_point(color = course_cols$gold, size = 1.9, alpha = 0.82) +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(
+    title = "Cumulative degree distribution of a BA network",
+    subtitle = "The CCDF gives a smoother view of the tail",
     x = "Degree k",
     y = "P(K >= k)"
   )
 ```
 
-The cumulative distribution is often smoother than the raw degree histogram and is therefore useful when investigating heavy-tailed behavior.
+Taken together, @fig-ba-degree-distribution-plot and @fig-ba-cumulative-distribution show the same structural message in two complementary ways. The raw distribution emphasizes the broadness of the tail, while the CCDF gives a cleaner view of the decay at large degree. In a textbook setting, it is useful for students to see both because empirical work often moves back and forth between them.
 
-## Comparison with Erdős--Rényi graphs
-
-A direct comparison with an Erdős--Rényi graph having approximately the same average degree helps clarify the difference in degree structure.
+## Measuring preferential attachment in simulation
 
 ```{r}
-#| label: ba-vs-er-comparison
-#| echo: false
-#| fig-cap: "Degree distributions of a Barabási--Albert graph and an Erdős--Rényi graph with approximately matched average degree."
+#| label: code-measuring-preferential-attachment-helper
 
-p_match <- (2 * m_ba) / (n_ba - 1)
-g_er_match <- sample_gnp(n = n_ba, p = p_match, directed = FALSE, loops = FALSE)
-deg_er <- degree(g_er_match)
+estimate_attachment_kernel_ba <- function(n = 1200, m = 2) {
+  deg <- rep(0, n)
+  adj <- matrix(0, nrow = n, ncol = n)
 
-er_tbl <- tibble(k = deg_er) |>
-  count(k, name = "count") |>
-  filter(k > 0) |>
-  mutate(prob = count / sum(count),
-         model = "Erdos-Renyi")
+  active <- seq_len(m + 1)
+  for (i in active) {
+    for (j in active) {
+      if (i < j) {
+        adj[i, j] <- 1
+        adj[j, i] <- 1
+      }
+    }
+  }
+  deg[active] <- rowSums(adj[active, active, drop = FALSE])
 
-ba_tbl <- tibble(k = deg_ba) |>
-  count(k, name = "count") |>
-  filter(k > 0) |>
-  mutate(prob = count / sum(count),
-         model = "Barabasi-Albert")
+  records <- list()
 
-compare_tbl <- bind_rows(ba_tbl, er_tbl)
+  for (t in (m + 2):n) {
+    existing_deg <- deg[1:(t - 1)]
+    probs <- existing_deg / sum(existing_deg)
+    targets <- sample(1:(t - 1), size = m, replace = FALSE, prob = probs)
 
-ggplot(compare_tbl, aes(x = k, y = prob, color = model)) +
-  geom_point(size = 2.0, alpha = 0.8) +
-  scale_x_log10() +
-  scale_y_log10() +
-  scale_color_manual(values = c("Barabasi-Albert" = course_cols$gold, "Erdos-Renyi" = course_cols$teal)) +
+    hit <- integer(t - 1)
+    hit[targets] <- 1L
+
+    records[[length(records) + 1]] <- tibble(k = existing_deg, received = hit)
+
+    adj[t, targets] <- 1
+    adj[targets, t] <- 1
+    deg[targets] <- deg[targets] + 1
+    deg[t] <- m
+  }
+
+  bind_rows(records) |>
+    group_by(k) |>
+    summarise(mean_new_links = mean(received), count = n(), .groups = "drop") |>
+    filter(count >= 30)
+}
+```
+
+If the BA mechanism is truly degree-proportional, then vertices of degree $k$ should receive new links at a rate that grows approximately linearly with $k$. This can be checked empirically from a simulation.
+
+```{r}
+#| label: fig-measuring-preferential-attachment
+#| echo: true
+#| fig-cap: 'Estimated attachment kernel in a BA simulation. The mean rate of receiving new links grows approximately linearly with current degree, consistent with preferential attachment.'
+
+attach_tbl <- estimate_attachment_kernel_ba(n = 1400, m = 2)
+
+ggplot(attach_tbl, aes(x = k, y = mean_new_links)) +
+  geom_point(color = course_cols$coral, size = 1.8, alpha = 0.85) +
+  geom_smooth(method = "lm", se = FALSE, color = course_cols$ink, linewidth = 0.9) +
   labs(
-    title = "Heavy-tailed versus homogeneous degree structure",
-    subtitle = "The two models have similar average degree but very different tails",
-    x = "Degree k",
-    y = "P(k)",
-    color = NULL
+    title = "Empirical attachment rate versus current degree",
+    subtitle = "Degree-proportional growth appears as an approximately linear trend",
+    x = "Current degree k",
+    y = "Mean probability of receiving a new link"
   )
 ```
 
-The contrast is the essential one:
+As shown in @fig-measuring-preferential-attachment, the simulated attachment rate increases roughly linearly with current degree. This does not replace the formal definition of the model, but it gives an empirical confirmation of what the mechanism means in practice [@barabasi1999; @barabasi2016].
 
--   the Erdős--Rényi graph has a narrow degree distribution,
--   the Barabási--Albert graph has a broad heavy-tailed degree distribution.
+## Beyond degree distribution: clustering and distances in the BA model
 
-This is the mathematical signature of hub formation.
+```{r}
+#| label: code-ba-vs-er-properties-helper
 
-## Why scale-free structure is important
+compare_stats <- function(n, m, reps = 10) {
+  map_dfr(seq_len(reps), function(r) {
+    g_ba <- igraph::sample_pa(n = n, m = m, power = 1, directed = FALSE)
+    p_er <- (2 * m) / (n - 1)
 
-Scale-free structure matters because degree heterogeneity strongly affects network behavior.
+    repeat {
+      g_er <- igraph::sample_gnp(n = n, p = p_er, directed = FALSE, loops = FALSE)
+      if (igraph::components(g_er)$no == 1) break
+    }
 
-### Paths and centralization
+    tibble(
+      model = c("Barabasi-Albert", "Erdos-Renyi"),
+      mean_distance = c(
+        igraph::mean_distance(g_ba, directed = FALSE),
+        igraph::mean_distance(g_er, directed = FALSE)
+      ),
+      transitivity = c(
+        igraph::transitivity(g_ba, type = "global"),
+        igraph::transitivity(g_er, type = "global")
+      )
+    )
+  })
+}
+```
 
-Hubs can act as highly efficient bridges. They reduce many shortest paths and create strong centralization of flow.
+A degree distribution is not the whole story of a network. Two models may differ not only in their tails, but also in their path length, clustering, and other global properties. It is therefore useful to compare the BA model with an Erdős--Rényi graph of similar average degree.
 
-### Robustness and vulnerability
+```{r}
+#| label: fig-ba-vs-er-properties
+#| echo: true
+#| fig-cap: 'A comparison of average path length and transitivity for BA and Erdős--Rényi graphs with approximately matched average degree. The BA model tends to produce shorter paths because of hubs, while clustering is not automatically high.'
 
-A network with hubs may be tolerant to random deletion of vertices, because most randomly chosen vertices are low-degree. But it may be highly vulnerable to targeted removal of hubs.
+compare_stats <- function(n, m, reps = 10) {
+  map_dfr(seq_len(reps), function(r) {
+    g_ba <- igraph::sample_pa(n = n, m = m, power = 1, directed = FALSE)
+    p_er <- (2 * m) / (n - 1)
+    repeat {
+      g_er <- igraph::sample_gnp(n = n, p = p_er, directed = FALSE, loops = FALSE)
+      if (igraph::components(g_er)$no == 1) break
+    }
 
-### Spreading processes
+    tibble(
+      model = c("Barabasi-Albert", "Erdos-Renyi"),
+      mean_distance = c(
+        igraph::mean_distance(g_ba, directed = FALSE),
+        igraph::mean_distance(g_er, directed = FALSE)
+      ),
+      transitivity = c(
+        igraph::transitivity(g_ba, type = "global"),
+        igraph::transitivity(g_er, type = "global")
+      )
+    )
+  })
+}
 
-Infections, information, or cascades can spread differently in hub-dominated networks than in homogeneous graphs, because hubs can act as powerful transmission centers.
+stats_tbl <- compare_stats(n = 250, m = 2, reps = 5) |>
+  pivot_longer(cols = c(mean_distance, transitivity),
+               names_to = "metric", values_to = "value") |>
+  mutate(metric = recode(metric,
+                         mean_distance = "Average path length",
+                         transitivity = "Global clustering"))
+ggplot(stats_tbl, aes(x = model, y = value, fill = model)) +
+  geom_boxplot(alpha = 0.85, width = 0.65, outlier.alpha = 0.4) +
+  facet_wrap(~ metric, scales = "free_y") +
+  scale_fill_manual(values = c("Barabasi-Albert" = course_cols$gold,
+                               "Erdos-Renyi" = course_cols$teal)) +
+  labs(
+    title = "Structural comparison of BA and Erdős--Rényi models",
+    subtitle = "Hub structure shortens distances, but clustering is not automatically large",
+    x = NULL,
+    y = NULL,
+    fill = NULL
+  )
+```
 
-So the shape of the degree distribution is not merely descriptive. It has dynamical consequences.
+Figure @fig-ba-vs-er-properties shows why one should not reduce the BA model to its power-law tail alone. The model typically creates shorter paths than a matched Erdős--Rényi graph because hubs provide shortcuts. At the same time, its clustering is not necessarily large enough to match many empirical networks. This is one reason later models introduced additional mechanisms beyond simple preferential attachment [@albert2002; @barabasi2016].
+
+## What the BA model explains and what it does not
+
+The BA model is historically important because it demonstrates that a very simple mechanism can generate heavy-tailed degree distributions and hub formation. It explains, in a mathematically transparent way, how growth plus cumulative advantage can lead to scale-free structure [@barabasi1999; @albert2002; @barabasi2016].
+
+However, the model also has clear limitations:
+
+1.  the exponent is quite specific, with asymptotic value $\gamma = 3$,
+2.  clustering is often lower than in many real systems,
+3.  communities, geometry, and hidden attributes are absent,
+4.  not every heavy-tailed network is generated by pure preferential attachment.
+
+So the BA model should be viewed as a foundational mechanism, not as a complete description of all scale-free networks.
 
 ## Core formulas to remember
 
 ::: {.callout-important title="Summary"}
-For scale-free networks and the Barabási--Albert model:
+For scale-free structure and the BA model, the most important formulas in this chapter are:
 
-1. **Preferential attachment probability:** $$\Pi_i(t) = \frac{k_i(t)}{\displaystyle\sum_j k_j(t)} = \frac{k_i(t)}{2L(t)}$$
+1.  **Power-law tail:** $$P(k) \sim Ck^{-\gamma}$$
 
-2. **Average degree in the BA model:** $$\langle k \rangle \approx 2m$$
+2.  **Scale-free scaling relation:** $$P(ak) \sim a^{-\gamma} P(k)$$
 
-3. **Power-law degree distribution:** $$P(k) \sim C k^{-\gamma}, \qquad \gamma = 3 \text{ for the BA model}$$
+3.  **Complementary cumulative tail:** $$P(K \geq k) \sim C'k^{-(\gamma - 1)} \qquad (\gamma > 1)$$
 
-4. **Scale-free property:** $$P(ak) = a^{-\gamma} P(k) \quad \text{for all } a > 0$$
+4.  **Preferential attachment probability:** $$\Pi_i(t) = \frac{k_i(t)}{\sum_j k_j(t)} = \frac{k_i(t)}{2L(t)}$$
 
-5. **Cumulative tail:** $$P(K \geq k) \sim C' k^{-(\gamma - 1)}$$
+5.  **Average degree in the BA model:** $$\langle k \rangle \approx 2m$$
 
-6. **Degree distribution comparison:**
-
-| Model | Degree distribution | Typical form |
-|:------|:-------------------:|:------------:|
-| $G(N,p)$ | Binomial / Poisson | narrow, peaked |
-| Watts--Strogatz | Near-Poisson | narrow, peaked |
-| Barabási--Albert | Power law | heavy-tailed, hub-dominated |
+6.  **BA tail exponent:** $$P(k) \sim Ck^{-3}$$
 :::
 
 ## In-class questions
 
-1.  Why does a broad degree distribution imply that average degree alone is insufficient to describe the graph?
-2.  What is the difference between a heavy-tailed degree distribution and a narrow one?
-3.  Why does preferential attachment lead naturally to hub formation?
-4.  Why are growth and preferential attachment both essential in the BA model?
-5.  Why does a scale-free network differ structurally from an Erdős--Rényi graph even when their average degrees are similar?
+1.  Why is a heavy-tailed degree distribution different from a narrow degree distribution even when the mean degree is the same?
+2.  Why does approximate linearity on a log-log plot not by itself prove a power law?
+3.  What is gained conceptually by studying scale-free structure before introducing the BA model?
+4.  Why does the configuration model help separate degree-sequence effects from growth effects?
+5.  Why do early vertices often have an advantage in the BA model?
+6.  In what sense is the BA model explanatory, and in what sense is it incomplete?
 
 ## End-of-chapter exercises
 
-The exercises below are divided into three groups:
+The exercises below are divided into four groups:
 
-1.  mathematical exercises,
-2.  conceptual and analytical exercises,
-3.  simulation and coding exercises.
+1.  conceptual and structural exercises,
+2.  mathematical exercises,
+3.  model-based analytical exercises,
+4.  simulation and coding exercises.
 
-### Part I. Mathematical exercises
+### Part I. Conceptual and structural exercises
 
-#### Exercise 1. Average degree in the BA model
+#### Exercise 1. Hubs and heterogeneity
 
-In the Barabási--Albert model, one new vertex and $m$ new edges are added at each time step.
-
-1.  Let $N$ be the number of vertices after many growth steps. Show that the total number of edges is approximately proportional to $mN$.
-2.  Deduce that the average degree is approximately $$
-    \langle k \rangle \approx 2m.
-    $$
-3.  Explain why this approximation becomes accurate for large $N$.
+Explain why average degree is not enough to describe a network with strong degree heterogeneity. In your answer, discuss the role of hubs and the limitations of using only a “typical” degree.
 
 ------------------------------------------------------------------------
 
-#### Exercise 2. Preferential-attachment probability
+#### Exercise 2. What “scale-free” means
 
-Suppose the degree of vertex $i$ at time $t$ is $k_i(t)$.
+Assume that $P(k) \sim Ck^{-\gamma}$.
 
-1.  Explain why the preferential-attachment rule can be written as $$
-    \Pi_i(t)=\frac{k_i(t)}{\sum_j k_j(t)}.
-    $$
-2.  Show that $$
-    \sum_i \Pi_i(t)=1.
-    $$
-3.  Interpret this expression probabilistically.
-
-------------------------------------------------------------------------
-
-#### Exercise 3. Power-law scaling
-
-Assume that the degree distribution satisfies
-
-$$
-P(k)\sim Ck^{-\gamma}.
-$$
-
-1.  Show that $$
-    P(ak)\sim a^{-\gamma}P(k)
-    $$ for every fixed $a>0$.
+1.  Show that $$P(ak) \sim a^{-\gamma}P(k)$$ for every fixed $a > 0$.
 2.  Explain why this motivates the term *scale-free*.
-3.  Discuss why such a distribution does not possess a single characteristic tail scale.
+3.  Discuss why finite real networks should not be expected to follow a perfect power law at all degrees.
 
 ------------------------------------------------------------------------
 
-#### Exercise 4. Cumulative power-law tail
+#### Exercise 3. Universality
+
+Write a short analytical note explaining what is meant by universality in the context of scale-free networks. Why does the appearance of heavy tails in many different systems attract theoretical interest?
+
+------------------------------------------------------------------------
+
+#### Exercise 4. Ultra-small distances
+
+Explain why a network with strong degree heterogeneity may have shorter typical path length than a homogeneous random graph with comparable average degree. What is the qualitative meaning of the phrase *ultra-small*?
+
+### Part II. Mathematical exercises
+
+#### Exercise 5. Cumulative power-law tail
 
 Assume that
 
 $$
-P(k)\sim Ck^{-\gamma}
+P(k) \sim Ck^{-\gamma}
 $$
 
-with $\gamma>1$.
+with $\gamma > 1$.
 
-Show heuristically that the cumulative tail satisfies
-
-$$
-P(K\ge k)\sim C'k^{-(\gamma-1)}.
-$$
-
-Explain why cumulative distributions are useful in empirical analysis.
-
-------------------------------------------------------------------------
-
-#### Exercise 5. Hub interpretation
-
-Let $k_{\max}$ denote the largest observed degree in a graph.
-
-1.  Explain why a graph with narrow degree distribution typically has moderate $k_{\max}$.
-2.  Explain why a heavy-tailed degree distribution allows much larger hub degrees.
-3.  Discuss why hub formation is a consequence of broad degree heterogeneity.
-
-------------------------------------------------------------------------
-
-#### Exercise 6. BA exponent
-
-A classical result for the Barabási--Albert model is
+Show heuristically that
 
 $$
-P(k)\sim Ck^{-3}.
+P(K \geq k) \sim C'k^{-(\gamma - 1)}.
 $$
 
-Explain the meaning of this statement and discuss how it differs conceptually from the binomial or Poisson degree laws encountered in earlier chapters.
-
-### Part II. Conceptual and analytical exercises
-
-#### Exercise 7. Growth versus static models
-
-Write a short analytical comparison between:
-
--   the Erdős--Rényi model,
--   the Watts--Strogatz model,
--   the Barabási--Albert model.
-
-Your answer should address: - whether the model is static or growing, - whether degree distribution is narrow or broad, - whether clustering is naturally high, - whether hubs appear naturally.
+Explain why the CCDF is often easier to interpret numerically than the raw degree distribution.
 
 ------------------------------------------------------------------------
 
-#### Exercise 8. Why preferential attachment creates hubs
+#### Exercise 6. Preferential-attachment probability
 
-Give a careful explanation of why preferential attachment amplifies degree differences over time.
+Suppose vertex $i$ has degree $k_i(t)$ at time $t$.
 
-Your answer should address: - cumulative advantage, - positive feedback, - the role of early vertices.
-
-------------------------------------------------------------------------
-
-#### Exercise 9. Scale-free versus small-world
-
-Explain why the terms *scale-free* and *small-world* describe different properties.
-
-Your answer should explain: - what structural quantity each concept refers to, - why a network can be scale-free without being a Watts--Strogatz network, - why a network can be small-world without having a power-law degree distribution.
+1.  Explain why the preferential-attachment rule has the form $$\Pi_i(t) = \frac{k_i(t)}{\sum_j k_j(t)}.$$
+2.  Show that $$\sum_i \Pi_i(t) = 1.$$
+3.  Give a probabilistic interpretation of this normalization.
 
 ------------------------------------------------------------------------
 
-#### Exercise 10. Why average degree is insufficient
+#### Exercise 7. Average degree in the BA model
 
-Two graphs may have the same average degree but very different structure.
+In the BA model, one new vertex and $m$ new edges are added at each time step.
 
-Discuss this statement in the context of: - Erdős--Rényi graphs, - Barabási--Albert graphs.
+1.  Show that for large network size, the number of edges grows approximately linearly in $N$.
+2.  Deduce that $$\langle k \rangle \approx 2m.$$
+3.  Explain why $m$ controls density but not the tail exponent.
 
-Your answer should explain why average degree alone does not capture heterogeneity or hub structure.
+### Part III. Model-based analytical exercises
 
-### Part III. Simulation and coding exercises
+#### Exercise 8. Configuration model versus BA model
 
-#### Exercise 11. Simulating the BA model
+Write a careful comparison between the configuration model and the BA model. Your answer should address:
 
-Write an `R` function that generates a Barabási--Albert graph with parameters $(N,m)$ and returns:
-
--   the average degree,
--   the maximum degree,
--   the degree sequence,
--   the empirical degree distribution.
-
-Test the function for several values of $N$ and $m$.
+-   what each model keeps fixed,
+-   whether the model is static or growing,
+-   whether the heavy tail is imposed or generated,
+-   what structural information is not captured by degree sequence alone.
 
 ------------------------------------------------------------------------
 
-#### Exercise 12. Log-log degree plot
+#### Exercise 9. Early vertices and cumulative advantage
 
-For a fixed Barabási--Albert graph:
-
-1.  compute the empirical degree distribution,
-2.  display it on ordinary axes,
-3.  display it on log-log axes,
-4.  explain why the heavy tail is more visible on log-log coordinates.
+Use the idea of degree trajectories to explain why early vertices often maintain an advantage in the BA model. Does early arrival guarantee that a vertex becomes a hub? Explain carefully.
 
 ------------------------------------------------------------------------
 
-#### Exercise 13. Cumulative distribution
+#### Exercise 10. Limits of the BA model
 
-For a Barabási--Albert graph with large $N$:
+Discuss at least three limitations of the BA model as a model of real networks. Why is it useful despite those limitations?
 
-1.  compute the empirical cumulative degree distribution,
-2.  plot it on log-log axes,
-3.  compare it with the raw empirical degree distribution,
-4.  discuss which representation is smoother and why.
+### Part IV. Simulation and coding exercises
+
+#### Exercise 11. Ordinary versus log-log plots
+
+Generate a heavy-tailed degree sequence and compare its empirical distribution on ordinary axes and on log-log axes. Explain which aspects of the tail become visible only after rescaling the axes.
 
 ------------------------------------------------------------------------
 
-#### Exercise 14. Comparison with Erdős--Rényi
+#### Exercise 12. Configuration-model experiment
 
-Generate:
+Generate a power-law-like degree sequence and use the configuration model to build a graph.
 
--   one Barabási--Albert graph with parameters $(N,m)$,
--   one Erdős--Rényi graph with approximately the same average degree.
+1.  Plot its degree distribution on log-log axes.
+2.  Compute its average degree and maximum degree.
+3.  Compare the result with an Erdős--Rényi graph of similar mean degree.
 
-Then compare:
+------------------------------------------------------------------------
 
--   average degree,
+#### Exercise 13. BA growth snapshots
+
+Write a short `R` script that generates snapshots of a BA network at several sizes. Use the figure to explain how hubs emerge over time.
+
+------------------------------------------------------------------------
+
+#### Exercise 14. Degree dynamics
+
+Simulate the BA model while tracking the degree of several vertices introduced at different times.
+
+1.  Plot degree versus time.
+2.  Compare early and late vertices.
+3.  Discuss how the figure illustrates cumulative advantage.
+
+------------------------------------------------------------------------
+
+#### Exercise 15. Measuring preferential attachment
+
+In a BA simulation, record the current degree of a vertex and whether it receives a new link at the next step.
+
+1.  Estimate the empirical attachment rate as a function of current degree.
+2.  Plot the result.
+3.  Explain why approximate linearity supports the preferential-attachment hypothesis.
+
+------------------------------------------------------------------------
+
+#### Exercise 16. BA versus Erdős--Rényi properties
+
+Generate BA and Erdős--Rényi networks with approximately the same average degree and compare:
+
+-   average path length,
+-   clustering,
 -   maximum degree,
--   degree distribution,
--   visual appearance.
+-   the visual appearance of the network.
 
-Discuss why the two networks differ despite matched average degree.
-
-------------------------------------------------------------------------
-
-#### Exercise 15. Effect of system size
-
-Repeat the BA simulation for several values of $N$.
-
-Study how the following quantities change with $N$:
-
--   maximum degree,
--   degree heterogeneity,
--   visibility of the heavy tail.
-
-Explain why hub structure becomes more pronounced as the network grows.
+Write a short discussion explaining which differences arise mainly because of hub structure.
 
 ### Suggested mini-project
 
 A strong mini-project for this chapter is the following:
 
-> Compare the degree structure of homogeneous random graphs and preferential-attachment networks under matched average degree.
+> Compare three ways of thinking about heavy-tailed degree structure: descriptive power-law analysis, the configuration model, and the Barabási--Albert growth model.
 
 A complete submission should contain:
 
--   mathematical definitions,
--   simulation code,
--   at least two quantitative figures,
--   a comparison of maximum degree and degree distribution,
--   a concluding discussion of hub formation.
+-   precise mathematical definitions,
+-   at least three figures,
+-   one configuration-model simulation,
+-   one BA growth simulation,
+-   one comparison with a homogeneous random graph,
+-   a concluding discussion separating structural signature from generative mechanism.
 
-## Concluding remarks
-
-Scale-free networks are characterized by strong degree heterogeneity and the emergence of hubs. Their degree distributions are fundamentally different from the narrow distributions of homogeneous random graphs.
-
-The Barabási--Albert model explains one mechanism capable of producing such structure: growth combined with preferential attachment. This mechanism shows how large inequalities in connectivity can emerge naturally from a simple probabilistic rule.
-
-The central lesson of the chapter is that network evolution rules shape degree structure, and that broad degree distributions lead to qualitatively different network organization.
+## References

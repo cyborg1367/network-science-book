@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>4&nbsp; Small-World Networks – Network Science</title>
+<title>6&nbsp; Small-World Networks – Network Science</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -77,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-4dd0a3cd2d1f0c1ca65dcbe395e0d0e9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-991efe7817ab53573c3d1fbe5f3be7de.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-70fd0f242a54890b402d5c000f6c78c3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -166,7 +166,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-small-world-graphs.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Small-World Networks</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-small-world-graphs.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Small-World Networks</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -201,26 +201,44 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../chapters/01-preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Preface and Reader’s Guide</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-graph-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Graph Theory</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../chapters/03-random-graphs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Random Graphs</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Random Graphs</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/04-random-graph-evolution.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Evolution of Random Graphs</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Evolution of Random Graphs</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/05-small-world-graphs.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Small-World Networks</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Small-World Networks</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/06-scale-free-graphs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Scale-Free Networks</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Scale-Free Networks</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-network-robustness.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Network Robustness</span></span></a>
   </div>
 </li>
     </ul>
@@ -233,9 +251,9 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">4.1</span> Introduction</a></li>
-  <li><a href="#learning-goals" id="toc-learning-goals" class="nav-link" data-scroll-target="#learning-goals"><span class="header-section-number">4.2</span> Learning goals</a></li>
-  <li><a href="#distance-diameter-and-average-path-length" id="toc-distance-diameter-and-average-path-length" class="nav-link" data-scroll-target="#distance-diameter-and-average-path-length"><span class="header-section-number">4.3</span> Distance, diameter, and average path length</a>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">6.1</span> Introduction</a></li>
+  <li><a href="#learning-goals" id="toc-learning-goals" class="nav-link" data-scroll-target="#learning-goals"><span class="header-section-number">6.2</span> Learning goals</a></li>
+  <li><a href="#distance-diameter-and-average-path-length" id="toc-distance-diameter-and-average-path-length" class="nav-link" data-scroll-target="#distance-diameter-and-average-path-length"><span class="header-section-number">6.3</span> Distance, diameter, and average path length</a>
   <ul class="collapse">
   <li><a href="#distance" id="toc-distance" class="nav-link" data-scroll-target="#distance">Distance</a></li>
   <li><a href="#diameter" id="toc-diameter" class="nav-link" data-scroll-target="#diameter">Diameter</a></li>
@@ -243,7 +261,7 @@ window.Quarto = {
   <li><a href="#why-averaging-suppresses-fluctuations" id="toc-why-averaging-suppresses-fluctuations" class="nav-link" data-scroll-target="#why-averaging-suppresses-fluctuations">Why averaging suppresses fluctuations</a></li>
   <li><a href="#clustering-coefficient" id="toc-clustering-coefficient" class="nav-link" data-scroll-target="#clustering-coefficient">Clustering coefficient</a></li>
   </ul></li>
-  <li><a href="#the-small-world-property-in-random-networks" id="toc-the-small-world-property-in-random-networks" class="nav-link" data-scroll-target="#the-small-world-property-in-random-networks"><span class="header-section-number">4.4</span> The small-world property in random networks</a>
+  <li><a href="#the-small-world-property-in-random-networks" id="toc-the-small-world-property-in-random-networks" class="nav-link" data-scroll-target="#the-small-world-property-in-random-networks"><span class="header-section-number">6.4</span> The small-world property in random networks</a>
   <ul class="collapse">
   <li><a href="#a-branching-approximation" id="toc-a-branching-approximation" class="nav-link" data-scroll-target="#a-branching-approximation">A branching approximation</a></li>
   <li><a href="#number-of-vertices-within-distance-d" id="toc-number-of-vertices-within-distance-d" class="nav-link" data-scroll-target="#number-of-vertices-within-distance-d">Number of vertices within distance <span class="math inline">d</span></a></li>
@@ -251,13 +269,13 @@ window.Quarto = {
   <li><a href="#average-path-length-in-random-networks" id="toc-average-path-length-in-random-networks" class="nav-link" data-scroll-target="#average-path-length-in-random-networks">Average path length in random networks</a></li>
   <li><a href="#a-social-network-illustration" id="toc-a-social-network-illustration" class="nav-link" data-scroll-target="#a-social-network-illustration">A social-network illustration</a></li>
   </ul></li>
-  <li><a href="#why-small-worlds-are-surprising" id="toc-why-small-worlds-are-surprising" class="nav-link" data-scroll-target="#why-small-worlds-are-surprising"><span class="header-section-number">4.5</span> Why small worlds are surprising</a>
+  <li><a href="#why-small-worlds-are-surprising" id="toc-why-small-worlds-are-surprising" class="nav-link" data-scroll-target="#why-small-worlds-are-surprising"><span class="header-section-number">6.5</span> Why small worlds are surprising</a>
   <ul class="collapse">
   <li><a href="#distance-scaling-in-regular-lattices" id="toc-distance-scaling-in-regular-lattices" class="nav-link" data-scroll-target="#distance-scaling-in-regular-lattices">Distance scaling in regular lattices</a></li>
   <li><a href="#why-the-contrast-matters" id="toc-why-the-contrast-matters" class="nav-link" data-scroll-target="#why-the-contrast-matters">Why the contrast matters</a></li>
   <li><a href="#simulated-scaling-of-average-path-length" id="toc-simulated-scaling-of-average-path-length" class="nav-link" data-scroll-target="#simulated-scaling-of-average-path-length">Simulated scaling of average path length</a></li>
   </ul></li>
-  <li><a href="#the-wattsstrogatz-model" id="toc-the-wattsstrogatz-model" class="nav-link" data-scroll-target="#the-wattsstrogatz-model"><span class="header-section-number">4.6</span> The Watts–Strogatz model</a>
+  <li><a href="#the-wattsstrogatz-model" id="toc-the-wattsstrogatz-model" class="nav-link" data-scroll-target="#the-wattsstrogatz-model"><span class="header-section-number">6.6</span> The Watts–Strogatz model</a>
   <ul class="collapse">
   <li><a href="#motivation" id="toc-motivation" class="nav-link" data-scroll-target="#motivation">Motivation</a></li>
   <li><a href="#parameters-of-the-model" id="toc-parameters-of-the-model" class="nav-link" data-scroll-target="#parameters-of-the-model">Parameters of the model</a></li>
@@ -271,9 +289,9 @@ window.Quarto = {
   <li><a href="#quantitative-transition" id="toc-quantitative-transition" class="nav-link" data-scroll-target="#quantitative-transition">Quantitative transition</a></li>
   <li><a href="#numerical-experiment" id="toc-numerical-experiment" class="nav-link" data-scroll-target="#numerical-experiment">Numerical experiment</a></li>
   </ul></li>
-  <li><a href="#small-world-regime" id="toc-small-world-regime" class="nav-link" data-scroll-target="#small-world-regime"><span class="header-section-number">4.7</span> Small-world regime</a></li>
-  <li><a href="#what-the-wattsstrogatz-model-explains-and-what-it-does-not" id="toc-what-the-wattsstrogatz-model-explains-and-what-it-does-not" class="nav-link" data-scroll-target="#what-the-wattsstrogatz-model-explains-and-what-it-does-not"><span class="header-section-number">4.8</span> What the Watts–Strogatz model explains and what it does not</a></li>
-  <li><a href="#applications-of-small-world-networks" id="toc-applications-of-small-world-networks" class="nav-link" data-scroll-target="#applications-of-small-world-networks"><span class="header-section-number">4.9</span> Applications of small-world networks</a>
+  <li><a href="#small-world-regime" id="toc-small-world-regime" class="nav-link" data-scroll-target="#small-world-regime"><span class="header-section-number">6.7</span> Small-world regime</a></li>
+  <li><a href="#what-the-wattsstrogatz-model-explains-and-what-it-does-not" id="toc-what-the-wattsstrogatz-model-explains-and-what-it-does-not" class="nav-link" data-scroll-target="#what-the-wattsstrogatz-model-explains-and-what-it-does-not"><span class="header-section-number">6.8</span> What the Watts–Strogatz model explains and what it does not</a></li>
+  <li><a href="#applications-of-small-world-networks" id="toc-applications-of-small-world-networks" class="nav-link" data-scroll-target="#applications-of-small-world-networks"><span class="header-section-number">6.9</span> Applications of small-world networks</a>
   <ul class="collapse">
   <li><a href="#social-systems" id="toc-social-systems" class="nav-link" data-scroll-target="#social-systems">Social systems</a></li>
   <li><a href="#neural-systems" id="toc-neural-systems" class="nav-link" data-scroll-target="#neural-systems">Neural systems</a></li>
@@ -281,16 +299,16 @@ window.Quarto = {
   <li><a href="#communication-and-information-systems" id="toc-communication-and-information-systems" class="nav-link" data-scroll-target="#communication-and-information-systems">Communication and information systems</a></li>
   <li><a href="#why-applications-matter" id="toc-why-applications-matter" class="nav-link" data-scroll-target="#why-applications-matter">Why applications matter</a></li>
   </ul></li>
-  <li><a href="#core-formulas-to-remember" id="toc-core-formulas-to-remember" class="nav-link" data-scroll-target="#core-formulas-to-remember"><span class="header-section-number">4.10</span> Core formulas to remember</a></li>
-  <li><a href="#in-class-questions" id="toc-in-class-questions" class="nav-link" data-scroll-target="#in-class-questions"><span class="header-section-number">4.11</span> In-class questions</a></li>
-  <li><a href="#end-of-chapter-exercises" id="toc-end-of-chapter-exercises" class="nav-link" data-scroll-target="#end-of-chapter-exercises"><span class="header-section-number">4.12</span> End-of-chapter exercises</a>
+  <li><a href="#core-formulas-to-remember" id="toc-core-formulas-to-remember" class="nav-link" data-scroll-target="#core-formulas-to-remember"><span class="header-section-number">6.10</span> Core formulas to remember</a></li>
+  <li><a href="#in-class-questions" id="toc-in-class-questions" class="nav-link" data-scroll-target="#in-class-questions"><span class="header-section-number">6.11</span> In-class questions</a></li>
+  <li><a href="#end-of-chapter-exercises" id="toc-end-of-chapter-exercises" class="nav-link" data-scroll-target="#end-of-chapter-exercises"><span class="header-section-number">6.12</span> End-of-chapter exercises</a>
   <ul class="collapse">
   <li><a href="#part-i.-mathematical-exercises" id="toc-part-i.-mathematical-exercises" class="nav-link" data-scroll-target="#part-i.-mathematical-exercises">Part I. Mathematical exercises</a></li>
   <li><a href="#part-ii.-conceptual-and-analytical-exercises" id="toc-part-ii.-conceptual-and-analytical-exercises" class="nav-link" data-scroll-target="#part-ii.-conceptual-and-analytical-exercises">Part II. Conceptual and analytical exercises</a></li>
   <li><a href="#part-iii.-simulation-and-coding-exercises" id="toc-part-iii.-simulation-and-coding-exercises" class="nav-link" data-scroll-target="#part-iii.-simulation-and-coding-exercises">Part III. Simulation and coding exercises</a></li>
   <li><a href="#suggested-mini-project" id="toc-suggested-mini-project" class="nav-link" data-scroll-target="#suggested-mini-project">Suggested mini-project</a></li>
   </ul></li>
-  <li><a href="#concluding-remarks" id="toc-concluding-remarks" class="nav-link" data-scroll-target="#concluding-remarks"><span class="header-section-number">4.13</span> Concluding remarks</a></li>
+  <li><a href="#concluding-remarks" id="toc-concluding-remarks" class="nav-link" data-scroll-target="#concluding-remarks"><span class="header-section-number">6.13</span> Concluding remarks</a></li>
   </ul>
 </nav>
     </div>
@@ -299,7 +317,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Small-World Networks</span></h1>
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Small-World Networks</span></h1>
 </div>
 
 
@@ -316,8 +334,8 @@ window.Quarto = {
 </header>
 
 
-<section id="introduction" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">4.1</span> Introduction</h2>
+<section id="introduction" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">6.1</span> Introduction</h2>
 <p>The small-world phenomenon is one of the most widely discussed ideas in network science. In popular language it often appears through the phrase <em>six degrees of separation</em>: two individuals, even if they live very far apart, may still be connected through only a short chain of acquaintances.</p>
 <p>From the viewpoint of graph theory, however, the important issue is not whether the number is exactly six. The real content of the statement is structural. It says that the distance between two randomly chosen vertices in a large network is often surprisingly small.</p>
 <p>This immediately raises two mathematical questions:</p>
@@ -333,8 +351,8 @@ window.Quarto = {
 </ul>
 <p>The final goal of the chapter is therefore to understand how these two properties can coexist. The Watts–Strogatz model provides one of the first and most influential answers to that question.</p>
 </section>
-<section id="learning-goals" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="learning-goals"><span class="header-section-number">4.2</span> Learning goals</h2>
+<section id="learning-goals" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="learning-goals"><span class="header-section-number">6.2</span> Learning goals</h2>
 <p>By the end of this chapter, it should be possible to:</p>
 <ul>
 <li>define graph distance, diameter, and average path length precisely</li>
@@ -347,12 +365,12 @@ window.Quarto = {
 <li>discuss why small-world structure is relevant in applications</li>
 </ul>
 </section>
-<section id="distance-diameter-and-average-path-length" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="distance-diameter-and-average-path-length"><span class="header-section-number">4.3</span> Distance, diameter, and average path length</h2>
+<section id="distance-diameter-and-average-path-length" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="distance-diameter-and-average-path-length"><span class="header-section-number">6.3</span> Distance, diameter, and average path length</h2>
 <section id="distance" class="level3">
 <h3 class="anchored" data-anchor-id="distance">Distance</h3>
 <div id="def-sw-distance" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 4.1</strong></span> Let <span class="math inline">G=(V,E)</span> be a connected undirected graph. For vertices <span class="math inline">u,v \in V</span>, the <strong>distance</strong> between <span class="math inline">u</span> and <span class="math inline">v</span>, denoted by</p>
+<p><span class="theorem-title"><strong>Definition 6.1</strong></span> Let <span class="math inline">G=(V,E)</span> be a connected undirected graph. For vertices <span class="math inline">u,v \in V</span>, the <strong>distance</strong> between <span class="math inline">u</span> and <span class="math inline">v</span>, denoted by</p>
 <p><span class="math display">
 d(u,v),
 </span></p>
@@ -364,7 +382,7 @@ d(u,v),
 <section id="diameter" class="level3">
 <h3 class="anchored" data-anchor-id="diameter">Diameter</h3>
 <div id="def-sw-diameter" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 4.2</strong></span> Let <span class="math inline">G=(V,E)</span> be a connected graph. The <strong>diameter</strong> of <span class="math inline">G</span> is</p>
+<p><span class="theorem-title"><strong>Definition 6.2</strong></span> Let <span class="math inline">G=(V,E)</span> be a connected graph. The <strong>diameter</strong> of <span class="math inline">G</span> is</p>
 <p><span class="math display">
 D(G)=\max_{u,v \in V} d(u,v).
 </span></p>
@@ -375,7 +393,7 @@ D(G)=\max_{u,v \in V} d(u,v).
 <section id="average-path-length" class="level3">
 <h3 class="anchored" data-anchor-id="average-path-length">Average path length</h3>
 <div id="def-sw-average-path" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 4.3</strong></span> Let <span class="math inline">G=(V,E)</span> be a connected graph with <span class="math inline">N=|V|</span> vertices. The <strong>average path length</strong> of <span class="math inline">G</span> is</p>
+<p><span class="theorem-title"><strong>Definition 6.3</strong></span> Let <span class="math inline">G=(V,E)</span> be a connected graph with <span class="math inline">N=|V|</span> vertices. The <strong>average path length</strong> of <span class="math inline">G</span> is</p>
 <p><span class="math display">
 L(G)
 =
@@ -399,7 +417,7 @@ d(u,v).
 <section id="clustering-coefficient" class="level3">
 <h3 class="anchored" data-anchor-id="clustering-coefficient">Clustering coefficient</h3>
 <div id="def-sw-clustering" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 4.4</strong></span> Let <span class="math inline">G=(V,E)</span> be an undirected graph. The <strong>average clustering coefficient</strong> of <span class="math inline">G</span> is</p>
+<p><span class="theorem-title"><strong>Definition 6.4</strong></span> Let <span class="math inline">G=(V,E)</span> be an undirected graph. The <strong>average clustering coefficient</strong> of <span class="math inline">G</span> is</p>
 <p><span class="math display">
 \bar{C}(G)
 =
@@ -417,8 +435,8 @@ d(u,v).
 <p>That coexistence is the essence of the small-world property.</p>
 </section>
 </section>
-<section id="the-small-world-property-in-random-networks" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="the-small-world-property-in-random-networks"><span class="header-section-number">4.4</span> The small-world property in random networks</h2>
+<section id="the-small-world-property-in-random-networks" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="the-small-world-property-in-random-networks"><span class="header-section-number">6.4</span> The small-world property in random networks</h2>
 <p>A first explanation of short distances comes from a simple random-network calculation.</p>
 <section id="a-branching-approximation" class="level3">
 <h3 class="anchored" data-anchor-id="a-branching-approximation">A branching approximation</h3>
@@ -521,8 +539,8 @@ L(G)
 <p>This rough estimate suggests that the typical social separation scale is only a few steps. The exact numerical value should not be taken literally, but the order of magnitude is the key message: logarithmic scaling leads to surprisingly short paths even in extremely large systems.</p>
 </section>
 </section>
-<section id="why-small-worlds-are-surprising" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="why-small-worlds-are-surprising"><span class="header-section-number">4.5</span> Why small worlds are surprising</h2>
+<section id="why-small-worlds-are-surprising" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="why-small-worlds-are-surprising"><span class="header-section-number">6.5</span> Why small worlds are surprising</h2>
 <p>The small-world effect is surprising because our geometric intuition is often shaped by regular lattices, and regular lattices do <strong>not</strong> display logarithmic distance growth.</p>
 <section id="distance-scaling-in-regular-lattices" class="level3">
 <h3 class="anchored" data-anchor-id="distance-scaling-in-regular-lattices">Distance scaling in regular lattices</h3>
@@ -732,8 +750,8 @@ L(G)\sim D(G)\sim N^{1/d}.
 <p>This is the precise structural meaning of the small-world effect. In a random network, the typical separation between vertices increases so slowly with system size that even very large systems can remain metrically compact.</p>
 </section>
 </section>
-<section id="the-wattsstrogatz-model" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="the-wattsstrogatz-model"><span class="header-section-number">4.6</span> The Watts–Strogatz model</h2>
+<section id="the-wattsstrogatz-model" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="the-wattsstrogatz-model"><span class="header-section-number">6.6</span> The Watts–Strogatz model</h2>
 <p>The random-network estimate above explains why short distances can occur, but it does not explain how a network can retain high clustering at the same time. That question is addressed by the Watts–Strogatz model.</p>
 <section id="motivation" class="level3">
 <h3 class="anchored" data-anchor-id="motivation">Motivation</h3>
@@ -772,7 +790,7 @@ N \gg K \gg \ln N \gg 1,
 <section id="regular-ring-lattice" class="level3">
 <h3 class="anchored" data-anchor-id="regular-ring-lattice">Regular ring lattice</h3>
 <div id="def-watts-ring" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 4.5</strong></span> Let <span class="math inline">N</span> and <span class="math inline">K</span> be as above, with <span class="math inline">K</span> even. The <strong>regular ring lattice</strong> is the graph on vertex set</p>
+<p><span class="theorem-title"><strong>Definition 6.5</strong></span> Let <span class="math inline">N</span> and <span class="math inline">K</span> be as above, with <span class="math inline">K</span> even. The <strong>regular ring lattice</strong> is the graph on vertex set</p>
 <p><span class="math display">
 V=\{0,1,\dots,N-1\}
 </span></p>
@@ -789,7 +807,7 @@ V=\{0,1,\dots,N-1\}
 <h3 class="anchored" data-anchor-id="definition-of-the-wattsstrogatz-model">Definition of the Watts–Strogatz model</h3>
 <p>In the original Watts–Strogatz construction, the rewiring probability is usually denoted by <span class="math inline">\beta</span>.</p>
 <div id="def-watts-strogatz" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 4.6</strong></span> The <strong>Watts–Strogatz model</strong> with parameters <span class="math inline">(N,K,\beta)</span> is constructed as follows.</p>
+<p><span class="theorem-title"><strong>Definition 6.6</strong></span> The <strong>Watts–Strogatz model</strong> with parameters <span class="math inline">(N,K,\beta)</span> is constructed as follows.</p>
 <ol type="1">
 <li>Start from the regular ring lattice on <span class="math inline">N</span> vertices with degree <span class="math inline">K</span>.</li>
 <li>For each vertex <span class="math display">
@@ -1115,10 +1133,10 @@ K=10.
 <p>although the precise interval depends on <span class="math inline">N</span> and <span class="math inline">K</span>.</p>
 </section>
 </section>
-<section id="small-world-regime" class="level2" data-number="4.7">
-<h2 data-number="4.7" class="anchored" data-anchor-id="small-world-regime"><span class="header-section-number">4.7</span> Small-world regime</h2>
+<section id="small-world-regime" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="small-world-regime"><span class="header-section-number">6.7</span> Small-world regime</h2>
 <div id="def-small-world-regime" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 4.7</strong></span> In the Watts–Strogatz model, the <strong>small-world regime</strong> is the range of rewiring probabilities <span class="math inline">\beta</span> for which</p>
+<p><span class="theorem-title"><strong>Definition 6.7</strong></span> In the Watts–Strogatz model, the <strong>small-world regime</strong> is the range of rewiring probabilities <span class="math inline">\beta</span> for which</p>
 <ol type="1">
 <li>the average path length is significantly smaller than in the regular lattice, and</li>
 <li>the clustering coefficient remains substantially larger than in a comparable random graph.</li>
@@ -1142,9 +1160,9 @@ K=10.
 <div class="callout-body-container callout-body">
 <table class="caption-top table">
 <colgroup>
-<col style="width: 22%">
-<col style="width: 36%">
-<col style="width: 41%">
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1175,8 +1193,8 @@ K=10.
 </div>
 </div>
 </section>
-<section id="what-the-wattsstrogatz-model-explains-and-what-it-does-not" class="level2" data-number="4.8">
-<h2 data-number="4.8" class="anchored" data-anchor-id="what-the-wattsstrogatz-model-explains-and-what-it-does-not"><span class="header-section-number">4.8</span> What the Watts–Strogatz model explains and what it does not</h2>
+<section id="what-the-wattsstrogatz-model-explains-and-what-it-does-not" class="level2" data-number="6.8">
+<h2 data-number="6.8" class="anchored" data-anchor-id="what-the-wattsstrogatz-model-explains-and-what-it-does-not"><span class="header-section-number">6.8</span> What the Watts–Strogatz model explains and what it does not</h2>
 <p>The Watts–Strogatz model successfully explains one specific empirical coexistence:</p>
 <ul>
 <li>high clustering,</li>
@@ -1192,8 +1210,8 @@ K=10.
 <p>Nor does it naturally reproduce the strong degree dependence of clustering often observed in hierarchical or scale-free empirical networks.</p>
 <p>This limitation is conceptually important. The Watts–Strogatz model explains one aspect of real network structure, but not the full combination of features seen in many data sets.</p>
 </section>
-<section id="applications-of-small-world-networks" class="level2" data-number="4.9">
-<h2 data-number="4.9" class="anchored" data-anchor-id="applications-of-small-world-networks"><span class="header-section-number">4.9</span> Applications of small-world networks</h2>
+<section id="applications-of-small-world-networks" class="level2" data-number="6.9">
+<h2 data-number="6.9" class="anchored" data-anchor-id="applications-of-small-world-networks"><span class="header-section-number">6.9</span> Applications of small-world networks</h2>
 <p>The small-world concept is important not only as a mathematical idea, but also because many real systems appear to balance local organization with global reachability.</p>
 <section id="social-systems" class="level3">
 <h3 class="anchored" data-anchor-id="social-systems">Social systems</h3>
@@ -1224,8 +1242,8 @@ K=10.
 <p>This is why the Watts–Strogatz model remains one of the most influential models in network science.</p>
 </section>
 </section>
-<section id="core-formulas-to-remember" class="level2" data-number="4.10">
-<h2 data-number="4.10" class="anchored" data-anchor-id="core-formulas-to-remember"><span class="header-section-number">4.10</span> Core formulas to remember</h2>
+<section id="core-formulas-to-remember" class="level2" data-number="6.10">
+<h2 data-number="6.10" class="anchored" data-anchor-id="core-formulas-to-remember"><span class="header-section-number">6.10</span> Core formulas to remember</h2>
 <div class="callout callout-style-default callout-important callout-titled" title="Summary">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1248,8 +1266,8 @@ K=10.
 </div>
 </div>
 </section>
-<section id="in-class-questions" class="level2" data-number="4.11">
-<h2 data-number="4.11" class="anchored" data-anchor-id="in-class-questions"><span class="header-section-number">4.11</span> In-class questions</h2>
+<section id="in-class-questions" class="level2" data-number="6.11">
+<h2 data-number="6.11" class="anchored" data-anchor-id="in-class-questions"><span class="header-section-number">6.11</span> In-class questions</h2>
 <ol type="1">
 <li>What does “small” mean mathematically in the phrase <em>small-world</em>?</li>
 <li>Why is the estimate <span class="math inline">\ln N / \ln \langle k \rangle</span> associated with random networks?</li>
@@ -1261,8 +1279,8 @@ K=10.
 <li>Why are small-world structures useful in applications?</li>
 </ol>
 </section>
-<section id="end-of-chapter-exercises" class="level2" data-number="4.12">
-<h2 data-number="4.12" class="anchored" data-anchor-id="end-of-chapter-exercises"><span class="header-section-number">4.12</span> End-of-chapter exercises</h2>
+<section id="end-of-chapter-exercises" class="level2" data-number="6.12">
+<h2 data-number="6.12" class="anchored" data-anchor-id="end-of-chapter-exercises"><span class="header-section-number">6.12</span> End-of-chapter exercises</h2>
 <p>The exercises below are divided into three groups:</p>
 <ol type="1">
 <li>mathematical exercises,</li>
@@ -1493,8 +1511,8 @@ L(G)\approx \frac{\ln N}{\ln \langle k \rangle}.
 </ul>
 </section>
 </section>
-<section id="concluding-remarks" class="level2" data-number="4.13">
-<h2 data-number="4.13" class="anchored" data-anchor-id="concluding-remarks"><span class="header-section-number">4.13</span> Concluding remarks</h2>
+<section id="concluding-remarks" class="level2" data-number="6.13">
+<h2 data-number="6.13" class="anchored" data-anchor-id="concluding-remarks"><span class="header-section-number">6.13</span> Concluding remarks</h2>
 <p>The small-world phenomenon means that the typical distance between vertices in a large network can be unexpectedly small. In random networks this behavior is explained by logarithmic distance scaling. In regular lattices it is absent, because distances grow polynomially with system size.</p>
 <p>The Watts–Strogatz model shows how these two worlds can be connected. A small amount of random rewiring introduces shortcuts that rapidly reduce path lengths while leaving most local clustering intact.</p>
 <p>The central lesson of the chapter is therefore this: short global separation and strong local order can coexist in the same network, and the small-world model provides a concrete mechanism for that coexistence.</p>
@@ -1906,12 +1924,12 @@ L(G)\approx \frac{\ln N}{\ln \langle k \rangle}.
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
       <a href="../chapters/04-random-graph-evolution.html" class="pagination-link" aria-label="The Evolution of Random Graphs">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Evolution of Random Graphs</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Evolution of Random Graphs</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="../chapters/06-scale-free-graphs.html" class="pagination-link" aria-label="Scale-Free Networks">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Scale-Free Networks</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Scale-Free Networks</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Zahra Rezaei">
-<meta name="dcterms.date" content="2026-03-29">
+<meta name="dcterms.date" content="2026-04-03">
 
 <title>Network Science</title>
 <style>
@@ -67,7 +67,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./chapters/03-random-graphs.html" rel="next">
+<link href="./chapters/01-preface.html" rel="next">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -78,7 +78,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-4dd0a3cd2d1f0c1ca65dcbe395e0d0e9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-991efe7817ab53573c3d1fbe5f3be7de.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-70fd0f242a54890b402d5c000f6c78c3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -159,26 +159,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./chapters/01-preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Preface and Reader’s Guide</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapters/02-graph-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Graph Theory</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./chapters/03-random-graphs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Random Graphs</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Random Graphs</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./chapters/04-random-graph-evolution.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Evolution of Random Graphs</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Evolution of Random Graphs</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./chapters/05-small-world-graphs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Small-World Networks</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Small-World Networks</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./chapters/06-scale-free-graphs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Scale-Free Networks</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Scale-Free Networks</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chapters/07-network-robustness.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Network Robustness</span></span></a>
   </div>
 </li>
     </ul>
@@ -192,8 +210,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#welcome" id="toc-welcome" class="nav-link active" data-scroll-target="#welcome"><span class="header-section-number">0.1</span> Welcome</a></li>
-  <li><a href="#required-packages" id="toc-required-packages" class="nav-link" data-scroll-target="#required-packages"><span class="header-section-number">0.2</span> Required packages</a></li>
-  <li><a href="#current-chapters" id="toc-current-chapters" class="nav-link" data-scroll-target="#current-chapters"><span class="header-section-number">0.3</span> Current chapters</a></li>
+  <li><a href="#the-big-questions" id="toc-the-big-questions" class="nav-link" data-scroll-target="#the-big-questions"><span class="header-section-number">0.2</span> The Big Questions</a></li>
+  <li><a href="#course-map" id="toc-course-map" class="nav-link" data-scroll-target="#course-map"><span class="header-section-number">0.3</span> Course Map</a></li>
+  <li><a href="#conceptual-progression" id="toc-conceptual-progression" class="nav-link" data-scroll-target="#conceptual-progression"><span class="header-section-number">0.4</span> Conceptual Progression</a></li>
+  <li><a href="#how-to-use-this-book" id="toc-how-to-use-this-book" class="nav-link" data-scroll-target="#how-to-use-this-book"><span class="header-section-number">0.5</span> How To Use This Book</a></li>
+  <li><a href="#what-students-should-notice-across-chapters" id="toc-what-students-should-notice-across-chapters" class="nav-link" data-scroll-target="#what-students-should-notice-across-chapters"><span class="header-section-number">0.6</span> What Students Should Notice Across Chapters</a></li>
+  <li><a href="#software-setup" id="toc-software-setup" class="nav-link" data-scroll-target="#software-setup"><span class="header-section-number">0.7</span> Software Setup</a></li>
   </ul>
 </nav>
     </div>
@@ -220,7 +242,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 29, 2026</p>
+      <p class="date">April 3, 2026</p>
     </div>
   </div>
   
@@ -234,40 +256,167 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="welcome" class="level2" data-number="0.1">
 <h2 data-number="0.1" class="anchored" data-anchor-id="welcome"><span class="header-section-number">0.1</span> Welcome</h2>
-<p>This Quarto book is designed as a single, well-structured version of a Network Science course.</p>
-<p>Each chapter follows the same pattern:</p>
-<ol type="1">
-<li><strong>Theory and intuition</strong></li>
-<li><strong>Worked examples in R</strong></li>
-<li><strong>Exercises and coding tasks</strong></li>
-</ol>
-<p>The same source files produce both:</p>
+<p>This book is designed as the main course text for a university class in <strong>Network Science</strong>. Its purpose is not only to define central ideas, but to help students move back and forth between:</p>
 <ul>
-<li>an HTML course website</li>
-<li>a PDF course handout</li>
+<li>mathematical language,</li>
+<li>structural intuition,</li>
+<li>computational experimentation in <code>R</code>,</li>
+<li>and interpretation of real network phenomena.</li>
 </ul>
+<p>The book treats networks as mathematical objects, probabilistic systems, and models of real complex systems all at once. Across the chapters, we move from the language of graphs to randomness, emergence, clustering, hubs, and robustness.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="What This Book Is Trying To Teach">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>What This Book Is Trying To Teach
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The central goal of the course is to understand how <strong>large-scale network behavior emerges from local structural rules</strong>.</p>
+<p>By the end of the book, students should be able to:</p>
+<ul>
+<li>describe networks using precise graph-theoretic definitions,</li>
+<li>analyze random and generative network models,</li>
+<li>interpret degree distributions, clustering, distances, and components,</li>
+<li>compare homogeneous and heterogeneous network structures,</li>
+<li>and use simulation in <code>R</code> to test theoretical predictions.</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="required-packages" class="level2" data-number="0.2">
-<h2 data-number="0.2" class="anchored" data-anchor-id="required-packages"><span class="header-section-number">0.2</span> Required packages</h2>
+<section id="the-big-questions" class="level2" data-number="0.2">
+<h2 data-number="0.2" class="anchored" data-anchor-id="the-big-questions"><span class="header-section-number">0.2</span> The Big Questions</h2>
+<p>The course is organized around a small number of recurring questions:</p>
+<ol type="1">
+<li>How should we represent a network mathematically?</li>
+<li>What changes when edges are introduced at random?</li>
+<li>Why do large connected structures suddenly emerge?</li>
+<li>How can networks have both short distances and local clustering?</li>
+<li>Why do some networks produce hubs and heavy-tailed degree distributions?</li>
+<li>What makes a network resilient, and what makes it fragile?</li>
+</ol>
+<p>These questions give the book its internal structure. Each chapter develops one part of this larger story.</p>
+</section>
+<section id="course-map" class="level2" data-number="0.3">
+<h2 data-number="0.3" class="anchored" data-anchor-id="course-map"><span class="header-section-number">0.3</span> Course Map</h2>
+<p>After this welcome page, the book begins with a short preface and reader’s guide, then moves into the main conceptual chapters.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Chapter</th>
+<th style="text-align: left;">Main theme</th>
+<th style="text-align: left;">Guiding idea</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><a href="./chapters/01-preface.html">Preface and Reader’s Guide</a></td>
+<td style="text-align: left;">Orientation</td>
+<td style="text-align: left;">Explains how to read the text, what background is assumed, and how theory, code, and exercises fit together.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="./chapters/02-graph-theory.html">Graph Theory</a></td>
+<td style="text-align: left;">Foundations</td>
+<td style="text-align: left;">Networks begin with the language of vertices, edges, paths, matrices, and connectivity.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="./chapters/03-random-graphs.html">Random Graphs</a></td>
+<td style="text-align: left;">Probability on graphs</td>
+<td style="text-align: left;">Structure can be studied statistically when edges appear by chance.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="./chapters/04-random-graph-evolution.html">The Evolution of Random Graphs</a></td>
+<td style="text-align: left;">Emergence and phase transitions</td>
+<td style="text-align: left;">Global connectivity appears through threshold behavior rather than smooth change.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="./chapters/05-small-world-graphs.html">Small-World Networks</a></td>
+<td style="text-align: left;">Distance and clustering</td>
+<td style="text-align: left;">Real networks can combine short paths with surprisingly strong local cohesion.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><a href="./chapters/06-scale-free-graphs.html">Scale-Free Networks</a></td>
+<td style="text-align: left;">Hubs and heavy tails</td>
+<td style="text-align: left;">Broad degree distributions create heterogeneity, hierarchy, and hub-dominated structure.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><a href="./chapters/07-network-robustness.html">Network Robustness</a></td>
+<td style="text-align: left;">Failure and resilience</td>
+<td style="text-align: left;">The same structure that makes networks efficient can also make them vulnerable.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="conceptual-progression" class="level2" data-number="0.4">
+<h2 data-number="0.4" class="anchored" data-anchor-id="conceptual-progression"><span class="header-section-number">0.4</span> Conceptual Progression</h2>
+<p>The intellectual progression of the book is deliberate:</p>
+<ol type="1">
+<li>We start with <strong>graph theory</strong>, because every later model depends on a precise structural vocabulary.</li>
+<li>We then study <strong>random graphs</strong>, where probability becomes part of the model rather than a nuisance.</li>
+<li>From there, we examine <strong>network evolution</strong>, where component growth and threshold phenomena reveal how global order emerges.</li>
+<li>We next turn to <strong>small-world structure</strong>, which explains why many large networks remain navigable.</li>
+<li>We then study <strong>scale-free networks</strong>, where heterogeneity, hubs, and preferential attachment become central.</li>
+<li>Finally, we investigate <strong>robustness</strong>, asking how network architecture shapes resilience under failure or attack.</li>
+</ol>
+<p>This means the book is not just a list of topics. It is a structured argument about how network structure, randomness, growth, and vulnerability fit together.</p>
+</section>
+<section id="how-to-use-this-book" class="level2" data-number="0.5">
+<h2 data-number="0.5" class="anchored" data-anchor-id="how-to-use-this-book"><span class="header-section-number">0.5</span> How To Use This Book</h2>
+<p>Each chapter is designed to be used in the same rhythm:</p>
+<ol type="1">
+<li><strong>Theory and intuition</strong>: key definitions, explanations, and mathematical results.</li>
+<li><strong>Worked examples in <code>R</code></strong>: simulations and visualizations that make the abstract ideas concrete.</li>
+<li><strong>Exercises and coding tasks</strong>: problems that move from derivation to interpretation to implementation.</li>
+</ol>
+<p>For students, the most effective way to use the book is:</p>
+<ul>
+<li>read the definitions carefully before looking at code,</li>
+<li>use the figures to build intuition about what the formulas mean,</li>
+<li>run and modify the <code>R</code> examples,</li>
+<li>and treat the exercises as part of the learning process, not as material left for the end.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled" title="Classroom Use">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Classroom Use
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This welcome page is the front door to a course text, not just project documentation. The book is intended to support lectures, homework, discussion, and computational exploration in parallel.</p>
+</div>
+</div>
+</section>
+<section id="what-students-should-notice-across-chapters" class="level2" data-number="0.6">
+<h2 data-number="0.6" class="anchored" data-anchor-id="what-students-should-notice-across-chapters"><span class="header-section-number">0.6</span> What Students Should Notice Across Chapters</h2>
+<p>Although the topics differ, several ideas return throughout the book:</p>
+<ul>
+<li><strong>Local versus global structure</strong>: a small local rule can produce a large global effect.</li>
+<li><strong>Typical behavior versus exceptional nodes</strong>: averages matter, but tails and hubs matter too.</li>
+<li><strong>Randomness versus mechanism</strong>: some patterns arise from chance, others from growth rules or constraints.</li>
+<li><strong>Interpretation through computation</strong>: simulation helps students see why the mathematics is meaningful.</li>
+</ul>
+<p>Seeing these recurring themes is one of the most important learning outcomes of the course.</p>
+</section>
+<section id="software-setup" class="level2" data-number="0.7">
+<h2 data-number="0.7" class="anchored" data-anchor-id="software-setup"><span class="header-section-number">0.7</span> Software Setup</h2>
 <p>Install the packages below once:</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"igraph"</span>, <span class="st">"dplyr"</span>, <span class="st">"ggplot2"</span>, <span class="st">"tidyr"</span>, <span class="st">"purrr"</span>, <span class="st">"plotly"</span>, <span class="st">"tinytex"</span>, <span class="st">"quarto"</span>, <span class="st">"ggraph"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>))</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>tinytex<span class="sc">::</span><span class="fu">install_tinytex</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"renv"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">install.packages</span>(<span class="st">"renv"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>renv<span class="sc">::</span><span class="fu">restore</span>()</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>tinytex<span class="sc">::</span><span class="fu">install_tinytex</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-</section>
-<section id="current-chapters" class="level2" data-number="0.3">
-<h2 data-number="0.3" class="anchored" data-anchor-id="current-chapters"><span class="header-section-number">0.3</span> Current chapters</h2>
-<p>The current book contains these chapters:</p>
+<p>The same source files produce both:</p>
 <ul>
-<li><a href="./chapters/03-random-graphs.html">Random Graphs</a></li>
-<li><a href="./chapters/04-random-graph-evolution.html">Random Graph Evolution</a></li>
-<li><a href="./chapters/05-small-world-graphs.html">Small-World Graphs</a></li>
-<li><a href="./chapters/06-scale-free-graphs.html">Scale-free Graphs</a></li>
+<li>an HTML course website,</li>
+<li>and a PDF course handout.</li>
 </ul>
 
 
@@ -678,8 +827,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="nav-page nav-page-previous">
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./chapters/03-random-graphs.html" class="pagination-link" aria-label="Random Graphs">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Random Graphs</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./chapters/01-preface.html" class="pagination-link" aria-label="Preface and Reader's Guide">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Preface and Reader’s Guide</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -1,45 +1,52 @@
-<<<<<<< HEAD
-# Network Science Quarto Template
+# Network Science
 
-This is a Quarto **book** project designed to produce both:
+Quarto book for a Network Science course, with both HTML and PDF output.
 
--   an HTML website
--   a PDF handout/book
+## Project structure
 
-## Files
+-   `_quarto.yml`: project and book configuration
+-   `index.qmd`: landing page and course overview
+-   `chapters/01-preface.qmd`: course preface and reader guide
+-   `chapters/`: chapter source files
+-   `R/book-setup.R`: shared R setup helpers for package loading, plotting theme, and chunk defaults
+-   `renv.lock`: reproducible package lockfile
+-   `renv/`: project-local renv infrastructure
+-   `styles.scss`: book-specific visual theme overrides
+-   `references.bib`: bibliography for cited chapters
+-   `docs/`: rendered site output
 
--   `_quarto.yml` — project configuration
--   `index.qmd` — overview page
--   `chapters/03-random-graphs.qmd` — first chapter template
--   `styles.scss` — visual theme customizations
+## Setup
 
-## In RStudio
+Open the project in RStudio and install the required packages once:
 
-1.  Open RStudio.
-2.  Go to **File \> Open Project**.
-3.  Open this folder.
-4.  Install packages if needed.
-5.  Render with:
+``` r
+if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
+renv::restore()
+tinytex::install_tinytex()
+```
+
+This restores the project library from `renv.lock` and keeps the book reproducible across machines. The shared helper in `R/book-setup.R` is still used by the chapters themselves.
+
+## Render
+
+From R:
 
 ``` r
 quarto::quarto_render()
 ```
 
-or use the **Render** button.
+Or use the Quarto Render button in RStudio.
 
-## Required R packages
+## Adding or updating chapters
 
-``` r
-install.packages(c("igraph", "dplyr", "ggplot2", "tidyr", "purrr", "tinytex", "quarto"))
-tinytex::install_tinytex()
-```
+1.  Create or edit files in `chapters/`.
+2.  Add the chapter file to `_quarto.yml` under `book: chapters:`.
+3.  If the chapter needs shared setup, source `R/book-setup.R` in the setup chunk and call `ns_book_setup(...)`.
+4.  Render the book again.
 
-## Add a new chapter
+## Maintenance notes
 
-1.  Create a new file in `chapters/`, for example `04-small-world.qmd`
-2.  Add it to `_quarto.yml` under `book: chapters:`
-3.  Render again
-=======
-# network-science-book
-Quarto book for the Network Science course
->>>>>>> a4230ad7aed7f1a8c182bed494ca2f515f98d768
+-   Keep `README.md`, `index.qmd`, and `_quarto.yml` in sync when chapter order changes.
+-   Prefer `renv::restore()` for environment setup rather than ad hoc package installation.
+-   If a chapter cites references, keep `references.bib` in version control.
+-   Shared package lists, palettes, and plotting defaults should live in `R/book-setup.R` rather than being duplicated per chapter.

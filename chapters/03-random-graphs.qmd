@@ -1,56 +1,27 @@
 ---
 title: "Random Graphs"
+subtitle: "When networks emerge from chance — the Erdős–Rényi model"
 ---
 
 ```{r}
 #| label: chapter-setup
 #| include: false
 
-library(igraph)
-library(dplyr)
-library(ggplot2)
-library(tidyr)
-library(purrr)
-library(plotly)
+setup_candidates <- c("R/book-setup.R", "../R/book-setup.R")
+setup_file <- setup_candidates[file.exists(setup_candidates)][1]
 
-course_cols <- list(
-  teal  = "#0F766E",
-  blue  = "#0EA5E9",
-  gold  = "#F59E0B",
-  warm  = "#D97706",
-  ink   = "#1F2937",
-  slate = "#475569",
-  grid  = "#E5E7EB"
+if (is.na(setup_file)) {
+  stop("Could not locate R/book-setup.R", call. = FALSE)
+}
+
+source(setup_file, local = knitr::knit_global())
+
+ns_book_setup(
+  preset = "random",
+  seed = 1234
 )
-
-theme_set(
-  theme_minimal(base_size = 13) +
-    theme(
-      plot.title.position = "plot",
-      plot.caption.position = "plot",
-      panel.grid.minor = element_blank(),
-      panel.grid.major.x = element_line(color = course_cols$grid, linewidth = 0.35),
-      panel.grid.major.y = element_line(color = course_cols$grid, linewidth = 0.35),
-      axis.title = element_text(color = course_cols$ink, face = "plain"),
-      axis.text = element_text(color = course_cols$ink),
-      axis.ticks = element_line(color = course_cols$grid, linewidth = 0.3),
-      plot.title = element_text(face = "bold", color = course_cols$ink, size = rel(1.12)),
-      plot.subtitle = element_text(color = course_cols$slate, margin = margin(b = 10)),
-      plot.caption = element_text(color = course_cols$slate, hjust = 1, size = rel(0.86)),
-      legend.position = "top",
-      legend.title = element_text(color = course_cols$ink, face = "bold"),
-      legend.text = element_text(color = course_cols$slate),
-      legend.key.width = unit(1.2, "lines"),
-      strip.text = element_text(face = "bold", color = course_cols$ink),
-      strip.background = element_rect(fill = scales::alpha(course_cols$blue, 0.08), color = NA),
-      plot.background = element_rect(fill = "white", color = NA),
-      panel.background = element_rect(fill = "white", color = NA),
-      plot.margin = margin(10, 12, 8, 6)
-    )
-)
-
-set.seed(1234)
 ```
+
 
 ## Introduction
 

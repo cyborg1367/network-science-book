@@ -6,38 +6,21 @@ title: "The Evolution of Random Graphs"
 #| label: chapter-setup-evolution
 #| include: false
 
-library(igraph)
-library(dplyr)
-library(ggplot2)
-library(tidyr)
-library(purrr)
+setup_candidates <- c("R/book-setup.R", "../R/book-setup.R")
+setup_file <- setup_candidates[file.exists(setup_candidates)][1]
 
-course_cols <- list(
-  teal  = "#0F766E",
-  blue  = "#2563EB",
-  gold  = "#F59E0B",
-  coral = "#E76F51",
-  ink   = "#1F2937",
-  grid  = "#E5E7EB"
+if (is.na(setup_file)) {
+  stop("Could not locate R/book-setup.R", call. = FALSE)
+}
+
+source(setup_file, local = knitr::knit_global())
+
+ns_book_setup(
+  preset = "evolution",
+  seed = 2026
 )
-
-theme_set(
-  theme_minimal(base_size = 13) +
-    theme(
-      plot.title.position = "plot",
-      panel.grid.minor = element_blank(),
-      panel.grid.major.x = element_line(color = course_cols$grid, linewidth = 0.35),
-      panel.grid.major.y = element_line(color = course_cols$grid, linewidth = 0.35),
-      axis.title = element_text(color = course_cols$ink),
-      axis.text = element_text(color = course_cols$ink),
-      plot.title = element_text(face = "bold", color = course_cols$ink),
-      plot.subtitle = element_text(color = "#475569"),
-      legend.position = "top"
-    )
-)
-
-set.seed(2026)
 ```
+
 
 ## Introduction
 
@@ -57,13 +40,13 @@ is the key parameter controlling that transition.
 
 By the end of this chapter, it should be possible to:
 
-- define connected graphs and connected components precisely
-- define the size of a component and the notion of a giant component
-- explain how a random graph evolves as the edge probability increases
-- distinguish the subcritical, critical, supercritical, and connected regimes
-- explain why the threshold $\langle k \rangle = 1$ is important
-- explain why the connectedness threshold occurs near $\langle k \rangle = \ln N$
-- verify these ideas numerically in `R`
+-   define connected graphs and connected components precisely
+-   define the size of a component and the notion of a giant component
+-   explain how a random graph evolves as the edge probability increases
+-   distinguish the subcritical, critical, supercritical, and connected regimes
+-   explain why the threshold $\langle k \rangle = 1$ is important
+-   explain why the connectedness threshold occurs near $\langle k \rangle = \ln N$
+-   verify these ideas numerically in `R`
 
 ## Connectedness and components
 
@@ -84,8 +67,8 @@ If this condition fails, then the graph is disconnected. In that case the graph 
 ::: {#def-connected-component}
 Let $G=(V,E)$ be an undirected graph. A subgraph $H$ of $G$ is called a **connected component** of $G$ if:
 
-1. $H$ is connected, and
-2. $H$ is maximal with respect to inclusion among connected subgraphs of $G$.
+1.  $H$ is connected, and
+2.  $H$ is maximal with respect to inclusion among connected subgraphs of $G$.
 :::
 
 The word *connected* means that every pair of vertices in $H$ can be joined by a path entirely contained in $H$.
@@ -201,17 +184,17 @@ par(old_par)
 
 The three graphs above illustrate the same idea in progressively more disconnected form:
 
-- in the first graph, every vertex belongs to one single connected component
-- in the second graph, the graph splits into two components
-- in the third graph, the graph decomposes into several small pieces, including isolated vertices
+-   in the first graph, every vertex belongs to one single connected component
+-   in the second graph, the graph splits into two components
+-   in the third graph, the graph decomposes into several small pieces, including isolated vertices
 
 ### Component-size table
 
-| Graph | Component sizes |
-|:-----:|:----------------|
-| One component | $7$ |
-| Two components | $4, 3$ |
-| Four components | $3, 2, 1, 1$ |
+|      Graph      | Component sizes |
+|:---------------:|:----------------|
+|  One component  | $7$             |
+| Two components  | $4, 3$          |
+| Four components | $3, 2, 1, 1$    |
 
 This table translates the picture into numerical structure and prepares the transition to the notion of a giant component.
 
@@ -239,15 +222,15 @@ The giant component marks the first stage at which the graph begins to behave li
 
 Before it appears:
 
-- most vertices belong only to tiny disconnected groups
-- reachability is local
-- no global connected backbone exists
+-   most vertices belong only to tiny disconnected groups
+-   reachability is local
+-   no global connected backbone exists
 
 After it appears:
 
-- a positive fraction of vertices become mutually reachable
-- one connected structure dominates the graph
-- system-wide connectivity becomes possible
+-   a positive fraction of vertices become mutually reachable
+-   one connected structure dominates the graph
+-   system-wide connectivity becomes possible
 
 So the emergence of the giant component is the key event in the evolution of a random graph.
 
@@ -273,10 +256,10 @@ every possible edge is present, so the graph is complete and hence connected.
 
 The mathematically interesting behavior lies between these extremes. As $p$ increases,
 
-1. isolated vertices begin to join into tiny components,
-2. small components merge into larger components,
-3. one component begins to dominate,
-4. eventually the graph becomes connected.
+1.  isolated vertices begin to join into tiny components,
+2.  small components merge into larger components,
+3.  one component begins to dominate,
+4.  eventually the graph becomes connected.
 
 So the evolution of the graph is most naturally described through the evolution of its component structure.
 
@@ -356,10 +339,10 @@ par(old_par)
 
 These snapshots show several distinct structural stages.
 
-- At $p=0$, all vertices are isolated.
-- For very small $p$, tiny components begin to appear.
-- At intermediate values of $p$, components merge and one of them starts to dominate.
-- At larger values of $p$, most vertices belong to a single large connected structure.
+-   At $p=0$, all vertices are isolated.
+-   For very small $p$, tiny components begin to appear.
+-   At intermediate values of $p$, components merge and one of them starts to dominate.
+-   At larger values of $p$, most vertices belong to a single large connected structure.
 
 The qualitative transition is therefore from fragmentation to macroscopic connectivity.
 
@@ -508,8 +491,8 @@ The transition is therefore continuous: the giant component emerges gradually, g
 
 In the supercritical regime, the graph has two coexisting structural parts:
 
-1. one giant component containing a positive fraction of all vertices,
-2. many finite components outside the giant component.
+1.  one giant component containing a positive fraction of all vertices,
+2.  many finite components outside the giant component.
 
 Near the threshold, those finite components are typically small and predominantly tree-like. By contrast, the giant component contains many cycles and loops. So the onset of the giant component is also the onset of genuinely complex global connectivity.
 
@@ -537,18 +520,18 @@ $$
 
 in which
 
-- the graph has a giant component,
-- many smaller components still exist,
-- isolated vertices may still be present,
-- the full graph is not yet connected.
+-   the graph has a giant component,
+-   many smaller components still exist,
+-   isolated vertices may still be present,
+-   the full graph is not yet connected.
 
 Only when the average degree reaches order $\ln N$ do these remaining disconnected pieces disappear with high probability.
 
 ::: {.callout-important title="Two distinct thresholds"}
 The emergence of the giant component and the graph becoming fully connected are separate events:
 
-- **Giant component threshold:** $\langle k \rangle = 1$
-- **Connectedness threshold:** $\langle k \rangle \approx \ln N$
+-   **Giant component threshold:** $\langle k \rangle = 1$
+-   **Connectedness threshold:** $\langle k \rangle \approx \ln N$
 
 Between these two thresholds, the graph has a macroscopic connected backbone but also retains isolated vertices and small disconnected pieces.
 :::
@@ -696,7 +679,7 @@ This last plot makes the distinction between the two thresholds especially clear
 ## Summary of regimes
 
 | Regime | Condition | Main structural property |
-|:------|:----------|:--------------------------|
+|:---|:---|:---|
 | Subcritical | $\langle k \rangle < 1$ | Only small connected components are present |
 | Critical | $\langle k \rangle \approx 1$ | The giant component begins to emerge |
 | Supercritical | $\langle k \rangle > 1$ | A giant component coexists with many finite components |
@@ -709,34 +692,34 @@ This table summarizes the evolution of the Erdős--Rényi random graph in terms 
 ::: {.callout-important title="Summary"}
 For the evolution of Erdős--Rényi random graphs $G(N,p)$:
 
-1. **Expected degree:** $$\langle k \rangle = p(N-1)$$
+1.  **Expected degree:** $$\langle k \rangle = p(N-1)$$
 
-2. **Giant-component threshold:** $$\langle k \rangle = 1 \quad \Leftrightarrow \quad p_c \approx \frac{1}{N}$$
+2.  **Giant-component threshold:** $$\langle k \rangle = 1 \quad \Leftrightarrow \quad p_c \approx \frac{1}{N}$$
 
-3. **Giant-component fraction** (self-consistency equation): $$S = 1 - e^{-\langle k \rangle S}$$
+3.  **Giant-component fraction** (self-consistency equation): $$S = 1 - e^{-\langle k \rangle S}$$
 
-4. **Near-threshold size:** $$S \approx 2(\langle k \rangle - 1), \qquad \langle k \rangle \downarrow 1^{+}$$
+4.  **Near-threshold size:** $$S \approx 2(\langle k \rangle - 1), \qquad \langle k \rangle \downarrow 1^{+}$$
 
-5. **Connectedness threshold:** $$\langle k \rangle \approx \ln N \quad \Leftrightarrow \quad p \approx \frac{\ln N}{N}$$
+5.  **Connectedness threshold:** $$\langle k \rangle \approx \ln N \quad \Leftrightarrow \quad p \approx \frac{\ln N}{N}$$
 :::
 
 ## In-class questions
 
-1. Why is connectedness a global property of a graph?
-2. What role does maximality play in the definition of a connected component?
-3. Why is an isolated vertex still a connected component?
-4. What distinguishes a largest component from a giant component?
-5. Why does the threshold $\langle k \rangle = 1$ matter?
-6. Why does the connectedness threshold occur later, near $\langle k \rangle = \ln N$?
-7. Why can a graph have a giant component and still be disconnected?
+1.  Why is connectedness a global property of a graph?
+2.  What role does maximality play in the definition of a connected component?
+3.  Why is an isolated vertex still a connected component?
+4.  What distinguishes a largest component from a giant component?
+5.  Why does the threshold $\langle k \rangle = 1$ matter?
+6.  Why does the connectedness threshold occur later, near $\langle k \rangle = \ln N$?
+7.  Why can a graph have a giant component and still be disconnected?
 
 ## End-of-chapter exercises
 
 The exercises below are grouped into three categories:
 
-1. mathematical exercises,
-2. conceptual and analytical exercises,
-3. simulation and coding exercises.
+1.  mathematical exercises,
+2.  conceptual and analytical exercises,
+3.  simulation and coding exercises.
 
 They are designed to move from formal understanding to computational verification.
 
@@ -746,38 +729,36 @@ They are designed to move from formal understanding to computational verificatio
 
 Let $G=(V,E)$ be an undirected graph.
 
-1. Prove that every vertex of $G$ belongs to at least one connected component.
-2. Prove that no vertex can belong to two distinct connected components.
-3. Deduce that the connected components of $G$ form a partition of the vertex set $V$.
+1.  Prove that every vertex of $G$ belongs to at least one connected component.
+2.  Prove that no vertex can belong to two distinct connected components.
+3.  Deduce that the connected components of $G$ form a partition of the vertex set $V$.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 2. Isolated vertices
 
 Let $v \in V$ be a vertex with degree zero.
 
-1. Prove that $\{v\}$ is a connected subgraph.
-2. Prove that $\{v\}$ is maximal among connected subgraphs containing $v$.
-3. Conclude that an isolated vertex is a connected component of size $1$.
+1.  Prove that $\{v\}$ is a connected subgraph.
+2.  Prove that $\{v\}$ is maximal among connected subgraphs containing $v$.
+3.  Conclude that an isolated vertex is a connected component of size $1$.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 3. Giant component criterion
 
 Let $C_{\max}(G_N)$ denote the largest connected component of a graph on $N$ vertices.
 
-1. Explain why every finite graph has a largest connected component.
-2. Give an example of a sequence of graphs for which
-   $$
-   \frac{|C_{\max}(G_N)|}{N} \to 0.
-   $$
-3. Give an example of a sequence of graphs for which
-   $$
-   \frac{|C_{\max}(G_N)|}{N} \to c > 0.
-   $$
-4. Explain why the second case corresponds to the existence of a giant component.
+1.  Explain why every finite graph has a largest connected component.
+2.  Give an example of a sequence of graphs for which $$
+    \frac{|C_{\max}(G_N)|}{N} \to 0.
+    $$
+3.  Give an example of a sequence of graphs for which $$
+    \frac{|C_{\max}(G_N)|}{N} \to c > 0.
+    $$
+4.  Explain why the second case corresponds to the existence of a giant component.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 4. Threshold written in terms of $p$
 
@@ -787,21 +768,17 @@ $$
 \langle k \rangle = p(N-1).
 $$
 
-1. Show that the condition
-   $$
-   \langle k \rangle = 1
-   $$
-   implies
-   $$
-   p_c = \frac{1}{N-1}.
-   $$
-2. Show that for large $N$ this becomes
-   $$
-   p_c \sim \frac{1}{N}.
-   $$
-3. Explain why this implies that the critical edge density becomes very small in large networks.
+1.  Show that the condition $$
+    \langle k \rangle = 1
+    $$ implies $$
+    p_c = \frac{1}{N-1}.
+    $$
+2.  Show that for large $N$ this becomes $$
+    p_c \sim \frac{1}{N}.
+    $$
+3.  Explain why this implies that the critical edge density becomes very small in large networks.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 5. Connectedness threshold
 
@@ -811,22 +788,18 @@ $$
 \langle k \rangle \approx \ln N.
 $$
 
-1. Show that this corresponds to
-   $$
-   p \approx \frac{\ln N}{N-1}.
-   $$
-2. Compare this threshold with the giant-component threshold
-   $$
-   p_c \approx \frac{1}{N-1}.
-   $$
-3. Prove that
-   $$
-   \ln N > 1
-   \qquad \text{for all } N>e,
-   $$
-   and explain why connectedness must occur later than the emergence of the giant component.
+1.  Show that this corresponds to $$
+    p \approx \frac{\ln N}{N-1}.
+    $$
+2.  Compare this threshold with the giant-component threshold $$
+    p_c \approx \frac{1}{N-1}.
+    $$
+3.  Prove that $$
+    \ln N > 1
+    \qquad \text{for all } N>e,
+    $$ and explain why connectedness must occur later than the emergence of the giant component.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 6. The self-consistency equation
 
@@ -836,13 +809,13 @@ $$
 S = 1 - e^{-\langle k \rangle S}.
 $$
 
-1. Verify that $S=0$ is always a solution.
-2. Show that if $\langle k \rangle < 1$, then the tangent of the right-hand side at $S=0$ has slope smaller than $1$.
-3. Explain why this indicates that no positive solution exists in the subcritical regime.
-4. Show that when $\langle k \rangle > 1$, the slope at $S=0$ exceeds $1$.
-5. Explain why this allows the existence of a positive solution corresponding to a giant component.
+1.  Verify that $S=0$ is always a solution.
+2.  Show that if $\langle k \rangle < 1$, then the tangent of the right-hand side at $S=0$ has slope smaller than $1$.
+3.  Explain why this indicates that no positive solution exists in the subcritical regime.
+4.  Show that when $\langle k \rangle > 1$, the slope at $S=0$ exceeds $1$.
+5.  Explain why this allows the existence of a positive solution corresponding to a giant component.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 7. Near-threshold expansion
 
@@ -854,14 +827,13 @@ $$
 
 assume that $S$ is small and that $\langle k \rangle = 1+\varepsilon$ with $\varepsilon>0$ small.
 
-1. Expand the exponential up to second order in $S$.
-2. Show that, to leading order,
-   $$
-   S \approx 2(\langle k \rangle - 1).
-   $$
-3. Interpret this result in terms of the growth of the giant component just above the threshold.
+1.  Expand the exponential up to second order in $S$.
+2.  Show that, to leading order, $$
+    S \approx 2(\langle k \rangle - 1).
+    $$
+3.  Interpret this result in terms of the growth of the giant component just above the threshold.
 
----
+------------------------------------------------------------------------
 
 ### Part II. Conceptual and analytical exercises
 
@@ -869,47 +841,47 @@ assume that $S$ is small and that $\langle k \rangle = 1+\varepsilon$ with $\var
 
 For each of the following values of $\langle k \rangle$, determine whether the graph is expected to be in the subcritical, critical, supercritical, or connected regime:
 
-1. $\langle k \rangle = 0.4$
-2. $\langle k \rangle = 0.95$
-3. $\langle k \rangle = 1.8$
-4. $\langle k \rangle = \ln 500$
+1.  $\langle k \rangle = 0.4$
+2.  $\langle k \rangle = 0.95$
+3.  $\langle k \rangle = 1.8$
+4.  $\langle k \rangle = \ln 500$
 
 In each case, describe the expected component structure.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 9. Giant component versus connected graph
 
 Explain carefully why the following two statements are not equivalent:
 
-1. the graph has a giant component,
-2. the graph is connected.
+1.  the graph has a giant component,
+2.  the graph is connected.
 
 Your answer should include:
 
-- a formal distinction,
-- an explanation in terms of component sizes,
-- an example of a graph that has a giant component but is not connected.
+-   a formal distinction,
+-   an explanation in terms of component sizes,
+-   an example of a graph that has a giant component but is not connected.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 10. Structural interpretation of the regimes
 
 Write a short mathematical discussion comparing the four regimes:
 
-- subcritical,
-- critical,
-- supercritical,
-- connected.
+-   subcritical,
+-   critical,
+-   supercritical,
+-   connected.
 
 For each regime, describe:
 
-- the typical component sizes,
-- whether isolated vertices are common,
-- whether a giant component exists,
-- whether the graph is connected.
+-   the typical component sizes,
+-   whether isolated vertices are common,
+-   whether a giant component exists,
+-   whether the graph is connected.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 11. Why the emergence is a phase transition
 
@@ -917,22 +889,22 @@ The emergence of the giant component is often described as a phase transition.
 
 Write a short explanation of this statement. Your answer should address:
 
-- what quantity changes qualitatively,
-- what the threshold parameter is,
-- why the transition is not merely a gradual visual change,
-- why this phenomenon is global rather than local.
+-   what quantity changes qualitatively,
+-   what the threshold parameter is,
+-   why the transition is not merely a gradual visual change,
+-   why this phenomenon is global rather than local.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 12. Trees and cycles outside the giant component
 
 In the supercritical regime, many finite components outside the giant component are tree-like.
 
-1. Explain why a finite tree on $m$ vertices has exactly $m-1$ edges.
-2. Explain why the appearance of cycles indicates additional structural complexity.
-3. Discuss why the giant component is expected to contain cycles, whereas many small finite components remain tree-like near the threshold.
+1.  Explain why a finite tree on $m$ vertices has exactly $m-1$ edges.
+2.  Explain why the appearance of cycles indicates additional structural complexity.
+3.  Discuss why the giant component is expected to contain cycles, whereas many small finite components remain tree-like near the threshold.
 
----
+------------------------------------------------------------------------
 
 ### Part III. Simulation and coding exercises
 
@@ -940,14 +912,14 @@ In the supercritical regime, many finite components outside the giant component 
 
 Write an `R` function that takes an undirected graph `g` and returns:
 
-- the number of connected components,
-- the vector of component sizes,
-- the size of the largest connected component,
-- the fraction of vertices in the largest connected component.
+-   the number of connected components,
+-   the vector of component sizes,
+-   the size of the largest connected component,
+-   the fraction of vertices in the largest connected component.
 
 Test the function on at least three hand-constructed graphs.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 14. Evolution of the largest component
 
@@ -961,22 +933,22 @@ For each value of $p$, estimate the average largest-component fraction over repe
 
 Tasks:
 
-1. plot the largest-component fraction against $\langle k \rangle$,
-2. indicate the line $\langle k \rangle = 1$,
-3. explain where the giant component begins to emerge.
+1.  plot the largest-component fraction against $\langle k \rangle$,
+2.  indicate the line $\langle k \rangle = 1$,
+3.  explain where the giant component begins to emerge.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 15. Number of components and isolated vertices
 
 Using the same simulations as in Exercise 14, compute and plot:
 
-1. the average number of connected components,
-2. the average fraction of isolated vertices.
+1.  the average number of connected components,
+2.  the average fraction of isolated vertices.
 
 Discuss how these two quantities evolve as $\langle k \rangle$ increases.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 16. Empirical connectedness probability
 
@@ -984,12 +956,12 @@ For fixed $N=500$, estimate the probability that $G(N,p)$ is connected for a gri
 
 Tasks:
 
-1. plot the empirical connectedness probability against $\langle k \rangle$,
-2. indicate the line $\langle k \rangle = \ln N$,
-3. explain why the curve should be monotone increasing in theory,
-4. explain why Monte Carlo estimates may show small fluctuations.
+1.  plot the empirical connectedness probability against $\langle k \rangle$,
+2.  indicate the line $\langle k \rangle = \ln N$,
+3.  explain why the curve should be monotone increasing in theory,
+4.  explain why Monte Carlo estimates may show small fluctuations.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 17. Finite-size comparison
 
@@ -1001,11 +973,11 @@ $$
 
 For each value of $N$:
 
-1. plot the largest-component fraction against $\langle k \rangle$,
-2. compare the sharpness of the transition near $\langle k \rangle = 1$,
-3. discuss how the finite-size behavior changes as $N$ increases.
+1.  plot the largest-component fraction against $\langle k \rangle$,
+2.  compare the sharpness of the transition near $\langle k \rangle = 1$,
+3.  discuss how the finite-size behavior changes as $N$ increases.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 18. Connectedness threshold and system size
 
@@ -1021,7 +993,7 @@ Then compare your estimates with $\ln N$.
 
 Discuss whether the numerical behavior supports the theoretical scaling of the connectedness threshold.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 19. Monotone network evolution
 
@@ -1029,12 +1001,12 @@ Construct a sequence of graphs on a fixed set of vertices such that the edge set
 
 Tasks:
 
-1. keep vertex positions fixed across all snapshots,
-2. display at least six stages of evolution,
-3. highlight the largest component at each stage,
-4. explain how the component structure changes visually.
+1.  keep vertex positions fixed across all snapshots,
+2.  display at least six stages of evolution,
+3.  highlight the largest component at each stage,
+4.  explain how the component structure changes visually.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 20. Numerical solution of the giant-component equation
 
@@ -1044,22 +1016,22 @@ $$
 S = 1 - e^{-\langle k \rangle S}.
 $$
 
-1. Write an `R` function that solves this equation numerically for a given value of $\langle k \rangle$.
-2. Compute the solution for a grid of values of $\langle k \rangle$ between $0$ and $5$.
-3. Plot the resulting theoretical curve.
-4. Compare it with your simulation-based estimate of the largest-component fraction.
+1.  Write an `R` function that solves this equation numerically for a given value of $\langle k \rangle$.
+2.  Compute the solution for a grid of values of $\langle k \rangle$ between $0$ and $5$.
+3.  Plot the resulting theoretical curve.
+4.  Compare it with your simulation-based estimate of the largest-component fraction.
 
----
+------------------------------------------------------------------------
 
 #### Exercise 21. Short computational report
 
 Prepare a short report of approximately two pages based on your simulations. The report should include:
 
-- a brief statement of the model,
-- at least two figures,
-- one discussion of the threshold near $\langle k \rangle = 1$,
-- one discussion of the connectedness threshold near $\langle k \rangle = \ln N$,
-- a concluding paragraph interpreting the emergence of global connectivity.
+-   a brief statement of the model,
+-   at least two figures,
+-   one discussion of the threshold near $\langle k \rangle = 1$,
+-   one discussion of the connectedness threshold near $\langle k \rangle = \ln N$,
+-   a concluding paragraph interpreting the emergence of global connectivity.
 
 ## Suggested project-style extension
 
@@ -1069,10 +1041,10 @@ A strong mini-project for this chapter is the following:
 
 A complete submission should contain:
 
-- mathematical derivations,
-- simulation code,
-- plots,
-- interpretation of the results.
+-   mathematical derivations,
+-   simulation code,
+-   plots,
+-   interpretation of the results.
 
 ## Concluding remarks
 

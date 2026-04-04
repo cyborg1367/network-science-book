@@ -6,39 +6,21 @@ title: "Small-World Networks"
 #| label: chapter-setup-smallworld
 #| include: false
 
-library(igraph)
-library(dplyr)
-library(ggplot2)
-library(tidyr)
-library(purrr)
+setup_candidates <- c("R/book-setup.R", "../R/book-setup.R")
+setup_file <- setup_candidates[file.exists(setup_candidates)][1]
 
-course_cols <- list(
-  teal  = "#0F766E",
-  blue  = "#0EA5E9",
-  gold  = "#F59E0B",
-  warm  = "#D97706",
-  ink   = "#1F2937",
-  slate = "#475569",
-  grid  = "#E5E7EB"
+if (is.na(setup_file)) {
+  stop("Could not locate R/book-setup.R", call. = FALSE)
+}
+
+source(setup_file, local = knitr::knit_global())
+
+ns_book_setup(
+  preset = "smallworld",
+  seed = 2031
 )
-
-theme_set(
-  theme_minimal(base_size = 13) +
-    theme(
-      plot.title.position = "plot",
-      panel.grid.minor = element_blank(),
-      panel.grid.major.x = element_line(color = course_cols$grid, linewidth = 0.35),
-      panel.grid.major.y = element_line(color = course_cols$grid, linewidth = 0.35),
-      axis.title = element_text(color = course_cols$ink),
-      axis.text = element_text(color = course_cols$ink),
-      plot.title = element_text(face = "bold", color = course_cols$ink),
-      plot.subtitle = element_text(color = course_cols$slate),
-      legend.position = "top"
-    )
-)
-
-set.seed(2031)
 ```
+
 
 ## Introduction
 
@@ -998,7 +980,7 @@ That coexistence is what distinguishes a small-world network from both a regular
 
 ::: {.callout-tip title="Structural comparison"}
 | Model | Average path length | Clustering coefficient |
-|:---------------|:------------------------:|:----------------------------:|
+|:---|:--:|:--:|
 | Regular lattice | large ($\sim N/2K$) | high ($\sim 3/4$) |
 | Random graph ($G(N,p)$) | small ($\sim \ln N / \ln \langle k\rangle$) | low ($\sim p$) |
 | Watts--Strogatz (small-world) | small | high |

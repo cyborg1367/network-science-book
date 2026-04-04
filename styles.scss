@@ -21,15 +21,14 @@ $heading-color:     #0f172a;
 $border-color:      rgba(148, 163, 184, 0.22);
 $shadow-soft:       0 10px 30px rgba(15, 23, 42, 0.05);
 $shadow-card:       0 14px 36px rgba(15, 23, 42, 0.06);
-
-$font-family-base:        "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+$font-family-base:        "Crimson Pro", Georgia, serif;
 $font-family-monospace:   "JetBrains Mono", "Fira Code", monospace;
-$font-size-root:          16.5px;
+$font-size-root:          20px;
 $line-height-base:        1.82;
 
 /*-- scss:rules --*/
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 html {
   scroll-behavior: smooth;
@@ -104,7 +103,7 @@ body {
 }
 
 #quarto-sidebar .sidebar-item-text {
-  padding: 0.55rem 0.95rem;
+  padding: 0.4rem 0.5rem;
   border-radius: 10px;
   font-weight: 500;
   color: $secondary;
@@ -150,7 +149,6 @@ body {
 
 
 #quarto-margin-sidebar nav[role="doc-toc"] {
-  border-left: 1px solid $border-color;
   padding-left: 1rem;
 }
 
@@ -160,13 +158,14 @@ body {
   line-height: 1.45;
   padding: 0.28rem 0;
   transition: color 0.18s ease;
+  padding-left: 4px;
+
 }
 
 #quarto-margin-sidebar nav[role="doc-toc"] ul > li > a:hover,
 #quarto-margin-sidebar nav[role="doc-toc"] ul > li > a.active {
   color: $primary-dark;
   font-weight: 600;
-  padding-left: 4px;
 }
 
 /* ═══════════════════════════════════════════════════════════ */
@@ -215,14 +214,78 @@ h1, h2, h3, h4 {
   letter-spacing: -0.025em;
 }
 
-h1.title {
-  font-size: clamp(2.4rem, 4vw, 3.3rem);
-  font-weight: 800;
-  line-height: 1.08;
-  margin-bottom: 0.75rem;
+/* Chapter title block typography */
+#title-block-header,
+.quarto-title-block {
+  margin-bottom: 2.2rem;
+  padding-left: 0 !important;
+}
+
+#title-block-header .quarto-title-banner,
+.quarto-title-block .quarto-title-banner {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+#title-block-header .quarto-title-meta,
+#title-block-header .quarto-categories,
+.quarto-title-block .quarto-title-meta,
+.quarto-title-block .quarto-categories {
+  color: $text-soft;
+}
+
+/* Fix Quarto inline chapter number + nbsp + title layout */
+#title-block-header h1.title,
+.quarto-title-block .title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: clamp(2.8rem, 4.4vw, 4rem);
+  font-weight: 700;
+  line-height: 1.03;
+  letter-spacing: -0.02em;
+  color: #1f2430;
+  margin: 0 0 0.45rem 0;
+  padding: 0 !important;
+}
+
+#title-block-header h1.title .chapter-number,
+.quarto-title-block .title .chapter-number {
+  display: block;
+  font-family: $font-family-base;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: none;
+  color: #8b5cf6;
+  margin: 0 0 0.75rem 0;
+  padding: 0 !important;
+}
+
+#title-block-header h1.title .chapter-number::before,
+.quarto-title-block .title .chapter-number::before {
+  content: "Chapter ";
+}
+
+#title-block-header h1.title .chapter-title,
+.quarto-title-block .title .chapter-title {
+  display: block;
+  margin: 0;
+  padding: 0 !important;
 }
 
 .subtitle,
+#title-block-header .subtitle,
+.quarto-title-block .subtitle {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 1.18rem;
+  font-style: italic;
+  font-weight: 400;
+  color: #6b7280;
+  line-height: 1.45;
+  margin: 0;
+  padding-left: 0 !important;
+}
+
 .quarto-title-meta,
 .description,
 #title-block-header .quarto-categories {
@@ -316,11 +379,6 @@ tbody tr:nth-child(even) {
   background: rgba(248, 250, 252, 0.85);
 }
 
-.figure,
-.quarto-figure,
-.cell-output-display {
-  margin: 2rem 0;
-}
 
 .figure-caption,
 figcaption,
@@ -453,3 +511,4 @@ ul li::marker,
 ol li::marker {
   color: $primary-dark;
 }
+

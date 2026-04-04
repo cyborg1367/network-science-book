@@ -6,15 +6,20 @@ book:
   title: "Network Science"
   subtitle: "Concepts, Examples, and Exercises"
   author: "Zahra Rezaei"
-  date: today
+  date: "2026-04-03"
   chapters:
     - index.qmd
+    - chapters/01-preface.qmd
+    - chapters/02-graph-theory.qmd
     - chapters/03-random-graphs.qmd
     - chapters/04-random-graph-evolution.qmd
     - chapters/05-small-world-graphs.qmd
     - chapters/06-scale-free-graphs.qmd
+    - chapters/07-network-robustness.qmd
   page-navigation: true
   search: true
+
+bibliography: references.bib
 
 execute:
   echo: true

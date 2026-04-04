@@ -6,62 +6,134 @@ title: "Course Overview"
 #| label: setup
 #| include: false
 
-library(ggplot2)
+setup_candidates <- c("R/book-setup.R", "../R/book-setup.R")
+setup_file <- setup_candidates[file.exists(setup_candidates)][1]
 
-knitr::opts_chunk$set(
-  fig.width = 7,
-  fig.height = 4.6,
-  out.width = "100%",
-  dpi = 160,
-  fig.retina = 2,
-  comment = NA
+if (is.na(setup_file)) {
+  stop("Could not locate R/book-setup.R", call. = FALSE)
+}
+
+source(setup_file, local = knitr::knit_global())
+
+ns_book_setup(
+  preset = "index",
+  seed = 1234,
+  chunk_options = list(
+    fig.width = 7,
+    fig.height = 4.6,
+    out.width = "100%",
+    dpi = 160,
+    fig.retina = 2,
+    comment = NA
+  )
 )
-
-theme_set(
-  theme_minimal(base_size = 13) +
-    theme(
-      plot.title.position = "plot",
-      panel.grid.minor = element_blank()
-    )
-)
-
-set.seed(1234)
 ```
 
 ## Welcome
 
-This Quarto book is designed as a single, well-structured version of a Network Science course.
+This book is designed as the main course text for a university class in **Network Science**. Its purpose is not only to define central ideas, but to help students move back and forth between:
 
-Each chapter follows the same pattern:
+-   mathematical language,
+-   structural intuition,
+-   computational experimentation in `R`,
+-   and interpretation of real network phenomena.
 
-1.  **Theory and intuition**
-2.  **Worked examples in R**
-3.  **Exercises and coding tasks**
+The book treats networks as mathematical objects, probabilistic systems, and models of real complex systems all at once. Across the chapters, we move from the language of graphs to randomness, emergence, clustering, hubs, and robustness.
 
-The same source files produce both:
+::: {.callout-important title="What This Book Is Trying To Teach"}
+The central goal of the course is to understand how **large-scale network behavior emerges from local structural rules**.
 
--   an HTML course website
--   a PDF course handout
+By the end of the book, students should be able to:
 
-## Required packages
+-   describe networks using precise graph-theoretic definitions,
+-   analyze random and generative network models,
+-   interpret degree distributions, clustering, distances, and components,
+-   compare homogeneous and heterogeneous network structures,
+-   and use simulation in `R` to test theoretical predictions.
+:::
+
+## The Big Questions
+
+The course is organized around a small number of recurring questions:
+
+1.  How should we represent a network mathematically?
+2.  What changes when edges are introduced at random?
+3.  Why do large connected structures suddenly emerge?
+4.  How can networks have both short distances and local clustering?
+5.  Why do some networks produce hubs and heavy-tailed degree distributions?
+6.  What makes a network resilient, and what makes it fragile?
+
+These questions give the book its internal structure. Each chapter develops one part of this larger story.
+
+## Course Map
+
+After this welcome page, the book begins with a short preface and reader's guide, then moves into the main conceptual chapters.
+
+| Chapter | Main theme | Guiding idea |
+|:-----------------------|:-----------------------|:-----------------------|
+| [Preface and Reader's Guide](chapters/01-preface.qmd) | Orientation | Explains how to read the text, what background is assumed, and how theory, code, and exercises fit together. |
+| [Graph Theory](chapters/02-graph-theory.qmd) | Foundations | Networks begin with the language of vertices, edges, paths, matrices, and connectivity. |
+| [Random Graphs](chapters/03-random-graphs.qmd) | Probability on graphs | Structure can be studied statistically when edges appear by chance. |
+| [The Evolution of Random Graphs](chapters/04-random-graph-evolution.qmd) | Emergence and phase transitions | Global connectivity appears through threshold behavior rather than smooth change. |
+| [Small-World Networks](chapters/05-small-world-graphs.qmd) | Distance and clustering | Real networks can combine short paths with surprisingly strong local cohesion. |
+| [Scale-Free Networks](chapters/06-scale-free-graphs.qmd) | Hubs and heavy tails | Broad degree distributions create heterogeneity, hierarchy, and hub-dominated structure. |
+| [Network Robustness](chapters/07-network-robustness.qmd) | Failure and resilience | The same structure that makes networks efficient can also make them vulnerable. |
+
+## Conceptual Progression
+
+The intellectual progression of the book is deliberate:
+
+1.  We start with **graph theory**, because every later model depends on a precise structural vocabulary.
+2.  We then study **random graphs**, where probability becomes part of the model rather than a nuisance.
+3.  From there, we examine **network evolution**, where component growth and threshold phenomena reveal how global order emerges.
+4.  We next turn to **small-world structure**, which explains why many large networks remain navigable.
+5.  We then study **scale-free networks**, where heterogeneity, hubs, and preferential attachment become central.
+6.  Finally, we investigate **robustness**, asking how network architecture shapes resilience under failure or attack.
+
+This means the book is not just a list of topics. It is a structured argument about how network structure, randomness, growth, and vulnerability fit together.
+
+## How To Use This Book
+
+Each chapter is designed to be used in the same rhythm:
+
+1.  **Theory and intuition**: key definitions, explanations, and mathematical results.
+2.  **Worked examples in `R`**: simulations and visualizations that make the abstract ideas concrete.
+3.  **Exercises and coding tasks**: problems that move from derivation to interpretation to implementation.
+
+For students, the most effective way to use the book is:
+
+-   read the definitions carefully before looking at code,
+-   use the figures to build intuition about what the formulas mean,
+-   run and modify the `R` examples,
+-   and treat the exercises as part of the learning process, not as material left for the end.
+
+::: {.callout-note title="Classroom Use"}
+This welcome page is the front door to a course text, not just project documentation. The book is intended to support lectures, homework, discussion, and computational exploration in parallel.
+:::
+
+## What Students Should Notice Across Chapters
+
+Although the topics differ, several ideas return throughout the book:
+
+-   **Local versus global structure**: a small local rule can produce a large global effect.
+-   **Typical behavior versus exceptional nodes**: averages matter, but tails and hubs matter too.
+-   **Randomness versus mechanism**: some patterns arise from chance, others from growth rules or constraints.
+-   **Interpretation through computation**: simulation helps students see why the mathematics is meaningful.
+
+Seeing these recurring themes is one of the most important learning outcomes of the course.
+
+## Software Setup
 
 Install the packages below once:
 
 ```{r}
 #| eval: false
-install.packages(c(
-  "igraph", "dplyr", "ggplot2", "tidyr", "purrr", "plotly", "tinytex", "quarto", "ggraph"
-))
+if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
+renv::restore()
 tinytex::install_tinytex()
 ```
 
-## Current chapters
+The same source files produce both:
 
-The current book contains these chapters:
-
-- [Random Graphs](chapters/03-random-graphs.qmd)
-- [Random Graph Evolution](chapters/04-random-graph-evolution.qmd)
-- [Small-World Graphs](chapters/05-small-world-graphs.qmd)
-- [Scale-free Graphs](chapters/06-scale-free-graphs.qmd)
-
-
+-   an HTML course website,
+-   and a PDF course handout.
