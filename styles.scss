@@ -66,9 +66,9 @@ body {
         display: grid;
         gap: 0;
         grid-template-columns: 
-        [screen-start] 10px 
+        [screen-start] 2px 
         [screen-start-inset] 1fr 
-        [page-start] minmax(60px, 130px) 
+        [page-start] minmax(60px, 160px) 
         [page-start-inset] minmax(10px, 170px) 
         [body-start-outset] minmax(15px, 50px) 
         [body-start] 1em 

@@ -1,0 +1,1229 @@
+---
+title: "Community Structure in Graphs"
+subtitle: "Mesoscopic Organization, Graph Cuts, Spectral Methods, Modularity, and Statistical Inference"
+bibliography: ../references.bib
+---
+
+```{r}
+#| include: false
+
+setup_candidates <- c("R/book-setup.R", "../R/book-setup.R")
+setup_file <- setup_candidates[file.exists(setup_candidates)][1]
+
+if (is.na(setup_file)) {
+  stop("Could not locate R/book-setup.R", call. = FALSE)
+}
+
+source(setup_file, local = knitr::knit_global())
+
+ns_book_setup(
+  preset = "advanced",
+  packages = c(ns_package_profile("advanced"), "ggraph", "patchwork"),
+  seed = 2081,
+  chunk_options = list(
+    fig.width = 8.2,
+    fig.height = 5.2,
+    dpi = 350,
+    out.width = "100%",
+    fig.align = "center",
+    warning = FALSE,
+    message = FALSE
+  )
+)
+```
+
+## Introduction
+
+After learning how random graphs generate baseline connectivity, how scale-free networks create hubs, and how small-world networks combine clustering with short paths, we now move to a different question: how do vertices assemble into *modules* or *communities*? In many real networks, the most informative structure is neither purely local nor purely global. Instead, it lives at an intermediate, **mesoscopic** scale. Social networks split into circles of friends, scientific collaboration networks split into research specialties, gene regulatory networks contain functional modules, and transportation networks organize into regional clusters. Community structure is therefore a canonical example of mesoscopic organization in complex systems [@barabasi2016; @girvan2002; @fortunato2010].
+
+In the language of network science, a community is a group of vertices that connect to one another more densely than to the rest of the graph. Yet this simple intuition immediately surfaces a fundamental difficulty: there is no unique, universally accepted mathematical definition of a community. Different definitions formalize different aspects of mesoscale cohesion. Some methods minimize sparse cuts between groups, some maximize a null-model deviation (modularity), and some treat block membership as a latent variable to be inferred from a probabilistic generative model [@fortunato2010; @newman2010]. Each approach answers a slightly different question, and each inherits different assumptions, computational characteristics, and failure modes.
+
+For master-level study, this plurality is not a problem to be avoided but a theoretical richness to be explored. The present chapter therefore develops community detection in stages: from informal intuition, through rigorous graph-cut quantities and spectral theory, through modularity and its optimization, to the stochastic block model as a full statistical inference framework. The chapter closes with a treatment of detectability limits that connects community structure to information theory, and with guidelines for honest interpretation of empirical results.
+
+## Chapter roadmap
+
+This chapter develops in the following order.
+
+1.  Formal definitions: graphs, partitions, and notation
+2.  Why communities are mesoscale and not local or global properties
+3.  The distinction between clustering coefficient and community structure
+4.  Internal density, cut size, volume, and conductance
+5.  Cheeger's inequality and the spectral geometry of cuts
+6.  The graph Laplacian, the Fiedler vector, and spectral clustering
+7.  Bridge edges and the Girvan--Newman divisive algorithm
+8.  Modularity: derivation from null-model first principles and spectral formulation
+9.  Fast optimization: Louvain and the Leiden algorithm
+10. The stochastic block model: likelihood, maximum-likelihood estimation, and EM outline
+11. The degree-corrected stochastic block model
+12. The Kesten--Stigum detectability threshold and its information-theoretic meaning
+13. Comparing partitions: normalized mutual information, adjusted Rand index, and variation of information
+14. Limitations: resolution limit, overlapping communities, and benchmark dependence
+15. A practical workflow for empirical community analysis
+
+## Learning goals
+
+By the end of this chapter, a student should be able to:
+
+-   define a graph partition formally and explain what makes a subset a good community candidate;
+-   state and apply the definitions of cut size, volume, conductance, and internal density;
+-   state Cheeger's inequality and explain what it connects;
+-   construct the (unnormalized and normalized) graph Laplacian and relate its eigenvalues to graph connectivity;
+-   describe spectral clustering and its connection to the normalized cut;
+-   explain the modularity null model, derive the community-level expression, and connect it to the modularity matrix eigenvalue problem;
+-   describe the Louvain heuristic and explain why the Leiden algorithm was proposed as an improvement;
+-   write down the likelihood of the stochastic block model, derive the maximum-likelihood estimator for $\Omega$, and outline the EM algorithm;
+-   state the Kesten--Stigum threshold and explain why detectability failure is an information-theoretic impossibility, not merely a computational one;
+-   compute and interpret NMI, ARI, and variation of information between two partitions;
+-   discuss the resolution limit, overlapping communities, and benchmark-dependence as fundamental limitations.
+
+------------------------------------------------------------------------
+
+## Formal preliminaries: graphs, partitions, and notation
+
+Throughout this chapter, let $G = (V, E)$ be a simple, undirected, connected graph with $n = |V|$ vertices and $m = |E|$ edges. The **adjacency matrix** is $A \in \{0,1\}^{n \times n}$ with $A_{ij} = 1$ if $\{i,j\} \in E$. The **degree** of vertex $i$ is $k_i = \sum_j A_{ij}$, and $\mathbf{k} = (k_1,\ldots,k_n)^T$ denotes the degree sequence. The **degree matrix** is $D = \mathrm{diag}(k_1,\ldots,k_n)$. The total number of edge endpoints satisfies $\sum_i k_i = 2m$.
+
+A **partition** of $V$ into $q$ communities is a collection $\mathcal{C} = \{C_1, C_2, \ldots, C_q\}$ satisfying
+
+$$
+C_r \cap C_s = \emptyset \;\text{ for } r \neq s, \qquad \bigcup_{r=1}^q C_r = V.
+$$
+
+The **assignment function** $z: V \to \{1,\ldots,q\}$ maps each vertex to its community label, so $z_i = r$ means vertex $i$ belongs to $C_r$. For a subset $S \subseteq V$, write $\bar{S} = V \setminus S$.
+
+For community $C_r$, define:
+
+-   $n_r = |C_r|$, the number of vertices;
+-   $m_r = \bigl|\{(i,j)\in E : i \in C_r,\, j \in C_r\}\bigr|$, the number of internal edges;
+-   $\ell_r = \bigl|\{(i,j)\in E : i \in C_r,\, j \notin C_r\}\bigr|$, the number of boundary edges (cut edges from $C_r$);
+-   $\mathrm{vol}(C_r) = \sum_{i \in C_r} k_i$, the volume.
+
+------------------------------------------------------------------------
+
+## Why communities matter
+
+A useful analytical decomposition separates structural questions by scale:
+
+-   at the **local** level: degree, triangles, and clustering around individual vertices;
+-   at the **global** level: diameter, giant components, and overall connectivity;
+-   at the **mesoscopic** level: whether $V$ decomposes into intermediate-scale modules.
+
+Community structure belongs to the third category. It is therefore not visible from degree distribution alone, and it cannot be captured by a single global scalar such as average path length. Two networks can share the same degree distribution and the same global density while differing profoundly in their block organization [@barabasi2016; @fortunato2010]. This scale separation is precisely why community detection requires its own mathematical machinery.
+
+In applications, a community can correspond to social role, biological function, thematic topic, geographic proximity, or hidden constraints in the formation process. Community analysis therefore transforms a large, difficult graph into an interpretable map of meso-level structure.
+
+------------------------------------------------------------------------
+
+## Communities are not the same as clustering
+
+This distinction is pedagogically essential.
+
+The **clustering coefficient** of vertex $i$ is a local quantity:
+
+$$
+c_i = \frac{\text{number of closed triangles centered at } i}{\binom{k_i}{2}},
+$$
+
+measuring the probability that two neighbors of $i$ are also neighbors of each other. Community structure, by contrast, is a mesoscopic quantity concerning whether groups of vertices cohere internally relative to their connections with the rest of the graph. A graph can have high average clustering without a clear block partition, and it can have a strong block partition without especially high local clustering.
+
+**Illustrative examples.** A ring lattice has high local clustering because neighbors are spatially proximate and tend to connect, but its community structure is spatially smooth and not naturally partitioned into sharply separated modules. Conversely, a graph consisting of two moderately sparse cliques connected by a single bridge will have only moderate local clustering (interior vertices of each clique form triangles, but bridge-adjacent vertices do not), yet the two-community partition is visually and quantitatively obvious.
+
+::: {.callout-note title="Key distinction"}
+The clustering coefficient asks whether the neighborhood of a single vertex is internally dense. Community detection asks whether the graph decomposes into groups whose internal connectivity substantially exceeds their external connectivity. These are genuinely different questions.
+:::
+
+------------------------------------------------------------------------
+
+## A first synthetic example: planted communities
+
+Before defining algorithms, it is valuable to construct a graph whose mesoscale structure is known in advance. The **planted partition model** (a special case of the stochastic block model treated formally later) assigns each vertex to a block and generates edges independently: edge probability $p_{\mathrm{in}}$ for vertex pairs within the same block, and $p_{\mathrm{out}} \ll p_{\mathrm{in}}$ for pairs in different blocks.
+
+```{r}
+#| label: fig-community-planted-graph
+#| fig-cap: 'A synthetic graph with three planted communities. The within-block edge probability ($p_{\mathrm{in}} = 0.32$) substantially exceeds the between-block probability ($p_{\mathrm{out}} = 0.025$), producing visible mesoscale structure.'
+
+make_planted_partition <- function(sizes, p_in = 0.25, p_out = 0.03) {
+  n <- sum(sizes)
+  block <- rep(seq_along(sizes), sizes)
+  A <- matrix(0, n, n)
+
+  for (i in seq_len(n - 1)) {
+    for (j in (i + 1):n) {
+      p <- if (block[i] == block[j]) p_in else p_out
+      A[i, j] <- rbinom(1, 1, p)
+      A[j, i] <- A[i, j]
+    }
+  }
+
+  g <- igraph::graph_from_adjacency_matrix(A, mode = "undirected", diag = FALSE)
+  igraph::V(g)$block <- factor(block)
+  g
+}
+
+p_in  <- 0.32
+p_out <- 0.025
+
+g_planted <- make_planted_partition(
+  sizes = c(14, 14, 12),
+  p_in = p_in,
+  p_out = p_out
+)
+
+palette_blocks <- c(course_cols$blue, course_cols$gold, course_cols$violet)
+
+set.seed(2081)
+ggraph::ggraph(g_planted, layout = "fr") +
+  ggraph::geom_edge_link(alpha = 0.22, colour = course_cols$slate) +
+  ggraph::geom_node_point(aes(color = block), size = 3.1) +
+  ggplot2::scale_color_manual(values = palette_blocks) +
+  ggplot2::labs(
+    title = "A graph with planted community structure",
+    subtitle = bquote(p["in"] == .(p_in) * "," ~ p["out"] == .(p_out)),
+    color = "Planted block"
+  )
+```
+
+A second view, often more informative for matrix-analytic methods, is the **reordered adjacency matrix**.
+
+```{r}
+#| label: fig-community-adjacency-blocks
+#| fig-cap: 'Adjacency matrix of the planted graph after reordering vertices by block label. Community structure manifests as denser diagonal blocks separated by sparse off-diagonal regions.'
+
+A_planted <- as.matrix(igraph::as_adjacency_matrix(g_planted, sparse = FALSE))
+ord_planted <- order(as.integer(igraph::V(g_planted)$block))
+A_ord <- A_planted[ord_planted, ord_planted]
+
+adj_df <- as.data.frame(as.table(A_ord)) |>
+  dplyr::rename(row = Var1, col = Var2, edge = Freq) |>
+  dplyr::mutate(row = as.integer(row), col = as.integer(col))
+
+ggplot2::ggplot(adj_df, ggplot2::aes(x = col, y = row, fill = factor(edge))) +
+  ggplot2::geom_tile() +
+  ggplot2::scale_fill_manual(values = c("0" = "white", "1" = course_cols$ink), guide = "none") +
+  ggplot2::scale_y_reverse() +
+  ggplot2::coord_fixed() +
+  ggplot2::labs(
+    title = "Adjacency matrix reordered by planted labels",
+    subtitle = "Communities appear as denser diagonal blocks",
+    x = "Vertex index", y = "Vertex index"
+  )
+```
+
+The matrix view in @fig-community-adjacency-blocks motivates the stochastic block model: the planted partition is designed so that the adjacency matrix has an approximate block structure, which the SBM formalizes as a statistical generative model.
+
+------------------------------------------------------------------------
+
+## Quantifying a candidate community
+
+Visual intuition must be complemented by mathematics. For a subset $S \subseteq V$, we introduce four complementary quantities.
+
+### Internal density
+
+$$
+\rho_{\mathrm{in}}(S) = \frac{2 m_{\mathrm{in}}(S)}{|S|(|S|-1)},
+$$
+
+the fraction of possible edges within $S$ that are actually present. High internal density is necessary but not sufficient for a meaningful community: a very small dense clique surrounded by a large sparse graph may have $\rho_{\mathrm{in}} \approx 1$ while being an isolated fragment rather than a coherent module.
+
+### Cut size
+
+$$
+\mathrm{cut}(S, \bar{S}) = m_{\mathrm{out}}(S) = \bigl|\{(i,j)\in E : i\in S,\, j \notin S\}\bigr|.
+$$
+
+A small cut is necessary for $S$ to be a well-separated community. However, minimizing the cut alone is problematic: the global minimum of $\mathrm{cut}(S,\bar{S})$ over all non-trivial bipartitions is often achieved by a very small $S$, such as a single vertex or a low-degree pair. This motivates normalization by size or degree.
+
+### Volume and conductance
+
+Define the **volume** of $S$:
+
+$$
+\mathrm{vol}(S) = \sum_{i \in S} k_i.
+$$
+
+Note that $\mathrm{vol}(V) = 2m$. The **conductance** of $S$ is then
+
+$$
+\phi(S) = \frac{\mathrm{cut}(S, \bar{S})}{\min\{\mathrm{vol}(S),\, \mathrm{vol}(\bar{S})\}}.
+$$
+
+Conductance takes values in $[0,1]$ and is small when $S$ has a sparse boundary relative to its internal degree mass. It penalizes both small isolated sets and sets with excessively large boundaries, making it arguably the most natural cut-based quality measure for a community.
+
+The **conductance of the graph** is defined as
+
+$$
+\phi(G) = \min_{S \,:\, 0 < \mathrm{vol}(S) \leq m} \phi(S),
+$$
+
+measuring how well-connected (or difficult to cut) the entire graph is.
+
+### Summary statistics for the planted graph
+
+```{r}
+block_membership <- as.integer(igraph::V(g_planted)$block)
+A_planted <- as.matrix(igraph::as_adjacency_matrix(g_planted, sparse = FALSE))
+
+community_summary <- tibble::tibble(
+  block = sort(unique(block_membership))
+) |>
+  dplyr::rowwise() |>
+  dplyr::mutate(
+    size         = sum(block_membership == block),
+    int_edges    = sum(A_planted[block_membership == block, block_membership == block]) / 2,
+    bnd_edges    = sum(A_planted[block_membership == block, block_membership != block]),
+    int_density  = int_edges / choose(size, 2),
+    volume       = sum(igraph::degree(g_planted)[block_membership == block]),
+    conductance  = bnd_edges / min(volume, sum(igraph::degree(g_planted)) - volume)
+  ) |>
+  dplyr::ungroup()
+
+community_summary
+```
+
+### Cheeger's inequality
+
+The conductance $\phi(G)$ is NP-hard to compute exactly. A profound result from spectral graph theory provides both an efficient approximation and a deep connection between geometry and the eigenspectrum.
+
+::: {.callout-note title="Theorem (Cheeger's inequality)"}
+Let $\lambda_2$ be the second-smallest eigenvalue of the **normalized Laplacian** $\mathcal{L} = D^{-1/2} L D^{-1/2}$ (defined below). Then
+
+$$
+\frac{\lambda_2}{2} \;\leq\; \phi(G) \;\leq\; \sqrt{2\lambda_2}.
+$$
+:::
+
+The lower bound is due to Cheeger and Buser [@chung1997], and the upper bound is constructive: the sweep algorithm on the second eigenvector of $\mathcal{L}$ finds a cut achieving $\phi \leq \sqrt{2\lambda_2}$. Cheeger's inequality is fundamental because it shows that a small spectral gap $\lambda_2 \approx 0$ is both *necessary* and *sufficient* (up to a square root) for the existence of a sparse cut. A graph with well-separated communities must have a small $\lambda_2$.
+
+------------------------------------------------------------------------
+
+## Graph Laplacian and spectral community detection
+
+Cheeger's inequality tells us something deeper than a technical bound: a good community split is not only a combinatorial object, but also a spectral one. In other words, when a graph contains two weakly connected regions, that structural bottleneck leaves a trace in the eigenvalues and eigenvectors of the Laplacian. This is the real reason the Laplacian enters the story. We are not changing the problem; we are changing its language from discrete cuts to continuous geometry.
+
+The educational payoff is important. A raw cut asks us to search over an exponential number of vertex subsets, whereas a spectral relaxation replaces that search by an eigenvector problem. The resulting vectors are not yet communities themselves, but they provide coordinates that reveal where the graph is easiest to separate. The rest of this section develops that logic in stages: first the Laplacian, then the normalized cut objective, then the spectral embedding that turns vertices into points in Euclidean space.
+
+### The unnormalized Laplacian
+
+The **unnormalized graph Laplacian** is
+
+$$
+L = D - A.
+$$
+
+Its basic properties are:
+
+1.  $L$ is symmetric positive semi-definite: $\mathbf{x}^T L \mathbf{x} = \sum_{\{i,j\}\in E}(x_i - x_j)^2 \geq 0$ for all $\mathbf{x} \in \mathbb{R}^n$.
+2.  $L \mathbf{1} = \mathbf{0}$, so $\mathbf{1}$ is an eigenvector with eigenvalue $0$.
+3.  The multiplicity of eigenvalue $0$ equals the number of connected components of $G$.
+4.  All eigenvalues satisfy $0 = \lambda_1 \leq \lambda_2 \leq \cdots \leq \lambda_n$.
+
+The second eigenvalue $\lambda_2(L)$ is the **algebraic connectivity** (or **Fiedler value**) of $G$. It measures how well-connected the graph is: $\lambda_2 = 0$ if and only if $G$ is disconnected; a large $\lambda_2$ implies strong connectivity and therefore, by Cheeger, large conductance.
+
+The corresponding eigenvector $\mathbf{v}_2$ is the **Fiedler vector**. A classical result is that thresholding $\mathbf{v}_2$ at its median value produces a bipartition of $V$ with conductance bounded by $\sqrt{2\lambda_2}$. This is the geometric idea behind spectral bipartitioning.
+
+### The normalized Laplacian
+
+The **normalized (or symmetric) Laplacian** is
+
+$$
+\mathcal{L} = D^{-1/2} L D^{-1/2} = I - D^{-1/2} A D^{-1/2}.
+$$
+
+Its eigenvalues lie in $[0,2]$, and the normalized Laplacian appears naturally in random-walk analysis: the transition matrix of the simple random walk on $G$ is $P = D^{-1} A = I - D^{-1} L$, so $\mathcal{L}$ and $P$ share the same eigenvectors (up to the $D^{1/2}$ transformation).
+
+### The normalized cut and its spectral relaxation
+
+For a bipartition $(S, \bar{S})$, the **normalized cut** is
+
+$$
+\mathrm{NCut}(S, \bar{S}) = \frac{\mathrm{cut}(S,\bar{S})}{\mathrm{vol}(S)} + \frac{\mathrm{cut}(S,\bar{S})}{\mathrm{vol}(\bar{S})}.
+$$
+
+Unlike the raw cut, the normalized cut is large when either part of the partition is small in degree-volume. Minimizing NCut over all bipartitions is NP-hard, but it has a natural spectral relaxation. Define the indicator $\mathbf{f} \in \mathbb{R}^n$ with $f_i = \sqrt{\mathrm{vol}(\bar{S})/\mathrm{vol}(S)}$ if $i \in S$ and $f_i = -\sqrt{\mathrm{vol}(S)/\mathrm{vol}(\bar{S})}$ if $i \in \bar{S}$. Then
+
+$$
+\mathrm{NCut}(S, \bar{S}) = \frac{\tilde{\mathbf{f}}^T \mathcal{L}\, \tilde{\mathbf{f}}}{\tilde{\mathbf{f}}^T \tilde{\mathbf{f}}},
+$$
+
+where $\tilde{\mathbf{f}} = D^{1/2} \mathbf{f}$, under the constraint $\tilde{\mathbf{f}}^T D^{1/2}\mathbf{1} = 0$. Relaxing $\tilde{\mathbf{f}}$ from a discrete vector to a continuous one and applying the Rayleigh quotient, the minimum is achieved by $\tilde{\mathbf{f}} = \mathbf{v}_2(\mathcal{L})$, the second eigenvector of $\mathcal{L}$. This is the **spectral relaxation of normalized cut** [@shi2000].
+
+### Why the spectral relaxation helps
+
+The crucial approximation step is the relaxation from a discrete indicator vector to a continuous one. That move may seem abstract at first, so it helps to read it operationally. A discrete partition forces each vertex to belong entirely to one side of a cut. The relaxed eigenvector problem instead allows vertices to take continuous coordinates, and these coordinates measure how strongly each vertex is aligned with one side or the other of a low-conductance split. Vertices with similar coordinates are difficult to separate without paying a cut penalty; vertices with very different coordinates naturally belong to different sides.
+
+For two communities, the sign and magnitude of the Fiedler vector already contain most of the geometric information. For more than two communities, we keep several leading eigenvectors and let them define an embedding of the vertices into a low-dimensional Euclidean space. Community detection is then performed in that embedded space rather than directly on the graph.
+
+### Spectral clustering algorithm
+
+The full spectral clustering algorithm for $q$ communities proceeds as follows.
+
+::: {.callout-note title="Algorithm: Spectral Clustering"}
+**Input:** graph $G$ with $n$ vertices, target number of communities $q$.
+
+1.  Compute $\mathcal{L} = D^{-1/2}(D-A)D^{-1/2}$.
+2.  Find the $q$ smallest eigenvectors $\mathbf{v}_1, \ldots, \mathbf{v}_q$ of $\mathcal{L}$.
+3.  Form the matrix $U \in \mathbb{R}^{n \times q}$ with columns $\mathbf{v}_1, \ldots, \mathbf{v}_q$.
+4.  Row-normalize $U$: let $\tilde{u}_{ir} = u_{ir} / \|\mathbf{u}_{i\cdot}\|$.
+5.  Treat each row $\tilde{\mathbf{u}}_{i\cdot}$ as a point in $\mathbb{R}^q$ and apply $k$-means clustering with $k = q$.
+6.  Assign vertex $i$ to the community of its cluster.
+
+**Output:** partition $\mathcal{C} = \{C_1, \ldots, C_q\}$.
+:::
+
+The row normalization in step 4 projects vertices onto the unit sphere, which makes $k$-means more geometrically stable when block sizes and densities differ. The spectral embedding maps the discrete combinatorial structure of $G$ onto a continuous Euclidean space where standard clustering applies [@ng2002; @von2007tutorial].
+
+```{r}
+#| label: fig-spectral-embedding-planted
+#| fig-cap: 'Two-dimensional spectral embedding of the planted graph. Vertices are colored by planted block. The Laplacian does not recover communities by directly cutting edges one by one; instead, it places vertices with similar structural roles close together in an embedding space, where standard clustering becomes feasible.'
+
+A_planted <- as.matrix(igraph::as_adjacency_matrix(g_planted, sparse = FALSE))
+D_planted <- diag(rowSums(A_planted))
+Lsym_planted <- diag(nrow(A_planted)) -
+  diag(1 / sqrt(pmax(diag(D_planted), 1e-12))) %*%
+  A_planted %*%
+  diag(1 / sqrt(pmax(diag(D_planted), 1e-12)))
+
+eig_planted <- eigen(Lsym_planted, symmetric = TRUE)
+embed_df <- tibble::tibble(
+  x = eig_planted$vectors[, 2],
+  y = eig_planted$vectors[, 3],
+  block = igraph::V(g_planted)$block
+)
+
+ggplot2::ggplot(embed_df, ggplot2::aes(x = x, y = y, color = block)) +
+  ggplot2::geom_point(size = 2.6, alpha = 0.9) +
+  ggplot2::scale_color_manual(values = palette_blocks) +
+  ggplot2::labs(
+    title = "Spectral embedding separates the planted communities",
+    subtitle = "Coordinates come from the second and third eigenvectors of the normalized Laplacian",
+    x = "Second eigenvector coordinate",
+    y = "Third eigenvector coordinate",
+    color = "Planted block"
+  )
+```
+
+As shown in @fig-spectral-embedding-planted, the Laplacian-based embedding converts a graph partitioning problem into a geometric clustering problem. This is the point that is easy to miss if one sees only the eigenvector formulas: the eigenvectors are useful because they supply coordinates in which structurally similar vertices become spatially close.
+
+Spectral clustering has the following important properties:
+
+-   It is computationally efficient for sparse graphs: the dominant cost is the partial eigendecomposition, which can be done in $O(n \cdot q)$ time using iterative methods.
+-   It requires specifying $q$ in advance, unlike modularity-maximization methods.
+-   The quality of the approximation degrades gracefully as $\lambda_{q+1} - \lambda_q$ (the eigengap) shrinks, which provides a natural diagnostic: a large eigengap suggests $q$ is a good choice.
+
+------------------------------------------------------------------------
+
+## Bridge edges and the Girvan--Newman algorithm
+
+The first historically influential modern algorithm for community detection is due to Girvan and Newman [@girvan2002]. Its central intuition is that communities are held apart by a comparatively small number of bridge edges. Identifying and removing those bridges should reveal the modular structure.
+
+### Edge betweenness
+
+For an edge $e = \{u,v\}$, the **edge betweenness centrality** is
+
+$$
+B_e = \sum_{s \neq t}\frac{\sigma_{st}(e)}{\sigma_{st}},
+$$
+
+where $\sigma_{st}$ is the total number of shortest paths between $s$ and $t$, and $\sigma_{st}(e)$ is the number of those shortest paths that use edge $e$. A bridge between two dense communities lies on many shortest paths between vertices in different communities and therefore acquires high betweenness.
+
+This can be made precise: if $G$ consists of two cliques of size $n/2$ connected by a single bridge $e^*$, then $B_{e^*} = (n/2)^2$ while interior edges have betweenness at most $O(n)$. In general, the betweenness of an intercommunity edge grows with the product of community sizes it separates.
+
+```{r}
+#| label: fig-edge-betweenness-bridges
+#| fig-cap: 'Edges in the top decile of edge betweenness highlighted in red. In a planted partition graph, high-betweenness edges concentrate between communities rather than deep inside them.'
+
+edge_bet <- igraph::edge_betweenness(g_planted)
+ig_plot  <- g_planted
+igraph::E(ig_plot)$score       <- edge_bet
+q90 <- stats::quantile(edge_bet, 0.90)
+igraph::E(ig_plot)$bridge_flag <- ifelse(edge_bet >= q90, "Top 10%", "Other edges")
+
+set.seed(2081)
+ggraph::ggraph(ig_plot, layout = "fr") +
+  ggraph::geom_edge_link(aes(edge_colour = bridge_flag, edge_width = score), alpha = 0.55) +
+  ggraph::geom_node_point(aes(color = block), size = 3.0) +
+  ggraph::scale_edge_color_manual(
+    values = c("Other edges" = "grey75", "Top 10%" = course_cols$rose)
+  ) +
+  ggraph::scale_edge_width(range = c(0.25, 1.6), guide = "none") +
+  ggplot2::scale_color_manual(values = palette_blocks) +
+  ggplot2::labs(
+    title    = "Edge betweenness identifies intercommunity bridges",
+    subtitle = "Red edges: top 10% by betweenness centrality",
+    color    = "Block", edge_colour = "Edge type"
+  )
+```
+
+### The divisive algorithm
+
+The Girvan--Newman algorithm is **divisive**: it repeatedly removes the highest-betweenness edge and recomputes betweenness on the modified graph.
+
+::: {.callout-note title="Algorithm: Girvan--Newman"}
+**Input:** graph $G$.
+
+1.  Compute $B_e$ for all edges using Brandes' algorithm in $O(nm)$ time.
+2.  Remove the edge $e^* = \arg\max_e B_e$.
+3.  Recompute $B_e$ on the modified graph.
+4.  Repeat steps 2--3 until all edges have been removed or a stopping criterion is met.
+5.  The hierarchy of splits produces a **dendrogram**; cut at a level that maximizes modularity or satisfies a domain criterion.
+
+**Output:** hierarchical partition tree (dendrogram).
+:::
+
+The algorithm is $O(n m^2)$ in the worst case (or $O(n^2 m)$ for sparse graphs), making it computationally prohibitive for large networks. Its chief value is pedagogical and conceptual: it demonstrates that community boundaries coincide with edges that carry large amounts of global routing, an insight that motivates both the modularity and the SBM approaches.
+
+```{r}
+#| label: fig-girvan-newman-partition
+#| fig-cap: 'Partition returned by the Girvan--Newman algorithm on the planted graph. The algorithm recovers the planted structure because bridge edges between the three communities concentrate in the top betweenness decile.'
+
+gn_fit <- igraph::cluster_edge_betweenness(g_planted)
+ig_gn  <- g_planted
+igraph::V(ig_gn)$community <- factor(igraph::membership(gn_fit))
+
+set.seed(2081)
+ggraph::ggraph(ig_gn, layout = "fr") +
+  ggraph::geom_edge_link(alpha = 0.22, colour = course_cols$slate) +
+  ggraph::geom_node_point(aes(color = community), size = 3.1) +
+  ggplot2::scale_color_brewer(palette = "Set2") +
+  ggplot2::labs(
+    title    = "Girvan--Newman partition",
+    subtitle = paste0(
+      "Detected communities: ", length(igraph::sizes(gn_fit)),
+      "; Q = ", round(igraph::modularity(gn_fit), 3)
+    ),
+    color = "Detected block"
+  )
+```
+
+------------------------------------------------------------------------
+
+## Modularity: null-model viewpoint and spectral formulation
+
+Instead of removing bridges, a complementary approach asks whether a proposed partition contains *more within-community edges than one would expect by chance given the degree sequence*. This is the **modularity** framework [@newman2004finding; @newman2006modularity].
+
+### Derivation from the configuration model null
+
+The configuration model generates a random graph with prescribed expected degrees by connecting pairs of edge stubs uniformly at random. Under this null model, the probability of an edge between $i$ and $j$ is approximately
+
+$$
+p_{ij}^{\mathrm{null}} = \frac{k_i k_j}{2m},
+$$
+
+which preserves the expected degree of every vertex while otherwise randomizing connectivity [@newman2010]. The expected adjacency matrix of the null model has entries $k_i k_j / (2m)$, and the **modularity matrix** is the deviation of the observed adjacency from this expectation:
+
+$$
+B_{ij} = A_{ij} - \frac{k_i k_j}{2m}.
+$$
+
+Note that $B\mathbf{1} = \mathbf{0}$ because $\sum_j B_{ij} = k_i - k_i \sum_j k_j/(2m) = k_i - k_i = 0$.
+
+### The modularity formula
+
+For a partition $\{c_i\}$, **modularity** is the normalized total excess of internal edges over the null expectation:
+
+$$
+Q = \frac{1}{2m}\sum_{i,j} B_{ij}\,\delta(c_i,c_j)
+  = \frac{1}{2m}\sum_{i,j}\left(A_{ij} - \frac{k_i k_j}{2m}\right)\delta(c_i,c_j),
+$$
+
+where $\delta(c_i, c_j) = \mathbf{1}[c_i = c_j]$. Modularity $Q \in (-1, 1)$, with $Q = 0$ corresponding to a partition no better than the null model and $Q$ close to 1 indicating strong community structure.
+
+### Community-level expression: derivation
+
+Starting from the pairwise formula, we derive an equivalent expression in terms of community-level quantities. Define
+
+$$
+e_{rs} = \frac{1}{2m}\sum_{i \in C_r}\sum_{j \in C_s} A_{ij},
+\qquad
+a_r = \frac{\mathrm{vol}(C_r)}{2m} = \frac{1}{2m}\sum_{i \in C_r} k_i.
+$$
+
+Here $e_{rs}$ is the fraction of all edge endpoints contributed by edges between $C_r$ and $C_s$, and $a_r$ is the fraction of total degree in community $r$.
+
+For the within-community sum in $Q$, restricting $\delta(c_i,c_j) = 1$ to pairs $(i,j)$ with $c_i = c_j = r$:
+
+$$
+\sum_{i,j:\, c_i=c_j=r} A_{ij} = 2m\, e_{rr},
+\qquad
+\sum_{i,j:\, c_i=c_j=r}\frac{k_i k_j}{2m} = \frac{1}{2m}\left(\sum_{i \in C_r}k_i\right)^2 = 2m\, a_r^2.
+$$
+
+Therefore:
+
+$$
+\boxed{Q = \sum_{r=1}^q \left(e_{rr} - a_r^2\right).}
+$$
+
+This form makes the null-model comparison transparent: for each community $r$, we compare the observed internal edge fraction $e_{rr}$ to the fraction $a_r^2$ expected if edges were placed at random with the correct degree distribution. Communities that capture more internal edges than expected contribute positively to $Q$.
+
+### Spectral formulation and the modularity matrix eigenvalue problem
+
+For a bipartition into two communities with assignment vector $s_i \in \{+1, -1\}$, write $\delta(c_i,c_j) = (s_i s_j + 1)/2$. Then
+
+$$
+Q = \frac{1}{4m}\mathbf{s}^T B\, \mathbf{s},
+$$
+
+maximized (relaxing $s_i$ to $\mathbb{R}$) by the **leading eigenvector** of $B$. This is the Newman spectral bisection algorithm [@newman2006modularity].
+
+For $q > 2$ communities, we use indicator matrices $U \in \mathbb{R}^{n \times q}$ with $U_{ir} = \mathbf{1}[z_i = r]$. Then
+
+$$
+Q = \frac{1}{2m}\,\mathrm{tr}\bigl(U^T B\, U\bigr).
+$$
+
+Relaxing $U$ to be orthogonal, this trace is maximized by the $q$ leading eigenvectors of $B$. Community labels are then assigned by $k$-means in the eigenvector space, exactly analogous to spectral clustering. The modularity-spectral and Laplacian-spectral methods therefore share the same mathematical structure; the difference lies in whether $B$ or $\mathcal{L}$ governs the embedding.
+
+```{r}
+#| label: fig-modularity-vs-random-partitions
+#| fig-cap: 'Modularity of the planted partition (red dashed line) compared to 400 random relabelings with the same community sizes. The planted partition far exceeds the random baseline, confirming its statistical significance as a mesoscale structure.'
+
+true_membership <- as.integer(igraph::V(g_planted)$block)
+planted_Q <- igraph::modularity(g_planted, membership = true_membership)
+
+random_Q <- replicate(400, {
+  igraph::modularity(g_planted, membership = sample(true_membership))
+})
+
+modularity_df <- tibble::tibble(Q = random_Q)
+
+ggplot2::ggplot(modularity_df, ggplot2::aes(x = Q)) +
+  ggplot2::geom_histogram(
+    bins = 28, fill = course_cols$blue, color = "white", alpha = 0.88
+  ) +
+  ggplot2::geom_vline(
+    xintercept = planted_Q,
+    color      = course_cols$rose,
+    linewidth  = 1.2,
+    linetype   = "dashed"
+  ) +
+  ggplot2::annotate(
+    "text",
+    x = planted_Q, y = Inf,
+    label = paste0("Planted  Q = ", round(planted_Q, 3)),
+    vjust = 1.5, hjust = 1.05,
+    color = course_cols$rose, size = 3.8
+  ) +
+  ggplot2::labs(
+    title    = "Planted modularity far exceeds the random baseline",
+    subtitle = "400 random relabelings with identical community sizes",
+    x = "Modularity Q", y = "Count"
+  )
+```
+
+------------------------------------------------------------------------
+
+## Fast community detection: Louvain and the Leiden algorithm
+
+Exact modularity maximization is NP-hard [@brandes2008modularity]. For large networks, efficient heuristics are necessary.
+
+### The Louvain method
+
+The **Louvain method** [@blondel2008] is a greedy multilevel algorithm organized in two alternating phases.
+
+::: {.callout-note title="Algorithm: Louvain"}
+**Input:** graph $G = (V, E)$.
+
+**Phase 1 (local moves):** Initialize each vertex in its own community.
+
+For each vertex $i$ (in arbitrary order, repeated until convergence): - Temporarily remove $i$ from its current community. - For each neighboring community $C$, compute the modularity gain of placing $i$ in $C$: $$\Delta Q = \left[\frac{\Sigma_{\mathrm{in}} + 2 k_{i,\mathrm{in}}}{2m} - \left(\frac{\Sigma_{\mathrm{tot}} + k_i}{2m}\right)^2\right] - \left[\frac{\Sigma_{\mathrm{in}}}{2m} - \left(\frac{\Sigma_{\mathrm{tot}}}{2m}\right)^2 - \left(\frac{k_i}{2m}\right)^2\right],$$ where $\Sigma_{\mathrm{in}}$ = internal degree of $C$, $\Sigma_{\mathrm{tot}}$ = total degree of $C$, $k_{i,\mathrm{in}}$ = edges from $i$ to $C$. - Place $i$ in the community maximizing $\Delta Q$ if $\Delta Q > 0$; otherwise keep $i$ isolated.
+
+**Phase 2 (aggregation):** Collapse each detected community into a single supernode, accumulating edge weights. Apply Phase 1 to the aggregated (weighted) graph.
+
+Repeat both phases until no further gain is possible.
+
+**Output:** hierarchical partition with the highest modularity partition at each level.
+:::
+
+The key efficiency gain of Louvain is that the modularity gain formula $\Delta Q$ can be computed in $O(\deg(i))$ time per vertex move, reducing the overall complexity to approximately $O(m \log n)$ per pass.
+
+### The Leiden algorithm: correcting Louvain's flaw
+
+A significant theoretical problem with Louvain was identified by Traag et al. [@traag2019leiden]: **Louvain can produce internally disconnected communities**. In Phase 2, an aggregated supernode can represent a set of vertices that, when examined in the original graph, are not connected to each other within their community. Such a community is not a coherent module in any meaningful sense.
+
+The **Leiden algorithm** corrects this by introducing a **refinement phase** between aggregation steps:
+
+::: {.callout-note title="Algorithm: Leiden (summary)"}
+1.  Apply local moves as in Louvain Phase 1.
+2.  **Refinement:** For each community $C$ returned in step 1, further sub-partition $C$ into well-connected subcommunities using a constrained local-move procedure that enforces internal connectivity.
+3.  Aggregate based on the refined partition (not the Phase 1 partition).
+4.  Repeat until convergence.
+:::
+
+Leiden guarantees that every community in the output is $\gamma$-separated: its internal edge density exceeds its boundary density by a factor $\gamma$, providing a formal quality certificate that Louvain does not. In practice, Leiden often produces partitions of equal or higher modularity than Louvain while being provably free of disconnected communities [@traag2019leiden].
+
+```{r}
+#| label: fig-community-method-comparison
+#| fig-cap: 'Modularity and number of detected communities for three methods on a four-community planted benchmark. Labels show detected community count $k$. Louvain and Walktrap are competitive on this scale; Girvan--Newman is most interpretable but slowest.'
+
+g_benchmark <- make_planted_partition(
+  sizes = c(25, 25, 25, 25), p_in = 0.18, p_out = 0.015
+)
+
+fit_louvain  <- igraph::cluster_louvain(g_benchmark)
+fit_walktrap <- igraph::cluster_walktrap(g_benchmark)
+fit_gn_bench <- igraph::cluster_edge_betweenness(g_benchmark)
+
+method_df <- tibble::tibble(
+  method = c("Louvain", "Walktrap", "Girvan-Newman"),
+  modularity = c(
+    igraph::modularity(fit_louvain),
+    igraph::modularity(fit_walktrap),
+    igraph::modularity(fit_gn_bench)
+  ),
+  communities = c(
+    length(igraph::sizes(fit_louvain)),
+    length(igraph::sizes(fit_walktrap)),
+    length(igraph::sizes(fit_gn_bench))
+  )
+)
+
+method_df |>
+  dplyr::mutate(method = stats::reorder(method, modularity)) |>
+  ggplot2::ggplot(ggplot2::aes(x = method, y = modularity, fill = method)) +
+  ggplot2::geom_col(width = 0.72, show.legend = FALSE) +
+  ggplot2::geom_text(
+    ggplot2::aes(label = paste0("k = ", communities)),
+    vjust = -0.5, size = 3.7, color = course_cols$ink
+  ) +
+  ggplot2::coord_flip() +
+  ggplot2::scale_fill_brewer(palette = "Set2") +
+  ggplot2::scale_y_continuous(limits = c(0, max(method_df$modularity) + 0.08)) +
+  ggplot2::labs(
+    title    = "Method comparison on a four-block benchmark graph",
+    subtitle = "Labels show detected community count k",
+    x = NULL, y = "Modularity Q"
+  )
+```
+
+------------------------------------------------------------------------
+
+## The stochastic block model: community detection as statistical inference
+
+Up to this point, the chapter has treated community detection mainly as an optimization problem. We defined scores such as conductance and modularity, and then searched for partitions that optimize those scores. The stochastic block model changes the question. Instead of asking, "Which partition scores well?" it asks, "What latent block structure could plausibly have generated the graph we observe?"
+
+This shift matters educationally and scientifically. Once we introduce a generative model, we can talk not only about finding a partition, but also about uncertainty, parameter estimation, model comparison, and even the limits of recoverability. The **stochastic block model** (SBM) therefore reframes community detection as **statistical inference**: we assume a probabilistic mechanism for edge formation and infer which latent community assignments are most consistent with the data [@holland1983; @wang1987; @nowicki2001].
+
+### Model definition
+
+Let each vertex $i \in V$ have a latent community label $z_i \in \{1,\ldots,q\}$. The SBM assumes that edges are conditionally independent given the labels, with connection probability determined solely by the block membership of the two endpoints:
+
+$$
+\Pr(A_{ij} = 1 \mid z_i = r,\, z_j = s) = \omega_{rs}, \quad i < j.
+$$
+
+The matrix $\Omega = (\omega_{rs}) \in [0,1]^{q \times q}$ is symmetric. The SBM encompasses:
+
+-   **Assortative communities:** $\omega_{rr} > \omega_{rs}$ for $r \neq s$, describing cohesive groups.
+-   **Disassortative structure:** $\omega_{rr} < \omega_{rs}$, producing bipartite-like patterns.
+-   **Core--periphery structure:** one dense core block with lower-density peripheral blocks.
+
+All three arise from the same likelihood, making the SBM a genuinely general model for latent network structure.
+
+### Likelihood function
+
+Let $\boldsymbol{\pi} = (\pi_1,\ldots,\pi_q)$ with $\sum_r \pi_r = 1$ be the community size proportions. The **complete-data log-likelihood** (treating $\mathbf{z}$ as observed) is
+
+$$
+\ell(\Omega, \boldsymbol{\pi} \mid A, \mathbf{z})
+= \sum_{r \leq s} \left[
+  m_{rs} \log \omega_{rs} + \left(M_{rs} - m_{rs}\right)\log(1 - \omega_{rs})
+\right]
++ \sum_{r=1}^q n_r \log \pi_r,
+$$
+
+where
+
+$$
+m_{rs} = \sum_{\substack{i \in C_r,\, j \in C_s \\ i < j}} A_{ij}, \qquad
+M_{rs} = \begin{cases} \binom{n_r}{2} & r = s, \\ n_r n_s & r \neq s,\end{cases}
+$$
+
+are the observed and possible edge counts between blocks $r$ and $s$.
+
+### Maximum-likelihood estimators
+
+Fixing $\mathbf{z}$, differentiating $\ell$ with respect to $\omega_{rs}$ and $\pi_r$, the MLEs are:
+
+$$
+\hat{\omega}_{rs} = \frac{m_{rs}}{M_{rs}}, \qquad \hat{\pi}_r = \frac{n_r}{n}.
+$$
+
+These are simply observed edge densities between (and within) blocks—a natural result. The difficult part is that $\mathbf{z}$ is unobserved.
+
+### EM algorithm for SBM inference
+
+The **Expectation-Maximization (EM) algorithm** [@dempster1977] handles the latent labels by alternating between:
+
+**E-step:** Compute the posterior probability that vertex $i$ belongs to community $r$, given the current parameter estimates $(\hat{\Omega}, \hat{\boldsymbol{\pi}})$ and the observed graph $A$:
+
+$$
+\tau_{ir} = \Pr(z_i = r \mid A, \hat{\Omega}, \hat{\boldsymbol{\pi}})
+\propto \hat{\pi}_r \prod_{j \neq i} \hat{\omega}_{rs_j}^{A_{ij}}
+(1 - \hat{\omega}_{rs_j})^{1 - A_{ij}},
+$$
+
+where the product runs over all other vertices $j$ with their current soft assignments $s_j$. In practice, mean-field variational approximations or belief propagation are used for computational tractability.
+
+**M-step:** Update the parameters using the soft assignments $\tau_{ir}$:
+
+$$
+\tilde{m}_{rs} = \sum_{i,j:\, i<j} \tau_{ir}\,\tau_{js}\, A_{ij}, \qquad
+\tilde{M}_{rs} = \sum_{i < j} \tau_{ir}\,\tau_{js}, \qquad
+\hat{\omega}_{rs} = \frac{\tilde{m}_{rs}}{\tilde{M}_{rs}}.
+$$
+
+The EM algorithm converges to a local maximum of the marginal likelihood. Multiple initializations are recommended to mitigate local optima.
+
+```{r}
+#| label: fig-sbm-adjacency-heatmap
+#| fig-cap: 'Adjacency matrix of a three-block SBM after reordering vertices by planted block. The block structure in $\Omega$ produces visible dense diagonal blocks in the reordered adjacency matrix.'
+
+make_block_graph <- function(sizes, P) {
+  n <- sum(sizes)
+  block <- rep(seq_along(sizes), sizes)
+  A <- matrix(0, n, n)
+  for (i in seq_len(n - 1)) {
+    for (j in (i + 1):n) {
+      p <- P[block[i], block[j]]
+      A[i, j] <- rbinom(1, 1, p)
+      A[j, i] <- A[i, j]
+    }
+  }
+  g <- igraph::graph_from_adjacency_matrix(A, mode = "undirected", diag = FALSE)
+  igraph::V(g)$block <- factor(block)
+  g
+}
+
+P_sbm <- matrix(
+  c(0.24, 0.03, 0.02,
+    0.03, 0.22, 0.025,
+    0.02, 0.025, 0.20),
+  nrow = 3, byrow = TRUE
+)
+
+g_sbm    <- make_block_graph(sizes = c(20, 18, 22), P = P_sbm)
+A_sbm    <- as.matrix(igraph::as_adjacency_matrix(g_sbm, sparse = FALSE))
+ord      <- order(as.integer(igraph::V(g_sbm)$block))
+A_ord_sbm <- A_sbm[ord, ord]
+
+adj_df_sbm <- as.data.frame(as.table(A_ord_sbm)) |>
+  dplyr::rename(row = Var1, col = Var2, edge = Freq) |>
+  dplyr::mutate(row = as.integer(row), col = as.integer(col))
+
+ggplot2::ggplot(adj_df_sbm, ggplot2::aes(x = col, y = row, fill = factor(edge))) +
+  ggplot2::geom_tile() +
+  ggplot2::scale_fill_manual(
+    values = c("0" = "white", "1" = course_cols$ink), guide = "none"
+  ) +
+  ggplot2::scale_y_reverse() +
+  ggplot2::coord_fixed() +
+  ggplot2::labs(
+    title    = "Adjacency matrix of a three-block SBM",
+    subtitle = expression(Omega[diag] %~~% 0.22 ~~ Omega[off] %~~% 0.027),
+    x = "Vertex index", y = "Vertex index"
+  )
+```
+
+```{r}
+#| label: fig-sbm-omega-heatmap
+#| fig-cap: 'Block probability matrix $\Omega$ used to generate the synthetic SBM example. Diagonal entries are larger than off-diagonal entries, so the model encodes assortative communities before any graph is sampled.'
+
+omega_df <- expand.grid(row = 1:nrow(P_sbm), col = 1:ncol(P_sbm)) |>
+  dplyr::mutate(prob = as.vector(P_sbm))
+
+ggplot2::ggplot(omega_df, ggplot2::aes(x = factor(col), y = factor(row), fill = prob)) +
+  ggplot2::geom_tile(color = "white") +
+  ggplot2::geom_text(ggplot2::aes(label = sprintf("%.3f", prob)), color = "white", size = 4) +
+  ggplot2::scale_fill_gradient(low = course_cols$blue, high = course_cols$violet) +
+  ggplot2::labs(
+    title = "The block matrix drives the generative mechanism",
+    subtitle = "Higher diagonal probabilities encode assortative communities",
+    x = "Block index",
+    y = "Block index",
+    fill = "Probability"
+  )
+```
+
+Before looking at the sampled graph, it is worth pausing at @fig-sbm-omega-heatmap. The matrix $\Omega$ is the real object being specified by the model: it tells us which pairs of blocks should connect densely and which should connect sparsely. The adjacency matrix in @fig-sbm-adjacency-heatmap is then just one random realization from that block-level recipe.
+
+### Recovering the planted structure
+
+```{r}
+#| label: fig-sbm-confusion-heatmap
+#| fig-cap: 'Confusion matrix between planted SBM blocks and Louvain-detected blocks. Strong concentration along a permutation of the diagonal indicates near-perfect recovery. Community labels are arbitrary up to permutation.'
+
+fit_sbm_louvain <- igraph::cluster_louvain(g_sbm)
+truth     <- igraph::V(g_sbm)$block
+estimated <- factor(igraph::membership(fit_sbm_louvain))
+conf_df   <- as.data.frame(table(truth = truth, estimated = estimated)) |>
+  dplyr::rename(count = Freq)
+
+ggplot2::ggplot(conf_df, ggplot2::aes(x = estimated, y = truth, fill = count)) +
+  ggplot2::geom_tile(color = "white") +
+  ggplot2::geom_text(ggplot2::aes(label = count), color = "white", size = 4) +
+  ggplot2::scale_fill_gradient(low = course_cols$blue, high = course_cols$violet) +
+  ggplot2::labs(
+    title    = "Detected versus planted communities",
+    subtitle = "Label permutation is irrelevant; concentration matters",
+    x = "Detected community", y = "Planted block", fill = "Vertices"
+  )
+```
+
+As shown in @fig-sbm-confusion-heatmap, recovery should not be judged by literal agreement of community labels. Community labels are arbitrary up to permutation, so what matters is whether the mass of the confusion matrix concentrates near a permutation of the diagonal. This is the statistical analogue of a successful recovery plot.
+
+### Degree-corrected SBM
+
+The standard SBM implicitly assumes that all vertices in a block have similar degrees, since $\Pr(A_{ij}=1)$ depends only on block membership. In practice, degree heterogeneity is strong: recall from the scale-free chapter that real networks often have power-law degree distributions. A hub within a block will be connected to many vertices in other blocks purely because of its high degree, not because of genuine intercommunity affinity. The basic SBM may misidentify this degree-driven connectivity as evidence for multiple communities.
+
+The **degree-corrected SBM** (DC-SBM) of Karrer and Newman [@karrer2011] introduces vertex-specific degree parameters $\theta_i > 0$:
+
+$$
+\Pr(A_{ij}=1 \mid z_i=r,\, z_j=s) = \theta_i \theta_j \omega_{rs},
+$$
+
+where $\omega_{rs}$ now captures block-level affinity after controlling for individual degree propensities. Under this model, the expected degree of vertex $i$ is
+
+$$
+\mathbb{E}[k_i] = \theta_i \sum_{j \neq i} \theta_j \omega_{z_i z_j},
+$$
+
+so $\theta_i$ is identifiable from the degree sequence. The DC-SBM can represent both heavy-tailed degree distributions and modular structure simultaneously, resolving the tension between hubs and communities that the standard SBM cannot handle. Fitting the DC-SBM by maximum likelihood leads to an extended EM algorithm or to a belief-propagation method that alternates between degree normalization and block assignment.
+
+------------------------------------------------------------------------
+
+## Detectability and the Kesten--Stigum threshold
+
+Community detection is subject to a fundamental limit that is not merely computational but **information-theoretic**: even given unlimited computation, there exist regimes in which no algorithm can recover communities at a rate better than random guessing.
+
+### Setup: the symmetric planted partition model
+
+Consider the symmetric two-block planted partition model: $n$ vertices, two equal-size blocks, within-block edge probability $p_{\mathrm{in}} = a/n$, and between-block probability $p_{\mathrm{out}} = b/n$ (with $a > b$ for assortativity). This model is a special case of the sparse SBM, where average degree is $c = (a + b)/2$.
+
+### The Kesten--Stigum threshold
+
+A remarkable phase transition was established by Decelle et al. [@decelle2011] (conjectured) and proved rigorously by Massoulié [@massouli2014] and Mossel et al. [@mossel2018]:
+
+::: {.callout-note title="Theorem (Kesten--Stigum, community detection)"}
+Let $\mu = (a - b)/2$ be the signal-to-noise parameter and $c = (a + b)/2$ the average degree. Then:
+
+-   **Above threshold:** If $\mu^2 > c$ (equivalently, $(a-b)^2 > 2(a+b)$), there exists a polynomial-time algorithm that detects communities with positive correlation with the planted partition.
+-   **Below threshold:** If $\mu^2 < c$, no algorithm—regardless of computational cost—can detect communities with correlation better than chance.
+-   **At the threshold:** $\mu^2 = c$ is a sharp phase transition.
+:::
+
+The condition $(a - b)^2 > 2(a + b)$ can be rewritten as the signal-to-noise ratio
+
+$$
+\mathrm{SNR} = \frac{(a - b)^2}{2(a + b)} > 1.
+$$
+
+Below this threshold, the graph looks statistically identical to an Erdős--Rényi random graph with the same average degree: the community signal is entirely absorbed into statistical fluctuations.
+
+**Why is this information-theoretic?** The proof that recovery is impossible below the threshold proceeds by showing that the mutual information $I(\mathbf{z}; A)$ between the planted labels and the observed graph goes to zero as $n \to \infty$. Even an oracle with access to the entire graph cannot extract the label vector $\mathbf{z}$ from $A$ if SNR $< 1$. This is not a statement about algorithms but about the data itself.
+
+```{r}
+#| label: fig-detectability-threshold
+#| fig-cap: 'Modularity of the Louvain partition as $p_{\mathrm{out}}/p_{\mathrm{in}}$ increases toward 1. Recovery degrades sharply near the Kesten--Stigum threshold. At high mixing, the detected partition is no better than a random assignment.'
+
+set.seed(2081)
+mixing_ratios <- seq(0.05, 0.90, by = 0.05)
+p_in_fixed    <- 0.30
+
+detect_df <- purrr::map_dfr(mixing_ratios, function(ratio) {
+  p_out <- ratio * p_in_fixed
+  g_tmp <- make_planted_partition(
+    sizes = c(20, 20), p_in = p_in_fixed, p_out = p_out
+  )
+  fit_tmp <- igraph::cluster_louvain(g_tmp)
+  tibble::tibble(
+    mixing   = ratio,
+    Q        = igraph::modularity(fit_tmp),
+    n_comm   = length(igraph::sizes(fit_tmp))
+  )
+})
+
+# Kesten-Stigum threshold for this model: (a-b)^2 = 2(a+b)
+n_nodes <- 40
+ks_ratio <- function(r, p_in, n) {
+  a <- p_in * n
+  b <- r * p_in * n
+  (a - b)^2 / (2 * (a + b))
+}
+
+ks_snr <- purrr::map_dbl(mixing_ratios, ks_ratio, p_in = p_in_fixed, n = n_nodes)
+ks_threshold_x <- mixing_ratios[which.min(abs(ks_snr - 1))]
+
+ggplot2::ggplot(detect_df, ggplot2::aes(x = mixing, y = Q)) +
+  ggplot2::geom_line(color = course_cols$blue, linewidth = 1.1) +
+  ggplot2::geom_point(color = course_cols$blue, size = 2) +
+  ggplot2::geom_vline(
+    xintercept = ks_threshold_x,
+    linetype   = "dashed",
+    color      = course_cols$rose,
+    linewidth  = 1.0
+  ) +
+  ggplot2::annotate(
+    "text",
+    x = ks_threshold_x + 0.02,
+    y = 0.35,
+    label = "Kesten-Stigum\nthreshold",
+    color = course_cols$rose,
+    hjust = 0,
+    size = 3.5
+  ) +
+  ggplot2::labs(
+    title    = "Detectability degrades near the Kesten-Stigum threshold",
+    subtitle = expression(p["in"] == 0.30 ~~ "two equal blocks of 20 vertices"),
+    x        = expression(p["out"] / p["in"] ~~ "(mixing ratio)"),
+    y        = "Louvain modularity Q"
+  )
+```
+
+------------------------------------------------------------------------
+
+## Comparing partitions: NMI, ARI, and variation of information
+
+When evaluating a community detection method against planted labels, or comparing two different methods, we need a principled way to measure partition similarity. Three measures are standard in the literature.
+
+### Normalized Mutual Information (NMI)
+
+Given two partitions $\mathcal{C} = \{C_1,\ldots,C_q\}$ and $\mathcal{C}' = \{C_1',\ldots,C_{q'}'\}$ of the same vertex set, let $n_{rs} = |C_r \cap C_s'|$, $n_r = |C_r|$, $n_s' = |C_s'|$.
+
+The **mutual information** between the two partitions (treated as random variables on a uniformly drawn vertex) is
+
+$$
+I(\mathcal{C};\mathcal{C}') = \sum_{r=1}^q \sum_{s=1}^{q'} \frac{n_{rs}}{n} \log \frac{n\, n_{rs}}{n_r\, n_s'}.
+$$
+
+The marginal entropies are $H(\mathcal{C}) = -\sum_r (n_r/n)\log(n_r/n)$ and $H(\mathcal{C}')$ defined similarly. The normalized mutual information is
+
+$$
+\mathrm{NMI}(\mathcal{C}, \mathcal{C}') = \frac{2\, I(\mathcal{C};\mathcal{C}')}{H(\mathcal{C}) + H(\mathcal{C}')}.
+$$
+
+$\mathrm{NMI} \in [0, 1]$: value 1 indicates perfect agreement (up to permutation of labels), value 0 indicates statistical independence between the two partitions. NMI is invariant to label permutation, which is essential since community labels are meaningless beyond their identity.
+
+### Adjusted Rand Index (ARI)
+
+The **Rand Index** counts the fraction of vertex pairs on which two partitions agree (both in the same community, or both in different communities):
+
+$$
+\mathrm{RI}(\mathcal{C}, \mathcal{C}') = \frac{|\{(i,j): (c_i = c_j) \Leftrightarrow (c_i' = c_j')\}|}{\binom{n}{2}}.
+$$
+
+The **Adjusted Rand Index** corrects for expected agreement under random partitions of the same size:
+
+$$
+\mathrm{ARI} = \frac{\mathrm{RI} - \mathbb{E}[\mathrm{RI}]}{\max(\mathrm{RI}) - \mathbb{E}[\mathrm{RI}]}.
+$$
+
+$\mathrm{ARI} \in [-1, 1]$: value 1 means perfect agreement, value 0 means agreement at chance level, and negative values indicate worse-than-chance agreement. ARI is particularly appropriate when community sizes are highly unbalanced, a regime where NMI can be misleading.
+
+### Variation of Information
+
+The **Variation of Information** (VI) is a metric on the space of partitions [@meilua2003]:
+
+$$
+\mathrm{VI}(\mathcal{C}, \mathcal{C}') = H(\mathcal{C}\mid\mathcal{C}') + H(\mathcal{C}'\mid\mathcal{C}),
+$$
+
+where $H(\mathcal{C}\mid\mathcal{C}') = H(\mathcal{C}) - I(\mathcal{C};\mathcal{C}')$ is the conditional entropy. Unlike NMI, VI satisfies the triangle inequality, making it a true metric on the space of partitions. It is the theoretically cleanest measure but is not bounded by 1 in general (it grows with $\log n$).
+
+```{r}
+#| label: fig-nmi-ari-vs-mixing
+#| fig-cap: 'NMI (blue) and ARI (gold) between planted and Louvain-detected partitions as the mixing ratio increases. Both metrics approach zero near and beyond the Kesten-Stigum threshold, confirming that recovery becomes chance-level.'
+
+set.seed(2081)
+mixing_eval <- seq(0.05, 0.90, by = 0.05)
+
+compute_nmi <- function(true_labels, detected_labels) {
+  n      <- length(true_labels)
+  tbl    <- table(true_labels, detected_labels)
+  n_r    <- rowSums(tbl)
+  n_s    <- colSums(tbl)
+  H_C    <- -sum((n_r / n) * log(n_r / n + 1e-15))
+  H_Cp   <- -sum((n_s / n) * log(n_s / n + 1e-15))
+  MI     <- sum((tbl / n) * log(n * tbl / outer(n_r, n_s) + 1e-15))
+  2 * MI / (H_C + H_Cp + 1e-15)
+}
+
+compute_ari <- function(true_labels, detected_labels) {
+  tbl   <- table(true_labels, detected_labels)
+  sum_sq_rows <- sum(choose(rowSums(tbl), 2))
+  sum_sq_cols <- sum(choose(colSums(tbl), 2))
+  sum_sq_all  <- sum(choose(tbl, 2))
+  n_pairs     <- choose(length(true_labels), 2)
+  expected    <- sum_sq_rows * sum_sq_cols / n_pairs
+  maximum     <- (sum_sq_rows + sum_sq_cols) / 2
+  (sum_sq_all - expected) / (maximum - expected + 1e-15)
+}
+
+eval_df <- purrr::map_dfr(mixing_eval, function(ratio) {
+  p_out <- ratio * p_in_fixed
+  g_tmp <- make_planted_partition(
+    sizes = c(20, 20), p_in = p_in_fixed, p_out = p_out
+  )
+  true_lab <- as.integer(igraph::V(g_tmp)$block)
+  fit_tmp  <- igraph::cluster_louvain(g_tmp)
+  det_lab  <- igraph::membership(fit_tmp)
+  tibble::tibble(
+    mixing = ratio,
+    NMI    = compute_nmi(true_lab, det_lab),
+    ARI    = compute_ari(true_lab, det_lab)
+  )
+})
+
+eval_long <- eval_df |>
+  tidyr::pivot_longer(cols = c(NMI, ARI), names_to = "metric", values_to = "value")
+
+ggplot2::ggplot(eval_long, ggplot2::aes(x = mixing, y = value, color = metric)) +
+  ggplot2::geom_line(linewidth = 1.1) +
+  ggplot2::geom_point(size = 2) +
+  ggplot2::geom_vline(
+    xintercept = ks_threshold_x,
+    linetype = "dashed",
+    color = course_cols$rose,
+    linewidth = 0.9
+  ) +
+  ggplot2::scale_color_manual(
+    values = c("NMI" = course_cols$blue, "ARI" = course_cols$gold)
+  ) +
+  ggplot2::labs(
+    title    = "Recovery quality versus mixing strength",
+    subtitle = "Both NMI and ARI collapse near the Kesten-Stigum threshold (red dashed)",
+    x        = expression(p["out"] / p["in"]),
+    y        = "Partition similarity",
+    color    = "Metric"
+  )
+```
+
+------------------------------------------------------------------------
+
+## Limitations of community detection
+
+### The resolution limit of modularity
+
+Modularity has a **resolution limit**: in a large graph, optimizing $Q$ tends to merge small but well-defined communities into larger blocks [@fortunato2007resolution]. The origin of this behavior can be understood from the null model: for a small community $C_r$ with $e_{rr}$ edges, the null-model term $a_r^2$ depends on the global size of the graph through $\mathrm{vol}(C_r)/(2m)$. When $m$ is large, the modularity gain of splitting a small but genuine community becomes negligible relative to the gain from merging it with a neighbor.
+
+Quantitatively, Fortunato and Barthélemy showed that communities with fewer than $\sqrt{m}$ internal edges may not be resolvable by modularity maximization, regardless of how isolated they actually are. This is a global property of the objective function, not a local artifact, and it cannot be fixed by using a different optimization algorithm. Resolution-limit-aware methods include the use of a tunable resolution parameter $\gamma$ in the modified objective $Q_\gamma = \sum_r (e_{rr} - \gamma a_r^2)$, where $\gamma > 1$ favors finer partitions.
+
+### Overlapping and hierarchical communities
+
+Real networks often violate the hard-partition assumption. A scientist may belong to multiple research fields; a gene may participate in multiple functional modules; a city may lie at the intersection of cultural regions. **Overlapping community** models such as the mixed-membership SBM [@airoldi2008] and the BigCLAM non-negative matrix factorization approach [@yang2013] extend the partition framework to soft assignments $u_{ir} \geq 0$ representing vertex $i$'s strength of membership in community $r$.
+
+**Hierarchical community structure** is equally common: communities often nest within super-communities, which nest within still larger groups. Flat partitions lose this hierarchical information. Methods that return a dendrogram (Girvan--Newman, Ward's linkage on graph distance) preserve it, at the cost of requiring the user to choose a resolution for the final partition.
+
+### Benchmark dependence
+
+Method performance depends strongly on graph properties: size, density, degree heterogeneity, and mixing strength. The **LFR benchmark** [@lancichinetti2008] generates synthetic graphs with planted communities, power-law degree distributions, and power-law community size distributions, providing a more realistic test bed than the homogeneous planted partition model. A method that excels on the planted partition may fail on LFR benchmarks at high mixing, and vice versa. Any method comparison should therefore span a range of benchmark families.
+
+::: {.callout-warning title="Interpretive caution"}
+A detected community partition is a structured hypothesis about mesoscale organization, not a scientific fact. It should be interpreted alongside domain knowledge, validated against available metadata, and checked for stability under different methods and parameter choices.
+:::
+
+------------------------------------------------------------------------
+
+## Comparing the main approaches
+
+| Method | Core idea | Main strength | Main limitation |
+|---|---|---|---|
+| Girvan--Newman | Remove edges with high edge betweenness | Highly interpretable on small graphs | Too slow for large networks |
+| Spectral clustering | Relax cut optimization into an eigenvector problem | Strong mathematical foundation; clear geometry | Requires choosing the number of communities |
+| Louvain/Leiden | Greedy modularity optimization | Fast and scalable | Objective-function dependent; modularity has a resolution limit |
+| SBM / DC-SBM | Infer latent blocks from a generative model | Probabilistic interpretation and uncertainty | More modeling choices; inference can be delicate |
+
+The point of this table is not to crown a universal winner. Rather, it helps separate four genuinely different philosophies of community detection: bridge removal, spectral relaxation, quality-function optimization, and probabilistic inference. A mature analysis often compares more than one of them.
+
+## A practical workflow for community analysis
+
+For empirical data, principled method selection and careful interpretation matter as much as algorithmic choice.
+
+1.  **Pre-analysis.** Examine the degree distribution, connected components, and whether a raw adjacency matrix (reordered by degree) shows any block structure. Understand whether edge weights or vertex attributes are available.
+2.  **Run multiple methods.** At minimum, compare a modularity-based method (Louvain or Leiden) with a random-walk or spectral method. Note where they agree and where they diverge.
+3.  **Inspect the full partition, not just** $Q$. Examine community sizes, internal density, conductance per community, and the confusion matrix against any available ground truth.
+4.  **Assess stability.** Perturb the graph slightly (remove 5--10% of edges at random) and rerun. Communities that appear robustly across perturbations are more credible.
+5.  **Validate against metadata.** If node attributes (geographic region, function, topic) are available, compute NMI or ARI between the detected partition and the metadata. Agreement strengthens interpretation; disagreement motivates investigation.
+6.  **Report limitations explicitly.** State the method used, the value of any resolution parameter, the number of detected communities, and whether the result was sensitive to these choices.
+
+------------------------------------------------------------------------
+
+## Concluding remarks
+
+Community structure is one of the clearest and most consequential examples of mesoscale organization in complex networks. It is neither a local property like clustering coefficient nor a global scalar like path length; it describes an intermediate level at which a network decomposes into cohesive modules that often carry scientific meaning.
+
+This chapter has developed three complementary theoretical frameworks:
+
+-   The **graph-cut and spectral** viewpoint formalizes communities as low-conductance sets, connects them to the eigenspectrum of the Laplacian via Cheeger's inequality, and leads to spectral clustering as a principled polynomial-time approximation of normalized cut minimization.
+-   The **modularity and null-model** viewpoint defines community quality relative to a degree-preserving random baseline, leads to the modularity matrix eigenvalue problem, and motivates greedy multilevel heuristics such as Louvain and Leiden.
+-   The **stochastic block model** viewpoint treats block membership as latent structure, provides a full likelihood and an EM inference framework, and generalizes beyond assortative communities to any pattern of inter-block connectivity.
+
+All three frameworks share a common theme: communities are meaningful only relative to an appropriate baseline. The cut viewpoint uses random walks; the modularity viewpoint uses the configuration model; the SBM viewpoint uses a parametric generative model. For master-level study, understanding *which baseline each method assumes* is as important as knowing *how to run* the algorithm.
+
+The Kesten--Stigum threshold places fundamental limits on what any method can achieve: when the community signal is too weak relative to graph sparsity, recovery at better-than-chance accuracy is information-theoretically impossible. This result is one of the deepest connections between network science and statistical physics, and it sets a realistic ceiling on what community detection can deliver in practice.
+
+------------------------------------------------------------------------
+
+## Exercises
+
+### Part I. Computational and derivation exercises
+
+**Exercise 8.1. Internal density, cut size, and conductance.**  
+Construct a graph with two candidate subsets $S_1$ and $S_2$. Compute $\rho_{\mathrm{in}}(S)$, $\operatorname{cut}(S,V\setminus S)$, and $\phi(S)$ for both subsets. Explain why these three quantities do not always rank the subsets in the same order.
+
+**Exercise 8.2. Edge betweenness and bridge identification.**  
+For a small graph of your choice, compute the edge-betweenness score of every edge. Identify the edges that act as bridges between dense regions, and explain why their shortest-path usage is large.
+
+**Exercise 8.3. Interpreting the modularity formula.**  
+Starting from
+$$
+Q = \frac{1}{2m}\sum_{i,j}\left(A_{ij}-\frac{k_i k_j}{2m}\right)\delta(c_i,c_j),
+$$
+derive the community-level form
+$$
+Q = \sum_r (e_{rr}-a_r^2).
+$$
+State clearly what $e_{rr}$ and $a_r$ mean.
+
+### Part II. Conceptual and analytical exercises
+
+**Exercise 8.4. Clustering versus community structure.**  
+Give one example of a graph with high clustering coefficient but weak global community structure, and one example of a graph with modest clustering but a clear block partition. Explain why local triangles and mesoscopic communities are different notions.
+
+**Exercise 8.5. Modularity versus SBM.**  
+Write a short comparison between modularity-based community detection and SBM-based inference. Your answer should discuss the following points: objective function versus generative model, degree effects, interpretability, and sensitivity to weak signal.
+
+**Exercise 8.6. Detectability threshold.**  
+In the sparse two-block SBM, explain in words the meaning of the inequality
+$$
+(a-b)^2 > 2(a+b).
+$$
+Why does failure of this condition represent an information-theoretic limitation rather than merely a weakness of one algorithm?
+
+**Exercise 8.7. Resolution limit and interpretation.**  
+Explain why a globally normalized objective such as modularity can merge small but meaningful communities inside a much larger graph. Relate your answer to the idea of scale in mesoscale structure [@fortunato2007resolution].
+
+### Part III. Simulation and coding exercises
+
+**Exercise 8.8. Failure of Girvan--Newman under weak separation.**  
+Use the planted-partition generator in this chapter. Keep $p_{\mathrm{in}}$ fixed and gradually increase $p_{\mathrm{out}}$. At what point does the Girvan--Newman partition cease to align well with the planted blocks?
+
+**Exercise 8.9. Comparing algorithms on the same benchmark.**  
+Generate one benchmark graph with known planted communities and compare `cluster_edge_betweenness()`, `cluster_walktrap()`, and `cluster_louvain()`. Compare their modularity values, the number of detected groups, and their qualitative agreement with the planted partition.
+
+**Exercise 8.10. SBM recovery and confusion matrices.**  
+Generate SBM graphs with fixed group sizes but progressively weaker block separation. For each graph, compute a confusion matrix between planted and detected communities. Describe how recoverability degrades as the diagonal and off-diagonal probabilities become closer.
+
+**Exercise 8.11. Degree correction experiment.**  
+Create a benchmark in which one block contains several high-degree hubs. Compare the behavior of a modularity-based method to the qualitative expectations of a degree-corrected SBM. What kinds of mistakes arise when degree heterogeneity is confused with community structure?
+
+### Mini-project
+
+**Mini-project 8.1. A full community-detection workflow on a benchmark network.**  
+Build a complete analysis pipeline for a synthetic network with planted communities. Your report should include:
+1. visualization of the graph and its reordered adjacency matrix,
+2. at least two community-detection methods,
+3. one quality function or external comparison metric,
+4. a discussion of whether the recovered partition is structurally meaningful,
+5. a reflection on which limitations from this chapter are visible in your experiment.
+
+Your final report should distinguish carefully between *detecting a partition*, *justifying a partition mathematically*, and *interpreting a partition scientifically*.

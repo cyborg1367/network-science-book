@@ -16,6 +16,7 @@ book:
     - chapters/05-small-world-graphs.qmd
     - chapters/06-scale-free-graphs.qmd
     - chapters/07-network-robustness.qmd
+    - chapters/08-community-in-graphs.qmd
   page-navigation: true
   search: true
 

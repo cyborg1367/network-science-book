@@ -55,7 +55,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -77,7 +97,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-4dd0a3cd2d1f0c1ca65dcbe395e0d0e9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-70fd0f242a54890b402d5c000f6c78c3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-b5d8c9ff6161f8ccf1af3142a66ed23c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -241,6 +261,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Network Robustness</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-community-in-graphs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Community Structure in Graphs</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -253,16 +279,17 @@ window.Quarto = {
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">3.1</span> Introduction</a></li>
   <li><a href="#learning-goals" id="toc-learning-goals" class="nav-link" data-scroll-target="#learning-goals"><span class="header-section-number">3.2</span> Learning goals</a></li>
-  <li><a href="#what-is-a-graph" id="toc-what-is-a-graph" class="nav-link" data-scroll-target="#what-is-a-graph"><span class="header-section-number">3.3</span> What is a graph?</a>
+  <li><a href="#chapter-roadmap" id="toc-chapter-roadmap" class="nav-link" data-scroll-target="#chapter-roadmap"><span class="header-section-number">3.3</span> Chapter roadmap</a></li>
+  <li><a href="#what-is-a-graph" id="toc-what-is-a-graph" class="nav-link" data-scroll-target="#what-is-a-graph"><span class="header-section-number">3.4</span> What is a graph?</a>
   <ul class="collapse">
   <li><a href="#formal-definition" id="toc-formal-definition" class="nav-link" data-scroll-target="#formal-definition">Formal definition</a></li>
   <li><a href="#a-motivating-example" id="toc-a-motivating-example" class="nav-link" data-scroll-target="#a-motivating-example">A motivating example</a></li>
   </ul></li>
-  <li><a href="#directed-and-undirected-graphs" id="toc-directed-and-undirected-graphs" class="nav-link" data-scroll-target="#directed-and-undirected-graphs"><span class="header-section-number">3.4</span> Directed and undirected graphs</a>
+  <li><a href="#directed-and-undirected-graphs" id="toc-directed-and-undirected-graphs" class="nav-link" data-scroll-target="#directed-and-undirected-graphs"><span class="header-section-number">3.5</span> Directed and undirected graphs</a>
   <ul class="collapse">
   <li><a href="#weighted-graphs" id="toc-weighted-graphs" class="nav-link" data-scroll-target="#weighted-graphs">Weighted graphs</a></li>
   </ul></li>
-  <li><a href="#degree-and-the-handshaking-lemma" id="toc-degree-and-the-handshaking-lemma" class="nav-link" data-scroll-target="#degree-and-the-handshaking-lemma"><span class="header-section-number">3.5</span> Degree and the handshaking lemma</a>
+  <li><a href="#degree-and-the-handshaking-lemma" id="toc-degree-and-the-handshaking-lemma" class="nav-link" data-scroll-target="#degree-and-the-handshaking-lemma"><span class="header-section-number">3.6</span> Degree and the handshaking lemma</a>
   <ul class="collapse">
   <li><a href="#degree-of-a-vertex" id="toc-degree-of-a-vertex" class="nav-link" data-scroll-target="#degree-of-a-vertex">Degree of a vertex</a></li>
   <li><a href="#degree-sequence" id="toc-degree-sequence" class="nav-link" data-scroll-target="#degree-sequence">Degree sequence</a></li>
@@ -270,62 +297,63 @@ window.Quarto = {
   <li><a href="#average-degree" id="toc-average-degree" class="nav-link" data-scroll-target="#average-degree">Average degree</a></li>
   <li><a href="#in-degree-and-out-degree-in-directed-graphs" id="toc-in-degree-and-out-degree-in-directed-graphs" class="nav-link" data-scroll-target="#in-degree-and-out-degree-in-directed-graphs">In-degree and out-degree in directed graphs</a></li>
   </ul></li>
-  <li><a href="#matrix-representations" id="toc-matrix-representations" class="nav-link" data-scroll-target="#matrix-representations"><span class="header-section-number">3.6</span> Matrix representations</a>
+  <li><a href="#matrix-representations" id="toc-matrix-representations" class="nav-link" data-scroll-target="#matrix-representations"><span class="header-section-number">3.7</span> Matrix representations</a>
   <ul class="collapse">
   <li><a href="#the-adjacency-matrix" id="toc-the-adjacency-matrix" class="nav-link" data-scroll-target="#the-adjacency-matrix">The adjacency matrix</a></li>
   <li><a href="#the-degree-matrix" id="toc-the-degree-matrix" class="nav-link" data-scroll-target="#the-degree-matrix">The degree matrix</a></li>
   <li><a href="#the-laplacian-matrix" id="toc-the-laplacian-matrix" class="nav-link" data-scroll-target="#the-laplacian-matrix">The Laplacian matrix</a></li>
   </ul></li>
-  <li><a href="#walks-paths-and-cycles" id="toc-walks-paths-and-cycles" class="nav-link" data-scroll-target="#walks-paths-and-cycles"><span class="header-section-number">3.7</span> Walks, paths, and cycles</a>
+  <li><a href="#walks-paths-and-cycles" id="toc-walks-paths-and-cycles" class="nav-link" data-scroll-target="#walks-paths-and-cycles"><span class="header-section-number">3.8</span> Walks, paths, and cycles</a>
   <ul class="collapse">
   <li><a href="#walk" id="toc-walk" class="nav-link" data-scroll-target="#walk">Walk</a></li>
   <li><a href="#trail-and-path" id="toc-trail-and-path" class="nav-link" data-scroll-target="#trail-and-path">Trail and path</a></li>
   <li><a href="#cycle" id="toc-cycle" class="nav-link" data-scroll-target="#cycle">Cycle</a></li>
   </ul></li>
-  <li><a href="#connectivity" id="toc-connectivity" class="nav-link" data-scroll-target="#connectivity"><span class="header-section-number">3.8</span> Connectivity</a>
+  <li><a href="#connectivity" id="toc-connectivity" class="nav-link" data-scroll-target="#connectivity"><span class="header-section-number">3.9</span> Connectivity</a>
   <ul class="collapse">
   <li><a href="#connected-graphs-and-components" id="toc-connected-graphs-and-components" class="nav-link" data-scroll-target="#connected-graphs-and-components">Connected graphs and components</a></li>
   <li><a href="#strong-and-weak-connectivity-in-directed-graphs" id="toc-strong-and-weak-connectivity-in-directed-graphs" class="nav-link" data-scroll-target="#strong-and-weak-connectivity-in-directed-graphs">Strong and weak connectivity in directed graphs</a></li>
   <li><a href="#cut-vertices-and-bridges" id="toc-cut-vertices-and-bridges" class="nav-link" data-scroll-target="#cut-vertices-and-bridges">Cut vertices and bridges</a></li>
   </ul></li>
-  <li><a href="#trees-and-spanning-trees" id="toc-trees-and-spanning-trees" class="nav-link" data-scroll-target="#trees-and-spanning-trees"><span class="header-section-number">3.9</span> Trees and spanning trees</a>
+  <li><a href="#trees-and-spanning-trees" id="toc-trees-and-spanning-trees" class="nav-link" data-scroll-target="#trees-and-spanning-trees"><span class="header-section-number">3.10</span> Trees and spanning trees</a>
   <ul class="collapse">
   <li><a href="#definition-of-a-tree" id="toc-definition-of-a-tree" class="nav-link" data-scroll-target="#definition-of-a-tree">Definition of a tree</a></li>
   <li><a href="#spanning-trees" id="toc-spanning-trees" class="nav-link" data-scroll-target="#spanning-trees">Spanning trees</a></li>
   </ul></li>
-  <li><a href="#bipartite-graphs" id="toc-bipartite-graphs" class="nav-link" data-scroll-target="#bipartite-graphs"><span class="header-section-number">3.10</span> Bipartite graphs</a>
+  <li><a href="#bipartite-graphs" id="toc-bipartite-graphs" class="nav-link" data-scroll-target="#bipartite-graphs"><span class="header-section-number">3.11</span> Bipartite graphs</a>
   <ul class="collapse">
   <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition">Definition</a></li>
   <li><a href="#königs-criterion" id="toc-königs-criterion" class="nav-link" data-scroll-target="#königs-criterion">König’s criterion</a></li>
   <li><a href="#complete-bipartite-graph" id="toc-complete-bipartite-graph" class="nav-link" data-scroll-target="#complete-bipartite-graph">Complete bipartite graph</a></li>
   </ul></li>
-  <li><a href="#special-graph-families" id="toc-special-graph-families" class="nav-link" data-scroll-target="#special-graph-families"><span class="header-section-number">3.11</span> Special graph families</a>
+  <li><a href="#special-graph-families" id="toc-special-graph-families" class="nav-link" data-scroll-target="#special-graph-families"><span class="header-section-number">3.12</span> Special graph families</a>
   <ul class="collapse">
   <li><a href="#complete-graph" id="toc-complete-graph" class="nav-link" data-scroll-target="#complete-graph">Complete graph</a></li>
   <li><a href="#cycle-and-path-graphs" id="toc-cycle-and-path-graphs" class="nav-link" data-scroll-target="#cycle-and-path-graphs">Cycle and path graphs</a></li>
   <li><a href="#regular-graphs" id="toc-regular-graphs" class="nav-link" data-scroll-target="#regular-graphs">Regular graphs</a></li>
   </ul></li>
-  <li><a href="#subgraphs-and-graph-isomorphism" id="toc-subgraphs-and-graph-isomorphism" class="nav-link" data-scroll-target="#subgraphs-and-graph-isomorphism"><span class="header-section-number">3.12</span> Subgraphs and graph isomorphism</a>
+  <li><a href="#subgraphs-and-graph-isomorphism" id="toc-subgraphs-and-graph-isomorphism" class="nav-link" data-scroll-target="#subgraphs-and-graph-isomorphism"><span class="header-section-number">3.13</span> Subgraphs and graph isomorphism</a>
   <ul class="collapse">
   <li><a href="#subgraph" id="toc-subgraph" class="nav-link" data-scroll-target="#subgraph">Subgraph</a></li>
   <li><a href="#graph-isomorphism" id="toc-graph-isomorphism" class="nav-link" data-scroll-target="#graph-isomorphism">Graph isomorphism</a></li>
   </ul></li>
-  <li><a href="#working-with-graphs-in-r" id="toc-working-with-graphs-in-r" class="nav-link" data-scroll-target="#working-with-graphs-in-r"><span class="header-section-number">3.13</span> Working with graphs in R</a>
+  <li><a href="#working-with-graphs-in-r" id="toc-working-with-graphs-in-r" class="nav-link" data-scroll-target="#working-with-graphs-in-r"><span class="header-section-number">3.14</span> Working with graphs in R</a>
   <ul class="collapse">
   <li><a href="#constructing-graphs" id="toc-constructing-graphs" class="nav-link" data-scroll-target="#constructing-graphs">Constructing graphs</a></li>
   <li><a href="#basic-graph-attributes" id="toc-basic-graph-attributes" class="nav-link" data-scroll-target="#basic-graph-attributes">Basic graph attributes</a></li>
   <li><a href="#adjacency-and-laplacian-matrices" id="toc-adjacency-and-laplacian-matrices" class="nav-link" data-scroll-target="#adjacency-and-laplacian-matrices">Adjacency and Laplacian matrices</a></li>
   <li><a href="#triangle-counting-via-matrix-trace" id="toc-triangle-counting-via-matrix-trace" class="nav-link" data-scroll-target="#triangle-counting-via-matrix-trace">Triangle counting via matrix trace</a></li>
   </ul></li>
-  <li><a href="#summary-of-key-definitions" id="toc-summary-of-key-definitions" class="nav-link" data-scroll-target="#summary-of-key-definitions"><span class="header-section-number">3.14</span> Summary of key definitions</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">3.15</span> Exercises</a>
+  <li><a href="#summary-of-key-definitions" id="toc-summary-of-key-definitions" class="nav-link" data-scroll-target="#summary-of-key-definitions"><span class="header-section-number">3.15</span> Summary of key definitions</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">3.16</span> Exercises</a>
   <ul class="collapse">
   <li><a href="#part-i.-computational-and-derivation-exercises" id="toc-part-i.-computational-and-derivation-exercises" class="nav-link" data-scroll-target="#part-i.-computational-and-derivation-exercises">Part I. Computational and derivation exercises</a></li>
   <li><a href="#part-ii.-conceptual-and-analytical-exercises" id="toc-part-ii.-conceptual-and-analytical-exercises" class="nav-link" data-scroll-target="#part-ii.-conceptual-and-analytical-exercises">Part II. Conceptual and analytical exercises</a></li>
   <li><a href="#part-iii.-simulation-and-coding-exercises" id="toc-part-iii.-simulation-and-coding-exercises" class="nav-link" data-scroll-target="#part-iii.-simulation-and-coding-exercises">Part III. Simulation and coding exercises</a></li>
   </ul></li>
-  <li><a href="#suggested-mini-project" id="toc-suggested-mini-project" class="nav-link" data-scroll-target="#suggested-mini-project"><span class="header-section-number">3.16</span> Suggested mini-project</a></li>
-  <li><a href="#concluding-remarks" id="toc-concluding-remarks" class="nav-link" data-scroll-target="#concluding-remarks"><span class="header-section-number">3.17</span> Concluding remarks</a></li>
+  <li><a href="#suggested-mini-project" id="toc-suggested-mini-project" class="nav-link" data-scroll-target="#suggested-mini-project"><span class="header-section-number">3.17</span> Suggested mini-project</a></li>
+  <li><a href="#bridge-to-the-next-chapter" id="toc-bridge-to-the-next-chapter" class="nav-link" data-scroll-target="#bridge-to-the-next-chapter"><span class="header-section-number">3.18</span> Bridge to the next chapter</a></li>
+  <li><a href="#concluding-remarks" id="toc-concluding-remarks" class="nav-link" data-scroll-target="#concluding-remarks"><span class="header-section-number">3.19</span> Concluding remarks</a></li>
   </ul>
 </nav>
     </div>
@@ -335,6 +363,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Graph Theory</span></h1>
+<p class="subtitle lead">The mathematical language of network structure</p>
 </div>
 
 
@@ -354,8 +383,8 @@ window.Quarto = {
 <section id="introduction" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">3.1</span> Introduction</h2>
 <p>Network science rests on a mathematical foundation: <strong>graph theory</strong>. Before studying random graphs, small worlds, or scale-free networks, it is essential to establish the formal language used to describe networks. That language is graph theory.</p>
-<p>Graph theory is a branch of discrete mathematics that studies collections of objects and the pairwise connections between them. Its origins trace back to Leonhard Euler’s 1736 solution to the <em>Königsberg bridge problem</em>, in which the question of whether a particular city could be traversed by crossing each of its seven bridges exactly once was reformulated as a purely combinatorial question about a drawing made of vertices and edges. Euler’s insight — that only the pattern of connections, not the physical geography, determines the answer — is the founding idea of graph theory.</p>
-<p>In the context of network science, graph theory provides:</p>
+<p>Graph theory is a branch of discrete mathematics that studies collections of objects and the pairwise connections between them. Its origins trace back to Leonhard Euler’s 1736 solution to the <em>Königsberg bridge problem</em>, in which the question of whether a particular city could be traversed by crossing each of its seven bridges exactly once was reformulated as a purely combinatorial question about a drawing made of vertices and edges. Euler’s insight — that only the pattern of connections, not the physical geography, determines the answer — is the founding idea of graph theory <span class="citation" data-cites="euler1736">(<a href="#ref-euler1736" role="doc-biblioref">Euler 1736</a>)</span>.</p>
+<p>In the context of network science, graph theory provides a common mathematical language for later topics such as random graphs, small-world structure, and scale-free degree heterogeneity <span class="citation" data-cites="diestel2017 west2001 newman2010">(<a href="#ref-diestel2017" role="doc-biblioref">Diestel 2017</a>; <a href="#ref-west2001" role="doc-biblioref">West 2001</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span>. Specifically, it provides:</p>
 <ul>
 <li>a precise vocabulary for describing structures,</li>
 <li>algebraic representations that enable computation,</li>
@@ -379,8 +408,12 @@ window.Quarto = {
 <li>use <code>igraph</code> in <code>R</code> to construct and analyse graphs</li>
 </ul>
 </section>
-<section id="what-is-a-graph" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="what-is-a-graph"><span class="header-section-number">3.3</span> What is a graph?</h2>
+<section id="chapter-roadmap" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="chapter-roadmap"><span class="header-section-number">3.3</span> Chapter roadmap</h2>
+<p>This chapter moves from the most basic objects to the more structural concepts needed later in the book. It begins with the definition of a graph and the main graph types, then studies degree and matrix representations, and only after that turns to walks, connectivity, trees, bipartite structure, and standard graph families. The chapter ends with a compact computational toolkit in <code>R</code>, so that each theoretical definition is connected to a concrete representation that can be explored computationally.</p>
+</section>
+<section id="what-is-a-graph" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="what-is-a-graph"><span class="header-section-number">3.4</span> What is a graph?</h2>
 <section id="formal-definition" class="level3">
 <h3 class="anchored" data-anchor-id="formal-definition">Formal definition</h3>
 <div id="def-graph" class="theorem definition">
@@ -425,8 +458,8 @@ E = \bigl\{\{1,2\},\, \{1,3\},\, \{2,4\},\, \{3,4\},\, \{4,5\}\bigr\}.
 </div>
 </section>
 </section>
-<section id="directed-and-undirected-graphs" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="directed-and-undirected-graphs"><span class="header-section-number">3.4</span> Directed and undirected graphs</h2>
+<section id="directed-and-undirected-graphs" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="directed-and-undirected-graphs"><span class="header-section-number">3.5</span> Directed and undirected graphs</h2>
 <p>The definition above assumes that each edge is unordered: if <span class="math inline">u</span> and <span class="math inline">v</span> are connected, the connection runs symmetrically in both directions. Such a graph is called <strong>undirected</strong>.</p>
 <p>In many real networks, connections are asymmetric. A hyperlink may point from page <span class="math inline">u</span> to page <span class="math inline">v</span> without the reverse link existing. A neuron may send signals to a target cell without receiving signals back.</p>
 <div id="def-directed-graph" class="theorem definition">
@@ -451,8 +484,8 @@ E = \bigl\{\{1,2\},\, \{1,3\},\, \{2,4\},\, \{3,4\},\, \{4,5\}\bigr\}.
 <p>Weights may represent distances, capacities, interaction strengths, or costs, depending on the application.</p>
 </section>
 </section>
-<section id="degree-and-the-handshaking-lemma" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="degree-and-the-handshaking-lemma"><span class="header-section-number">3.5</span> Degree and the handshaking lemma</h2>
+<section id="degree-and-the-handshaking-lemma" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="degree-and-the-handshaking-lemma"><span class="header-section-number">3.6</span> Degree and the handshaking lemma</h2>
 <section id="degree-of-a-vertex" class="level3">
 <h3 class="anchored" data-anchor-id="degree-of-a-vertex">Degree of a vertex</h3>
 <div id="def-degree" class="theorem definition">
@@ -536,8 +569,9 @@ k_v^{\text{out}} = |\{u \in V : (v, u) \in A\}|.
 </div>
 </section>
 </section>
-<section id="matrix-representations" class="level2" data-number="3.6">
-<h2 data-number="3.6" class="anchored" data-anchor-id="matrix-representations"><span class="header-section-number">3.6</span> Matrix representations</h2>
+<section id="matrix-representations" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="matrix-representations"><span class="header-section-number">3.7</span> Matrix representations</h2>
+<p>Matrix representations are especially important in network science because they translate combinatorial structure into linear-algebraic objects. This makes it possible to study connectivity, diffusion, centrality, and spectral structure with computational tools that extend far beyond hand-drawn examples <span class="citation" data-cites="newman2010">(<a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span>.</p>
 <section id="the-adjacency-matrix" class="level3">
 <h3 class="anchored" data-anchor-id="the-adjacency-matrix">The adjacency matrix</h3>
 <div id="def-adjacency-matrix" class="theorem definition">
@@ -589,8 +623,8 @@ L_{ij} = \begin{cases} k_i &amp; \text{if } i = j, \\ -1 &amp; \text{if } \{i, j
 </div>
 </section>
 </section>
-<section id="walks-paths-and-cycles" class="level2" data-number="3.7">
-<h2 data-number="3.7" class="anchored" data-anchor-id="walks-paths-and-cycles"><span class="header-section-number">3.7</span> Walks, paths, and cycles</h2>
+<section id="walks-paths-and-cycles" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="walks-paths-and-cycles"><span class="header-section-number">3.8</span> Walks, paths, and cycles</h2>
 <section id="walk" class="level3">
 <h3 class="anchored" data-anchor-id="walk">Walk</h3>
 <div id="def-walk" class="theorem definition">
@@ -634,8 +668,8 @@ v_0, v_1, v_2, \ldots, v_\ell
 </div>
 </section>
 </section>
-<section id="connectivity" class="level2" data-number="3.8">
-<h2 data-number="3.8" class="anchored" data-anchor-id="connectivity"><span class="header-section-number">3.8</span> Connectivity</h2>
+<section id="connectivity" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="connectivity"><span class="header-section-number">3.9</span> Connectivity</h2>
 <section id="connected-graphs-and-components" class="level3">
 <h3 class="anchored" data-anchor-id="connected-graphs-and-components">Connected graphs and components</h3>
 <div id="def-connectivity" class="theorem definition">
@@ -693,8 +727,8 @@ c(G - e) &gt; c(G).
 </div>
 </section>
 </section>
-<section id="trees-and-spanning-trees" class="level2" data-number="3.9">
-<h2 data-number="3.9" class="anchored" data-anchor-id="trees-and-spanning-trees"><span class="header-section-number">3.9</span> Trees and spanning trees</h2>
+<section id="trees-and-spanning-trees" class="level2" data-number="3.10">
+<h2 data-number="3.10" class="anchored" data-anchor-id="trees-and-spanning-trees"><span class="header-section-number">3.10</span> Trees and spanning trees</h2>
 <section id="definition-of-a-tree" class="level3">
 <h3 class="anchored" data-anchor-id="definition-of-a-tree">Definition of a tree</h3>
 <div id="def-tree" class="theorem definition">
@@ -731,8 +765,8 @@ c(G - e) &gt; c(G).
 </div>
 </section>
 </section>
-<section id="bipartite-graphs" class="level2" data-number="3.10">
-<h2 data-number="3.10" class="anchored" data-anchor-id="bipartite-graphs"><span class="header-section-number">3.10</span> Bipartite graphs</h2>
+<section id="bipartite-graphs" class="level2" data-number="3.11">
+<h2 data-number="3.11" class="anchored" data-anchor-id="bipartite-graphs"><span class="header-section-number">3.11</span> Bipartite graphs</h2>
 <section id="definition" class="level3">
 <h3 class="anchored" data-anchor-id="definition">Definition</h3>
 <div id="def-bipartite" class="theorem definition">
@@ -764,8 +798,8 @@ c(G - e) &gt; c(G).
 </div>
 </section>
 </section>
-<section id="special-graph-families" class="level2" data-number="3.11">
-<h2 data-number="3.11" class="anchored" data-anchor-id="special-graph-families"><span class="header-section-number">3.11</span> Special graph families</h2>
+<section id="special-graph-families" class="level2" data-number="3.12">
+<h2 data-number="3.12" class="anchored" data-anchor-id="special-graph-families"><span class="header-section-number">3.12</span> Special graph families</h2>
 <p>Several families appear repeatedly in network science as benchmarks and building blocks.</p>
 <section id="complete-graph" class="level3">
 <h3 class="anchored" data-anchor-id="complete-graph">Complete graph</h3>
@@ -804,8 +838,8 @@ M = \binom{N}{2} = \frac{N(N-1)}{2}
 </div>
 </section>
 </section>
-<section id="subgraphs-and-graph-isomorphism" class="level2" data-number="3.12">
-<h2 data-number="3.12" class="anchored" data-anchor-id="subgraphs-and-graph-isomorphism"><span class="header-section-number">3.12</span> Subgraphs and graph isomorphism</h2>
+<section id="subgraphs-and-graph-isomorphism" class="level2" data-number="3.13">
+<h2 data-number="3.13" class="anchored" data-anchor-id="subgraphs-and-graph-isomorphism"><span class="header-section-number">3.13</span> Subgraphs and graph isomorphism</h2>
 <section id="subgraph" class="level3">
 <h3 class="anchored" data-anchor-id="subgraph">Subgraph</h3>
 <div id="def-subgraph" class="theorem definition">
@@ -826,8 +860,8 @@ M = \binom{N}{2} = \frac{N(N-1)}{2}
 <p>A necessary condition for isomorphism is that two graphs have the same degree sequence. This condition is easy to check but is not sufficient: non-isomorphic graphs can share the same degree sequence.</p>
 </section>
 </section>
-<section id="working-with-graphs-in-r" class="level2" data-number="3.13">
-<h2 data-number="3.13" class="anchored" data-anchor-id="working-with-graphs-in-r"><span class="header-section-number">3.13</span> Working with graphs in R</h2>
+<section id="working-with-graphs-in-r" class="level2" data-number="3.14">
+<h2 data-number="3.14" class="anchored" data-anchor-id="working-with-graphs-in-r"><span class="header-section-number">3.14</span> Working with graphs in R</h2>
 <p>The <code>igraph</code> package provides a comprehensive toolkit for constructing, manipulating, and analysing graphs in R.</p>
 <section id="constructing-graphs" class="level3">
 <h3 class="anchored" data-anchor-id="constructing-graphs">Constructing graphs</h3>
@@ -993,8 +1027,8 @@ Fiedler value (algebraic connectivity): 0.518806 </code></pre>
 </div>
 </section>
 </section>
-<section id="summary-of-key-definitions" class="level2" data-number="3.14">
-<h2 data-number="3.14" class="anchored" data-anchor-id="summary-of-key-definitions"><span class="header-section-number">3.14</span> Summary of key definitions</h2>
+<section id="summary-of-key-definitions" class="level2" data-number="3.15">
+<h2 data-number="3.15" class="anchored" data-anchor-id="summary-of-key-definitions"><span class="header-section-number">3.15</span> Summary of key definitions</h2>
 <p>The table below collects the most important quantities introduced in this chapter.</p>
 <div class="cell" data-tbl-cap="Core graph-theoretic quantities, their notation, and formulas.">
 <div class="cell-output-display">
@@ -1068,8 +1102,8 @@ Fiedler value (algebraic connectivity): 0.518806 </code></pre>
 </div>
 </div>
 </section>
-<section id="exercises" class="level2" data-number="3.15">
-<h2 data-number="3.15" class="anchored" data-anchor-id="exercises"><span class="header-section-number">3.15</span> Exercises</h2>
+<section id="exercises" class="level2" data-number="3.16">
+<h2 data-number="3.16" class="anchored" data-anchor-id="exercises"><span class="header-section-number">3.16</span> Exercises</h2>
 <hr>
 <section id="part-i.-computational-and-derivation-exercises" class="level3">
 <h3 class="anchored" data-anchor-id="part-i.-computational-and-derivation-exercises">Part I. Computational and derivation exercises</h3>
@@ -1234,8 +1268,8 @@ Fiedler value (algebraic connectivity): 0.518806 </code></pre>
 </section>
 </section>
 </section>
-<section id="suggested-mini-project" class="level2" data-number="3.16">
-<h2 data-number="3.16" class="anchored" data-anchor-id="suggested-mini-project"><span class="header-section-number">3.16</span> Suggested mini-project</h2>
+<section id="suggested-mini-project" class="level2" data-number="3.17">
+<h2 data-number="3.17" class="anchored" data-anchor-id="suggested-mini-project"><span class="header-section-number">3.17</span> Suggested mini-project</h2>
 <p>A strong mini-project for this chapter is the following:</p>
 <blockquote class="blockquote">
 <p>Investigate graph-theoretic properties across several graph families and at least one real-world network.</p>
@@ -1249,8 +1283,12 @@ Fiedler value (algebraic connectivity): 0.518806 </code></pre>
 <li>a discussion of which graph-theoretic quantities are most informative for characterizing the network’s structure.</li>
 </ul>
 </section>
-<section id="concluding-remarks" class="level2" data-number="3.17">
-<h2 data-number="3.17" class="anchored" data-anchor-id="concluding-remarks"><span class="header-section-number">3.17</span> Concluding remarks</h2>
+<section id="bridge-to-the-next-chapter" class="level2" data-number="3.18">
+<h2 data-number="3.18" class="anchored" data-anchor-id="bridge-to-the-next-chapter"><span class="header-section-number">3.18</span> Bridge to the next chapter</h2>
+<p>This chapter has treated graphs as deterministic mathematical objects: the vertex set and edge set are specified, and the goal is to reason about the resulting structure. The next chapter changes that viewpoint. Instead of fixing one graph in advance, we will study probability models that generate many possible graphs. The language introduced here — degree, adjacency matrix, connectedness, trees, and components — will become the vocabulary used to describe what a random graph typically looks like.</p>
+</section>
+<section id="concluding-remarks" class="level2" data-number="3.19">
+<h2 data-number="3.19" class="anchored" data-anchor-id="concluding-remarks"><span class="header-section-number">3.19</span> Concluding remarks</h2>
 <p>Graph theory provides the rigorous language that network science depends on. The definitions introduced in this chapter — graphs, adjacency matrices, degrees, paths, connectivity, trees — are not merely formal conventions. They are the precise tools that make it possible to state questions clearly, derive results exactly, and implement algorithms efficiently.</p>
 <p>Several key ideas run through this chapter:</p>
 <ul>
@@ -1263,6 +1301,20 @@ Fiedler value (algebraic connectivity): 0.518806 </code></pre>
 <p>These foundations will be used throughout all subsequent chapters. The Erdős–Rényi model, the Watts–Strogatz model, and the Barabási–Albert model are all built on top of the graph-theoretic language established here. Before asking <em>how likely</em> a graph with certain properties is, one must first be able to describe those properties precisely — and that is what this chapter has provided.</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-diestel2017" class="csl-entry" role="listitem">
+Diestel, Reinhard. 2017. <em>Graph Theory</em>. 5th ed. Springer. <a href="https://doi.org/10.1007/978-3-662-53622-3">https://doi.org/10.1007/978-3-662-53622-3</a>.
+</div>
+<div id="ref-euler1736" class="csl-entry" role="listitem">
+Euler, Leonhard. 1736. <span>“Solutio Problematis Ad Geometriam Situs Pertinentis.”</span> <em>Commentarii Academiae Scientiarum Imperialis Petropolitanae</em> 8: 128–40.
+</div>
+<div id="ref-newman2010" class="csl-entry" role="listitem">
+Newman, M. E. J. 2010. <em>Networks: An Introduction</em>. Oxford University Press.
+</div>
+<div id="ref-west2001" class="csl-entry" role="listitem">
+West, Douglas B. 2001. <em>Introduction to Graph Theory</em>. 2nd ed. Prentice Hall.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

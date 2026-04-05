@@ -22,7 +22,6 @@ ns_book_setup(
 )
 ```
 
-
 ## Introduction
 
 Random graphs are one of the most important starting points in network science. In ordinary graph theory, the usual starting point is a fixed graph: the nodes and links are already given, and the goal is to analyse the structure that is already there. In random graph theory, the viewpoint changes. Instead of starting from one fixed graph, the starting point is a rule for generating graphs.

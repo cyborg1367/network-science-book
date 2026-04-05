@@ -55,7 +55,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -77,7 +97,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-4dd0a3cd2d1f0c1ca65dcbe395e0d0e9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-70fd0f242a54890b402d5c000f6c78c3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-b5d8c9ff6161f8ccf1af3142a66ed23c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -241,6 +261,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Network Robustness</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-community-in-graphs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Community Structure in Graphs</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -253,7 +279,8 @@ window.Quarto = {
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">5.1</span> Introduction</a></li>
   <li><a href="#learning-goals" id="toc-learning-goals" class="nav-link" data-scroll-target="#learning-goals"><span class="header-section-number">5.2</span> Learning goals</a></li>
-  <li><a href="#connectedness-and-components" id="toc-connectedness-and-components" class="nav-link" data-scroll-target="#connectedness-and-components"><span class="header-section-number">5.3</span> Connectedness and components</a>
+  <li><a href="#chapter-roadmap" id="toc-chapter-roadmap" class="nav-link" data-scroll-target="#chapter-roadmap"><span class="header-section-number">5.3</span> Chapter roadmap</a></li>
+  <li><a href="#connectedness-and-components" id="toc-connectedness-and-components" class="nav-link" data-scroll-target="#connectedness-and-components"><span class="header-section-number">5.4</span> Connectedness and components</a>
   <ul class="collapse">
   <li><a href="#connected-graph" id="toc-connected-graph" class="nav-link" data-scroll-target="#connected-graph">Connected graph</a></li>
   <li><a href="#connected-component" id="toc-connected-component" class="nav-link" data-scroll-target="#connected-component">Connected component</a></li>
@@ -262,47 +289,49 @@ window.Quarto = {
   <li><a href="#example-component-structure" id="toc-example-component-structure" class="nav-link" data-scroll-target="#example-component-structure">Example: component structure</a></li>
   <li><a href="#component-size-table" id="toc-component-size-table" class="nav-link" data-scroll-target="#component-size-table">Component-size table</a></li>
   </ul></li>
-  <li><a href="#giant-component" id="toc-giant-component" class="nav-link" data-scroll-target="#giant-component"><span class="header-section-number">5.4</span> Giant component</a>
+  <li><a href="#giant-component" id="toc-giant-component" class="nav-link" data-scroll-target="#giant-component"><span class="header-section-number">5.5</span> Giant component</a>
   <ul class="collapse">
   <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition">Definition</a></li>
   <li><a href="#why-the-giant-component-matters" id="toc-why-the-giant-component-matters" class="nav-link" data-scroll-target="#why-the-giant-component-matters">Why the giant component matters</a></li>
   </ul></li>
-  <li><a href="#the-evolution-of-a-random-graph" id="toc-the-evolution-of-a-random-graph" class="nav-link" data-scroll-target="#the-evolution-of-a-random-graph"><span class="header-section-number">5.5</span> The evolution of a random graph</a>
+  <li><a href="#the-evolution-of-a-random-graph" id="toc-the-evolution-of-a-random-graph" class="nav-link" data-scroll-target="#the-evolution-of-a-random-graph"><span class="header-section-number">5.6</span> The evolution of a random graph</a>
   <ul class="collapse">
   <li><a href="#evolution-through-snapshots" id="toc-evolution-through-snapshots" class="nav-link" data-scroll-target="#evolution-through-snapshots">Evolution through snapshots</a></li>
   </ul></li>
-  <li><a href="#regimes-of-random-graph-evolution" id="toc-regimes-of-random-graph-evolution" class="nav-link" data-scroll-target="#regimes-of-random-graph-evolution"><span class="header-section-number">5.6</span> Regimes of random-graph evolution</a>
+  <li><a href="#regimes-of-random-graph-evolution" id="toc-regimes-of-random-graph-evolution" class="nav-link" data-scroll-target="#regimes-of-random-graph-evolution"><span class="header-section-number">5.7</span> Regimes of random-graph evolution</a>
   <ul class="collapse">
   <li><a href="#subcritical-regime" id="toc-subcritical-regime" class="nav-link" data-scroll-target="#subcritical-regime">Subcritical regime</a></li>
   <li><a href="#critical-regime" id="toc-critical-regime" class="nav-link" data-scroll-target="#critical-regime">Critical regime</a></li>
   <li><a href="#supercritical-regime" id="toc-supercritical-regime" class="nav-link" data-scroll-target="#supercritical-regime">Supercritical regime</a></li>
   <li><a href="#connected-regime" id="toc-connected-regime" class="nav-link" data-scroll-target="#connected-regime">Connected regime</a></li>
   </ul></li>
-  <li><a href="#mathematical-description-of-the-giant-component" id="toc-mathematical-description-of-the-giant-component" class="nav-link" data-scroll-target="#mathematical-description-of-the-giant-component"><span class="header-section-number">5.7</span> Mathematical description of the giant component</a>
+  <li><a href="#mathematical-description-of-the-giant-component" id="toc-mathematical-description-of-the-giant-component" class="nav-link" data-scroll-target="#mathematical-description-of-the-giant-component"><span class="header-section-number">5.8</span> Mathematical description of the giant component</a>
   <ul class="collapse">
   <li><a href="#interpretation-of-the-self-consistency-equation" id="toc-interpretation-of-the-self-consistency-equation" class="nav-link" data-scroll-target="#interpretation-of-the-self-consistency-equation">Interpretation of the self-consistency equation</a></li>
   <li><a href="#near-threshold-behavior" id="toc-near-threshold-behavior" class="nav-link" data-scroll-target="#near-threshold-behavior">Near-threshold behavior</a></li>
   <li><a href="#structure-in-the-supercritical-regime" id="toc-structure-in-the-supercritical-regime" class="nav-link" data-scroll-target="#structure-in-the-supercritical-regime">Structure in the supercritical regime</a></li>
   <li><a href="#connectedness-threshold" id="toc-connectedness-threshold" class="nav-link" data-scroll-target="#connectedness-threshold">Connectedness threshold</a></li>
   </ul></li>
-  <li><a href="#numerical-exploration" id="toc-numerical-exploration" class="nav-link" data-scroll-target="#numerical-exploration"><span class="header-section-number">5.8</span> Numerical exploration</a>
+  <li><a href="#finite-size-interpretation-of-the-thresholds" id="toc-finite-size-interpretation-of-the-thresholds" class="nav-link" data-scroll-target="#finite-size-interpretation-of-the-thresholds"><span class="header-section-number">5.9</span> Finite-size interpretation of the thresholds</a></li>
+  <li><a href="#numerical-exploration" id="toc-numerical-exploration" class="nav-link" data-scroll-target="#numerical-exploration"><span class="header-section-number">5.10</span> Numerical exploration</a>
   <ul class="collapse">
   <li><a href="#largest-component-fraction" id="toc-largest-component-fraction" class="nav-link" data-scroll-target="#largest-component-fraction">Largest component fraction</a></li>
   <li><a href="#number-of-connected-components" id="toc-number-of-connected-components" class="nav-link" data-scroll-target="#number-of-connected-components">Number of connected components</a></li>
   <li><a href="#fraction-of-isolated-vertices" id="toc-fraction-of-isolated-vertices" class="nav-link" data-scroll-target="#fraction-of-isolated-vertices">Fraction of isolated vertices</a></li>
   <li><a href="#probability-of-connectedness" id="toc-probability-of-connectedness" class="nav-link" data-scroll-target="#probability-of-connectedness">Probability of connectedness</a></li>
   </ul></li>
-  <li><a href="#summary-of-regimes" id="toc-summary-of-regimes" class="nav-link" data-scroll-target="#summary-of-regimes"><span class="header-section-number">5.9</span> Summary of regimes</a></li>
-  <li><a href="#core-formulas-to-remember" id="toc-core-formulas-to-remember" class="nav-link" data-scroll-target="#core-formulas-to-remember"><span class="header-section-number">5.10</span> Core formulas to remember</a></li>
-  <li><a href="#in-class-questions" id="toc-in-class-questions" class="nav-link" data-scroll-target="#in-class-questions"><span class="header-section-number">5.11</span> In-class questions</a></li>
-  <li><a href="#end-of-chapter-exercises" id="toc-end-of-chapter-exercises" class="nav-link" data-scroll-target="#end-of-chapter-exercises"><span class="header-section-number">5.12</span> End-of-chapter exercises</a>
+  <li><a href="#summary-of-regimes" id="toc-summary-of-regimes" class="nav-link" data-scroll-target="#summary-of-regimes"><span class="header-section-number">5.11</span> Summary of regimes</a></li>
+  <li><a href="#core-formulas-to-remember" id="toc-core-formulas-to-remember" class="nav-link" data-scroll-target="#core-formulas-to-remember"><span class="header-section-number">5.12</span> Core formulas to remember</a></li>
+  <li><a href="#in-class-questions" id="toc-in-class-questions" class="nav-link" data-scroll-target="#in-class-questions"><span class="header-section-number">5.13</span> In-class questions</a></li>
+  <li><a href="#end-of-chapter-exercises" id="toc-end-of-chapter-exercises" class="nav-link" data-scroll-target="#end-of-chapter-exercises"><span class="header-section-number">5.14</span> End-of-chapter exercises</a>
   <ul class="collapse">
   <li><a href="#part-i.-mathematical-exercises" id="toc-part-i.-mathematical-exercises" class="nav-link" data-scroll-target="#part-i.-mathematical-exercises">Part I. Mathematical exercises</a></li>
   <li><a href="#part-ii.-conceptual-and-analytical-exercises" id="toc-part-ii.-conceptual-and-analytical-exercises" class="nav-link" data-scroll-target="#part-ii.-conceptual-and-analytical-exercises">Part II. Conceptual and analytical exercises</a></li>
   <li><a href="#part-iii.-simulation-and-coding-exercises" id="toc-part-iii.-simulation-and-coding-exercises" class="nav-link" data-scroll-target="#part-iii.-simulation-and-coding-exercises">Part III. Simulation and coding exercises</a></li>
   </ul></li>
-  <li><a href="#suggested-project-style-extension" id="toc-suggested-project-style-extension" class="nav-link" data-scroll-target="#suggested-project-style-extension"><span class="header-section-number">5.13</span> Suggested project-style extension</a></li>
-  <li><a href="#concluding-remarks" id="toc-concluding-remarks" class="nav-link" data-scroll-target="#concluding-remarks"><span class="header-section-number">5.14</span> Concluding remarks</a></li>
+  <li><a href="#suggested-project-style-extension" id="toc-suggested-project-style-extension" class="nav-link" data-scroll-target="#suggested-project-style-extension"><span class="header-section-number">5.15</span> Suggested project-style extension</a></li>
+  <li><a href="#bridge-to-the-next-chapter" id="toc-bridge-to-the-next-chapter" class="nav-link" data-scroll-target="#bridge-to-the-next-chapter"><span class="header-section-number">5.16</span> Bridge to the next chapter</a></li>
+  <li><a href="#concluding-remarks" id="toc-concluding-remarks" class="nav-link" data-scroll-target="#concluding-remarks"><span class="header-section-number">5.17</span> Concluding remarks</a></li>
   </ul>
 </nav>
     </div>
@@ -312,6 +341,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Evolution of Random Graphs</span></h1>
+<p class="subtitle lead">Thresholds, components, and the emergence of large-scale connectivity</p>
 </div>
 
 
@@ -330,7 +360,7 @@ window.Quarto = {
 
 <section id="introduction" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">5.1</span> Introduction</h2>
-<p>The previous chapter focused on the static properties of random graphs: the Erdős–Rényi models, average degree, degree distribution, and clustering coefficient. Those quantities describe the graph at a fixed stage.</p>
+<p>The previous chapter focused on the static properties of random graphs: the Erdős–Rényi models, average degree, degree distribution, and clustering coefficient. This chapter follows the classical line of work on how those graphs change as edges are added and how global connectivity emerges through threshold behavior <span class="citation" data-cites="erdos1960 bollobas2001book newman2010">(<a href="#ref-erdos1960" role="doc-biblioref">Erdős and Rényi 1960</a>; <a href="#ref-bollobas2001book" role="doc-biblioref">Bollobás 2001</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span>. Those quantities describe the graph at a fixed stage.</p>
 <p>A second and equally important question is how a random graph changes as links are gradually introduced. At the beginning there may be no links at all, so every vertex is isolated. When a small number of links is added, tiny connected groups appear. As the density of links increases, these groups merge into larger connected structures. Eventually one component becomes comparable in size to the full graph. This object is called the giant component.</p>
 <p>The central theme of this chapter is that the emergence of large-scale connectivity is governed by a threshold phenomenon. In the Erdős–Rényi model, the expected degree</p>
 <p><span class="math display">
@@ -351,8 +381,12 @@ window.Quarto = {
 <li>verify these ideas numerically in <code>R</code></li>
 </ul>
 </section>
-<section id="connectedness-and-components" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="connectedness-and-components"><span class="header-section-number">5.3</span> Connectedness and components</h2>
+<section id="chapter-roadmap" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="chapter-roadmap"><span class="header-section-number">5.3</span> Chapter roadmap</h2>
+<p>The chapter begins with the language of connectedness and components, since threshold phenomena cannot be understood without a precise notion of how a graph breaks into pieces. It then studies the giant component and the qualitative regimes of Erdős–Rényi evolution, before introducing the standard self-consistency equation and the connectedness threshold. Numerical experiments come only after the theory, so that the simulations can be interpreted rather than merely observed.</p>
+</section>
+<section id="connectedness-and-components" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="connectedness-and-components"><span class="header-section-number">5.4</span> Connectedness and components</h2>
 <section id="connected-graph" class="level3">
 <h3 class="anchored" data-anchor-id="connected-graph">Connected graph</h3>
 <div id="def-connected-graph" class="theorem definition">
@@ -441,8 +475,8 @@ window.Quarto = {
 <p>This table translates the picture into numerical structure and prepares the transition to the notion of a giant component.</p>
 </section>
 </section>
-<section id="giant-component" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="giant-component"><span class="header-section-number">5.4</span> Giant component</h2>
+<section id="giant-component" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="giant-component"><span class="header-section-number">5.5</span> Giant component</h2>
 <section id="definition" class="level3">
 <h3 class="anchored" data-anchor-id="definition">Definition</h3>
 <div id="def-giant-component" class="theorem definition">
@@ -473,8 +507,8 @@ window.Quarto = {
 <p>So the emergence of the giant component is the key event in the evolution of a random graph.</p>
 </section>
 </section>
-<section id="the-evolution-of-a-random-graph" class="level2" data-number="5.5">
-<h2 data-number="5.5" class="anchored" data-anchor-id="the-evolution-of-a-random-graph"><span class="header-section-number">5.5</span> The evolution of a random graph</h2>
+<section id="the-evolution-of-a-random-graph" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="the-evolution-of-a-random-graph"><span class="header-section-number">5.6</span> The evolution of a random graph</h2>
 <p>Consider the Erdős–Rényi model <span class="math inline">G(N,p)</span> with fixed <span class="math inline">N</span> and variable parameter <span class="math inline">p \in [0,1]</span>.</p>
 <p>At one extreme,</p>
 <p><span class="math display">
@@ -517,8 +551,8 @@ p = 1,
 <p>The qualitative transition is therefore from fragmentation to macroscopic connectivity.</p>
 </section>
 </section>
-<section id="regimes-of-random-graph-evolution" class="level2" data-number="5.6">
-<h2 data-number="5.6" class="anchored" data-anchor-id="regimes-of-random-graph-evolution"><span class="header-section-number">5.6</span> Regimes of random-graph evolution</h2>
+<section id="regimes-of-random-graph-evolution" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="regimes-of-random-graph-evolution"><span class="header-section-number">5.7</span> Regimes of random-graph evolution</h2>
 <p>A convenient parameter for describing these regimes is the expected degree</p>
 <p><span class="math display">
 \langle k \rangle = p(N-1).
@@ -572,8 +606,8 @@ p \approx \frac{\ln N}{N}.
 <p>There is therefore a broad intermediate range in which the graph already has a giant component but is not yet fully connected.</p>
 </section>
 </section>
-<section id="mathematical-description-of-the-giant-component" class="level2" data-number="5.7">
-<h2 data-number="5.7" class="anchored" data-anchor-id="mathematical-description-of-the-giant-component"><span class="header-section-number">5.7</span> Mathematical description of the giant component</h2>
+<section id="mathematical-description-of-the-giant-component" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="mathematical-description-of-the-giant-component"><span class="header-section-number">5.8</span> Mathematical description of the giant component</h2>
 <p>A central quantity is the relative size of the giant component,</p>
 <p><span class="math display">
 S = \frac{N_G}{N},
@@ -695,8 +729,13 @@ S \approx 2(\langle k \rangle - 1), \qquad \langle k \rangle \downarrow 1^{+}.
 </div>
 </section>
 </section>
-<section id="numerical-exploration" class="level2" data-number="5.8">
-<h2 data-number="5.8" class="anchored" data-anchor-id="numerical-exploration"><span class="header-section-number">5.8</span> Numerical exploration</h2>
+<section id="finite-size-interpretation-of-the-thresholds" class="level2" data-number="5.9">
+<h2 data-number="5.9" class="anchored" data-anchor-id="finite-size-interpretation-of-the-thresholds"><span class="header-section-number">5.9</span> Finite-size interpretation of the thresholds</h2>
+<p>The thresholds discussed in this chapter are sharp in the large-<span class="math inline">N</span> limit, but numerical simulations are always finite. For finite graphs, the transition is therefore rounded rather than perfectly abrupt. In practice, one should read the threshold near <span class="math inline">\langle k \rangle = 1</span> as the location where the giant component begins to dominate, and the connectedness threshold near <span class="math inline">\langle k \rangle = \ln N</span> as the scale where isolated vertices become rare enough that full connectivity becomes likely <span class="citation" data-cites="newman2010 bollobas2001book">(<a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>; <a href="#ref-bollobas2001book" role="doc-biblioref">Bollobás 2001</a>)</span>.</p>
+<p>This finite-size viewpoint is important pedagogically. It prevents the theory from being interpreted too mechanically and helps explain why simulation curves are smooth even when the asymptotic theory speaks in terms of sharp transitions.</p>
+</section>
+<section id="numerical-exploration" class="level2" data-number="5.10">
+<h2 data-number="5.10" class="anchored" data-anchor-id="numerical-exploration"><span class="header-section-number">5.10</span> Numerical exploration</h2>
 <p>The structural transition can be observed numerically by generating many graphs for different values of <span class="math inline">p</span> and tracking several global quantities.</p>
 <div class="cell">
 <details class="code-fold">
@@ -862,8 +901,8 @@ S \approx 2(\langle k \rangle - 1), \qquad \langle k \rangle \downarrow 1^{+}.
 <p>This last plot makes the distinction between the two thresholds especially clear. The giant component appears near <span class="math inline">\langle k \rangle = 1</span>, but the probability that the graph is fully connected remains small until the expected degree is of order <span class="math inline">\ln N</span>.</p>
 </section>
 </section>
-<section id="summary-of-regimes" class="level2" data-number="5.9">
-<h2 data-number="5.9" class="anchored" data-anchor-id="summary-of-regimes"><span class="header-section-number">5.9</span> Summary of regimes</h2>
+<section id="summary-of-regimes" class="level2" data-number="5.11">
+<h2 data-number="5.11" class="anchored" data-anchor-id="summary-of-regimes"><span class="header-section-number">5.11</span> Summary of regimes</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -902,8 +941,8 @@ S \approx 2(\langle k \rangle - 1), \qquad \langle k \rangle \downarrow 1^{+}.
 </table>
 <p>This table summarizes the evolution of the Erdős–Rényi random graph in terms of its component structure.</p>
 </section>
-<section id="core-formulas-to-remember" class="level2" data-number="5.10">
-<h2 data-number="5.10" class="anchored" data-anchor-id="core-formulas-to-remember"><span class="header-section-number">5.10</span> Core formulas to remember</h2>
+<section id="core-formulas-to-remember" class="level2" data-number="5.12">
+<h2 data-number="5.12" class="anchored" data-anchor-id="core-formulas-to-remember"><span class="header-section-number">5.12</span> Core formulas to remember</h2>
 <div class="callout callout-style-default callout-important callout-titled" title="Summary">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -925,8 +964,8 @@ S \approx 2(\langle k \rangle - 1), \qquad \langle k \rangle \downarrow 1^{+}.
 </div>
 </div>
 </section>
-<section id="in-class-questions" class="level2" data-number="5.11">
-<h2 data-number="5.11" class="anchored" data-anchor-id="in-class-questions"><span class="header-section-number">5.11</span> In-class questions</h2>
+<section id="in-class-questions" class="level2" data-number="5.13">
+<h2 data-number="5.13" class="anchored" data-anchor-id="in-class-questions"><span class="header-section-number">5.13</span> In-class questions</h2>
 <ol type="1">
 <li>Why is connectedness a global property of a graph?</li>
 <li>What role does maximality play in the definition of a connected component?</li>
@@ -937,8 +976,8 @@ S \approx 2(\langle k \rangle - 1), \qquad \langle k \rangle \downarrow 1^{+}.
 <li>Why can a graph have a giant component and still be disconnected?</li>
 </ol>
 </section>
-<section id="end-of-chapter-exercises" class="level2" data-number="5.12">
-<h2 data-number="5.12" class="anchored" data-anchor-id="end-of-chapter-exercises"><span class="header-section-number">5.12</span> End-of-chapter exercises</h2>
+<section id="end-of-chapter-exercises" class="level2" data-number="5.14">
+<h2 data-number="5.14" class="anchored" data-anchor-id="end-of-chapter-exercises"><span class="header-section-number">5.14</span> End-of-chapter exercises</h2>
 <p>The exercises below are grouped into three categories:</p>
 <ol type="1">
 <li>mathematical exercises,</li>
@@ -1239,8 +1278,8 @@ S = 1 - e^{-\langle k \rangle S}.
 </section>
 </section>
 </section>
-<section id="suggested-project-style-extension" class="level2" data-number="5.13">
-<h2 data-number="5.13" class="anchored" data-anchor-id="suggested-project-style-extension"><span class="header-section-number">5.13</span> Suggested project-style extension</h2>
+<section id="suggested-project-style-extension" class="level2" data-number="5.15">
+<h2 data-number="5.15" class="anchored" data-anchor-id="suggested-project-style-extension"><span class="header-section-number">5.15</span> Suggested project-style extension</h2>
 <p>A strong mini-project for this chapter is the following:</p>
 <blockquote class="blockquote">
 <p>Compare the simulated evolution of <span class="math inline">G(N,p)</span> with the theoretical equations for giant-component emergence and connectedness threshold.</p>
@@ -1253,13 +1292,34 @@ S = 1 - e^{-\langle k \rangle S}.
 <li>interpretation of the results.</li>
 </ul>
 </section>
-<section id="concluding-remarks" class="level2" data-number="5.14">
-<h2 data-number="5.14" class="anchored" data-anchor-id="concluding-remarks"><span class="header-section-number">5.14</span> Concluding remarks</h2>
+<section id="bridge-to-the-next-chapter" class="level2" data-number="5.16">
+<h2 data-number="5.16" class="anchored" data-anchor-id="bridge-to-the-next-chapter"><span class="header-section-number">5.16</span> Bridge to the next chapter</h2>
+<p>The Erdős–Rényi process explains how a giant component appears in a graph assembled by chance, but it does not explain why many real networks simultaneously exhibit short path lengths and substantial local clustering. The next chapter addresses that gap by studying small-world networks, where a small number of shortcuts can dramatically reduce distances while preserving neighborhood structure <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-watts1998" role="doc-biblioref">Watts and Strogatz 1998</a>; <a href="#ref-strogatz2001" role="doc-biblioref">Strogatz 2001</a>)</span>.</p>
+</section>
+<section id="concluding-remarks" class="level2" data-number="5.17">
+<h2 data-number="5.17" class="anchored" data-anchor-id="concluding-remarks"><span class="header-section-number">5.17</span> Concluding remarks</h2>
 <p>The evolution of a random graph is one of the clearest demonstrations of how global structure can arise from simple local randomness.</p>
 <p>At first the graph contains only isolated vertices and very small components. As edges are added, these small pieces merge. Near the threshold <span class="math inline">\langle k \rangle = 1</span>, a giant component emerges. Much later, near <span class="math inline">\langle k \rangle = \ln N</span>, the graph becomes connected with high probability.</p>
 <p>So the emergence of a network is not a smooth undifferentiated process. It is organized by precise structural thresholds, and those thresholds can be described mathematically in terms of component size and expected degree.</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-bollobas2001book" class="csl-entry" role="listitem">
+Bollobás, Béla. 2001. <em>Random Graphs</em>. 2nd ed. Cambridge University Press. <a href="https://doi.org/10.1017/CBO9780511814068">https://doi.org/10.1017/CBO9780511814068</a>.
+</div>
+<div id="ref-erdos1960" class="csl-entry" role="listitem">
+Erdős, Paul, and Alfréd Rényi. 1960. <span>“On the Evolution of Random Graphs.”</span> <em>Publications of the Mathematical Institute of the Hungarian Academy of Sciences</em> 5: 17–61.
+</div>
+<div id="ref-newman2010" class="csl-entry" role="listitem">
+Newman, M. E. J. 2010. <em>Networks: An Introduction</em>. Oxford University Press.
+</div>
+<div id="ref-strogatz2001" class="csl-entry" role="listitem">
+Strogatz, Steven H. 2001. <span>“Exploring Complex Networks.”</span> <em>Nature</em> 410 (6825): 268–76. <a href="https://doi.org/10.1038/35065725">https://doi.org/10.1038/35065725</a>.
+</div>
+<div id="ref-watts1998" class="csl-entry" role="listitem">
+Watts, Duncan J., and Steven H. Strogatz. 1998. <span>“Collective Dynamics of ’Small-World’ Networks.”</span> <em>Nature</em> 393 (6684): 440–42. <a href="https://doi.org/10.1038/30918">https://doi.org/10.1038/30918</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

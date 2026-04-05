@@ -1,5 +1,7 @@
 ---
 title: "The Evolution of Random Graphs"
+subtitle: "Thresholds, components, and the emergence of large-scale connectivity"
+bibliography: ../references.bib
 ---
 
 ```{r}
@@ -24,7 +26,7 @@ ns_book_setup(
 
 ## Introduction
 
-The previous chapter focused on the static properties of random graphs: the Erdős--Rényi models, average degree, degree distribution, and clustering coefficient. Those quantities describe the graph at a fixed stage.
+The previous chapter focused on the static properties of random graphs: the Erdős--Rényi models, average degree, degree distribution, and clustering coefficient. This chapter follows the classical line of work on how those graphs change as edges are added and how global connectivity emerges through threshold behavior [@erdos1960; @bollobas2001book; @newman2010]. Those quantities describe the graph at a fixed stage.
 
 A second and equally important question is how a random graph changes as links are gradually introduced. At the beginning there may be no links at all, so every vertex is isolated. When a small number of links is added, tiny connected groups appear. As the density of links increases, these groups merge into larger connected structures. Eventually one component becomes comparable in size to the full graph. This object is called the giant component.
 
@@ -47,6 +49,11 @@ By the end of this chapter, it should be possible to:
 -   explain why the threshold $\langle k \rangle = 1$ is important
 -   explain why the connectedness threshold occurs near $\langle k \rangle = \ln N$
 -   verify these ideas numerically in `R`
+
+
+## Chapter roadmap
+
+The chapter begins with the language of connectedness and components, since threshold phenomena cannot be understood without a precise notion of how a graph breaks into pieces. It then studies the giant component and the qualitative regimes of Erdős--Rényi evolution, before introducing the standard self-consistency equation and the connectedness threshold. Numerical experiments come only after the theory, so that the simulations can be interpreted rather than merely observed.
 
 ## Connectedness and components
 
@@ -535,6 +542,13 @@ The emergence of the giant component and the graph becoming fully connected are 
 
 Between these two thresholds, the graph has a macroscopic connected backbone but also retains isolated vertices and small disconnected pieces.
 :::
+
+
+## Finite-size interpretation of the thresholds
+
+The thresholds discussed in this chapter are sharp in the large-$N$ limit, but numerical simulations are always finite. For finite graphs, the transition is therefore rounded rather than perfectly abrupt. In practice, one should read the threshold near $\langle k \rangle = 1$ as the location where the giant component begins to dominate, and the connectedness threshold near $\langle k \rangle = \ln N$ as the scale where isolated vertices become rare enough that full connectivity becomes likely [@newman2010; @bollobas2001book].
+
+This finite-size viewpoint is important pedagogically. It prevents the theory from being interpreted too mechanically and helps explain why simulation curves are smooth even when the asymptotic theory speaks in terms of sharp transitions.
 
 ## Numerical exploration
 
@@ -1045,6 +1059,11 @@ A complete submission should contain:
 -   simulation code,
 -   plots,
 -   interpretation of the results.
+
+
+## Bridge to the next chapter
+
+The Erdős--Rényi process explains how a giant component appears in a graph assembled by chance, but it does not explain why many real networks simultaneously exhibit short path lengths and substantial local clustering. The next chapter addresses that gap by studying small-world networks, where a small number of shortcuts can dramatically reduce distances while preserving neighborhood structure [@watts1998; @strogatz2001].
 
 ## Concluding remarks
 

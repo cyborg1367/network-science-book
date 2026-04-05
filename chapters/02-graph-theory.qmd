@@ -1,5 +1,7 @@
 ---
 title: "Graph Theory"
+subtitle: "The mathematical language of network structure"
+bibliography: ../references.bib
 ---
 
 ```{r}
@@ -26,9 +28,9 @@ ns_book_setup(
 
 Network science rests on a mathematical foundation: **graph theory**. Before studying random graphs, small worlds, or scale-free networks, it is essential to establish the formal language used to describe networks. That language is graph theory.
 
-Graph theory is a branch of discrete mathematics that studies collections of objects and the pairwise connections between them. Its origins trace back to Leonhard Euler's 1736 solution to the *Königsberg bridge problem*, in which the question of whether a particular city could be traversed by crossing each of its seven bridges exactly once was reformulated as a purely combinatorial question about a drawing made of vertices and edges. Euler's insight — that only the pattern of connections, not the physical geography, determines the answer — is the founding idea of graph theory.
+Graph theory is a branch of discrete mathematics that studies collections of objects and the pairwise connections between them. Its origins trace back to Leonhard Euler's 1736 solution to the *Königsberg bridge problem*, in which the question of whether a particular city could be traversed by crossing each of its seven bridges exactly once was reformulated as a purely combinatorial question about a drawing made of vertices and edges. Euler's insight — that only the pattern of connections, not the physical geography, determines the answer — is the founding idea of graph theory [@euler1736].
 
-In the context of network science, graph theory provides:
+In the context of network science, graph theory provides a common mathematical language for later topics such as random graphs, small-world structure, and scale-free degree heterogeneity [@diestel2017; @west2001; @newman2010]. Specifically, it provides:
 
 -   a precise vocabulary for describing structures,
 -   algebraic representations that enable computation,
@@ -49,6 +51,11 @@ By the end of this chapter, it should be possible to:
 -   identify bipartite graphs and apply König's criterion
 -   describe standard graph families and recognise them
 -   use `igraph` in `R` to construct and analyse graphs
+
+
+## Chapter roadmap
+
+This chapter moves from the most basic objects to the more structural concepts needed later in the book. It begins with the definition of a graph and the main graph types, then studies degree and matrix representations, and only after that turns to walks, connectivity, trees, bipartite structure, and standard graph families. The chapter ends with a compact computational toolkit in `R`, so that each theoretical definition is connected to a concrete representation that can be explored computationally.
 
 ## What is a graph?
 
@@ -295,6 +302,9 @@ annotate(
 ```
 
 ## Matrix representations
+
+Matrix representations are especially important in network science because they translate combinatorial structure into linear-algebraic objects. This makes it possible to study connectivity, diffusion, centrality, and spectral structure with computational tools that extend far beyond hand-drawn examples [@newman2010].
+
 
 ### The adjacency matrix
 
@@ -1090,6 +1100,11 @@ A complete submission should include:
 -   analysis of at least one real network from the `igraphdata` package,
 -   comparison of the real network's properties against the theoretical benchmarks,
 -   a discussion of which graph-theoretic quantities are most informative for characterizing the network's structure.
+
+
+## Bridge to the next chapter
+
+This chapter has treated graphs as deterministic mathematical objects: the vertex set and edge set are specified, and the goal is to reason about the resulting structure. The next chapter changes that viewpoint. Instead of fixing one graph in advance, we will study probability models that generate many possible graphs. The language introduced here — degree, adjacency matrix, connectedness, trees, and components — will become the vocabulary used to describe what a random graph typically looks like.
 
 ## Concluding remarks
 
