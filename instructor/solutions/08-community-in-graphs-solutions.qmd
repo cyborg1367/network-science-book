@@ -1,0 +1,75 @@
+---
+title: "Community Structure in Graphs — Solutions"
+subtitle: "Corresponds to `chapters/08-community-in-graphs.qmd`"
+---
+
+```{r}
+#| label: solution-setup
+#| include: false
+
+setup_candidates <- c("../../R/book-setup.R", "../R/book-setup.R", "R/book-setup.R")
+setup_file <- setup_candidates[file.exists(setup_candidates)][1]
+
+if (is.na(setup_file)) {
+  stop("Could not locate R/book-setup.R", call. = FALSE)
+}
+
+source(setup_file, local = TRUE)
+ns_book_setup(preset = "advanced")
+```
+
+### Part I. Computational and derivation exercises
+
+#### Exercise 8.1. Internal density, cut size, and conductance
+
+*(Instructor: add solution.)*
+
+#### Exercise 8.2. Edge betweenness and bridge identification
+
+*(Instructor: add solution.)*
+
+#### Exercise 8.3. Interpreting the modularity formula
+
+*(Instructor: add solution.)*
+
+### Part II. Conceptual and analytical exercises
+
+#### Exercise 8.4. Clustering versus community structure
+
+*(Instructor: add solution.)*
+
+#### Exercise 8.5. Modularity versus SBM
+
+*(Instructor: add solution.)*
+
+#### Exercise 8.6. Detectability threshold
+
+*(Instructor: add solution.)*
+
+#### Exercise 8.7. Resolution limit and interpretation
+
+*(Instructor: add solution.)*
+
+### Part III. Simulation and coding exercises
+
+#### Exercise 8.8. Failure of Girvan--Newman under weak separation
+
+*(Instructor: add solution.)*
+
+#### Exercise 8.9. Comparing algorithms on the same benchmark
+
+*(Instructor: add solution.)*
+
+#### Exercise 8.10. SBM recovery and confusion matrices
+
+*(Instructor: add solution.)*
+
+#### Exercise 8.11. Degree correction experiment
+
+*(Instructor: add solution.)*
+
+### Mini-project
+
+#### Mini-project 8.1. A full community-detection workflow on a benchmark network
+
+*(Instructor: add solution.)*

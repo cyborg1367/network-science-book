@@ -1,0 +1,65 @@
+---
+title: "Instructor Solutions Manual"
+---
+
+::: {.callout-warning title="Teaching staff only"}
+This manual is **not** part of the student course book. Do not publish it on the public course website or distribute it to students before they have attempted the exercises.
+:::
+
+## Purpose
+
+This book contains worked solutions for the end-of-chapter exercises in *Network Science*. Each solution page corresponds to one student chapter and follows the same exercise numbering.
+
+Use this manual to:
+
+- prepare lectures and office hours,
+- design grading rubrics,
+- verify computational outputs from the `R` exercises,
+- and support teaching assistants.
+
+## Chapter index
+
+| Student chapter | Solution page |
+|:----------------|:--------------|
+| Graph Theory | [Chapter 2 solutions](solutions/02-graph-theory-solutions.qmd) |
+| Random Graphs | [Chapter 3 solutions](solutions/03-random-graphs-solutions.qmd) |
+| The Evolution of Random Graphs | [Chapter 4 solutions](solutions/04-random-graph-evolution-solutions.qmd) |
+| Small-World Networks | [Chapter 5 solutions](solutions/05-small-world-graphs-solutions.qmd) |
+| Scale-Free Networks | [Chapter 6 solutions](solutions/06-scale-free-graphs-solutions.qmd) |
+| Network Robustness | [Chapter 7 solutions](solutions/07-network-robustness-solutions.qmd) |
+| Community Structure in Graphs | [Chapter 8 solutions](solutions/08-community-in-graphs-solutions.qmd) |
+
+## How to render
+
+From the project root in R:
+
+```r
+quarto::quarto_render("instructor")
+```
+
+Or from the shell:
+
+```bash
+quarto render instructor
+```
+
+Output is written to `instructor-docs/` (HTML and PDF). The student book in `docs/` is **not** affected.
+
+## Publishing guidance
+
+| Audience | Build | Output folder | Typical use |
+|:---------|:------|:--------------|:------------|
+| Students | `quarto render` | `docs/` | Public course website |
+| Teaching staff | `quarto render instructor` | `instructor-docs/` | LMS, private repo, or PDF for graders |
+
+Keep `instructor-docs/` off the same public URL as `docs/`.
+
+## Writing solutions
+
+Solution source files live in `solutions/` at the project root. Replace the placeholder text under each exercise with:
+
+1. a concise final answer for quick grading,
+2. a short derivation or explanation where needed,
+3. and executable `R` code for simulation exercises.
+
+When you add or renumber exercises in a student chapter, update the corresponding file in `solutions/`.

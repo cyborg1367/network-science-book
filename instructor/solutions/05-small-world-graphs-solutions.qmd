@@ -1,0 +1,97 @@
+---
+title: "Small-World Networks — Solutions"
+subtitle: "Corresponds to `chapters/05-small-world-graphs.qmd`"
+---
+
+```{r}
+#| label: solution-setup
+#| include: false
+
+setup_candidates <- c("../../R/book-setup.R", "../R/book-setup.R", "R/book-setup.R")
+setup_file <- setup_candidates[file.exists(setup_candidates)][1]
+
+if (is.na(setup_file)) {
+  stop("Could not locate R/book-setup.R", call. = FALSE)
+}
+
+source(setup_file, local = TRUE)
+ns_book_setup(preset = "smallworld")
+```
+
+### Part I. Mathematical exercises
+
+#### Exercise 1. Geometric-series derivation
+
+*(Instructor: add solution.)*
+
+#### Exercise 2. Logarithmic distance estimate
+
+*(Instructor: add solution.)*
+
+#### Exercise 3. Why the estimate is not exact
+
+*(Instructor: add solution.)*
+
+#### Exercise 4. Lattice scaling laws
+
+*(Instructor: add solution.)*
+
+#### Exercise 5. Average degree in the ring lattice
+
+*(Instructor: add solution.)*
+
+#### Exercise 6. Normalized observables
+
+*(Instructor: add solution.)*
+
+#### Exercise 7. Ring-lattice path length
+
+*(Instructor: add solution.)*
+
+#### Exercise 8. Ring-lattice clustering
+
+*(Instructor: add solution.)*
+
+### Part II. Conceptual and analytical exercises
+
+#### Exercise 9. Six degrees and logarithmic scaling
+
+*(Instructor: add solution.)*
+
+#### Exercise 10. Why small worlds are surprising
+
+*(Instructor: add solution.)*
+
+#### Exercise 11. Random graph versus small-world network
+
+*(Instructor: add solution.)*
+
+#### Exercise 12. Why shortcuts are powerful
+
+*(Instructor: add solution.)*
+
+#### Exercise 13. Limitations of the Watts--Strogatz model
+
+*(Instructor: add solution.)*
+
+#### Exercise 14. Interpreting the small-worldness index
+
+*(Instructor: add solution.)*
+
+### Part III. Simulation and coding exercises
+
+#### Exercise 15. Distance scaling in random networks
+
+*(Instructor: add solution.)*
+
+#### Exercise 16. Visualizing the Watts--Strogatz interpolation
+
+*(Instructor: add solution.)*
+
+#### Exercise 17. Detecting the small-world regime numerically
+
+*(Instructor: add solution.)*
+
+#### Exercise 18. Comparing ring lattice, Watts--Strogatz, and random graph
+
+*(Instructor: add solution.)*

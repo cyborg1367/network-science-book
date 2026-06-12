@@ -6,3 +6,13 @@
 /.quarto/
 **/*.quarto_ipynb
 _quarto_internal_scss_error.scss
+
+# Instructor Quarto project intermediates (rendered site is in instructor-docs/)
+instructor/_freeze/
+instructor/site_libs/
+instructor/index_files/
+instructor/solutions/*_files/
+instructor/solutions/**/execute-results/
+instructor/solutions/**/figure-html/
+instructor/solutions/**/figure-pdf/
+instructor/solutions/**/mediabag/

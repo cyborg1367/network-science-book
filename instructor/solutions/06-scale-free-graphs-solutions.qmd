@@ -1,0 +1,91 @@
+---
+title: "Scale-Free Networks — Solutions"
+subtitle: "Corresponds to `chapters/06-scale-free-graphs.qmd`"
+---
+
+```{r}
+#| label: solution-setup
+#| include: false
+
+setup_candidates <- c("../../R/book-setup.R", "../R/book-setup.R", "R/book-setup.R")
+setup_file <- setup_candidates[file.exists(setup_candidates)][1]
+
+if (is.na(setup_file)) {
+  stop("Could not locate R/book-setup.R", call. = FALSE)
+}
+
+source(setup_file, local = TRUE)
+ns_book_setup(preset = "advanced")
+```
+
+### Part I. Conceptual and structural exercises
+
+#### Exercise 1. Hubs and heterogeneity
+
+*(Instructor: add solution.)*
+
+#### Exercise 2. What "scale-free" means
+
+*(Instructor: add solution.)*
+
+#### Exercise 3. Universality
+
+*(Instructor: add solution.)*
+
+#### Exercise 4. Ultra-small distances
+
+*(Instructor: add solution.)*
+
+### Part II. Mathematical exercises
+
+#### Exercise 5. Cumulative power-law tail
+
+*(Instructor: add solution.)*
+
+#### Exercise 6. Preferential-attachment probability
+
+*(Instructor: add solution.)*
+
+#### Exercise 7. Average degree in the BA model
+
+*(Instructor: add solution.)*
+
+### Part III. Model-based analytical exercises
+
+#### Exercise 8. Configuration model versus BA model
+
+*(Instructor: add solution.)*
+
+#### Exercise 9. Early vertices and cumulative advantage
+
+*(Instructor: add solution.)*
+
+#### Exercise 10. Limits of the BA model
+
+*(Instructor: add solution.)*
+
+### Part IV. Simulation and coding exercises
+
+#### Exercise 11. Ordinary versus log-log plots
+
+*(Instructor: add solution.)*
+
+#### Exercise 12. Configuration-model experiment
+
+*(Instructor: add solution.)*
+
+#### Exercise 13. BA growth snapshots
+
+*(Instructor: add solution.)*
+
+#### Exercise 14. Degree dynamics
+
+*(Instructor: add solution.)*
+
+#### Exercise 15. Measuring preferential attachment
+
+*(Instructor: add solution.)*
+
+#### Exercise 16. BA versus Erdős--Rényi properties
+
+*(Instructor: add solution.)*

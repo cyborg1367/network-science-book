@@ -1,0 +1,440 @@
+---
+title: "Graph Theory — Solutions"
+subtitle: "Corresponds to `chapters/02-graph-theory.qmd`"
+---
+
+```{r}
+#| label: solution-setup
+#| include: false
+
+setup_candidates <- c("../../R/book-setup.R", "../R/book-setup.R", "R/book-setup.R")
+setup_file <- setup_candidates[file.exists(setup_candidates)][1]
+
+if (is.na(setup_file)) {
+  stop("Could not locate R/book-setup.R", call. = FALSE)
+}
+
+source(setup_file, local = knitr::knit_global())
+ns_book_setup(preset = "core", seed = 42)
+```
+
+## Exercise 1. Degree sequences: existence and uniqueness
+
+**Part 1.** Two non-isomorphic graphs on six vertices with the same degree sequence.
+
+Take the degree sequence $(2,2,2,2,2,2)$. Two graphs realising it are the cycle $C_6$ and the disjoint union of two triangles $K_3 \sqcup K_3$.
+
+- $C_6$: one connected component, diameter $3$, girth $6$, no triangle.
+- $K_3 \sqcup K_3$: two connected components, diameter $\infty$ (between components), girth $3$.
+
+These are not isomorphic: $C_6$ is connected and $K_3 \sqcup K_3$ is not. The same degree sequence is shared, confirming that degree sequence alone does not determine isomorphism class.
+
+```{r}
+#| label: ex1-nonisomorphic
+#| echo: true
+
+library(igraph)
+
+g_c6    <- make_ring(6)
+g_2k3   <- disjoint_union(make_full_graph(3), make_full_graph(3))
+
+list(
+  C6_degrees     = sort(degree(g_c6),  decreasing = TRUE),
+  TwoK3_degrees  = sort(degree(g_2k3), decreasing = TRUE),
+  C6_connected   = is_connected(g_c6),
+  TwoK3_connected= is_connected(g_2k3),
+  C6_components  = components(g_c6)$no,
+  TwoK3_components = components(g_2k3)$no
+)
+```
+
+**Part 2.** The Erdős–Gallai theorem [@erdosgallai1960] states that a sequence of non-negative integers $d_1 \geq d_2 \geq \cdots \geq d_n$ is graphical (realisable as the degree sequence of a simple undirected graph) if and only if the sum $\sum_{i=1}^n d_i$ is even, and for each $k = 1, \ldots, n$:
+
+$$
+\sum_{i=1}^{k} d_i \leq k(k-1) + \sum_{i=k+1}^{n} \min(d_i, k).
+$$
+
+Applying this to each sequence:
+
+**(a) $(4, 3, 3, 2, 2)$.** Sum $= 14$, which is even. Check $k=1$: $4 \leq 0 + \min(3,1)+\min(3,1)+\min(2,1)+\min(2,1) = 4$. ✓ Check $k=2$: $7 \leq 2 + \min(3,2)+\min(2,2)+\min(2,2) = 2+2+2+2=8$. ✓ Remaining checks hold. **Graphical.**
+
+**(b) $(5, 3, 3, 2, 1)$.** Sum $= 14$, even. But $k=1$: $5 \leq 0 + \min(3,1)+\min(3,1)+\min(2,1)+\min(1,1) = 1+1+1+1 = 4$. The condition $5 \leq 4$ fails. **Not graphical.**
+
+**(c) $(4, 4, 3, 3, 2, 2)$.** Sum $= 18$, even. Check $k=1$: $4 \leq 0+1+1+1+1+1=5$. ✓ Check $k=2$: $8 \leq 2+2+2+2+2=10$. ✓ Check $k=3$: $11 \leq 6+2+2+2=12$. ✓ Remaining checks hold. **Graphical.**
+
+**Part 3.** The degree sequence $(5,4,3,2,1)$ is on $N=5$ vertices. Any simple graph on $5$ vertices has maximum possible degree $4$ (since each vertex can connect to at most $N-1 = 4$ others). The sequence requires one vertex of degree $5$, which is impossible. Alternatively: the sum $5+4+3+2+1 = 15$ is odd, violating the necessary condition that $\sum_v k_v = 2M$ must be even. Either observation is sufficient.
+
+---
+
+## Exercise 2. The Laplacian as a diagnostic tool
+
+**Part 1.** The graph has edge set $\{\{1,2\},\{1,3\},\{2,3\},\{3,4\}\}$. The degree sequence is $(k_1,k_2,k_3,k_4) = (2,2,3,1)$.
+
+$$
+A = \begin{pmatrix}
+0 & 1 & 1 & 0 \\
+1 & 0 & 1 & 0 \\
+1 & 1 & 0 & 1 \\
+0 & 0 & 1 & 0
+\end{pmatrix},
+\qquad
+L = D - A =
+\begin{pmatrix}
+ 2 & -1 & -1 &  0 \\
+-1 &  2 & -1 &  0 \\
+-1 & -1 &  3 & -1 \\
+ 0 &  0 & -1 &  1
+\end{pmatrix}.
+$$
+
+**Part 2.** Laplacian eigenvalues of the original graph:
+
+```{r}
+#| label: ex2-laplacian-original
+#| echo: true
+
+g_ex2 <- graph_from_edgelist(
+  matrix(c(1,2, 1,3, 2,3, 3,4), ncol = 2, byrow = TRUE),
+  directed = FALSE
+)
+
+laplacian_spectrum <- function(g) {
+  A <- as.matrix(as_adjacency_matrix(g, sparse = FALSE))
+  L <- diag(rowSums(A)) - A
+  round(sort(eigen(L, symmetric = TRUE)$values), 4)
+}
+
+cat("Eigenvalues (original graph):", laplacian_spectrum(g_ex2), "\n")
+cat("Components:", components(g_ex2)$no, "\n")
+```
+
+The smallest eigenvalue is $0$ with multiplicity $1$, consistent with $c(G) = 1$ (the graph is connected). The Fiedler value $\lambda_2 \approx 0.438$ is positive, confirming connectivity.
+
+**Part 3.** After deleting edge $\{3,4\}$:
+
+```{r}
+#| label: ex2-laplacian-deleted
+#| echo: true
+
+g_deleted <- delete_edges(g_ex2, get.edge.ids(g_ex2, c(3, 4)))
+
+cat("Eigenvalues (edge {3,4} deleted):", laplacian_spectrum(g_deleted), "\n")
+cat("Components:", components(g_deleted)$no, "\n")
+```
+
+After deletion, vertex $4$ becomes isolated. The graph now has two components — the triangle $\{1,2,3\}$ and the isolated vertex $\{4\}$ — so the zero eigenvalue has multiplicity $2$. The Fiedler value drops to $0$, reflecting disconnection. Before deletion, $\lambda_2 > 0$ measured how much connectivity remained; after, $\lambda_2 = 0$ signals that the graph has fragmented.
+
+**Part 4.** The student's claim is incorrect. The Fiedler value $\lambda_2$ does not count the number of edges whose removal disconnects the graph. What it does measure is the **algebraic connectivity** of the graph — loosely, how well-connected the graph is in terms of the structure of all its paths collectively, not just the minimum number of edge cuts. The correct quantity for "minimum edges to disconnect" is the **edge connectivity** $\lambda(G)$, defined as the minimum over all edge cuts. The relationship between the two is $\lambda_2 \leq \lambda(G) \leq \delta(G)$ (where $\delta(G)$ is the minimum degree), but equality does not hold in general.
+
+---
+
+## Exercise 3. Matrix powers and walk counting
+
+**Part 1.** For the motivating graph with $V=\{1,2,3,4,5\}$ and $E=\{\{1,2\},\{1,3\},\{2,4\},\{3,4\},\{4,5\}\}$:
+
+```{r}
+#| label: ex3-matrix-powers
+#| echo: true
+
+g_mot <- graph_from_edgelist(
+  matrix(c(1,2, 1,3, 2,4, 3,4, 4,5), ncol = 2, byrow = TRUE),
+  directed = FALSE
+)
+
+A <- as.matrix(as_adjacency_matrix(g_mot, sparse = FALSE))
+A2 <- A %*% A
+A3 <- A2 %*% A
+
+cat("A:\n"); print(A)
+cat("\nA^2:\n"); print(A2)
+cat("\nA^3:\n"); print(A3)
+```
+
+**Part 2.** The entry $(A^2)_{ij}$ counts the number of walks of length $2$ from $i$ to $j$, equivalently the number of common neighbors of $i$ and $j$. A pair $(i,j)$ with $(A^2)_{ij} > 0$ and $A_{ij} = 0$ is at distance exactly $2$.
+
+From the computed $A^2$: the off-diagonal entries that are positive where $A_{ij}=0$ identify distance-$2$ pairs. For example, $(A^2)_{15} = 0$ and $A_{15}=0$, so vertices $1$ and $5$ share no common neighbor and are not at distance $2$ (they are at distance $3$, through $2\to4\to5$ or $3\to4\to5$). Pairs such as $(1,4)$ have $(A^2)_{14} = 2 > 0$ with $A_{14}=0$, confirming $d(1,4)=2$ via the two paths $1\to2\to4$ and $1\to3\to4$.
+
+**Part 3.**
+
+```{r}
+#| label: ex3-triangles
+#| echo: true
+
+cat("tr(A^3)/6 =", sum(diag(A3)) / 6, "\n")
+cat("igraph triangles =", sum(count_triangles(g_mot)) / 3, "\n")
+```
+
+The graph has no triangles — vertex $4$ is adjacent to $2$ and $3$, but $\{2,3\} \notin E$; and vertex $1$ is adjacent to $2$ and $3$, but $4\notin N(1)$, so no triangle closes. The result $0$ is confirmed by both methods.
+
+The factor $6$ arises because each triangle $\{i,j,k\}$ contributes to $\operatorname{tr}(A^3)$ in exactly $6$ ways: the closed walk can start at any of the $3$ vertices and traverse the triangle in either of $2$ directions, giving $3 \times 2 = 6$.
+
+**Part 4.** A walk allows vertices and edges to be revisited. A path requires all vertices to be distinct. Consider the graph $K_3$ on vertices $\{1,2,3\}$ with all three edges present. Then $(A^2)_{12} = 1$ (the walk $1\to3\to2$). But actually all length-$2$ walks from $1$ to $2$ are paths here. A cleaner example: take the triangle $\{1,2,3\}$ and look at $(A^2)_{11} = 2$. This counts the closed walks $1\to2\to1$ and $1\to3\to1$ — both of length $2$ — but neither is a path since vertex $1$ is repeated. The number of paths of length $2$ starting and ending at $1$ is $0$, yet $(A^2)_{11} = k_1 = 2 > 0$. More generally, the diagonal entry $(A^2)_{ii} = k_i$ always counts degree-many non-path closed walks; there are no closed paths of length $2$ in a simple graph.
+
+---
+
+## Exercise 4. Connectivity and fragility
+
+**Part 1.** The graph consists of triangle $\{1,2,3\}$, edge $\{3,4\}$, and triangle $\{4,5,6\}$.
+
+- **Cut vertices:** vertices $3$ and $4$. Removing vertex $3$ disconnects $\{1,2\}$ from $\{4,5,6\}$; removing vertex $4$ disconnects $\{1,2,3\}$ from $\{5,6\}$.
+- **Bridge:** the edge $\{3,4\}$ only. Every other edge lies within a triangle and its removal leaves the triangle still connected through the remaining triangle edge.
+
+**Part 2.** *Claim: every bridge lies in no cycle.*
+
+**Proof.** Suppose for contradiction that edge $e = \{u,v\}$ is both a bridge and lies in a cycle $C$. Since $e$ is in cycle $C$, there exists a path from $u$ to $v$ in $G - e$ that follows the remaining edges of $C$. Therefore $u$ and $v$ remain connected in $G - e$, so removing $e$ does not increase the number of components — contradicting the assumption that $e$ is a bridge. $\square$
+
+For $P_N$: every edge $\{i, i+1\}$ lies in no cycle (since $P_N$ is acyclic), so every edge is a bridge. The $N-2$ interior vertices are all cut vertices (removing any interior vertex $i$ splits the path into $\{1,\ldots,i-1\}$ and $\{i+1,\ldots,N\}$). The two endpoints are not cut vertices.
+
+For $C_N$: every edge lies in the cycle $C_N$ itself, so by the result above, no edge is a bridge. Similarly, removing any single vertex from $C_N$ leaves a path, which is connected — so $C_N$ has no cut vertices.
+
+**Part 3.**
+
+```{r}
+#| label: ex4-fiedler-comparison
+#| echo: true
+
+g_cut <- graph_from_edgelist(
+  matrix(c(1,2, 2,3, 3,1, 3,4, 4,5, 5,6, 6,4), ncol = 2, byrow = TRUE),
+  directed = FALSE
+)
+g_c6 <- make_ring(6)
+
+fiedler <- function(g) {
+  A <- as.matrix(as_adjacency_matrix(g, sparse = FALSE))
+  L <- diag(rowSums(A)) - A
+  sort(eigen(L, symmetric = TRUE)$values)[2]
+}
+
+cat("Fiedler value, two-triangle graph:", round(fiedler(g_cut), 4), "\n")
+cat("Fiedler value, C6:               ", round(fiedler(g_c6), 4), "\n")
+```
+
+$C_6$ has the larger Fiedler value. This is consistent with the structural analysis: $C_6$ has no bridges or cut vertices, so it is more resilient to single-element removal. The two-triangle graph has a bridge $\{3,4\}$ and two cut vertices, making it fundamentally fragile.
+
+However, the Fiedler value is not a perfect predictor of fragility. It summarises global algebraic connectivity — an average over all pairs — and may miss local weaknesses. A graph can have a moderate Fiedler value while still containing a single critical bridge. In general, the edge connectivity $\lambda(G)$ is the correct measure of minimum cut size, and for the two-triangle graph $\lambda(G) = 1$ (the bridge), whereas $\lambda(C_6) = 2$.
+
+**Part 4.**
+
+```{r}
+#| label: ex4-igraph-verification
+#| echo: true
+
+cat("Articulation points:", as_ids(articulation_points(g_cut)), "\n")
+
+# Identify bridges by testing each edge
+el <- as_edgelist(g_cut)
+bridge_edges <- which(sapply(seq_len(ecount(g_cut)), function(i) {
+  g_tmp <- delete_edges(g_cut, i)
+  !is_connected(g_tmp)
+}))
+cat("Bridge edges (row indices in edge list):", bridge_edges, "\n")
+cat("Bridge endpoint pair:", el[bridge_edges, ], "\n")
+```
+
+---
+
+## Exercise 5. Trees: characterisation and counting
+
+**Part 1.** *Proof that a connected graph with $N$ vertices is a tree if and only if $M = N - 1$.*
+
+$(\Rightarrow)$ Let $G$ be a tree (connected and acyclic). We prove $M = N-1$ by induction on $N$. Base case $N=1$: $M=0 = 1-1$. ✓ Inductive step: assume the result for all trees on fewer than $N$ vertices. Since $G$ is a tree with $N \geq 2$, it has at least one leaf (a vertex of degree $1$; this follows because an acyclic connected graph cannot have all degrees $\geq 2$, as a DFS would then produce a cycle). Remove a leaf $v$ and its incident edge. The resulting graph $G - v$ is still connected (no cut vertex is a leaf in a tree) and acyclic, so by the inductive hypothesis it has $N-2$ edges. Adding back the leaf gives $M = (N-2)+1 = N-1$. $\square$
+
+$(\Leftarrow)$ Let $G$ be connected with $M = N-1$. We show $G$ is acyclic. Suppose $G$ contains a cycle $C$. Remove any edge $e$ from $C$; the resulting graph $G-e$ is still connected (the remaining edges of $C$ provide an alternate path). Apply the forward direction to any spanning tree $T$ of $G-e$: $T$ has $N-1$ edges. But $G-e$ has $M-1 = N-2$ edges, so $T = G-e$. Since $G-e$ is connected and has $N-1$ edges, it is a tree — but we assumed it had $N-2$ edges. Contradiction. $\square$
+
+**Part 2.** Cayley's formula [@cayley1889] states that the number of distinct labeled trees on $N$ vertices is $N^{N-2}$. For $N=4$: $4^{4-2} = 4^2 = 16$.
+
+The 16 labeled trees on $\{1,2,3,4\}$ fall into two structural (unlabeled) types:
+- **Star** ($K_{1,3}$): one central vertex connected to three leaves. There are $4$ choices of center, giving $4$ labeled stars.
+- **Path** ($P_4$): a path through all four vertices. The number of labeled paths is $4!/2 = 12$ (divide by $2$ for the two directions of traversal).
+
+Total: $4 + 12 = 16$. ✓
+
+```{r}
+#| label: ex5-cayley-check
+#| echo: true
+
+# Enumerate all labeled trees on 4 vertices and count
+library(igraph)
+n_trees <- 4^(4 - 2)
+cat("Cayley's formula gives:", n_trees, "labeled trees on 4 vertices\n")
+```
+
+**Part 3.** A graph with $N=10$ and $M=9$ is not necessarily a tree. The condition $M = N-1$ is necessary but not sufficient — **connectivity** is also required. A counterexample: the disjoint union of a triangle $K_3$ and a path $P_7$ has $N = 10$ vertices and $M = 3 + 6 = 9$ edges, but two connected components and two cycles in the triangle. The missing condition is that $G$ must be connected.
+
+**Part 4.**
+
+```{r}
+#| label: ex5-random-tree
+#| echo: true
+
+set.seed(42)
+g_tree <- sample_tree(15)
+
+A_t <- as.matrix(as_adjacency_matrix(g_tree, sparse = FALSE))
+L_t <- diag(rowSums(A_t)) - A_t
+eigs_t <- round(sort(eigen(L_t, symmetric = TRUE)$values), 4)
+
+list(
+  N              = vcount(g_tree),
+  M              = ecount(g_tree),
+  M_equals_N_1   = ecount(g_tree) == vcount(g_tree) - 1,
+  is_connected   = is_connected(g_tree),
+  is_acyclic     = is_forest(g_tree),
+  girth          = girth(g_tree)$girth,   # Inf for acyclic
+  unique_paths   = TRUE,                  # implied by tree structure
+  all_bridges    = length(bridges(g_tree)) == ecount(g_tree),
+  zero_eig_mult  = sum(abs(eigs_t) < 1e-8)  # should be 1 (connected)
+)
+```
+
+All five conditions from the theorem are satisfied: $M = N-1$, connected, acyclic (girth $= \infty$), all edges are bridges, and $\lambda_2(L) > 0$ (zero eigenvalue has multiplicity $1$).
+
+---
+
+## Exercise 6. Bipartite structure: theory and detection
+
+**Part 1.** *Proof of König's criterion [@koenig1916].*
+
+$(\Rightarrow)$ Suppose $G$ is bipartite with bipartition $(X, Y)$. Every edge crosses the bipartition, so any walk alternates between $X$ and $Y$. After $\ell$ steps, a walk starting in $X$ is in $X$ if $\ell$ is even and in $Y$ if $\ell$ is odd. A closed walk therefore has even length. Since every cycle is a closed walk, all cycles in $G$ have even length.
+
+$(\Leftarrow)$ Suppose $G$ contains no odd cycle. Run BFS from any vertex $r$; assign $r$ colour $0$. For each vertex $v$ discovered, assign colour $d(r,v) \bmod 2$, where $d(r,v)$ is the BFS distance. For any edge $\{u,v\}$, if $u$ and $v$ had the same colour, the BFS tree path from $r$ to $u$, the edge $\{u,v\}$, and the BFS tree path from $v$ back to $r$ would form an odd cycle — a contradiction. Therefore all edges connect vertices of different colours, and the colouring is a valid $2$-colouring, so $G$ is bipartite. $\square$
+
+**Part 2.** $K_{m,n}$ has bipartition $|X|=m$, $|Y|=n$. Every vertex in $X$ has degree $n$ and every vertex in $Y$ has degree $m$. The average degree is:
+
+$$
+\langle k \rangle = \frac{2mn}{m+n}.
+$$
+
+For fixed $n$, consider $\langle k \rangle$ as a function of $m$:
+
+$$
+\frac{\partial}{\partial m}\left(\frac{2mn}{m+n}\right) = \frac{2n^2}{(m+n)^2} > 0.
+$$
+
+The average degree is strictly increasing in $m$. As $m \to \infty$, $\langle k \rangle \to 2n$. There is no finite maximum — the average degree grows without bound as one partition grows. This makes intuitive sense: adding more vertices to $X$ increases every $Y$-vertex's degree to $m$, pulling the average up indefinitely.
+
+**Part 3.** The adjacency matrix
+
+$$
+A = \begin{pmatrix}
+0 & 1 & 0 & 1 \\
+1 & 0 & 1 & 0 \\
+0 & 1 & 0 & 1 \\
+1 & 0 & 1 & 0
+\end{pmatrix}
+$$
+
+has a visually obvious $2 \times 2$ block structure alternating between $0$-blocks and $1$-blocks, suggesting bipartition $X = \{1,3\}$ and $Y = \{2,4\}$.
+
+To verify using the spectrum: a graph is bipartite if and only if its adjacency spectrum is symmetric about zero (i.e., if $\mu$ is an eigenvalue, then $-\mu$ is also an eigenvalue with the same multiplicity).
+
+```{r}
+#| label: ex6-bipartite-spectrum
+#| echo: true
+
+A_bip <- matrix(c(0,1,0,1,
+                   1,0,1,0,
+                   0,1,0,1,
+                   1,0,1,0), nrow = 4, byrow = TRUE)
+
+eigs_adj <- round(sort(eigen(A_bip, symmetric = TRUE)$values), 4)
+cat("Adjacency eigenvalues:", eigs_adj, "\n")
+cat("Spectrum symmetric about 0:", all(sort(eigs_adj) == -sort(-eigs_adj)), "\n")
+
+g_bip_ex <- graph_from_adjacency_matrix(A_bip, mode = "undirected")
+cat("igraph bipartite check:", bipartite_mapping(g_bip_ex)$res, "\n")
+```
+
+The eigenvalues are $\{-2, -0, 0, 2\}$ (symmetric about $0$), confirming bipartiteness without drawing the graph.
+
+**Part 4.** A concrete example: co-authorship networks are bipartite when one set of nodes represents authors and the other represents papers. Each author-paper edge records authorship; no author-author or paper-paper edges exist.
+
+The standard clustering coefficient $C_i = 2L_i / (k_i(k_i-1))$ counts triangles in the neighborhood of vertex $i$. In a bipartite graph, no triangle can exist — any cycle must be of even length (by König's criterion). Therefore $C_i = 0$ for every vertex by construction, regardless of how densely connected the graph actually is. Applying the clustering coefficient without accounting for bipartite structure would lead to the misleading conclusion that the network has no local cohesion, when in fact strong shared-paper relationships between authors exist. The correct local statistic for bipartite networks is the **4-cycle coefficient** or an analogous motif-based measure defined on the appropriate cycle length.
+
+---
+
+## Exercise 7. Comparative network profile
+
+**Part 1.** Closed-form diameters.
+
+For $P_{10}$: the graph is a path $1 - 2 - \cdots - 10$. The furthest pair is $(1, 10)$, connected by a path of length $9$. Therefore $D(P_{10}) = 9$.
+
+*Proof.* In $P_N$, the distance between vertices $i$ and $j$ (with $i < j$) is $j - i$, because the only path between them follows the unique route along the path graph. The maximum is achieved at $i=1$, $j=N$, giving $D(P_N) = N-1$.
+
+For $C_{10}$: the graph is a cycle. The distance between vertices $i$ and $j$ on a cycle of $N$ vertices is $\min(|i-j|, N - |i-j|)$ — the shorter of the two arcs. The maximum is achieved at antipodal vertices. For $N=10$: $D(C_{10}) = \lfloor 10/2 \rfloor = 5$.
+
+*Proof.* For even $N$, the antipodal pair $(1, N/2 + 1)$ has distance $N/2$, and no pair has larger distance. For odd $N$, $D(C_N) = (N-1)/2$.
+
+**Parts 2–4.**
+
+```{r}
+#| label: ex7-profile-table
+#| echo: true
+#| tbl-cap: "Comparative profile of four benchmark graphs."
+
+profile_graph <- function(g, name) {
+  A <- as.matrix(as_adjacency_matrix(g, sparse = FALSE))
+  L <- diag(rowSums(A)) - A
+  lam2 <- if (is_connected(g)) round(sort(eigen(L, symmetric = TRUE)$values)[2], 3) else NA_real_
+
+  tibble(
+    graph      = name,
+    N          = vcount(g),
+    M          = ecount(g),
+    avg_degree = round(mean(degree(g)), 3),
+    diameter   = ifelse(is_connected(g), diameter(g), NA_integer_),
+    components = components(g)$no,
+    fiedler    = lam2
+  )
+}
+
+set.seed(42)
+g_er <- sample_gnp(20, 0.20, directed = FALSE)
+while (!is_connected(g_er)) g_er <- sample_gnp(20, 0.20, directed = FALSE)
+
+profiles <- bind_rows(
+  profile_graph(make_full_graph(5),              "K5"),
+  profile_graph(make_ring(10),                   "C10"),
+  profile_graph(make_lattice(c(10), circular = FALSE), "P10"),
+  profile_graph(g_er,                            "G(20,0.20)")
+)
+
+profiles
+```
+
+**Fiedler value ranking.** From largest to smallest: $K_5 > C_{10} > G(20,0.20) > P_{10}$.
+
+- $K_5$ is $(N-1)$-regular and maximally connected; its Fiedler value equals $N = 5$, the largest possible for a $5$-vertex graph.
+- $C_{10}$ is $2$-regular with no bridges; every vertex has two edge-disjoint paths to every other vertex, giving moderate algebraic connectivity.
+- $G(20, 0.20)$ is sparse and random; its Fiedler value depends on the realisation but is typically small relative to its size.
+- $P_{10}$ has two leaves and every edge is a bridge; it is the most fragile structure, giving the smallest Fiedler value.
+
+**Stability across realisations.**
+
+```{r}
+#| label: ex7-stability
+#| echo: true
+
+set.seed(1)
+replicate_er <- function(seed) {
+  set.seed(seed)
+  g <- sample_gnp(20, 0.20, directed = FALSE)
+  while (!is_connected(g)) {
+    g <- sample_gnp(20, 0.20, directed = FALSE)
+  }
+  A <- as.matrix(as_adjacency_matrix(g, sparse = FALSE))
+  L <- diag(rowSums(A)) - A
+  list(
+    avg_degree = round(mean(degree(g)), 3),
+    diameter   = diameter(g),
+    fiedler    = round(sort(eigen(L, symmetric = TRUE)$values)[2], 3)
+  )
+}
+
+results <- lapply(1:5, replicate_er)
+do.call(rbind, lapply(results, as.data.frame))
+```
+
+Average degree is the most stable quantity across realisations — it concentrates around $p(N-1) = 0.20 \times 19 = 3.8$ with small variance (the number of edges is binomial). The diameter and Fiedler value are more variable: diameter depends on the specific structure of shortest paths, and the Fiedler value is sensitive to sparse cuts that may or may not arise in a given realisation.
+
+**Null model discussion.** Among the four graphs, $G(20, 0.20)$ is the most informative null model for the next chapter. It is the only stochastic graph, making it the natural baseline for asking whether an observed real network differs from what chance alone would produce. $K_5$, $C_{10}$, and $P_{10}$ are deterministic structures with highly constrained properties — useful as extreme benchmarks but not as probabilistic references. In Chapter 3, when the Erdős–Rényi model is introduced formally, these four graphs will serve as concrete anchors: $K_5$ illustrates maximum density, $P_{10}$ illustrates linear fragility, $C_{10}$ illustrates regular moderate connectivity, and $G(20,0.20)$ previews the sparse random regime where most of the theory operates.

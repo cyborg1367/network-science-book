@@ -1,0 +1,89 @@
+---
+title: "Network Robustness — Solutions"
+subtitle: "Corresponds to `chapters/07-network-robustness.qmd`"
+---
+
+```{r}
+#| label: solution-setup
+#| include: false
+
+setup_candidates <- c("../../R/book-setup.R", "../R/book-setup.R", "R/book-setup.R")
+setup_file <- setup_candidates[file.exists(setup_candidates)][1]
+
+if (is.na(setup_file)) {
+  stop("Could not locate R/book-setup.R", call. = FALSE)
+}
+
+source(setup_file, local = TRUE)
+ns_book_setup(preset = "advanced")
+```
+
+### Part I. Computational and derivation exercises
+
+#### Exercise 1. Molloy--Reed criterion
+
+*(Instructor: add solution.)*
+
+#### Exercise 2. Erdős--Rényi threshold derivation
+
+*(Instructor: add solution.)*
+
+#### Exercise 3. Effect of degree distribution on $f_c$
+
+*(Instructor: add solution.)*
+
+#### Exercise 4. Bond percolation
+
+*(Instructor: add solution.)*
+
+#### Exercise 5. Betweenness centrality by hand
+
+*(Instructor: add solution.)*
+
+#### Exercise 6. Robustness index
+
+*(Instructor: add solution.)*
+
+### Part II. Conceptual and analytical exercises
+
+#### Exercise 7. Why scale-free networks are robust to random failure
+
+*(Instructor: add solution.)*
+
+#### Exercise 8. The Achilles heel of scale-free networks
+
+*(Instructor: add solution.)*
+
+#### Exercise 9. Cascading failures
+
+*(Instructor: add solution.)*
+
+#### Exercise 10. Comparing robustness of graph families
+
+*(Instructor: add solution.)*
+
+### Part III. Simulation and coding exercises
+
+#### Exercise 11. Robustness curve for ER networks
+
+*(Instructor: add solution.)*
+
+#### Exercise 12. Targeted attack on BA networks
+
+*(Instructor: add solution.)*
+
+#### Exercise 13. Betweenness centrality attack
+
+*(Instructor: add solution.)*
+
+#### Exercise 14. Robustness index comparison
+
+*(Instructor: add solution.)*
+
+#### Exercise 15. Bond percolation simulation
+
+*(Instructor: add solution.)*
+
+#### Exercise 16. Finite-size effects
+
+*(Instructor: add solution.)*
