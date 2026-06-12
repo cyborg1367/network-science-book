@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>6&nbsp; Small-World Networks – Network Science</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -89,15 +92,14 @@ div.csl-indent {
 <link href="../chapters/04-random-graph-evolution.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4dd0a3cd2d1f0c1ca65dcbe395e0d0e9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-07314a9cf6582ab18f4f031a2d4fd43d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b5d8c9ff6161f8ccf1af3142a66ed23c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-d4aa30a0361d4615301e0f27ccb5b562.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -199,9 +201,7 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="../index.html" class="sidebar-logo-link">
-      </a>
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Network Science</a> 
     </div>
@@ -362,9 +362,9 @@ window.Quarto = {
 
 <section id="introduction" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">6.1</span> Introduction</h2>
-<p>The small-world phenomenon is one of the central ideas of modern network science. In everyday language it appears in phrases such as <em>six degrees of separation</em>: even in a very large social system, two people may be connected by only a short chain of acquaintances <span class="citation" data-cites="milgram1967 watts1998">(<a href="#ref-milgram1967" role="doc-biblioref">Milgram 1967</a>; <a href="#ref-watts1998" role="doc-biblioref">Watts and Strogatz 1998</a>)</span>. The mathematical content of the idea, however, is broader and more precise than the slogan itself.</p>
+<p>The small-world phenomenon is one of the central ideas of modern network science. In everyday language it appears in phrases such as <em>six degrees of separation</em>: even in a very large social system, two people may be connected by only a short chain of acquaintances <span class="citation" data-cites="milgram1967 watts1998">(<a href="#ref-milgram1967" role="doc-biblioref">Milgram, 1967</a>; <a href="#ref-watts1998" role="doc-biblioref">Watts &amp; Strogatz, 1998</a>)</span>. The mathematical content of the idea, however, is broader and more precise than the slogan itself.</p>
 <p>The real question is not whether the number is exactly six. The important structural observation is that in many large networks the typical distance between vertices is surprisingly small. This raises an immediate benchmark question: small relative to what? The answer only becomes clear when we compare different classes of graphs.</p>
-<p>Random graphs typically have short path lengths, often growing roughly logarithmically with network size <span class="citation" data-cites="newman2010 strogatz2001">(<a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>; <a href="#ref-strogatz2001" role="doc-biblioref">Strogatz 2001</a>)</span>. Regular lattices, by contrast, have strong local order but much larger distances, with polynomial growth in system size. Real networks often combine the most interesting aspects of both worlds: they retain strong local clustering while also exhibiting short global distances <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-watts1998" role="doc-biblioref">Watts and Strogatz 1998</a>; <a href="#ref-strogatz2001" role="doc-biblioref">Strogatz 2001</a>)</span>.</p>
+<p>Random graphs typically have short path lengths, often growing roughly logarithmically with network size <span class="citation" data-cites="newman2010 strogatz2001">(<a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>; <a href="#ref-strogatz2001" role="doc-biblioref">Strogatz, 2001</a>)</span>. Regular lattices, by contrast, have strong local order but much larger distances, with polynomial growth in system size. Real networks often combine the most interesting aspects of both worlds: they retain strong local clustering while also exhibiting short global distances <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-strogatz2001" role="doc-biblioref">Strogatz, 2001</a>; <a href="#ref-watts1998" role="doc-biblioref">Watts &amp; Strogatz, 1998</a>)</span>.</p>
 <p>This chapter follows that logical progression. We first define the basic metric quantities, then explain why random graphs naturally produce short paths, then show why that result is surprising from the perspective of lattice geometry, and finally introduce the Watts–Strogatz model as a mechanism that combines short paths with high clustering. The goal is not only to define a small-world network, but to understand why the phenomenon is mathematically nontrivial and structurally important.</p>
 </section>
 <section id="chapter-roadmap" class="level2" data-number="6.2">
@@ -449,7 +449,7 @@ L(G)=\frac{1}{N(N-1)}\sum_{\substack{u,v \in V \\ u \neq v}} d(u,v).
 <li>small global distances, and</li>
 <li>strong local clustering.</li>
 </ul>
-<p>That coexistence is the essence of the small-world phenomenon <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-watts1998" role="doc-biblioref">Watts and Strogatz 1998</a>; <a href="#ref-strogatz2001" role="doc-biblioref">Strogatz 2001</a>)</span>.</p>
+<p>That coexistence is the essence of the small-world phenomenon <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-strogatz2001" role="doc-biblioref">Strogatz, 2001</a>; <a href="#ref-watts1998" role="doc-biblioref">Watts &amp; Strogatz, 1998</a>)</span>.</p>
 </section>
 </section>
 <section id="why-random-graphs-can-have-short-distances" class="level2" data-number="6.5">
@@ -464,7 +464,7 @@ L(G)=\frac{1}{N(N-1)}\sum_{\substack{u,v \in V \\ u \neq v}} d(u,v).
 <li>about <span class="math inline">\langle k \rangle^3</span> vertices at distance <span class="math inline">3</span></li>
 <li>and in general about <span class="math inline">\langle k \rangle^d</span> vertices at distance <span class="math inline">d</span></li>
 </ul>
-<p>This argument ignores neighborhood overlap, loops, and degree fluctuations, so it is not exact. But it captures the main mechanism: when the number of reachable vertices grows exponentially with distance, only a small number of steps is needed to cover a large network <span class="citation" data-cites="newman2010">(<a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span>.</p>
+<p>This argument ignores neighborhood overlap, loops, and degree fluctuations, so it is not exact. But it captures the main mechanism: when the number of reachable vertices grows exponentially with distance, only a small number of steps is needed to cover a large network <span class="citation" data-cites="newman2010">(<a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>)</span>.</p>
 </section>
 <section id="number-of-vertices-within-distance-d" class="level3">
 <h3 class="anchored" data-anchor-id="number-of-vertices-within-distance-d">Number of vertices within distance <span class="math inline">d</span></h3>
@@ -496,7 +496,7 @@ N(d_{\max}) \approx N.
 <p><span class="math display">
 d_{\max} \approx \frac{\ln N}{\ln \langle k \rangle}.
 </span></p>
-<p>This is the first mathematical form of the small-world phenomenon. In many random-like networks, the average path length obeys a comparable logarithmic law <span class="citation" data-cites="newman2010 strogatz2001">(<a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>; <a href="#ref-strogatz2001" role="doc-biblioref">Strogatz 2001</a>)</span>.</p>
+<p>This is the first mathematical form of the small-world phenomenon. In many random-like networks, the average path length obeys a comparable logarithmic law <span class="citation" data-cites="newman2010 strogatz2001">(<a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>; <a href="#ref-strogatz2001" role="doc-biblioref">Strogatz, 2001</a>)</span>.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Key idea">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -551,7 +551,7 @@ L(G)\sim D(G)\sim N^{1/d}.
 </section>
 <section id="why-the-contrast-matters" class="level3">
 <h3 class="anchored" data-anchor-id="why-the-contrast-matters">Why the contrast matters</h3>
-<p>If a large system were organized like a low-dimensional lattice, distances would grow much faster than in a random graph. The small-world effect is therefore not merely the fact that distances are finite. It is the much stronger statement that they are dramatically smaller than what geometric lattice intuition would suggest <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-watts1998" role="doc-biblioref">Watts and Strogatz 1998</a>; <a href="#ref-strogatz2001" role="doc-biblioref">Strogatz 2001</a>)</span>.</p>
+<p>If a large system were organized like a low-dimensional lattice, distances would grow much faster than in a random graph. The small-world effect is therefore not merely the fact that distances are finite. It is the much stronger statement that they are dramatically smaller than what geometric lattice intuition would suggest <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-strogatz2001" role="doc-biblioref">Strogatz, 2001</a>; <a href="#ref-watts1998" role="doc-biblioref">Watts &amp; Strogatz, 1998</a>)</span>.</p>
 </section>
 </section>
 <section id="simulation-scaling-of-average-path-length" class="level2" data-number="6.7">
@@ -714,7 +714,7 @@ Figure&nbsp;6.2: The same simulation displayed on logarithmic axes. The lattice 
 </section>
 <section id="the-wattsstrogatz-model" class="level2" data-number="6.8">
 <h2 data-number="6.8" class="anchored" data-anchor-id="the-wattsstrogatz-model"><span class="header-section-number">6.8</span> The Watts–Strogatz model</h2>
-<p>The previous section explains why short distances can arise in random-like networks, but it does not explain how a network can keep high clustering at the same time. That is the problem addressed by the Watts–Strogatz model <span class="citation" data-cites="watts1998">(<a href="#ref-watts1998" role="doc-biblioref">Watts and Strogatz 1998</a>)</span>.</p>
+<p>The previous section explains why short distances can arise in random-like networks, but it does not explain how a network can keep high clustering at the same time. That is the problem addressed by the Watts–Strogatz model <span class="citation" data-cites="watts1998">(<a href="#ref-watts1998" role="doc-biblioref">Watts &amp; Strogatz, 1998</a>)</span>.</p>
 <section id="motivation" class="level3">
 <h3 class="anchored" data-anchor-id="motivation">Motivation</h3>
 <p>Two empirical observations often appear together in real systems:</p>
@@ -727,7 +727,7 @@ Figure&nbsp;6.2: The same simulation displayed on logarithmic axes. The lattice 
 <li>A regular lattice has strong local order and therefore high clustering, but large path lengths.</li>
 <li>A random graph has short path lengths, but typically much lower clustering.</li>
 </ul>
-<p>The Watts–Strogatz model interpolates between these two extremes. It shows that a graph can maintain local order while acquiring short global distances after only a small amount of random rewiring <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-watts1998" role="doc-biblioref">Watts and Strogatz 1998</a>; <a href="#ref-strogatz2001" role="doc-biblioref">Strogatz 2001</a>)</span>.</p>
+<p>The Watts–Strogatz model interpolates between these two extremes. It shows that a graph can maintain local order while acquiring short global distances after only a small amount of random rewiring <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-strogatz2001" role="doc-biblioref">Strogatz, 2001</a>; <a href="#ref-watts1998" role="doc-biblioref">Watts &amp; Strogatz, 1998</a>)</span>.</p>
 </section>
 <section id="parameters-of-the-model" class="level3">
 <h3 class="anchored" data-anchor-id="parameters-of-the-model">Parameters of the model</h3>
@@ -800,7 +800,7 @@ C(0)=\frac{3(K-2)}{4(K-1)}.
 <li>large clustering, and</li>
 <li>large average path length.</li>
 </ul>
-<p>That is exactly why it is a useful starting point for the model <span class="citation" data-cites="watts1998">(<a href="#ref-watts1998" role="doc-biblioref">Watts and Strogatz 1998</a>)</span>.</p>
+<p>That is exactly why it is a useful starting point for the model <span class="citation" data-cites="watts1998">(<a href="#ref-watts1998" role="doc-biblioref">Watts &amp; Strogatz, 1998</a>)</span>.</p>
 </section>
 </section>
 <section id="visualizing-the-transition-from-order-to-randomness" class="level2" data-number="6.9">
@@ -979,7 +979,7 @@ Figure&nbsp;6.3: From regular lattice to random network in the Watts–Strogatz 
 </ul>
 </div>
 </div>
-<p>This asymmetry is the structural source of the small-world regime <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-watts1998" role="doc-biblioref">Watts and Strogatz 1998</a>; <a href="#ref-strogatz2001" role="doc-biblioref">Strogatz 2001</a>)</span>.</p>
+<p>This asymmetry is the structural source of the small-world regime <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-strogatz2001" role="doc-biblioref">Strogatz, 2001</a>; <a href="#ref-watts1998" role="doc-biblioref">Watts &amp; Strogatz, 1998</a>)</span>.</p>
 </section>
 </section>
 <section id="numerical-identification-of-the-small-world-regime" class="level2" data-number="6.10">
@@ -1102,7 +1102,7 @@ Figure&nbsp;6.4: Normalized average path length and normalized clustering coeffi
 </section>
 <section id="quantifying-small-worldness" class="level2" data-number="6.11">
 <h2 data-number="6.11" class="anchored" data-anchor-id="quantifying-small-worldness"><span class="header-section-number">6.11</span> Quantifying small-worldness</h2>
-<p>The phrase <em>small-world</em> is often used qualitatively, but one can also build a simple numerical index. A common choice compares the observed graph with a random graph having similar size and average degree <span class="citation" data-cites="humphries2008 telesford2011">(<a href="#ref-humphries2008" role="doc-biblioref">Humphries and Gurney 2008</a>; <a href="#ref-telesford2011" role="doc-biblioref">Telesford et al. 2011</a>)</span>.</p>
+<p>The phrase <em>small-world</em> is often used qualitatively, but one can also build a simple numerical index. A common choice compares the observed graph with a random graph having similar size and average degree <span class="citation" data-cites="humphries2008 telesford2011">(<a href="#ref-humphries2008" role="doc-biblioref">Humphries &amp; Gurney, 2008</a>; <a href="#ref-telesford2011" role="doc-biblioref">Telesford et al., 2011</a>)</span>.</p>
 <p>Let <span class="math inline">C</span> and <span class="math inline">L</span> denote the clustering coefficient and average path length of the observed graph, and let <span class="math inline">C_{\mathrm{rand}}</span> and <span class="math inline">L_{\mathrm{rand}}</span> denote the corresponding quantities for a comparable random graph. One widely used index is</p>
 <p><span class="math display">
 \sigma = \frac{C/C_{\mathrm{rand}}}{L/L_{\mathrm{rand}}}.
@@ -1245,7 +1245,7 @@ Figure&nbsp;6.5: Comparison of clustering coefficient, average path length, and 
 <p>Only the small-world model combines both properties.</p>
 </div>
 </div>
-<p>The table above highlights the central trade-off of the chapter. A regular lattice preserves local neighborhood structure, so triangles remain common, but long-range communication is inefficient. A random graph greatly improves reachability, yet it does so by sacrificing most of the local order. The Watts–Strogatz model occupies the narrow but important intermediate regime in which a small number of shortcuts lowers path length dramatically while much of the original clustering survives. For teaching purposes, this is the key structural message to keep in mind: small-world behavior is not pure randomness, but a controlled balance between local order and global efficiency <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-watts1998" role="doc-biblioref">Watts and Strogatz 1998</a>; <a href="#ref-strogatz2001" role="doc-biblioref">Strogatz 2001</a>)</span>.</p>
+<p>The table above highlights the central trade-off of the chapter. A regular lattice preserves local neighborhood structure, so triangles remain common, but long-range communication is inefficient. A random graph greatly improves reachability, yet it does so by sacrificing most of the local order. The Watts–Strogatz model occupies the narrow but important intermediate regime in which a small number of shortcuts lowers path length dramatically while much of the original clustering survives. For teaching purposes, this is the key structural message to keep in mind: small-world behavior is not pure randomness, but a controlled balance between local order and global efficiency <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-strogatz2001" role="doc-biblioref">Strogatz, 2001</a>; <a href="#ref-watts1998" role="doc-biblioref">Watts &amp; Strogatz, 1998</a>)</span>.</p>
 </section>
 <section id="what-the-wattsstrogatz-model-explains-and-what-it-does-not" class="level2" data-number="6.12">
 <h2 data-number="6.12" class="anchored" data-anchor-id="what-the-wattsstrogatz-model-explains-and-what-it-does-not"><span class="header-section-number">6.12</span> What the Watts–Strogatz model explains and what it does not</h2>
@@ -1255,7 +1255,7 @@ Figure&nbsp;6.5: Comparison of clustering coefficient, average path length, and 
 <li>short average path lengths.</li>
 </ul>
 <p>This is a major achievement. But the model does not explain all structural properties observed in real networks.</p>
-<p>Its degree distribution remains relatively narrow. Because rewiring preserves the number of edges and introduces only limited degree heterogeneity, the model does not naturally generate hubs or heavy-tailed degree distributions. Nor does it naturally reproduce the degree-dependent clustering patterns often seen in hierarchical or scale-free networks <span class="citation" data-cites="albert2002 barabasi2016">(<a href="#ref-albert2002" role="doc-biblioref">Albert and Barabási 2002</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási and Pósfai 2016</a>)</span>.</p>
+<p>Its degree distribution remains relatively narrow. Because rewiring preserves the number of edges and introduces only limited degree heterogeneity, the model does not naturally generate hubs or heavy-tailed degree distributions. Nor does it naturally reproduce the degree-dependent clustering patterns often seen in hierarchical or scale-free networks <span class="citation" data-cites="albert2002 barabasi2016">(<a href="#ref-albert2002" role="doc-biblioref">Albert &amp; Barabási, 2002</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási &amp; Pósfai, 2016</a>)</span>.</p>
 <p>Therefore, the model captures one key aspect of real systems, but not the full range of structural signatures found in empirical data.</p>
 </section>
 <section id="applications-of-small-world-networks" class="level2" data-number="6.13">
@@ -1263,11 +1263,11 @@ Figure&nbsp;6.5: Comparison of clustering coefficient, average path length, and 
 <p>The small-world idea matters because many real systems balance local organization with global reachability.</p>
 <section id="social-systems" class="level3">
 <h3 class="anchored" data-anchor-id="social-systems">Social systems</h3>
-<p>In social networks, high clustering reflects the tendency of acquaintances of the same person to know one another. At the same time, short path lengths support rapid information flow, rumor spreading, and social search <span class="citation" data-cites="milgram1967 watts1998">(<a href="#ref-milgram1967" role="doc-biblioref">Milgram 1967</a>; <a href="#ref-watts1998" role="doc-biblioref">Watts and Strogatz 1998</a>)</span>.</p>
+<p>In social networks, high clustering reflects the tendency of acquaintances of the same person to know one another. At the same time, short path lengths support rapid information flow, rumor spreading, and social search <span class="citation" data-cites="milgram1967 watts1998">(<a href="#ref-milgram1967" role="doc-biblioref">Milgram, 1967</a>; <a href="#ref-watts1998" role="doc-biblioref">Watts &amp; Strogatz, 1998</a>)</span>.</p>
 </section>
 <section id="neural-systems" class="level3">
 <h3 class="anchored" data-anchor-id="neural-systems">Neural systems</h3>
-<p>In brain and neural networks, strong local clustering is associated with local specialization, while short path lengths support efficient long-range communication. The result is often interpreted as a compromise between segregation and integration <span class="citation" data-cites="strogatz2001">(<a href="#ref-strogatz2001" role="doc-biblioref">Strogatz 2001</a>)</span>.</p>
+<p>In brain and neural networks, strong local clustering is associated with local specialization, while short path lengths support efficient long-range communication. The result is often interpreted as a compromise between segregation and integration <span class="citation" data-cites="strogatz2001">(<a href="#ref-strogatz2001" role="doc-biblioref">Strogatz, 2001</a>)</span>.</p>
 </section>
 <section id="technological-and-infrastructure-systems" class="level3">
 <h3 class="anchored" data-anchor-id="technological-and-infrastructure-systems">Technological and infrastructure systems</h3>
@@ -1285,7 +1285,7 @@ Figure&nbsp;6.5: Comparison of clustering coefficient, average path length, and 
 </section>
 <section id="bridge-to-the-next-chapter" class="level2" data-number="6.14">
 <h2 data-number="6.14" class="anchored" data-anchor-id="bridge-to-the-next-chapter"><span class="header-section-number">6.14</span> Bridge to the next chapter</h2>
-<p>The Watts–Strogatz model explains how short paths and high clustering can coexist, but it does not explain another major empirical feature of many real systems: the presence of hubs and strongly heterogeneous degree distributions. In the model, most vertices still have similar degree, even after rewiring. For that reason, the small-world chapter naturally leads to a new question: how can networks produce a few highly connected vertices together with many low-degree ones? That question takes us to the theory of scale-free networks, where the main focus shifts from shortcuts and clustering to heterogeneity, power laws, and growth mechanisms <span class="citation" data-cites="albert2002 barabasi2016">(<a href="#ref-albert2002" role="doc-biblioref">Albert and Barabási 2002</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási and Pósfai 2016</a>)</span>.</p>
+<p>The Watts–Strogatz model explains how short paths and high clustering can coexist, but it does not explain another major empirical feature of many real systems: the presence of hubs and strongly heterogeneous degree distributions. In the model, most vertices still have similar degree, even after rewiring. For that reason, the small-world chapter naturally leads to a new question: how can networks produce a few highly connected vertices together with many low-degree ones? That question takes us to the theory of scale-free networks, where the main focus shifts from shortcuts and clustering to heterogeneity, power laws, and growth mechanisms <span class="citation" data-cites="albert2002 barabasi2016">(<a href="#ref-albert2002" role="doc-biblioref">Albert &amp; Barabási, 2002</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási &amp; Pósfai, 2016</a>)</span>.</p>
 </section>
 <section id="core-formulas-to-remember" class="level2" data-number="6.15">
 <h2 data-number="6.15" class="anchored" data-anchor-id="core-formulas-to-remember"><span class="header-section-number">6.15</span> Core formulas to remember</h2>
@@ -1515,30 +1515,30 @@ L(G)\approx \frac{\ln N}{\ln \langle k \rangle}.
 <h2 data-number="6.18" class="anchored" data-anchor-id="references"><span class="header-section-number">6.18</span> References</h2>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
 <div id="ref-albert2002" class="csl-entry" role="listitem">
-Albert, Réka, and Albert-László Barabási. 2002. <span>“Statistical Mechanics of Complex Networks.”</span> <em>Reviews of Modern Physics</em> 74 (1): 47–97. <a href="https://doi.org/10.1103/RevModPhys.74.47">https://doi.org/10.1103/RevModPhys.74.47</a>.
+Albert, R., &amp; Barabási, A.-L. (2002). Statistical mechanics of complex networks. <em>Reviews of Modern Physics</em>, <em>74</em>(1), 47–97. <a href="https://doi.org/10.1103/RevModPhys.74.47">https://doi.org/10.1103/RevModPhys.74.47</a>
 </div>
 <div id="ref-barabasi2016" class="csl-entry" role="listitem">
-Barabási, Albert-László, and Márton Pósfai. 2016. <em>Network Science</em>. Cambridge University Press.
+Barabási, A.-L., &amp; Pósfai, M. (2016). <em>Network science</em>. Cambridge University Press.
 </div>
 <div id="ref-humphries2008" class="csl-entry" role="listitem">
-Humphries, Mark D., and Kevin Gurney. 2008. <span>“Network ’Small-World-Ness’: A Quantitative Method for Determining Canonical Network Equivalence.”</span> <em>PLoS ONE</em> 3 (4): e0002051. <a href="https://doi.org/10.1371/journal.pone.0002051">https://doi.org/10.1371/journal.pone.0002051</a>.
+Humphries, M. D., &amp; Gurney, K. (2008). Network ’small-world-ness’: A quantitative method for determining canonical network equivalence. <em>PLoS ONE</em>, <em>3</em>(4), e0002051. <a href="https://doi.org/10.1371/journal.pone.0002051">https://doi.org/10.1371/journal.pone.0002051</a>
 </div>
 <div id="ref-milgram1967" class="csl-entry" role="listitem">
-Milgram, Stanley. 1967. <span>“The Small World Problem.”</span> <em>Psychology Today</em> 2 (1): 60–67.
+Milgram, S. (1967). The small world problem. <em>Psychology Today</em>, <em>2</em>(1), 60–67.
 </div>
 <div id="ref-newman2010" class="csl-entry" role="listitem">
-Newman, M. E. J. 2010. <em>Networks: An Introduction</em>. Oxford University Press.
+Newman, M. E. J. (2010). <em>Networks: An introduction</em>. Oxford University Press.
 </div>
 <div id="ref-strogatz2001" class="csl-entry" role="listitem">
-Strogatz, Steven H. 2001. <span>“Exploring Complex Networks.”</span> <em>Nature</em> 410 (6825): 268–76. <a href="https://doi.org/10.1038/35065725">https://doi.org/10.1038/35065725</a>.
+Strogatz, S. H. (2001). Exploring complex networks. <em>Nature</em>, <em>410</em>(6825), 268–276. <a href="https://doi.org/10.1038/35065725">https://doi.org/10.1038/35065725</a>
 </div>
 <div id="ref-telesford2011" class="csl-entry" role="listitem">
-Telesford, Qawi K., Karen E. Joyce, Satoru Hayasaka, Jonathan H. Burdette, and Paul J. Laurienti. 2011. <span>“The Ubiquity of Small-World Networks.”</span> <em>Brain Connectivity</em> 1 (5): 367–75. <a href="https://doi.org/10.1089/brain.2011.0038">https://doi.org/10.1089/brain.2011.0038</a>.
+Telesford, Q. K., Joyce, K. E., Hayasaka, S., Burdette, J. H., &amp; Laurienti, P. J. (2011). The ubiquity of small-world networks. <em>Brain Connectivity</em>, <em>1</em>(5), 367–375. <a href="https://doi.org/10.1089/brain.2011.0038">https://doi.org/10.1089/brain.2011.0038</a>
 </div>
 <div id="ref-watts1998" class="csl-entry" role="listitem">
-Watts, Duncan J., and Steven H. Strogatz. 1998. <span>“Collective Dynamics of ’Small-World’ Networks.”</span> <em>Nature</em> 393 (6684): 440–42. <a href="https://doi.org/10.1038/30918">https://doi.org/10.1038/30918</a>.
+Watts, D. J., &amp; Strogatz, S. H. (1998). Collective dynamics of ’small-world’ networks. <em>Nature</em>, <em>393</em>(6684), 440–442. <a href="https://doi.org/10.1038/30918">https://doi.org/10.1038/30918</a>
 </div>
 </div>
 </section>

@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>7&nbsp; Scale-Free Networks – Network Science</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -89,15 +92,14 @@ div.csl-indent {
 <link href="../chapters/05-small-world-graphs.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4dd0a3cd2d1f0c1ca65dcbe395e0d0e9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-07314a9cf6582ab18f4f031a2d4fd43d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b5d8c9ff6161f8ccf1af3142a66ed23c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-d4aa30a0361d4615301e0f27ccb5b562.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -199,9 +201,7 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="../index.html" class="sidebar-logo-link">
-      </a>
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Network Science</a> 
     </div>
@@ -357,7 +357,7 @@ window.Quarto = {
 
 <section id="introduction" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">7.1</span> Introduction</h2>
-<p>Many real networks are dominated by degree heterogeneity. In citation systems, a small number of papers receive enormous attention while most receive few citations. In transportation systems, a small number of airports serve as major transfer hubs while most airports remain modest in connectivity. In the World Wide Web, some pages attract extraordinarily many links while the overwhelming majority remain comparatively peripheral. <span class="citation" data-cites="barabasi1999 albert2002 newman2010">(<a href="#ref-barabasi1999" role="doc-biblioref">Barabási and Albert 1999</a>; <a href="#ref-albert2002" role="doc-biblioref">Albert and Barabási 2002</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span></p>
+<p>Many real networks are dominated by degree heterogeneity. In citation systems, a small number of papers receive enormous attention while most receive few citations. In transportation systems, a small number of airports serve as major transfer hubs while most airports remain modest in connectivity. In the World Wide Web, some pages attract extraordinarily many links while the overwhelming majority remain comparatively peripheral. <span class="citation" data-cites="barabasi1999 albert2002 newman2010">(<a href="#ref-albert2002" role="doc-biblioref">Albert &amp; Barabási, 2002</a>; <a href="#ref-barabasi1999" role="doc-biblioref">Barabási &amp; Albert, 1999</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>)</span></p>
 <p>This chapter studies the mathematics of that phenomenon. Our goal is not merely to present the Barabási–Albert model, but to distinguish clearly between three different levels of description:</p>
 <ol type="1">
 <li>the <strong>structural signature</strong> of a scale-free network,</li>
@@ -514,9 +514,9 @@ P(ak) \sim C(ak)^{-\gamma} = a^{-\gamma} Ck^{-\gamma}.
 </span></p>
 <p>So rescaling the degree changes the tail only by a multiplicative factor. There is no characteristic degree scale governing the tail. This is the basic reason for the term <strong>scale-free</strong>.</p>
 <div id="def-scale-free-network" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 7.4</strong></span> A network is called <strong>scale-free</strong> if its degree distribution has a power-law tail over a substantial range of degrees <span class="citation" data-cites="barabasi1999 albert2002 newman2010">(<a href="#ref-barabasi1999" role="doc-biblioref">Barabási and Albert 1999</a>; <a href="#ref-albert2002" role="doc-biblioref">Albert and Barabási 2002</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span>.</p>
+<p><span class="theorem-title"><strong>Definition 7.4</strong></span> A network is called <strong>scale-free</strong> if its degree distribution has a power-law tail over a substantial range of degrees <span class="citation" data-cites="barabasi1999 albert2002 newman2010">(<a href="#ref-albert2002" role="doc-biblioref">Albert &amp; Barabási, 2002</a>; <a href="#ref-barabasi1999" role="doc-biblioref">Barabási &amp; Albert, 1999</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>)</span>.</p>
 </div>
-<p>In practice, this definition should be interpreted carefully. Real finite networks rarely exhibit a perfect power law over all degrees. What matters is the approximate tail behavior over a meaningful scaling region <span class="citation" data-cites="clauset2009">(<a href="#ref-clauset2009" role="doc-biblioref">Clauset, Shalizi, and Newman 2009</a>)</span>.</p>
+<p>In practice, this definition should be interpreted carefully. Real finite networks rarely exhibit a perfect power law over all degrees. What matters is the approximate tail behavior over a meaningful scaling region <span class="citation" data-cites="clauset2009">(<a href="#ref-clauset2009" role="doc-biblioref">Clauset et al., 2009</a>)</span>.</p>
 </section>
 <section id="why-the-tail-matters" class="level3">
 <h3 class="anchored" data-anchor-id="why-the-tail-matters">Why the tail matters</h3>
@@ -580,11 +580,11 @@ Figure&nbsp;7.2: A comparison between a Poisson distribution and a power-law dis
 </div>
 </div>
 </div>
-<p>Figure <a href="#fig-power-law-vs-poisson" class="quarto-xref">Figure&nbsp;<span>7.2</span></a> illustrates why log-log plots are so common in this literature. On ordinary axes, the mass near small degrees dominates the picture. On log-log axes, the difference in tail decay becomes much easier to see. At the same time, one should not over-interpret visual linearity. Finite-size noise, truncation, and sampling variability can all distort the tail <span class="citation" data-cites="clauset2009">(<a href="#ref-clauset2009" role="doc-biblioref">Clauset, Shalizi, and Newman 2009</a>)</span>.</p>
+<p>Figure <a href="#fig-power-law-vs-poisson" class="quarto-xref">Figure&nbsp;<span>7.2</span></a> illustrates why log-log plots are so common in this literature. On ordinary axes, the mass near small degrees dominates the picture. On log-log axes, the difference in tail decay becomes much easier to see. At the same time, one should not over-interpret visual linearity. Finite-size noise, truncation, and sampling variability can all distort the tail <span class="citation" data-cites="clauset2009">(<a href="#ref-clauset2009" role="doc-biblioref">Clauset et al., 2009</a>)</span>.</p>
 </section>
 <section id="universality-and-the-scale-free-viewpoint" class="level2" data-number="7.7">
 <h2 data-number="7.7" class="anchored" data-anchor-id="universality-and-the-scale-free-viewpoint"><span class="header-section-number">7.7</span> Universality and the scale-free viewpoint</h2>
-<p>One reason scale-free networks attracted so much attention is that broad degree distributions appear in many systems that are otherwise very different: technological, biological, informational, and social networks can all exhibit strong degree heterogeneity. This led to the idea of <strong>universality</strong>: systems with very different microscopic details may display similar large-scale statistical signatures. <span class="citation" data-cites="albert2002 barabasi2016">(<a href="#ref-albert2002" role="doc-biblioref">Albert and Barabási 2002</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási and Pósfai 2016</a>)</span></p>
+<p>One reason scale-free networks attracted so much attention is that broad degree distributions appear in many systems that are otherwise very different: technological, biological, informational, and social networks can all exhibit strong degree heterogeneity. This led to the idea of <strong>universality</strong>: systems with very different microscopic details may display similar large-scale statistical signatures. <span class="citation" data-cites="albert2002 barabasi2016">(<a href="#ref-albert2002" role="doc-biblioref">Albert &amp; Barabási, 2002</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási &amp; Pósfai, 2016</a>)</span></p>
 <p>This does not mean that all real networks are power-law networks, nor that all heavy-tailed networks arise from the same mechanism. The point is more subtle. Similar tail behavior can emerge from very different domains, which suggests that some statistical regularities are more fundamental than the details of the underlying application.</p>
 <p>For a mathematical treatment, the important lesson is that scale-free structure should be studied first as a structural phenomenon. A generative model such as the BA model is then one explanation of that phenomenon, not the definition of the phenomenon itself.</p>
 </section>
@@ -631,7 +631,7 @@ Figure&nbsp;7.2: A comparison between a Poisson distribution and a power-law dis
 <span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>Scale-free degree heterogeneity can also affect the metric structure of a network. In many classical random graph models, average path length grows on the order of <span class="math inline">\log N</span>. In sufficiently heavy-tailed networks, especially when <span class="math inline">2 &lt; \gamma &lt; 3</span>, the growth can be even slower. This regime is often described as <strong>ultra-small</strong>, because distances may scale like <span class="math inline">\log \log N</span> rather than <span class="math inline">\log N</span> in the large-size limit <span class="citation" data-cites="newman2001 dorogovtsev2003 barabasi2016">(<a href="#ref-newman2001" role="doc-biblioref">Newman, Strogatz, and Watts 2001</a>; <a href="#ref-dorogovtsev2003" role="doc-biblioref">Dorogovtsev, Mendes, and Samukhin 2003</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási and Pósfai 2016</a>)</span>.</p>
+<p>Scale-free degree heterogeneity can also affect the metric structure of a network. In many classical random graph models, average path length grows on the order of <span class="math inline">\log N</span>. In sufficiently heavy-tailed networks, especially when <span class="math inline">2 &lt; \gamma &lt; 3</span>, the growth can be even slower. This regime is often described as <strong>ultra-small</strong>, because distances may scale like <span class="math inline">\log \log N</span> rather than <span class="math inline">\log N</span> in the large-size limit <span class="citation" data-cites="newman2001 dorogovtsev2003 barabasi2016">(<a href="#ref-barabasi2016" role="doc-biblioref">Barabási &amp; Pósfai, 2016</a>; <a href="#ref-dorogovtsev2003" role="doc-biblioref">Dorogovtsev et al., 2003</a>; <a href="#ref-newman2001" role="doc-biblioref">Newman et al., 2001</a>)</span>.</p>
 <p>The exact asymptotics require care, but the central idea is intuitive: a small number of extremely connected hubs can create shortcuts across the graph. As a result, the network may remain globally close even as it becomes very large.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
@@ -696,11 +696,11 @@ Figure&nbsp;7.3: Average path length versus system size for Erdős–Rényi grap
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>The scale-free viewpoint is broader than any single growth model. If our objective is simply to construct a graph with a given degree sequence or degree distribution, we can do so without invoking growth or preferential attachment at all <span class="citation" data-cites="newman2001 newman2010">(<a href="#ref-newman2001" role="doc-biblioref">Newman, Strogatz, and Watts 2001</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span>.</p>
+<p>The scale-free viewpoint is broader than any single growth model. If our objective is simply to construct a graph with a given degree sequence or degree distribution, we can do so without invoking growth or preferential attachment at all <span class="citation" data-cites="newman2001 newman2010">(<a href="#ref-newman2001" role="doc-biblioref">Newman et al., 2001</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>)</span>.</p>
 <div id="def-configuration-model" class="theorem definition">
 <p><span class="theorem-title"><strong>Definition 7.5</strong></span> The <strong>configuration model</strong> constructs a random graph from a prescribed degree sequence by assigning a number of half-edges to each vertex equal to its degree and then pairing those half-edges at random.</p>
 </div>
-<p>This idea is important conceptually. It shows that a heavy-tailed degree distribution is not the same thing as a growth rule. One can impose the distribution first and randomize the rest of the structure <span class="citation" data-cites="newman2001 molloy1995">(<a href="#ref-newman2001" role="doc-biblioref">Newman, Strogatz, and Watts 2001</a>; <a href="#ref-molloy1995" role="doc-biblioref">Molloy and Reed 1995</a>)</span>.</p>
+<p>This idea is important conceptually. It shows that a heavy-tailed degree distribution is not the same thing as a growth rule. One can impose the distribution first and randomize the rest of the structure <span class="citation" data-cites="newman2001 molloy1995">(<a href="#ref-molloy1995" role="doc-biblioref">Molloy &amp; Reed, 1995</a>; <a href="#ref-newman2001" role="doc-biblioref">Newman et al., 2001</a>)</span>.</p>
 <section id="why-the-configuration-model-matters" class="level3">
 <h3 class="anchored" data-anchor-id="why-the-configuration-model-matters">Why the configuration model matters</h3>
 <p>The configuration model is useful because it allows us to separate two questions:</p>
@@ -978,7 +978,7 @@ Figure&nbsp;7.6: Degree trajectories for several vertices in a growing BA networ
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>A classical result for the BA model is that the degree distribution has asymptotic tail <span class="citation" data-cites="barabasi1999 bollobas2001">(<a href="#ref-barabasi1999" role="doc-biblioref">Barabási and Albert 1999</a>; <a href="#ref-bollobas2001" role="doc-biblioref">Bollobás et al. 2001</a>)</span></p>
+<p>A classical result for the BA model is that the degree distribution has asymptotic tail <span class="citation" data-cites="barabasi1999 bollobas2001">(<a href="#ref-barabasi1999" role="doc-biblioref">Barabási &amp; Albert, 1999</a>; <a href="#ref-bollobas2001" role="doc-biblioref">Bollobás et al., 2001</a>)</span></p>
 <p><span class="math display">
 P(k) \sim Ck^{-3}.
 </span></p>
@@ -1133,7 +1133,7 @@ Figure&nbsp;7.9: Estimated attachment kernel in a BA simulation. The mean rate o
 </div>
 </div>
 </div>
-<p>As shown in <a href="#fig-measuring-preferential-attachment" class="quarto-xref">Figure&nbsp;<span>7.9</span></a>, the simulated attachment rate increases roughly linearly with current degree. This does not replace the formal definition of the model, but it gives an empirical confirmation of what the mechanism means in practice <span class="citation" data-cites="barabasi1999 barabasi2016">(<a href="#ref-barabasi1999" role="doc-biblioref">Barabási and Albert 1999</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási and Pósfai 2016</a>)</span>.</p>
+<p>As shown in <a href="#fig-measuring-preferential-attachment" class="quarto-xref">Figure&nbsp;<span>7.9</span></a>, the simulated attachment rate increases roughly linearly with current degree. This does not replace the formal definition of the model, but it gives an empirical confirmation of what the mechanism means in practice <span class="citation" data-cites="barabasi1999 barabasi2016">(<a href="#ref-barabasi1999" role="doc-biblioref">Barabási &amp; Albert, 1999</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási &amp; Pósfai, 2016</a>)</span>.</p>
 </section>
 <section id="beyond-degree-distribution-clustering-and-distances-in-the-ba-model" class="level2" data-number="7.17">
 <h2 data-number="7.17" class="anchored" data-anchor-id="beyond-degree-distribution-clustering-and-distances-in-the-ba-model"><span class="header-section-number">7.17</span> Beyond degree distribution: clustering and distances in the BA model</h2>
@@ -1224,11 +1224,11 @@ Figure&nbsp;7.10: A comparison of average path length and transitivity for BA an
 </div>
 </div>
 </div>
-<p>Figure <a href="#fig-ba-vs-er-properties" class="quarto-xref">Figure&nbsp;<span>7.10</span></a> shows why one should not reduce the BA model to its power-law tail alone. The model typically creates shorter paths than a matched Erdős–Rényi graph because hubs provide shortcuts. At the same time, its clustering is not necessarily large enough to match many empirical networks. This is one reason later models introduced additional mechanisms beyond simple preferential attachment <span class="citation" data-cites="albert2002 barabasi2016">(<a href="#ref-albert2002" role="doc-biblioref">Albert and Barabási 2002</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási and Pósfai 2016</a>)</span>.</p>
+<p>Figure <a href="#fig-ba-vs-er-properties" class="quarto-xref">Figure&nbsp;<span>7.10</span></a> shows why one should not reduce the BA model to its power-law tail alone. The model typically creates shorter paths than a matched Erdős–Rényi graph because hubs provide shortcuts. At the same time, its clustering is not necessarily large enough to match many empirical networks. This is one reason later models introduced additional mechanisms beyond simple preferential attachment <span class="citation" data-cites="albert2002 barabasi2016">(<a href="#ref-albert2002" role="doc-biblioref">Albert &amp; Barabási, 2002</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási &amp; Pósfai, 2016</a>)</span>.</p>
 </section>
 <section id="what-the-ba-model-explains-and-what-it-does-not" class="level2" data-number="7.18">
 <h2 data-number="7.18" class="anchored" data-anchor-id="what-the-ba-model-explains-and-what-it-does-not"><span class="header-section-number">7.18</span> What the BA model explains and what it does not</h2>
-<p>The BA model is historically important because it demonstrates that a very simple mechanism can generate heavy-tailed degree distributions and hub formation. It explains, in a mathematically transparent way, how growth plus cumulative advantage can lead to scale-free structure <span class="citation" data-cites="barabasi1999 albert2002 barabasi2016">(<a href="#ref-barabasi1999" role="doc-biblioref">Barabási and Albert 1999</a>; <a href="#ref-albert2002" role="doc-biblioref">Albert and Barabási 2002</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási and Pósfai 2016</a>)</span>.</p>
+<p>The BA model is historically important because it demonstrates that a very simple mechanism can generate heavy-tailed degree distributions and hub formation. It explains, in a mathematically transparent way, how growth plus cumulative advantage can lead to scale-free structure <span class="citation" data-cites="barabasi1999 albert2002 barabasi2016">(<a href="#ref-albert2002" role="doc-biblioref">Albert &amp; Barabási, 2002</a>; <a href="#ref-barabasi1999" role="doc-biblioref">Barabási &amp; Albert, 1999</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási &amp; Pósfai, 2016</a>)</span>.</p>
 <p>However, the model also has clear limitations:</p>
 <ol type="1">
 <li>the exponent is quite specific, with asymptotic value <span class="math inline">\gamma = 3</span>,</li>
@@ -1443,33 +1443,33 @@ P(K \geq k) \sim C'k^{-(\gamma - 1)}.
 <h2 data-number="7.22" class="anchored" data-anchor-id="references"><span class="header-section-number">7.22</span> References</h2>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
 <div id="ref-albert2002" class="csl-entry" role="listitem">
-Albert, Réka, and Albert-László Barabási. 2002. <span>“Statistical Mechanics of Complex Networks.”</span> <em>Reviews of Modern Physics</em> 74 (1): 47–97. <a href="https://doi.org/10.1103/RevModPhys.74.47">https://doi.org/10.1103/RevModPhys.74.47</a>.
+Albert, R., &amp; Barabási, A.-L. (2002). Statistical mechanics of complex networks. <em>Reviews of Modern Physics</em>, <em>74</em>(1), 47–97. <a href="https://doi.org/10.1103/RevModPhys.74.47">https://doi.org/10.1103/RevModPhys.74.47</a>
 </div>
 <div id="ref-barabasi1999" class="csl-entry" role="listitem">
-Barabási, Albert-László, and Réka Albert. 1999. <span>“Emergence of Scaling in Random Networks.”</span> <em>Science</em> 286 (5439): 509–12. <a href="https://doi.org/10.1126/science.286.5439.509">https://doi.org/10.1126/science.286.5439.509</a>.
+Barabási, A.-L., &amp; Albert, R. (1999). Emergence of scaling in random networks. <em>Science</em>, <em>286</em>(5439), 509–512. <a href="https://doi.org/10.1126/science.286.5439.509">https://doi.org/10.1126/science.286.5439.509</a>
 </div>
 <div id="ref-barabasi2016" class="csl-entry" role="listitem">
-Barabási, Albert-László, and Márton Pósfai. 2016. <em>Network Science</em>. Cambridge University Press.
+Barabási, A.-L., &amp; Pósfai, M. (2016). <em>Network science</em>. Cambridge University Press.
 </div>
 <div id="ref-bollobas2001" class="csl-entry" role="listitem">
-Bollobás, Béla, Oliver Riordan, Joel Spencer, and Gábor Tusnády. 2001. <span>“The Degree Sequence of a Scale-Free Random Graph Process.”</span> <em>Random Structures &amp; Algorithms</em> 18 (3): 279–90. <a href="https://doi.org/10.1002/rsa.1009">https://doi.org/10.1002/rsa.1009</a>.
+Bollobás, B., Riordan, O., Spencer, J., &amp; Tusnády, G. (2001). The degree sequence of a scale-free random graph process. <em>Random Structures &amp; Algorithms</em>, <em>18</em>(3), 279–290. <a href="https://doi.org/10.1002/rsa.1009">https://doi.org/10.1002/rsa.1009</a>
 </div>
 <div id="ref-clauset2009" class="csl-entry" role="listitem">
-Clauset, Aaron, Cosma Rohilla Shalizi, and M. E. J. Newman. 2009. <span>“Power-Law Distributions in Empirical Data.”</span> <em>SIAM Review</em> 51 (4): 661–703. <a href="https://doi.org/10.1137/070710111">https://doi.org/10.1137/070710111</a>.
+Clauset, A., Shalizi, C. R., &amp; Newman, M. E. J. (2009). Power-law distributions in empirical data. <em>SIAM Review</em>, <em>51</em>(4), 661–703. <a href="https://doi.org/10.1137/070710111">https://doi.org/10.1137/070710111</a>
 </div>
 <div id="ref-dorogovtsev2003" class="csl-entry" role="listitem">
-Dorogovtsev, S. N., J. F. F. Mendes, and A. N. Samukhin. 2003. <span>“Metric Structure of Random Networks.”</span> <em>Nuclear Physics B</em> 653 (3): 307–38. <a href="https://doi.org/10.1016/S0550-3213(03)00095-2">https://doi.org/10.1016/S0550-3213(03)00095-2</a>.
+Dorogovtsev, S. N., Mendes, J. F. F., &amp; Samukhin, A. N. (2003). Metric structure of random networks. <em>Nuclear Physics B</em>, <em>653</em>(3), 307–338. <a href="https://doi.org/10.1016/S0550-3213(03)00095-2">https://doi.org/10.1016/S0550-3213(03)00095-2</a>
 </div>
 <div id="ref-molloy1995" class="csl-entry" role="listitem">
-Molloy, Michael, and Bruce Reed. 1995. <span>“A Critical Point for Random Graphs with a Given Degree Sequence.”</span> <em>Random Structures &amp; Algorithms</em> 6 (2-3): 161–80. <a href="https://doi.org/10.1002/rsa.3240060204">https://doi.org/10.1002/rsa.3240060204</a>.
+Molloy, M., &amp; Reed, B. (1995). A critical point for random graphs with a given degree sequence. <em>Random Structures &amp; Algorithms</em>, <em>6</em>(2-3), 161–180. <a href="https://doi.org/10.1002/rsa.3240060204">https://doi.org/10.1002/rsa.3240060204</a>
 </div>
 <div id="ref-newman2010" class="csl-entry" role="listitem">
-Newman, M. E. J. 2010. <em>Networks: An Introduction</em>. Oxford University Press.
+Newman, M. E. J. (2010). <em>Networks: An introduction</em>. Oxford University Press.
 </div>
 <div id="ref-newman2001" class="csl-entry" role="listitem">
-Newman, M. E. J., Steven H. Strogatz, and Duncan J. Watts. 2001. <span>“Random Graphs with Arbitrary Degree Distributions and Their Applications.”</span> <em>Physical Review E</em> 64 (2): 026118. <a href="https://doi.org/10.1103/PhysRevE.64.026118">https://doi.org/10.1103/PhysRevE.64.026118</a>.
+Newman, M. E. J., Strogatz, S. H., &amp; Watts, D. J. (2001). Random graphs with arbitrary degree distributions and their applications. <em>Physical Review E</em>, <em>64</em>(2), 026118. <a href="https://doi.org/10.1103/PhysRevE.64.026118">https://doi.org/10.1103/PhysRevE.64.026118</a>
 </div>
 </div>
 </section>

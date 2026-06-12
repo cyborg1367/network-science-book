@@ -1,0 +1,481 @@
+---
+title: "Graph Theory — Solutions"
+subtitle: "Corresponds to `chapters/02-graph-theory.qmd`"
+---
+
+```{r}
+#| label: solution-setup
+#| include: false
+
+setup_candidates <- c("R/book-setup.R", "../R/book-setup.R")
+setup_file <- setup_candidates[file.exists(setup_candidates)][1]
+
+if (is.na(setup_file)) {
+  stop("Could not locate R/book-setup.R", call. = FALSE)
+}
+
+source(setup_file, local = knitr::knit_global())
+ns_book_setup(preset = "core", seed = 42)
+```
+
+### Part I. Computational and derivation exercises
+
+#### Exercise 1. Handshaking lemma
+
+1.  The handshaking lemma states $\sum_{v \in V} k_v = 2M$. Here
+    $$
+    \sum_{v} k_v = 5 + 4 + 4 + 3 + 3 + 2 + 1 + 0 = 22,
+    $$
+    which is even, so the sequence is **compatible** with the lemma.
+
+2.  Therefore $2M = 22$, hence $M = 11$.
+
+3.  The average degree is
+    $$
+    \langle k \rangle = \frac{1}{N}\sum_v k_v = \frac{22}{8} = 2.75,
+    $$
+    equivalently $\langle k \rangle = 2M/N = 22/8 = 2.75$.
+
+#### Exercise 2. Adjacency matrix
+
+Label vertices $1,2,3,4$ in the natural order.
+
+1.  With edges $\{1,2\},\{1,3\},\{2,3\},\{3,4\}$,
+    $$
+    A =
+    \begin{pmatrix}
+    0 & 1 & 1 & 0 \\
+    1 & 0 & 1 & 0 \\
+    1 & 1 & 0 & 1 \\
+    0 & 0 & 1 & 0
+    \end{pmatrix}.
+    $$
+
+2.  Matrix multiplication gives
+    $$
+    A^2 =
+    \begin{pmatrix}
+    2 & 1 & 1 & 1 \\
+    1 & 2 & 1 & 1 \\
+    1 & 1 & 3 & 0 \\
+    1 & 1 & 0 & 1
+    \end{pmatrix}.
+    $$
+
+3.  The diagonal entry $(A^2)_{ii}$ counts **closed walks of length $2$** starting and ending at vertex $i$. Each neighbor $j$ of $i$ contributes one walk $i \to j \to i$, so $(A^2)_{ii} = k_i$. Here the diagonal is $(2,2,3,1)$, matching the degrees.
+
+4.  For a simple undirected graph, the number of triangles is
+    $$
+    t = \frac{\operatorname{tr}(A^3)}{6},
+    $$
+    because each triangle contributes six closed walks of length $3$. Computing $A^3$ gives $\operatorname{tr}(A^3) = 6$, so $t = 1$ (the triangle on $\{1,2,3\}$).
+
+```{r}
+#| label: ex2-verify-triangles
+#| echo: true
+
+g_ex2 <- graph_from_edgelist(
+  matrix(c(1, 2, 1, 3, 2, 3, 3, 4), ncol = 2, byrow = TRUE),
+  directed = FALSE
+)
+A <- as_adjacency_matrix(g_ex2, sparse = FALSE)
+list(
+  A_squared_diag = diag(A %*% A),
+  tr_A3 = sum(diag(A %*% A %*% A)),
+  triangles_from_trace = sum(diag(A %*% A %*% A)) / 6,
+  triangles_igraph = count_triangles(g_ex2, vids = V(g_ex2)) |> sum() / 3
+)
+```
+
+#### Exercise 3. Laplacian eigenvalues
+
+1.  The degree matrix is $D = \operatorname{diag}(2,2,3,1)$ and
+    $$
+    L = D - A =
+    \begin{pmatrix}
+     2 & -1 & -1 &  0 \\
+    -1 &  2 & -1 &  0 \\
+    -1 & -1 &  3 & -1 \\
+     0 &  0 & -1 &  1
+    \end{pmatrix}.
+    $$
+
+2.  The eigenvalues of $L$ are approximately
+    $$
+    \lambda \approx (0,\; 0.5858,\; 2.0000,\; 4.4142).
+    $$
+
+3.  Since $G$ is connected, $\mathbf{1} = (1,1,1,1)^\top$ satisfies $L\mathbf{1} = 0$, so $\lambda_1 = 0$ is an eigenvalue with eigenvector $\mathbf{1}$.
+
+4.  The second-smallest eigenvalue $\lambda_2 \approx 0.586$ is the **Fiedler value** (algebraic connectivity). It measures how well the graph resists being split into two parts: larger $\lambda_2$ means stronger connectivity.
+
+```{r}
+#| label: ex3-laplacian-eigs
+#| echo: true
+
+D <- diag(rowSums(A))
+L <- D - A
+round(eigen(L, symmetric = TRUE)$values, 4)
+```
+
+#### Exercise 4. Trees
+
+1.  **Proof.** Let $T$ be a tree on $N$ vertices. Delete a leaf $v$ (a vertex of degree $1$) and its unique incident edge. The result is a tree on $N-1$ vertices. By induction on $N$, it has $(N-1)-1 = N-2$ edges. Adding back $v$ and its leaf edge adds one edge, so $|E(T)| = N-1$.
+
+    *Base case:* $N=1$ gives $0 = 1-1$ edges.
+
+2.  By **Cayley's formula**, the number of labeled trees on $N$ vertices is $N^{N-2}$. For $N=4$ this gives $4^2 = 16$ distinct labeled trees.
+
+3.  **Example.** The cycle $C_4$ on vertices $\{1,2,3,4\}$ is connected but contains a cycle, so it is not a tree. Removing edge $\{1,4\}$ yields the spanning path $1\text{--}2\text{--}3\text{--}4$, which is a tree on four vertices.
+
+#### Exercise 5. Bipartite graphs
+
+1.  $K_{2,3}$ has bipartition sizes $2$ and $3$, so
+    $$
+    M = 2 \times 3 = 6
+    $$
+    edges (every vertex on one side connected to every vertex on the other).
+
+2.  **König's criterion:** a graph is bipartite if and only if it contains **no odd cycle**. In $K_{2,3}$, any cycle has even length (it must alternate between the two parts), so no odd cycle exists. Hence $K_{2,3}$ is bipartite.
+
+3.  $C_5$ is an odd cycle of length $5$. An odd cycle cannot be $2$-colored, so $C_5$ is **not** bipartite.
+
+4.  $C_N$ is bipartite **if and only if $N$ is even**. Even cycles alternate between two parts; odd cycles contain an odd closed walk, violating bipartiteness.
+
+#### Exercise 6. Cut vertices and bridges
+
+For $P_N$ with vertices $1,2,\ldots,N$ and $N \geq 3$:
+
+1.  **Cut vertices:** every internal vertex $2,3,\ldots,N-1$. Removing such a vertex disconnects the path into two components. The endpoints $1$ and $N$ are not cut vertices.
+
+2.  **Bridges:** every edge of $P_N$ is a bridge. Removing any edge splits the path into two components.
+
+3.  For the cycle $C_N$ with $N \geq 3$:
+
+    - there are **no cut vertices** (the graph remains connected after deleting any one vertex),
+    - there are **no bridges** (the graph remains connected after deleting any one edge).
+
+4.  Let $T$ be a tree and let $e = uv$ be any edge. Since trees are acyclic, removing $e$ disconnects $u$ from $v$. Therefore every tree edge is a bridge.
+
+### Part II. Conceptual and analytical exercises
+
+#### Exercise 7. Degree sequence realizability
+
+1.  The sequence $(3,3,2,2,1,1)$ has even sum $12$, so $M=6$. One explicit realization on vertices $\{1,\ldots,6\}$ is
+    $$
+    E = \{\{1,2\},\{1,3\},\{1,4\},\{2,3\},\{2,5\},\{4,6\}\},
+    $$
+    with degrees $k_1=3$, $k_2=3$, $k_3=2$, $k_4=2$, $k_5=1$, $k_6=1$.
+
+2.  The handshaking lemma requires $\sum d_i = 2M$ to be **even**. Here
+    $$
+    4+3+2+2+1 = 12,
+    $$
+    so the lemma does **not** rule out the sequence. In fact, the Havel--Hakimi algorithm shows $(4,3,2,2,1)$ **is graphical** on five vertices: connect vertex $1$ (degree $4$) to all others, then realize $(2,1,1,0)$ on the remaining four vertices with edges $\{2,3\}$ and $\{2,4\}$.
+
+    ::: {.callout-note title="Note for instructors"}
+    The exercise text asks students to show this sequence is not graphical using the handshaking lemma alone. That argument works only when the degree sum is **odd** (for example $(4,3,2,2,2)$ with sum $13$). For $(4,3,2,2,1)$, handshaking is a necessary but not sufficient test.
+    :::
+
+3.  **Erdős--Gallai theorem.** A non-increasing sequence $(d_1,\ldots,d_N)$ with even sum is graphical if and only if, for every $k = 1,\ldots,N$,
+    $$
+    \sum_{i=1}^{k} d_i \leq k(k-1) + \sum_{j=k+1}^{N} \min(d_j, k).
+    $$
+
+    For $(3,3,2,2,2)$ the sum is $12$, so $M=6$. Checking Erdős--Gallai for each $k$ (for example $k=3$: LHS $=8$, RHS $=6+\min(2,3)+\min(2,3)=10$) shows all inequalities hold. The Havel--Hakimi reduction terminates successfully, so the sequence **is graphical**. One realization is
+    $$
+    E = \{\{1,2\},\{1,3\},\{1,4\},\{2,3\},\{2,5\},\{4,5\}\}.
+    $$
+    A sequence that **fails** Erdős--Gallai is $(4,4,3,3,2,2)$ at $k=2$, but the exercise asks specifically about $(3,3,2,2,2)$.
+
+```{r}
+#| label: ex7-degree-sequences
+#| echo: true
+
+c(
+  d_332211 = is_graphical_degree_sequence(c(3, 3, 2, 2, 1, 1)),
+  d_43221 = is_graphical_degree_sequence(c(4, 3, 2, 2, 1)),
+  d_33222 = is_graphical_degree_sequence(c(3, 3, 2, 2, 2))
+)
+```
+
+#### Exercise 8. Isomorphism
+
+1.  **Invariants.**
+
+    - $C_6$: connected, $N=6$, all degrees $2$, one component, girth $6$, number of triangles $=0$.
+    - Two disjoint triangles: **not connected**, $N=6$, all degrees $2$, two components, girth $3$, total triangles $=2$.
+
+    Since the number of connected components differs, the graphs are **not isomorphic**.
+
+2.  No bijection $f : V(C_6) \to V(2K_3)$ can preserve adjacency, because isomorphism preserves connectedness. Hence no isomorphism exists.
+
+#### Exercise 9. Powers of the adjacency matrix
+
+Label $C_4$ cyclically as $1\text{--}2\text{--}3\text{--}4\text{--}1$.
+
+1.  $$
+    A =
+    \begin{pmatrix}
+    0 & 1 & 0 & 1 \\
+    1 & 0 & 1 & 0 \\
+    0 & 1 & 0 & 1 \\
+    1 & 0 & 1 & 0
+    \end{pmatrix}.
+    $$
+
+2.  $$
+    A^2 =
+    \begin{pmatrix}
+    2 & 0 & 2 & 0 \\
+    0 & 2 & 0 & 2 \\
+    2 & 0 & 2 & 0 \\
+    0 & 2 & 0 & 2
+    \end{pmatrix},
+    \qquad
+    A^3 =
+    \begin{pmatrix}
+    0 & 4 & 0 & 4 \\
+    4 & 0 & 4 & 0 \\
+    0 & 4 & 0 & 4 \\
+    4 & 0 & 4 & 0
+    \end{pmatrix}.
+    $$
+
+3.  Non-adjacent pairs in $C_4$ are $(1,3)$ and $(2,4)$. From $A^2$, $(A^2)_{13} = (A^2)_{24} = 2$, so there are **two** walks of length $2$ between each opposite pair (via the two neighbors on the cycle).
+
+4.  $(A^r)_{ij}$ counts **walks** of length $r$, allowing repeated vertices and edges. A **path** is a walk with no repeated vertices. For example, in $C_4$ the walk $1\to2\to1\to2$ is counted in $(A^3)_{12}$ but is not a path of length $3$.
+
+#### Exercise 10. Regular graphs
+
+1.  In a $k$-regular graph, each of the $N$ vertices contributes $k$ to the degree sum. The handshaking lemma gives
+    $$
+    Nk = 2M \quad\Longrightarrow\quad M = \frac{kN}{2}.
+    $$
+
+2.  Therefore $kN$ must be even. In particular, if $k$ is odd then $N$ must be even; if $k$ is even, any $N$ works.
+
+3.  Let $A$ be the adjacency matrix of a $k$-regular graph. For any vector $\mathbf{x}$,
+    $$
+    \mathbf{x}^\top A \mathbf{x} = \sum_{\{i,j\}\in E} 2x_i x_j \leq k \sum_i x_i^2 = k\|\mathbf{x}\|^2
+    $$
+    by Cauchy--Schwarz on each row, and similarly $\mathbf{x}^\top A \mathbf{x} \geq -k\|\mathbf{x}\|^2$. Hence every eigenvalue $\lambda$ of $A$ satisfies $|\lambda| \leq k$. The vector $\mathbf{1}$ satisfies $A\mathbf{1} = k\mathbf{1}$, so $\lambda = k$ is always an eigenvalue.
+
+### Part III. Simulation and coding exercises
+
+#### Exercise 11. The Petersen graph
+
+```{r}
+#| label: ex11-petersen
+#| echo: true
+#| fig-cap: "Petersen graph with vertex size proportional to degree."
+
+g_p <- make_graph("Petersen")
+
+list(
+  order = vcount(g_p),
+  size = ecount(g_p),
+  degree_sequence = sort(degree(g_p), decreasing = TRUE),
+  diameter = diameter(g_p),
+  girth = girth(g_p),
+  clustering = transitivity(g_p, type = "global")
+)
+
+A_p <- as_adjacency_matrix(g_p, sparse = FALSE)
+D_p <- diag(rowSums(A_p))
+L_p <- D_p - A_p
+fiedler <- sort(eigen(L_p, symmetric = TRUE)$values)[2]
+
+par(mar = c(1, 1, 2, 1))
+plot(
+  g_p,
+  vertex.size = 14 + 3 * degree(g_p),
+  vertex.color = course_cols$blue,
+  vertex.frame.color = "white",
+  vertex.label.color = "white",
+  edge.color = course_cols$slate,
+  main = "Petersen graph"
+)
+
+fiedler
+```
+
+**Summary.** The Petersen graph has $N=10$, $M=15$, is $3$-regular, has diameter $2$, girth $5$, and global clustering $0$. The Fiedler value is positive ($\approx 0.979$), confirming the graph is connected.
+
+#### Exercise 12. Exploring graph families
+
+```{r}
+#| label: ex12-graph-families
+#| echo: true
+#| fig-cap: "Original graph (left) and a minimum spanning tree (right) for each family."
+
+summarize_graph <- function(g, name) {
+  tibble(
+    graph = name,
+    degree_sequence = paste(sort(degree(g), decreasing = TRUE), collapse = ", "),
+    avg_degree = mean(degree(g)),
+    diameter = diameter(g),
+    clustering = transitivity(g, type = "global"),
+    bipartite = is_bipartite(g)
+  )
+}
+
+set.seed(42)
+g_k5 <- make_full_graph(5, loops = FALSE)
+g_c10 <- make_ring(10)
+g_p8 <- make_graph("path", n = 8)
+g_er <- sample_gnp(20, 0.25)
+
+families <- list(K5 = g_k5, C10 = g_c10, P8 = g_p8, ER = g_er)
+bind_rows(lapply(names(families), function(nm) summarize_graph(families[[nm]], nm)))
+
+old_par <- par(no.readonly = TRUE)
+par(mfrow = c(2, 4), mar = c(1, 1, 2, 1))
+for (nm in names(families)) {
+  g <- families[[nm]]
+  mst_g <- mst(g)
+  plot(g, main = paste(nm, "original"), vertex.size = 12,
+       vertex.color = course_cols$teal, vertex.label = NA)
+  plot(mst_g, main = paste(nm, "MST"), vertex.size = 12,
+       vertex.color = course_cols$gold, vertex.label = NA)
+}
+par(old_par)
+```
+
+| Graph | Bipartite? |
+|:------|:-----------|
+| $K_5$ | No |
+| $C_{10}$ | Yes |
+| $P_8$ | Yes |
+| $G(20,0.25)$ | Typically no (check with `is_bipartite`) |
+
+#### Exercise 13. Adjacency matrix powers
+
+```{r}
+#| label: ex13-adj-powers
+#| echo: true
+
+adj_power <- function(g, r) {
+  A <- as_adjacency_matrix(g, sparse = FALSE)
+  A_r <- A
+  if (r > 1) {
+    for (i in seq_len(r - 1)) A_r <- A_r %*% A
+  }
+  A_r
+}
+
+g_c5 <- make_ring(5)
+A3_c5 <- adj_power(g_c5, 3)
+walks_c5 <- sum(A3_c5)
+
+g_rand <- sample_gnp(15, 0.3)
+A3_rand <- adj_power(g_rand, 3)
+triangles_trace <- sum(diag(A3_rand)) / 6
+triangles_igraph <- sum(count_triangles(g_rand)) / 3
+
+list(
+  total_walks_length_3_in_C5 = walks_c5,
+  triangles_ER_trace = triangles_trace,
+  triangles_ER_igraph = triangles_igraph
+)
+```
+
+`sum(A^3)` counts all **ordered** walks of length $3$ (from any start vertex to any end vertex). For $C_5$ this total is $20$. The triangle count from $\operatorname{tr}(A^3)/6$ matches `igraph`'s triangle count on the random $G(15,0.3)$ graph.
+
+#### Exercise 14. Detecting cut vertices
+
+```{r}
+#| label: ex14-cut-vertices
+#| echo: true
+#| fig-cap: "Example connected graph with articulation points highlighted."
+
+random_connected <- function(n, p) {
+  repeat {
+    g <- sample_gnp(n, p)
+    if (is_connected(g)) return(g)
+  }
+}
+
+highlight_articulation <- function(g) {
+  ap <- articulation_points(g)
+  cols <- ifelse(seq_len(vcount(g)) %in% ap, course_cols$warm, course_cols$teal)
+  plot(
+    g,
+    vertex.color = cols,
+    vertex.size = 14,
+    vertex.label = NA,
+    edge.color = course_cols$slate,
+    main = paste("Articulation points:", paste(ap, collapse = ", "))
+  )
+  invisible(ap)
+}
+
+set.seed(42)
+g_demo <- random_connected(20, 0.15)
+highlight_articulation(g_demo)
+
+p_grid <- seq(0.1, 0.6, by = 0.05)
+mean_ap <- vapply(p_grid, function(p) {
+  mean(replicate(30, length(articulation_points(random_connected(25, p)))))
+}, numeric(1))
+
+ggplot(tibble(p = p_grid, mean_articulation_points = mean_ap),
+       aes(p, mean_articulation_points)) +
+  geom_line(linewidth = 1, color = course_cols$blue) +
+  geom_point(size = 2, color = course_cols$teal) +
+  labs(
+    x = "Edge probability p",
+    y = "Mean number of articulation points",
+    title = "Articulation points in G(25, p)"
+  ) +
+  theme_minimal(base_size = 14)
+```
+
+As $p$ increases, the graph becomes more redundant and the mean number of articulation points typically **decreases**.
+
+#### Exercise 15. Minimum spanning tree on a weighted graph
+
+```{r}
+#| label: ex15-mst
+#| echo: true
+#| fig-cap: "Full weighted graph (left) and MST highlighted (right), uniform weights."
+
+compare_mst <- function(weight_sampler, title_prefix, seed = 42) {
+  set.seed(seed)
+  g <- sample_gnp(12, 0.35)
+  E(g)$weight <- weight_sampler(ecount(g))
+
+  mst_g <- mst(g)
+  full_weight <- sum(E(g)$weight)
+  mst_weight <- sum(E(mst_g)$weight)
+
+  edge_cols <- ifelse(
+    apply(as_edgelist(g), 1, function(e) {
+      any(apply(as_edgelist(mst_g), 1, function(f) all(sort(e) == sort(f))))
+    }),
+    course_cols$gold,
+    course_cols$slate
+  )
+
+  par(mfrow = c(1, 2), mar = c(1, 1, 2, 1))
+  plot(g, edge.width = E(g)$weight / 2,
+       main = paste(title_prefix, "full graph"),
+       vertex.color = course_cols$teal, vertex.label = NA)
+  plot(g, edge.color = edge_cols, edge.width = 3,
+       main = paste(title_prefix, "MST highlighted"),
+       vertex.color = course_cols$teal, vertex.label = NA)
+
+  c(full_weight = full_weight, mst_weight = mst_weight,
+    fraction = mst_weight / full_weight)
+}
+
+uniform_result <- compare_mst(function(m) runif(m, 1, 10), "Uniform")
+exponential_result <- compare_mst(function(m) rexp(m, rate = 1/5), "Exponential")
+
+bind_rows(
+  tibble(distribution = "Uniform", !!!as.list(uniform_result)),
+  tibble(distribution = "Exponential", !!!as.list(exponential_result))
+)
+```
+
+The MST always has $N-1 = 11$ edges. Its total weight is much smaller than the sum of all edge weights. Exponential weights produce a wider spread of edge costs, so the MST–full-graph weight ratio can differ from the uniform case.

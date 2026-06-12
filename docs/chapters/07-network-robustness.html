@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>8&nbsp; Network Robustness – Network Science</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -89,15 +92,14 @@ div.csl-indent {
 <link href="../chapters/06-scale-free-graphs.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4dd0a3cd2d1f0c1ca65dcbe395e0d0e9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-07314a9cf6582ab18f4f031a2d4fd43d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b5d8c9ff6161f8ccf1af3142a66ed23c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-d4aa30a0361d4615301e0f27ccb5b562.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -199,9 +201,7 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="../index.html" class="sidebar-logo-link">
-      </a>
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Network Science</a> 
     </div>
@@ -352,13 +352,13 @@ window.Quarto = {
 <section id="introduction" class="level2" data-number="8.1">
 <h2 data-number="8.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">8.1</span> Introduction</h2>
 <p>All previous chapters have studied how networks are built and what structural properties they possess. This chapter asks a different question: <em>what happens when a network is damaged?</em></p>
-<p>Real networks — the internet, power grids, transportation systems, biological interaction networks — are subject to failure. Nodes can break down, edges can be severed, and components can become isolated from the rest of the system. The degree to which a network maintains its basic functionality despite such damage is called <strong>network robustness</strong> <span class="citation" data-cites="newman2010 albert2000">(<a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>; <a href="#ref-albert2000" role="doc-biblioref">Albert, Jeong, and Barabási 2000</a>)</span>.</p>
+<p>Real networks — the internet, power grids, transportation systems, biological interaction networks — are subject to failure. Nodes can break down, edges can be severed, and components can become isolated from the rest of the system. The degree to which a network maintains its basic functionality despite such damage is called <strong>network robustness</strong> <span class="citation" data-cites="newman2010 albert2000">(<a href="#ref-albert2000" role="doc-biblioref">Albert et al., 2000</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>)</span>.</p>
 <p>Two fundamentally different modes of failure must be distinguished from the outset:</p>
 <ol type="1">
 <li><p><strong>Random failures</strong>: nodes or edges fail without targeting any particular structural property. A router breaks down due to hardware malfunction; a power line fails due to weather. These failures are essentially random with respect to the network’s topology.</p></li>
 <li><p><strong>Targeted attacks</strong>: failures are directed at the most important nodes. A deliberate attack on infrastructure targets the highest-degree hubs, the most central nodes, or the most critical bridges.</p></li>
 </ol>
-<p>These two modes produce strikingly different outcomes depending on the type of network. In particular, scale-free networks and Erdős–Rényi random graphs respond to damage in ways that are almost opposite to one another. Understanding this asymmetry is one of the central insights of network robustness theory <span class="citation" data-cites="albert2000 cohen2000 callaway2000">(<a href="#ref-albert2000" role="doc-biblioref">Albert, Jeong, and Barabási 2000</a>; <a href="#ref-cohen2000" role="doc-biblioref">Cohen et al. 2000</a>; <a href="#ref-callaway2000" role="doc-biblioref">Callaway et al. 2000</a>)</span>.</p>
+<p>These two modes produce strikingly different outcomes depending on the type of network. In particular, scale-free networks and Erdős–Rényi random graphs respond to damage in ways that are almost opposite to one another. Understanding this asymmetry is one of the central insights of network robustness theory <span class="citation" data-cites="albert2000 cohen2000 callaway2000">(<a href="#ref-albert2000" role="doc-biblioref">Albert et al., 2000</a>; <a href="#ref-callaway2000" role="doc-biblioref">Callaway et al., 2000</a>; <a href="#ref-cohen2000" role="doc-biblioref"><span class="nocase">Cohen et al.</span>, 2000</a>)</span>.</p>
 </section>
 <section id="learning-goals" class="level2" data-number="8.2">
 <h2 data-number="8.2" class="anchored" data-anchor-id="learning-goals"><span class="header-section-number">8.2</span> Learning goals</h2>
@@ -403,7 +403,7 @@ S(f) = \frac{|G_{\text{giant}}(f)|}{N},
 </span></p>
 <p>where <span class="math inline">N</span> is the number of vertices in the original network and <span class="math inline">|G_{\text{giant}}(f)|</span> is the number of vertices in the largest connected component after removal.</p>
 </div>
-<p>This definition measures the surviving giant component relative to the <strong>original</strong> system size. That convention is standard in robustness studies because it tracks how much of the original network remains functionally connected. One may also normalize by the number of surviving vertices, but that answers a different question <span class="citation" data-cites="newman2010 callaway2000">(<a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>; <a href="#ref-callaway2000" role="doc-biblioref">Callaway et al. 2000</a>)</span>.</p>
+<p>This definition measures the surviving giant component relative to the <strong>original</strong> system size. That convention is standard in robustness studies because it tracks how much of the original network remains functionally connected. One may also normalize by the number of surviving vertices, but that answers a different question <span class="citation" data-cites="newman2010 callaway2000">(<a href="#ref-callaway2000" role="doc-biblioref">Callaway et al., 2000</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>)</span>.</p>
 <p>When <span class="math inline">S(f)</span> becomes very small and no component of order <span class="math inline">N</span> remains, the network has lost its global connectivity. The corresponding transition point is called the <strong>critical threshold</strong> <span class="math inline">f_c</span>.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Main idea">
 <div class="callout-header d-flex align-content-center">
@@ -421,7 +421,7 @@ S(f) = \frac{|G_{\text{giant}}(f)|}{N},
 </section>
 <section id="percolation-theory" class="level3">
 <h3 class="anchored" data-anchor-id="percolation-theory">Percolation theory</h3>
-<p>The mathematical framework for studying robustness is <strong>percolation theory</strong>. In the site percolation model <span class="citation" data-cites="callaway2000 newman2001 newman2010">(<a href="#ref-callaway2000" role="doc-biblioref">Callaway et al. 2000</a>; <a href="#ref-newman2001" role="doc-biblioref">Newman, Strogatz, and Watts 2001</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span>:</p>
+<p>The mathematical framework for studying robustness is <strong>percolation theory</strong>. In the site percolation model <span class="citation" data-cites="callaway2000 newman2001 newman2010">(<a href="#ref-callaway2000" role="doc-biblioref">Callaway et al., 2000</a>; <a href="#ref-newman2001" role="doc-biblioref">Newman et al., 2001</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>)</span>:</p>
 <ul>
 <li>each node is independently retained with probability <span class="math inline">1 - f</span>, or removed with probability <span class="math inline">f</span>,</li>
 <li>edges between removed nodes are also removed,</li>
@@ -448,7 +448,7 @@ S(f) &gt; 0 \text{ for } f &lt; f_c, \qquad S(f) = 0 \text{ in the } N\to\infty 
 <section id="criterion-for-the-giant-component" class="level3">
 <h3 class="anchored" data-anchor-id="criterion-for-the-giant-component">Criterion for the giant component</h3>
 <div id="thm-molloy-reed" class="theorem">
-<p><span class="theorem-title"><strong>Theorem 8.1</strong></span> <strong>Molloy–Reed criterion (configuration-model form).</strong> For a large, locally tree-like random network with degree distribution <span class="math inline">\{p_k\}</span>, a giant component exists when <span class="citation" data-cites="molloy1995 newman2001">(<a href="#ref-molloy1995" role="doc-biblioref">Molloy and Reed 1995</a>; <a href="#ref-newman2001" role="doc-biblioref">Newman, Strogatz, and Watts 2001</a>)</span></p>
+<p><span class="theorem-title"><strong>Theorem 8.1</strong></span> <strong>Molloy–Reed criterion (configuration-model form).</strong> For a large, locally tree-like random network with degree distribution <span class="math inline">\{p_k\}</span>, a giant component exists when <span class="citation" data-cites="molloy1995 newman2001">(<a href="#ref-molloy1995" role="doc-biblioref">Molloy &amp; Reed, 1995</a>; <a href="#ref-newman2001" role="doc-biblioref">Newman et al., 2001</a>)</span></p>
 <p><span class="math display">
 \sum_k k(k-2)p_k &gt; 0,
 </span></p>
@@ -521,7 +521,7 @@ f_c = 1 - \frac{1}{\kappa_0 - 1}
 \boxed{f_c = 1 - \frac{1}{\kappa_0 - 1}}
 \qquad \text{where} \quad \kappa_0 = \frac{\langle k^2 \rangle}{\langle k \rangle}.
 </span></p>
-<p>This formula is exact for locally tree-like networks (networks with negligible number of short cycles in the large-<span class="math inline">N</span> limit) and provides a good approximation for many real networks <span class="citation" data-cites="cohen2000 newman2001 newman2010">(<a href="#ref-cohen2000" role="doc-biblioref">Cohen et al. 2000</a>; <a href="#ref-newman2001" role="doc-biblioref">Newman, Strogatz, and Watts 2001</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span>.</p>
+<p>This formula is exact for locally tree-like networks (networks with negligible number of short cycles in the large-<span class="math inline">N</span> limit) and provides a good approximation for many real networks <span class="citation" data-cites="cohen2000 newman2001 newman2010">(<a href="#ref-cohen2000" role="doc-biblioref"><span class="nocase">Cohen et al.</span>, 2000</a>; <a href="#ref-newman2001" role="doc-biblioref">Newman et al., 2001</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>)</span>.</p>
 <p>With the general threshold formula in hand, the next step is to apply it to concrete graph families. The Erdős–Rényi model is the natural starting point because its degree distribution is analytically tractable and serves as a benchmark for more heterogeneous networks.</p>
 </section>
 </section>
@@ -529,7 +529,7 @@ f_c = 1 - \frac{1}{\kappa_0 - 1}
 <h2 data-number="8.6" class="anchored" data-anchor-id="robustness-of-erdősrényi-networks"><span class="header-section-number">8.6</span> Robustness of Erdős–Rényi networks</h2>
 <section id="degree-distribution-and-moments" class="level3">
 <h3 class="anchored" data-anchor-id="degree-distribution-and-moments">Degree distribution and moments</h3>
-<p>In the Erdős–Rényi model <span class="math inline">G(N, p)</span> with large <span class="math inline">N</span> and fixed <span class="math inline">\langle k \rangle = p(N-1) \approx pN</span>, the degree distribution is approximately Poisson <span class="citation" data-cites="newman2010 barabasi2016">(<a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási and Pósfai 2016</a>)</span>:</p>
+<p>In the Erdős–Rényi model <span class="math inline">G(N, p)</span> with large <span class="math inline">N</span> and fixed <span class="math inline">\langle k \rangle = p(N-1) \approx pN</span>, the degree distribution is approximately Poisson <span class="citation" data-cites="newman2010 barabasi2016">(<a href="#ref-barabasi2016" role="doc-biblioref">Barabási &amp; Pósfai, 2016</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>)</span>:</p>
 <p><span class="math display">
 p_k \approx e^{-\langle k \rangle} \frac{\langle k \rangle^k}{k!}.
 </span></p>
@@ -667,7 +667,7 @@ Figure&nbsp;8.1: Robustness curves for Erdős–Rényi networks under random nod
 <h2 data-number="8.7" class="anchored" data-anchor-id="robustness-of-scale-free-networks"><span class="header-section-number">8.7</span> Robustness of scale-free networks</h2>
 <section id="power-law-degree-distribution-and-diverging-moments" class="level3">
 <h3 class="anchored" data-anchor-id="power-law-degree-distribution-and-diverging-moments">Power-law degree distribution and diverging moments</h3>
-<p>For a scale-free network with degree distribution <span class="math inline">p_k \sim C k^{-\gamma}</span>, the behavior of the moments <span class="math inline">\langle k \rangle</span> and <span class="math inline">\langle k^2 \rangle</span> depends critically on the exponent <span class="math inline">\gamma</span> <span class="citation" data-cites="barabasi1999 albert2002 newman2010">(<a href="#ref-barabasi1999" role="doc-biblioref">Barabási and Albert 1999</a>; <a href="#ref-albert2002" role="doc-biblioref">Albert and Barabási 2002</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span>.</p>
+<p>For a scale-free network with degree distribution <span class="math inline">p_k \sim C k^{-\gamma}</span>, the behavior of the moments <span class="math inline">\langle k \rangle</span> and <span class="math inline">\langle k^2 \rangle</span> depends critically on the exponent <span class="math inline">\gamma</span> <span class="citation" data-cites="barabasi1999 albert2002 newman2010">(<a href="#ref-albert2002" role="doc-biblioref">Albert &amp; Barabási, 2002</a>; <a href="#ref-barabasi1999" role="doc-biblioref">Barabási &amp; Albert, 1999</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>)</span>.</p>
 <p>For <span class="math inline">\gamma &gt; 3</span>: both <span class="math inline">\langle k \rangle</span> and <span class="math inline">\langle k^2 \rangle</span> are finite.</p>
 <p>For <span class="math inline">2 &lt; \gamma \leq 3</span>: <span class="math inline">\langle k \rangle</span> is finite but <span class="math inline">\langle k^2 \rangle</span> <strong>diverges</strong> as <span class="math inline">N \to \infty</span>.</p>
 <p>For <span class="math inline">\gamma \leq 2</span>: both moments diverge.</p>
@@ -682,7 +682,7 @@ Figure&nbsp;8.1: Robustness curves for Erdős–Rényi networks under random nod
 <p><span class="math display">
 f_c = 1 - \frac{1}{\kappa_0 - 1} \to 1 \quad \text{as } N \to \infty.
 </span></p>
-<p>This is a remarkable result. For a scale-free network with <span class="math inline">2 &lt; \gamma \leq 3</span>, the critical threshold under random failure approaches <span class="math inline">1</span> in the large-<span class="math inline">N</span> limit. This means that <strong>no finite fraction of random node removals can destroy the giant component</strong> <span class="citation" data-cites="cohen2000 newman2001">(<a href="#ref-cohen2000" role="doc-biblioref">Cohen et al. 2000</a>; <a href="#ref-newman2001" role="doc-biblioref">Newman, Strogatz, and Watts 2001</a>)</span>.</p>
+<p>This is a remarkable result. For a scale-free network with <span class="math inline">2 &lt; \gamma \leq 3</span>, the critical threshold under random failure approaches <span class="math inline">1</span> in the large-<span class="math inline">N</span> limit. This means that <strong>no finite fraction of random node removals can destroy the giant component</strong> <span class="citation" data-cites="cohen2000 newman2001">(<a href="#ref-cohen2000" role="doc-biblioref"><span class="nocase">Cohen et al.</span>, 2000</a>; <a href="#ref-newman2001" role="doc-biblioref">Newman et al., 2001</a>)</span>.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Error tolerance in scale-free networks">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -696,7 +696,7 @@ f_c = 1 - \frac{1}{\kappa_0 - 1} \to 1 \quad \text{as } N \to \infty.
 <p>Scale-free networks are almost perfectly robust to random failures. Because most nodes have very small degree, a randomly chosen node is almost certainly not a hub. The hubs — which hold the network together — are rarely hit by chance.</p>
 </div>
 </div>
-<p>Albert, Jeong, and Barabási highlighted this phenomenon as <strong>error tolerance</strong>: the ability to withstand random failures, while contrasting it sharply with targeted attack vulnerability <span class="citation" data-cites="albert2000">(<a href="#ref-albert2000" role="doc-biblioref">Albert, Jeong, and Barabási 2000</a>)</span>.</p>
+<p>Albert, Jeong, and Barabási highlighted this phenomenon as <strong>error tolerance</strong>: the ability to withstand random failures, while contrasting it sharply with targeted attack vulnerability <span class="citation" data-cites="albert2000">(<a href="#ref-albert2000" role="doc-biblioref">Albert et al., 2000</a>)</span>.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Finite-size caveat">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1169,11 +1169,11 @@ Figure&nbsp;8.8: Robustness index <span class="math inline">R</span> for BA and 
 </section>
 <section id="real-world-implications" class="level2" data-number="8.15">
 <h2 data-number="8.15" class="anchored" data-anchor-id="real-world-implications"><span class="header-section-number">8.15</span> Real-world implications</h2>
-<p>The theoretical results developed in this chapter have direct consequences for the design and protection of real systems <span class="citation" data-cites="albert2000 cohen2000 newman2010">(<a href="#ref-albert2000" role="doc-biblioref">Albert, Jeong, and Barabási 2000</a>; <a href="#ref-cohen2000" role="doc-biblioref">Cohen et al. 2000</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span>.</p>
+<p>The theoretical results developed in this chapter have direct consequences for the design and protection of real systems <span class="citation" data-cites="albert2000 cohen2000 newman2010">(<a href="#ref-albert2000" role="doc-biblioref">Albert et al., 2000</a>; <a href="#ref-cohen2000" role="doc-biblioref"><span class="nocase">Cohen et al.</span>, 2000</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>)</span>.</p>
 <p><strong>Internet and communication networks.</strong> The internet exhibits scale-free degree distributions. This means that most routers fail occasionally without disrupting global connectivity — error tolerance. However, a coordinated attack on the most connected routers could fragment the network.</p>
 <p><strong>Power grids.</strong> Power grids are not scale-free: their degree distributions are more narrow. As a result, they are more susceptible to random failures than scale-free networks, but they also lack the extreme hub vulnerability. Cascading failures — triggered when overloaded nodes fail — are a major concern.</p>
 <p><strong>Biological networks.</strong> Protein interaction networks and metabolic networks tend to be scale-free. The observation that essential genes (whose knockout is lethal) disproportionately encode high-degree hub proteins is a biological manifestation of the Achilles heel phenomenon.</p>
-<p><strong>Epidemic spreading.</strong> The same hubs that make scale-free networks robust also make them efficient channels for spreading processes. A disease or a piece of information propagates especially quickly when hubs are involved. This is studied in epidemic models on networks, where the epidemic threshold vanishes for scale-free networks with <span class="math inline">\gamma \leq 3</span> <span class="citation" data-cites="newman2010 barabasi2016">(<a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási and Pósfai 2016</a>)</span>.</p>
+<p><strong>Epidemic spreading.</strong> The same hubs that make scale-free networks robust also make them efficient channels for spreading processes. A disease or a piece of information propagates especially quickly when hubs are involved. This is studied in epidemic models on networks, where the epidemic threshold vanishes for scale-free networks with <span class="math inline">\gamma \leq 3</span> <span class="citation" data-cites="newman2010 barabasi2016">(<a href="#ref-barabasi2016" role="doc-biblioref">Barabási &amp; Pósfai, 2016</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>)</span>.</p>
 </section>
 <section id="simulation-robustness-of-wattsstrogatz-networks" class="level2" data-number="8.16">
 <h2 data-number="8.16" class="anchored" data-anchor-id="simulation-robustness-of-wattsstrogatz-networks"><span class="header-section-number">8.16</span> Simulation: robustness of Watts–Strogatz networks</h2>
@@ -1447,33 +1447,33 @@ Figure&nbsp;8.9: Robustness curves for Watts–Strogatz small-world networks wit
 <h2 data-number="8.20" class="anchored" data-anchor-id="references"><span class="header-section-number">8.20</span> References</h2>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
 <div id="ref-albert2002" class="csl-entry" role="listitem">
-Albert, Réka, and Albert-László Barabási. 2002. <span>“Statistical Mechanics of Complex Networks.”</span> <em>Reviews of Modern Physics</em> 74 (1): 47–97. <a href="https://doi.org/10.1103/RevModPhys.74.47">https://doi.org/10.1103/RevModPhys.74.47</a>.
+Albert, R., &amp; Barabási, A.-L. (2002). Statistical mechanics of complex networks. <em>Reviews of Modern Physics</em>, <em>74</em>(1), 47–97. <a href="https://doi.org/10.1103/RevModPhys.74.47">https://doi.org/10.1103/RevModPhys.74.47</a>
 </div>
 <div id="ref-albert2000" class="csl-entry" role="listitem">
-Albert, Réka, Hawoong Jeong, and Albert-László Barabási. 2000. <span>“Error and Attack Tolerance of Complex Networks.”</span> <em>Nature</em> 406 (6794): 378–82. <a href="https://doi.org/10.1038/35019019">https://doi.org/10.1038/35019019</a>.
+Albert, R., Jeong, H., &amp; Barabási, A.-L. (2000). Error and attack tolerance of complex networks. <em>Nature</em>, <em>406</em>(6794), 378–382. <a href="https://doi.org/10.1038/35019019">https://doi.org/10.1038/35019019</a>
 </div>
 <div id="ref-barabasi1999" class="csl-entry" role="listitem">
-Barabási, Albert-László, and Réka Albert. 1999. <span>“Emergence of Scaling in Random Networks.”</span> <em>Science</em> 286 (5439): 509–12. <a href="https://doi.org/10.1126/science.286.5439.509">https://doi.org/10.1126/science.286.5439.509</a>.
+Barabási, A.-L., &amp; Albert, R. (1999). Emergence of scaling in random networks. <em>Science</em>, <em>286</em>(5439), 509–512. <a href="https://doi.org/10.1126/science.286.5439.509">https://doi.org/10.1126/science.286.5439.509</a>
 </div>
 <div id="ref-barabasi2016" class="csl-entry" role="listitem">
-Barabási, Albert-László, and Márton Pósfai. 2016. <em>Network Science</em>. Cambridge University Press.
+Barabási, A.-L., &amp; Pósfai, M. (2016). <em>Network science</em>. Cambridge University Press.
 </div>
 <div id="ref-callaway2000" class="csl-entry" role="listitem">
-Callaway, Duncan S., M. E. J. Newman, Steven H. Strogatz, and Duncan J. Watts. 2000. <span>“Network Robustness and Fragility: Percolation on Random Graphs.”</span> <em>Physical Review Letters</em> 85 (25): 5468–71. <a href="https://doi.org/10.1103/PhysRevLett.85.5468">https://doi.org/10.1103/PhysRevLett.85.5468</a>.
+Callaway, D. S., Newman, M. E. J., Strogatz, S. H., &amp; Watts, D. J. (2000). Network robustness and fragility: Percolation on random graphs. <em>Physical Review Letters</em>, <em>85</em>(25), 5468–5471. <a href="https://doi.org/10.1103/PhysRevLett.85.5468">https://doi.org/10.1103/PhysRevLett.85.5468</a>
 </div>
 <div id="ref-cohen2000" class="csl-entry" role="listitem">
-Cohen, Reuven, Keren Erez, Daniel ben-Avraham, and Shlomo Havlin. 2000. <span>“Resilience of the Internet to Random Breakdowns.”</span> <em>Physical Review Letters</em> 85 (21): 4626–28. <a href="https://doi.org/10.1103/PhysRevLett.85.4626">https://doi.org/10.1103/PhysRevLett.85.4626</a>.
+<span class="nocase">Cohen, R., Erez, K., ben-Avraham, D., &amp; Havlin, S.</span> (2000). Resilience of the internet to random breakdowns. <em>Physical Review Letters</em>, <em>85</em>(21), 4626–4628. <a href="https://doi.org/10.1103/PhysRevLett.85.4626">https://doi.org/10.1103/PhysRevLett.85.4626</a>
 </div>
 <div id="ref-molloy1995" class="csl-entry" role="listitem">
-Molloy, Michael, and Bruce Reed. 1995. <span>“A Critical Point for Random Graphs with a Given Degree Sequence.”</span> <em>Random Structures &amp; Algorithms</em> 6 (2-3): 161–80. <a href="https://doi.org/10.1002/rsa.3240060204">https://doi.org/10.1002/rsa.3240060204</a>.
+Molloy, M., &amp; Reed, B. (1995). A critical point for random graphs with a given degree sequence. <em>Random Structures &amp; Algorithms</em>, <em>6</em>(2-3), 161–180. <a href="https://doi.org/10.1002/rsa.3240060204">https://doi.org/10.1002/rsa.3240060204</a>
 </div>
 <div id="ref-newman2010" class="csl-entry" role="listitem">
-Newman, M. E. J. 2010. <em>Networks: An Introduction</em>. Oxford University Press.
+Newman, M. E. J. (2010). <em>Networks: An introduction</em>. Oxford University Press.
 </div>
 <div id="ref-newman2001" class="csl-entry" role="listitem">
-Newman, M. E. J., Steven H. Strogatz, and Duncan J. Watts. 2001. <span>“Random Graphs with Arbitrary Degree Distributions and Their Applications.”</span> <em>Physical Review E</em> 64 (2): 026118. <a href="https://doi.org/10.1103/PhysRevE.64.026118">https://doi.org/10.1103/PhysRevE.64.026118</a>.
+Newman, M. E. J., Strogatz, S. H., &amp; Watts, D. J. (2001). Random graphs with arbitrary degree distributions and their applications. <em>Physical Review E</em>, <em>64</em>(2), 026118. <a href="https://doi.org/10.1103/PhysRevE.64.026118">https://doi.org/10.1103/PhysRevE.64.026118</a>
 </div>
 </div>
 </section>

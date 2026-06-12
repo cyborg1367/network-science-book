@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>9&nbsp; Community Structure in Graphs – Network Science</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -88,15 +91,14 @@ div.csl-indent {
 <link href="../chapters/07-network-robustness.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4dd0a3cd2d1f0c1ca65dcbe395e0d0e9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-07314a9cf6582ab18f4f031a2d4fd43d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b5d8c9ff6161f8ccf1af3142a66ed23c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-d4aa30a0361d4615301e0f27ccb5b562.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -198,9 +200,7 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="../index.html" class="sidebar-logo-link">
-      </a>
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Network Science</a> 
     </div>
@@ -380,8 +380,8 @@ window.Quarto = {
 
 <section id="introduction" class="level2" data-number="9.1">
 <h2 data-number="9.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">9.1</span> Introduction</h2>
-<p>After learning how random graphs generate baseline connectivity, how scale-free networks create hubs, and how small-world networks combine clustering with short paths, we now move to a different question: how do vertices assemble into <em>modules</em> or <em>communities</em>? In many real networks, the most informative structure is neither purely local nor purely global. Instead, it lives at an intermediate, <strong>mesoscopic</strong> scale. Social networks split into circles of friends, scientific collaboration networks split into research specialties, gene regulatory networks contain functional modules, and transportation networks organize into regional clusters. Community structure is therefore a canonical example of mesoscopic organization in complex systems <span class="citation" data-cites="barabasi2016 girvan2002 fortunato2010">(<a href="#ref-barabasi2016" role="doc-biblioref">Barabási and Pósfai 2016</a>; <a href="#ref-girvan2002" role="doc-biblioref">Girvan and Newman 2002</a>; <a href="#ref-fortunato2010" role="doc-biblioref">Fortunato 2010</a>)</span>.</p>
-<p>In the language of network science, a community is a group of vertices that connect to one another more densely than to the rest of the graph. Yet this simple intuition immediately surfaces a fundamental difficulty: there is no unique, universally accepted mathematical definition of a community. Different definitions formalize different aspects of mesoscale cohesion. Some methods minimize sparse cuts between groups, some maximize a null-model deviation (modularity), and some treat block membership as a latent variable to be inferred from a probabilistic generative model <span class="citation" data-cites="fortunato2010 newman2010">(<a href="#ref-fortunato2010" role="doc-biblioref">Fortunato 2010</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span>. Each approach answers a slightly different question, and each inherits different assumptions, computational characteristics, and failure modes.</p>
+<p>After learning how random graphs generate baseline connectivity, how scale-free networks create hubs, and how small-world networks combine clustering with short paths, we now move to a different question: how do vertices assemble into <em>modules</em> or <em>communities</em>? In many real networks, the most informative structure is neither purely local nor purely global. Instead, it lives at an intermediate, <strong>mesoscopic</strong> scale. Social networks split into circles of friends, scientific collaboration networks split into research specialties, gene regulatory networks contain functional modules, and transportation networks organize into regional clusters. Community structure is therefore a canonical example of mesoscopic organization in complex systems <span class="citation" data-cites="barabasi2016 girvan2002 fortunato2010">(<a href="#ref-barabasi2016" role="doc-biblioref">Barabási &amp; Pósfai, 2016</a>; <a href="#ref-fortunato2010" role="doc-biblioref">Fortunato, 2010</a>; <a href="#ref-girvan2002" role="doc-biblioref">Girvan &amp; Newman, 2002</a>)</span>.</p>
+<p>In the language of network science, a community is a group of vertices that connect to one another more densely than to the rest of the graph. Yet this simple intuition immediately surfaces a fundamental difficulty: there is no unique, universally accepted mathematical definition of a community. Different definitions formalize different aspects of mesoscale cohesion. Some methods minimize sparse cuts between groups, some maximize a null-model deviation (modularity), and some treat block membership as a latent variable to be inferred from a probabilistic generative model <span class="citation" data-cites="fortunato2010 newman2010">(<a href="#ref-fortunato2010" role="doc-biblioref">Fortunato, 2010</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>)</span>. Each approach answers a slightly different question, and each inherits different assumptions, computational characteristics, and failure modes.</p>
 <p>For master-level study, this plurality is not a problem to be avoided but a theoretical richness to be explored. The present chapter therefore develops community detection in stages: from informal intuition, through rigorous graph-cut quantities and spectral theory, through modularity and its optimization, to the stochastic block model as a full statistical inference framework. The chapter closes with a treatment of detectability limits that connects community structure to information theory, and with guidelines for honest interpretation of empirical results.</p>
 </section>
 <section id="chapter-roadmap" class="level2" data-number="9.2">
@@ -448,7 +448,7 @@ C_r \cap C_s = \emptyset \;\text{ for } r \neq s, \qquad \bigcup_{r=1}^q C_r = V
 <li>at the <strong>global</strong> level: diameter, giant components, and overall connectivity;</li>
 <li>at the <strong>mesoscopic</strong> level: whether <span class="math inline">V</span> decomposes into intermediate-scale modules.</li>
 </ul>
-<p>Community structure belongs to the third category. It is therefore not visible from degree distribution alone, and it cannot be captured by a single global scalar such as average path length. Two networks can share the same degree distribution and the same global density while differing profoundly in their block organization <span class="citation" data-cites="barabasi2016 fortunato2010">(<a href="#ref-barabasi2016" role="doc-biblioref">Barabási and Pósfai 2016</a>; <a href="#ref-fortunato2010" role="doc-biblioref">Fortunato 2010</a>)</span>. This scale separation is precisely why community detection requires its own mathematical machinery.</p>
+<p>Community structure belongs to the third category. It is therefore not visible from degree distribution alone, and it cannot be captured by a single global scalar such as average path length. Two networks can share the same degree distribution and the same global density while differing profoundly in their block organization <span class="citation" data-cites="barabasi2016 fortunato2010">(<a href="#ref-barabasi2016" role="doc-biblioref">Barabási &amp; Pósfai, 2016</a>; <a href="#ref-fortunato2010" role="doc-biblioref">Fortunato, 2010</a>)</span>. This scale separation is precisely why community detection requires its own mathematical machinery.</p>
 <p>In applications, a community can correspond to social role, biological function, thematic topic, geographic proximity, or hidden constraints in the formation process. Community analysis therefore transforms a large, difficult graph into an interpretable map of meso-level structure.</p>
 <hr>
 </section>
@@ -660,7 +660,7 @@ Figure&nbsp;9.2: Adjacency matrix of the planted graph after reordering vertices
 </span></p>
 </div>
 </div>
-<p>The lower bound is due to Cheeger and Buser <span class="citation" data-cites="chung1997">(<a href="#ref-chung1997" role="doc-biblioref">Chung 1997</a>)</span>, and the upper bound is constructive: the sweep algorithm on the second eigenvector of <span class="math inline">\mathcal{L}</span> finds a cut achieving <span class="math inline">\phi \leq \sqrt{2\lambda_2}</span>. Cheeger’s inequality is fundamental because it shows that a small spectral gap <span class="math inline">\lambda_2 \approx 0</span> is both <em>necessary</em> and <em>sufficient</em> (up to a square root) for the existence of a sparse cut. A graph with well-separated communities must have a small <span class="math inline">\lambda_2</span>.</p>
+<p>The lower bound is due to Cheeger and Buser <span class="citation" data-cites="chung1997">(<a href="#ref-chung1997" role="doc-biblioref">Chung, 1997</a>)</span>, and the upper bound is constructive: the sweep algorithm on the second eigenvector of <span class="math inline">\mathcal{L}</span> finds a cut achieving <span class="math inline">\phi \leq \sqrt{2\lambda_2}</span>. Cheeger’s inequality is fundamental because it shows that a small spectral gap <span class="math inline">\lambda_2 \approx 0</span> is both <em>necessary</em> and <em>sufficient</em> (up to a square root) for the existence of a sparse cut. A graph with well-separated communities must have a small <span class="math inline">\lambda_2</span>.</p>
 <hr>
 </section>
 </section>
@@ -702,7 +702,7 @@ L = D - A.
 <p><span class="math display">
 \mathrm{NCut}(S, \bar{S}) = \frac{\tilde{\mathbf{f}}^T \mathcal{L}\, \tilde{\mathbf{f}}}{\tilde{\mathbf{f}}^T \tilde{\mathbf{f}}},
 </span></p>
-<p>where <span class="math inline">\tilde{\mathbf{f}} = D^{1/2} \mathbf{f}</span>, under the constraint <span class="math inline">\tilde{\mathbf{f}}^T D^{1/2}\mathbf{1} = 0</span>. Relaxing <span class="math inline">\tilde{\mathbf{f}}</span> from a discrete vector to a continuous one and applying the Rayleigh quotient, the minimum is achieved by <span class="math inline">\tilde{\mathbf{f}} = \mathbf{v}_2(\mathcal{L})</span>, the second eigenvector of <span class="math inline">\mathcal{L}</span>. This is the <strong>spectral relaxation of normalized cut</strong> <span class="citation" data-cites="shi2000">(<a href="#ref-shi2000" role="doc-biblioref">Shi and Malik 2000</a>)</span>.</p>
+<p>where <span class="math inline">\tilde{\mathbf{f}} = D^{1/2} \mathbf{f}</span>, under the constraint <span class="math inline">\tilde{\mathbf{f}}^T D^{1/2}\mathbf{1} = 0</span>. Relaxing <span class="math inline">\tilde{\mathbf{f}}</span> from a discrete vector to a continuous one and applying the Rayleigh quotient, the minimum is achieved by <span class="math inline">\tilde{\mathbf{f}} = \mathbf{v}_2(\mathcal{L})</span>, the second eigenvector of <span class="math inline">\mathcal{L}</span>. This is the <strong>spectral relaxation of normalized cut</strong> <span class="citation" data-cites="shi2000">(<a href="#ref-shi2000" role="doc-biblioref">Shi &amp; Malik, 2000</a>)</span>.</p>
 </section>
 <section id="why-the-spectral-relaxation-helps" class="level3">
 <h3 class="anchored" data-anchor-id="why-the-spectral-relaxation-helps">Why the spectral relaxation helps</h3>
@@ -734,7 +734,7 @@ L = D - A.
 <p><strong>Output:</strong> partition <span class="math inline">\mathcal{C} = \{C_1, \ldots, C_q\}</span>.</p>
 </div>
 </div>
-<p>The row normalization in step 4 projects vertices onto the unit sphere, which makes <span class="math inline">k</span>-means more geometrically stable when block sizes and densities differ. The spectral embedding maps the discrete combinatorial structure of <span class="math inline">G</span> onto a continuous Euclidean space where standard clustering applies <span class="citation" data-cites="ng2002 von2007tutorial">(<a href="#ref-ng2002" role="doc-biblioref">Ng, Jordan, and Weiss 2002</a>; <a href="#ref-von2007tutorial" role="doc-biblioref">Luxburg 2007</a>)</span>.</p>
+<p>The row normalization in step 4 projects vertices onto the unit sphere, which makes <span class="math inline">k</span>-means more geometrically stable when block sizes and densities differ. The spectral embedding maps the discrete combinatorial structure of <span class="math inline">G</span> onto a continuous Euclidean space where standard clustering applies <span class="citation" data-cites="ng2002 von2007tutorial">(<a href="#ref-von2007tutorial" role="doc-biblioref">Luxburg, 2007</a>; <a href="#ref-ng2002" role="doc-biblioref">Ng et al., 2002</a>)</span>.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Show code</summary>
@@ -788,7 +788,7 @@ Figure&nbsp;9.3: Two-dimensional spectral embedding of the planted graph. Vertic
 </section>
 <section id="bridge-edges-and-the-girvannewman-algorithm" class="level2" data-number="9.10">
 <h2 data-number="9.10" class="anchored" data-anchor-id="bridge-edges-and-the-girvannewman-algorithm"><span class="header-section-number">9.10</span> Bridge edges and the Girvan–Newman algorithm</h2>
-<p>The first historically influential modern algorithm for community detection is due to Girvan and Newman <span class="citation" data-cites="girvan2002">(<a href="#ref-girvan2002" role="doc-biblioref">Girvan and Newman 2002</a>)</span>. Its central intuition is that communities are held apart by a comparatively small number of bridge edges. Identifying and removing those bridges should reveal the modular structure.</p>
+<p>The first historically influential modern algorithm for community detection is due to Girvan and Newman <span class="citation" data-cites="girvan2002">(<a href="#ref-girvan2002" role="doc-biblioref">Girvan &amp; Newman, 2002</a>)</span>. Its central intuition is that communities are held apart by a comparatively small number of bridge edges. Identifying and removing those bridges should reveal the modular structure.</p>
 <section id="edge-betweenness" class="level3">
 <h3 class="anchored" data-anchor-id="edge-betweenness">Edge betweenness</h3>
 <p>For an edge <span class="math inline">e = \{u,v\}</span>, the <strong>edge betweenness centrality</strong> is</p>
@@ -899,14 +899,14 @@ Figure&nbsp;9.5: Partition returned by the Girvan–Newman algorithm on the plan
 </section>
 <section id="modularity-null-model-viewpoint-and-spectral-formulation" class="level2" data-number="9.11">
 <h2 data-number="9.11" class="anchored" data-anchor-id="modularity-null-model-viewpoint-and-spectral-formulation"><span class="header-section-number">9.11</span> Modularity: null-model viewpoint and spectral formulation</h2>
-<p>Instead of removing bridges, a complementary approach asks whether a proposed partition contains <em>more within-community edges than one would expect by chance given the degree sequence</em>. This is the <strong>modularity</strong> framework <span class="citation" data-cites="newman2004finding newman2006modularity">(<a href="#ref-newman2004finding" role="doc-biblioref">Newman and Girvan 2004</a>; <a href="#ref-newman2006modularity" role="doc-biblioref">Newman 2006</a>)</span>.</p>
+<p>Instead of removing bridges, a complementary approach asks whether a proposed partition contains <em>more within-community edges than one would expect by chance given the degree sequence</em>. This is the <strong>modularity</strong> framework <span class="citation" data-cites="newman2004finding newman2006modularity">(<a href="#ref-newman2006modularity" role="doc-biblioref">Newman, 2006</a>; <a href="#ref-newman2004finding" role="doc-biblioref">Newman &amp; Girvan, 2004</a>)</span>.</p>
 <section id="derivation-from-the-configuration-model-null" class="level3">
 <h3 class="anchored" data-anchor-id="derivation-from-the-configuration-model-null">Derivation from the configuration model null</h3>
 <p>The configuration model generates a random graph with prescribed expected degrees by connecting pairs of edge stubs uniformly at random. Under this null model, the probability of an edge between <span class="math inline">i</span> and <span class="math inline">j</span> is approximately</p>
 <p><span class="math display">
 p_{ij}^{\mathrm{null}} = \frac{k_i k_j}{2m},
 </span></p>
-<p>which preserves the expected degree of every vertex while otherwise randomizing connectivity <span class="citation" data-cites="newman2010">(<a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span>. The expected adjacency matrix of the null model has entries <span class="math inline">k_i k_j / (2m)</span>, and the <strong>modularity matrix</strong> is the deviation of the observed adjacency from this expectation:</p>
+<p>which preserves the expected degree of every vertex while otherwise randomizing connectivity <span class="citation" data-cites="newman2010">(<a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>)</span>. The expected adjacency matrix of the null model has entries <span class="math inline">k_i k_j / (2m)</span>, and the <strong>modularity matrix</strong> is the deviation of the observed adjacency from this expectation:</p>
 <p><span class="math display">
 B_{ij} = A_{ij} - \frac{k_i k_j}{2m}.
 </span></p>
@@ -948,7 +948,7 @@ a_r = \frac{\mathrm{vol}(C_r)}{2m} = \frac{1}{2m}\sum_{i \in C_r} k_i.
 <p><span class="math display">
 Q = \frac{1}{4m}\mathbf{s}^T B\, \mathbf{s},
 </span></p>
-<p>maximized (relaxing <span class="math inline">s_i</span> to <span class="math inline">\mathbb{R}</span>) by the <strong>leading eigenvector</strong> of <span class="math inline">B</span>. This is the Newman spectral bisection algorithm <span class="citation" data-cites="newman2006modularity">(<a href="#ref-newman2006modularity" role="doc-biblioref">Newman 2006</a>)</span>.</p>
+<p>maximized (relaxing <span class="math inline">s_i</span> to <span class="math inline">\mathbb{R}</span>) by the <strong>leading eigenvector</strong> of <span class="math inline">B</span>. This is the Newman spectral bisection algorithm <span class="citation" data-cites="newman2006modularity">(<a href="#ref-newman2006modularity" role="doc-biblioref">Newman, 2006</a>)</span>.</p>
 <p>For <span class="math inline">q &gt; 2</span> communities, we use indicator matrices <span class="math inline">U \in \mathbb{R}^{n \times q}</span> with <span class="math inline">U_{ir} = \mathbf{1}[z_i = r]</span>. Then</p>
 <p><span class="math display">
 Q = \frac{1}{2m}\,\mathrm{tr}\bigl(U^T B\, U\bigr).
@@ -1007,10 +1007,10 @@ Figure&nbsp;9.6: Modularity of the planted partition (red dashed line) compared 
 </section>
 <section id="fast-community-detection-louvain-and-the-leiden-algorithm" class="level2" data-number="9.12">
 <h2 data-number="9.12" class="anchored" data-anchor-id="fast-community-detection-louvain-and-the-leiden-algorithm"><span class="header-section-number">9.12</span> Fast community detection: Louvain and the Leiden algorithm</h2>
-<p>Exact modularity maximization is NP-hard <span class="citation" data-cites="brandes2008modularity">(<a href="#ref-brandes2008modularity" role="doc-biblioref">Brandes et al. 2008</a>)</span>. For large networks, efficient heuristics are necessary.</p>
+<p>Exact modularity maximization is NP-hard <span class="citation" data-cites="brandes2008modularity">(<a href="#ref-brandes2008modularity" role="doc-biblioref">Brandes et al., 2008</a>)</span>. For large networks, efficient heuristics are necessary.</p>
 <section id="the-louvain-method" class="level3">
 <h3 class="anchored" data-anchor-id="the-louvain-method">The Louvain method</h3>
-<p>The <strong>Louvain method</strong> <span class="citation" data-cites="blondel2008">(<a href="#ref-blondel2008" role="doc-biblioref">Blondel et al. 2008</a>)</span> is a greedy multilevel algorithm organized in two alternating phases.</p>
+<p>The <strong>Louvain method</strong> <span class="citation" data-cites="blondel2008">(<a href="#ref-blondel2008" role="doc-biblioref">Blondel et al., 2008</a>)</span> is a greedy multilevel algorithm organized in two alternating phases.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Algorithm: Louvain">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1033,7 +1033,7 @@ Figure&nbsp;9.6: Modularity of the planted partition (red dashed line) compared 
 </section>
 <section id="the-leiden-algorithm-correcting-louvains-flaw" class="level3">
 <h3 class="anchored" data-anchor-id="the-leiden-algorithm-correcting-louvains-flaw">The Leiden algorithm: correcting Louvain’s flaw</h3>
-<p>A significant theoretical problem with Louvain was identified by Traag et al. <span class="citation" data-cites="traag2019leiden">(<a href="#ref-traag2019leiden" role="doc-biblioref">Traag, Waltman, and Eck 2019</a>)</span>: <strong>Louvain can produce internally disconnected communities</strong>. In Phase 2, an aggregated supernode can represent a set of vertices that, when examined in the original graph, are not connected to each other within their community. Such a community is not a coherent module in any meaningful sense.</p>
+<p>A significant theoretical problem with Louvain was identified by Traag et al. <span class="citation" data-cites="traag2019leiden">(<a href="#ref-traag2019leiden" role="doc-biblioref">Traag et al., 2019</a>)</span>: <strong>Louvain can produce internally disconnected communities</strong>. In Phase 2, an aggregated supernode can represent a set of vertices that, when examined in the original graph, are not connected to each other within their community. Such a community is not a coherent module in any meaningful sense.</p>
 <p>The <strong>Leiden algorithm</strong> corrects this by introducing a <strong>refinement phase</strong> between aggregation steps:</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Algorithm: Leiden (summary)">
 <div class="callout-header d-flex align-content-center">
@@ -1053,7 +1053,7 @@ Figure&nbsp;9.6: Modularity of the planted partition (red dashed line) compared 
 </ol>
 </div>
 </div>
-<p>Leiden guarantees that every community in the output is <span class="math inline">\gamma</span>-separated: its internal edge density exceeds its boundary density by a factor <span class="math inline">\gamma</span>, providing a formal quality certificate that Louvain does not. In practice, Leiden often produces partitions of equal or higher modularity than Louvain while being provably free of disconnected communities <span class="citation" data-cites="traag2019leiden">(<a href="#ref-traag2019leiden" role="doc-biblioref">Traag, Waltman, and Eck 2019</a>)</span>.</p>
+<p>Leiden guarantees that every community in the output is <span class="math inline">\gamma</span>-separated: its internal edge density exceeds its boundary density by a factor <span class="math inline">\gamma</span>, providing a formal quality certificate that Louvain does not. In practice, Leiden often produces partitions of equal or higher modularity than Louvain while being provably free of disconnected communities <span class="citation" data-cites="traag2019leiden">(<a href="#ref-traag2019leiden" role="doc-biblioref">Traag et al., 2019</a>)</span>.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1115,7 +1115,7 @@ Figure&nbsp;9.7: Modularity and number of detected communities for three methods
 <section id="the-stochastic-block-model-community-detection-as-statistical-inference" class="level2" data-number="9.13">
 <h2 data-number="9.13" class="anchored" data-anchor-id="the-stochastic-block-model-community-detection-as-statistical-inference"><span class="header-section-number">9.13</span> The stochastic block model: community detection as statistical inference</h2>
 <p>Up to this point, the chapter has treated community detection mainly as an optimization problem. We defined scores such as conductance and modularity, and then searched for partitions that optimize those scores. The stochastic block model changes the question. Instead of asking, “Which partition scores well?” it asks, “What latent block structure could plausibly have generated the graph we observe?”</p>
-<p>This shift matters educationally and scientifically. Once we introduce a generative model, we can talk not only about finding a partition, but also about uncertainty, parameter estimation, model comparison, and even the limits of recoverability. The <strong>stochastic block model</strong> (SBM) therefore reframes community detection as <strong>statistical inference</strong>: we assume a probabilistic mechanism for edge formation and infer which latent community assignments are most consistent with the data <span class="citation" data-cites="holland1983 wang1987 nowicki2001">(<a href="#ref-holland1983" role="doc-biblioref">Holland, Laskey, and Leinhardt 1983</a>; <a href="#ref-wang1987" role="doc-biblioref">Wang and Wong 1987</a>; <a href="#ref-nowicki2001" role="doc-biblioref">Nowicki and Snijders 2001</a>)</span>.</p>
+<p>This shift matters educationally and scientifically. Once we introduce a generative model, we can talk not only about finding a partition, but also about uncertainty, parameter estimation, model comparison, and even the limits of recoverability. The <strong>stochastic block model</strong> (SBM) therefore reframes community detection as <strong>statistical inference</strong>: we assume a probabilistic mechanism for edge formation and infer which latent community assignments are most consistent with the data <span class="citation" data-cites="holland1983 wang1987 nowicki2001">(<a href="#ref-holland1983" role="doc-biblioref">Holland et al., 1983</a>; <a href="#ref-nowicki2001" role="doc-biblioref">Nowicki &amp; Snijders, 2001</a>; <a href="#ref-wang1987" role="doc-biblioref">Wang &amp; Wong, 1987</a>)</span>.</p>
 <section id="model-definition" class="level3">
 <h3 class="anchored" data-anchor-id="model-definition">Model definition</h3>
 <p>Let each vertex <span class="math inline">i \in V</span> have a latent community label <span class="math inline">z_i \in \{1,\ldots,q\}</span>. The SBM assumes that edges are conditionally independent given the labels, with connection probability determined solely by the block membership of the two endpoints:</p>
@@ -1157,7 +1157,7 @@ M_{rs} = \begin{cases} \binom{n_r}{2} &amp; r = s, \\ n_r n_s &amp; r \neq s,\en
 </section>
 <section id="em-algorithm-for-sbm-inference" class="level3">
 <h3 class="anchored" data-anchor-id="em-algorithm-for-sbm-inference">EM algorithm for SBM inference</h3>
-<p>The <strong>Expectation-Maximization (EM) algorithm</strong> <span class="citation" data-cites="dempster1977">(<a href="#ref-dempster1977" role="doc-biblioref">Dempster, Laird, and Rubin 1977</a>)</span> handles the latent labels by alternating between:</p>
+<p>The <strong>Expectation-Maximization (EM) algorithm</strong> <span class="citation" data-cites="dempster1977">(<a href="#ref-dempster1977" role="doc-biblioref">Dempster et al., 1977</a>)</span> handles the latent labels by alternating between:</p>
 <p><strong>E-step:</strong> Compute the posterior probability that vertex <span class="math inline">i</span> belongs to community <span class="math inline">r</span>, given the current parameter estimates <span class="math inline">(\hat{\Omega}, \hat{\boldsymbol{\pi}})</span> and the observed graph <span class="math inline">A</span>:</p>
 <p><span class="math display">
 \tau_{ir} = \Pr(z_i = r \mid A, \hat{\Omega}, \hat{\boldsymbol{\pi}})
@@ -1305,7 +1305,7 @@ Figure&nbsp;9.10: Confusion matrix between planted SBM blocks and Louvain-detect
 <section id="degree-corrected-sbm" class="level3">
 <h3 class="anchored" data-anchor-id="degree-corrected-sbm">Degree-corrected SBM</h3>
 <p>The standard SBM implicitly assumes that all vertices in a block have similar degrees, since <span class="math inline">\Pr(A_{ij}=1)</span> depends only on block membership. In practice, degree heterogeneity is strong: recall from the scale-free chapter that real networks often have power-law degree distributions. A hub within a block will be connected to many vertices in other blocks purely because of its high degree, not because of genuine intercommunity affinity. The basic SBM may misidentify this degree-driven connectivity as evidence for multiple communities.</p>
-<p>The <strong>degree-corrected SBM</strong> (DC-SBM) of Karrer and Newman <span class="citation" data-cites="karrer2011">(<a href="#ref-karrer2011" role="doc-biblioref">Karrer and Newman 2011</a>)</span> introduces vertex-specific degree parameters <span class="math inline">\theta_i &gt; 0</span>:</p>
+<p>The <strong>degree-corrected SBM</strong> (DC-SBM) of Karrer and Newman <span class="citation" data-cites="karrer2011">(<a href="#ref-karrer2011" role="doc-biblioref">Karrer &amp; Newman, 2011</a>)</span> introduces vertex-specific degree parameters <span class="math inline">\theta_i &gt; 0</span>:</p>
 <p><span class="math display">
 \Pr(A_{ij}=1 \mid z_i=r,\, z_j=s) = \theta_i \theta_j \omega_{rs},
 </span></p>
@@ -1326,7 +1326,7 @@ Figure&nbsp;9.10: Confusion matrix between planted SBM blocks and Louvain-detect
 </section>
 <section id="the-kestenstigum-threshold" class="level3">
 <h3 class="anchored" data-anchor-id="the-kestenstigum-threshold">The Kesten–Stigum threshold</h3>
-<p>A remarkable phase transition was established by Decelle et al. <span class="citation" data-cites="decelle2011">(<a href="#ref-decelle2011" role="doc-biblioref">Decelle et al. 2011</a>)</span> (conjectured) and proved rigorously by Massoulié <span class="citation" data-cites="massouli2014">(<a href="#ref-massouli2014" role="doc-biblioref"><strong>massouli2014?</strong></a>)</span> and Mossel et al. <span class="citation" data-cites="mossel2018">(<a href="#ref-mossel2018" role="doc-biblioref">Mossel, Neeman, and Sly 2018</a>)</span>:</p>
+<p>A remarkable phase transition was established by Decelle et al. <span class="citation" data-cites="decelle2011">(<a href="#ref-decelle2011" role="doc-biblioref">Decelle et al., 2011</a>)</span> (conjectured) and proved rigorously by Massoulié <span class="citation" data-cites="massoulie2014">(<a href="#ref-massoulie2014" role="doc-biblioref">Massoulié, 2014</a>)</span> and Mossel et al. <span class="citation" data-cites="mossel2018">(<a href="#ref-mossel2018" role="doc-biblioref">Mossel et al., 2018</a>)</span>:</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Theorem (Kesten--Stigum, community detection)">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1453,7 +1453,7 @@ I(\mathcal{C};\mathcal{C}') = \sum_{r=1}^q \sum_{s=1}^{q'} \frac{n_{rs}}{n} \log
 </section>
 <section id="variation-of-information" class="level3">
 <h3 class="anchored" data-anchor-id="variation-of-information">Variation of Information</h3>
-<p>The <strong>Variation of Information</strong> (VI) is a metric on the space of partitions <span class="citation" data-cites="meilua2003">(<a href="#ref-meilua2003" role="doc-biblioref">Meilă 2003</a>)</span>:</p>
+<p>The <strong>Variation of Information</strong> (VI) is a metric on the space of partitions <span class="citation" data-cites="meilua2003">(<a href="#ref-meilua2003" role="doc-biblioref">Meilă, 2003</a>)</span>:</p>
 <p><span class="math display">
 \mathrm{VI}(\mathcal{C}, \mathcal{C}') = H(\mathcal{C}\mid\mathcal{C}') + H(\mathcal{C}'\mid\mathcal{C}),
 </span></p>
@@ -1544,17 +1544,17 @@ Figure&nbsp;9.12: NMI (blue) and ARI (gold) between planted and Louvain-detected
 <h2 data-number="9.16" class="anchored" data-anchor-id="limitations-of-community-detection"><span class="header-section-number">9.16</span> Limitations of community detection</h2>
 <section id="the-resolution-limit-of-modularity" class="level3">
 <h3 class="anchored" data-anchor-id="the-resolution-limit-of-modularity">The resolution limit of modularity</h3>
-<p>Modularity has a <strong>resolution limit</strong>: in a large graph, optimizing <span class="math inline">Q</span> tends to merge small but well-defined communities into larger blocks <span class="citation" data-cites="fortunato2007resolution">(<a href="#ref-fortunato2007resolution" role="doc-biblioref">Fortunato and Barthélemy 2007</a>)</span>. The origin of this behavior can be understood from the null model: for a small community <span class="math inline">C_r</span> with <span class="math inline">e_{rr}</span> edges, the null-model term <span class="math inline">a_r^2</span> depends on the global size of the graph through <span class="math inline">\mathrm{vol}(C_r)/(2m)</span>. When <span class="math inline">m</span> is large, the modularity gain of splitting a small but genuine community becomes negligible relative to the gain from merging it with a neighbor.</p>
+<p>Modularity has a <strong>resolution limit</strong>: in a large graph, optimizing <span class="math inline">Q</span> tends to merge small but well-defined communities into larger blocks <span class="citation" data-cites="fortunato2007resolution">(<a href="#ref-fortunato2007resolution" role="doc-biblioref">Fortunato &amp; Barthélemy, 2007</a>)</span>. The origin of this behavior can be understood from the null model: for a small community <span class="math inline">C_r</span> with <span class="math inline">e_{rr}</span> edges, the null-model term <span class="math inline">a_r^2</span> depends on the global size of the graph through <span class="math inline">\mathrm{vol}(C_r)/(2m)</span>. When <span class="math inline">m</span> is large, the modularity gain of splitting a small but genuine community becomes negligible relative to the gain from merging it with a neighbor.</p>
 <p>Quantitatively, Fortunato and Barthélemy showed that communities with fewer than <span class="math inline">\sqrt{m}</span> internal edges may not be resolvable by modularity maximization, regardless of how isolated they actually are. This is a global property of the objective function, not a local artifact, and it cannot be fixed by using a different optimization algorithm. Resolution-limit-aware methods include the use of a tunable resolution parameter <span class="math inline">\gamma</span> in the modified objective <span class="math inline">Q_\gamma = \sum_r (e_{rr} - \gamma a_r^2)</span>, where <span class="math inline">\gamma &gt; 1</span> favors finer partitions.</p>
 </section>
 <section id="overlapping-and-hierarchical-communities" class="level3">
 <h3 class="anchored" data-anchor-id="overlapping-and-hierarchical-communities">Overlapping and hierarchical communities</h3>
-<p>Real networks often violate the hard-partition assumption. A scientist may belong to multiple research fields; a gene may participate in multiple functional modules; a city may lie at the intersection of cultural regions. <strong>Overlapping community</strong> models such as the mixed-membership SBM <span class="citation" data-cites="airoldi2008">(<a href="#ref-airoldi2008" role="doc-biblioref">Airoldi et al. 2008</a>)</span> and the BigCLAM non-negative matrix factorization approach <span class="citation" data-cites="yang2013">(<a href="#ref-yang2013" role="doc-biblioref">Yang and Leskovec 2013</a>)</span> extend the partition framework to soft assignments <span class="math inline">u_{ir} \geq 0</span> representing vertex <span class="math inline">i</span>’s strength of membership in community <span class="math inline">r</span>.</p>
+<p>Real networks often violate the hard-partition assumption. A scientist may belong to multiple research fields; a gene may participate in multiple functional modules; a city may lie at the intersection of cultural regions. <strong>Overlapping community</strong> models such as the mixed-membership SBM <span class="citation" data-cites="airoldi2008">(<a href="#ref-airoldi2008" role="doc-biblioref">Airoldi et al., 2008</a>)</span> and the BigCLAM non-negative matrix factorization approach <span class="citation" data-cites="yang2013">(<a href="#ref-yang2013" role="doc-biblioref">Yang &amp; Leskovec, 2013</a>)</span> extend the partition framework to soft assignments <span class="math inline">u_{ir} \geq 0</span> representing vertex <span class="math inline">i</span>’s strength of membership in community <span class="math inline">r</span>.</p>
 <p><strong>Hierarchical community structure</strong> is equally common: communities often nest within super-communities, which nest within still larger groups. Flat partitions lose this hierarchical information. Methods that return a dendrogram (Girvan–Newman, Ward’s linkage on graph distance) preserve it, at the cost of requiring the user to choose a resolution for the final partition.</p>
 </section>
 <section id="benchmark-dependence" class="level3">
 <h3 class="anchored" data-anchor-id="benchmark-dependence">Benchmark dependence</h3>
-<p>Method performance depends strongly on graph properties: size, density, degree heterogeneity, and mixing strength. The <strong>LFR benchmark</strong> <span class="citation" data-cites="lancichinetti2008">(<a href="#ref-lancichinetti2008" role="doc-biblioref">Lancichinetti, Fortunato, and Radicchi 2008</a>)</span> generates synthetic graphs with planted communities, power-law degree distributions, and power-law community size distributions, providing a more realistic test bed than the homogeneous planted partition model. A method that excels on the planted partition may fail on LFR benchmarks at high mixing, and vice versa. Any method comparison should therefore span a range of benchmark families.</p>
+<p>Method performance depends strongly on graph properties: size, density, degree heterogeneity, and mixing strength. The <strong>LFR benchmark</strong> <span class="citation" data-cites="lancichinetti2008">(<a href="#ref-lancichinetti2008" role="doc-biblioref">Lancichinetti et al., 2008</a>)</span> generates synthetic graphs with planted communities, power-law degree distributions, and power-law community size distributions, providing a more realistic test bed than the homogeneous planted partition model. A method that excels on the planted partition may fail on LFR benchmarks at high mixing, and vice versa. Any method comparison should therefore span a range of benchmark families.</p>
 <div class="callout callout-style-default callout-warning callout-titled" title="Interpretive caution">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1669,7 +1669,7 @@ In the sparse two-block SBM, explain in words the meaning of the inequality <spa
 (a-b)^2 &gt; 2(a+b).
 </span> Why does failure of this condition represent an information-theoretic limitation rather than merely a weakness of one algorithm?</p>
 <p><strong>Exercise 8.7. Resolution limit and interpretation.</strong><br>
-Explain why a globally normalized objective such as modularity can merge small but meaningful communities inside a much larger graph. Relate your answer to the idea of scale in mesoscale structure <span class="citation" data-cites="fortunato2007resolution">(<a href="#ref-fortunato2007resolution" role="doc-biblioref">Fortunato and Barthélemy 2007</a>)</span>.</p>
+Explain why a globally normalized objective such as modularity can merge small but meaningful communities inside a much larger graph. Relate your answer to the idea of scale in mesoscale structure <span class="citation" data-cites="fortunato2007resolution">(<a href="#ref-fortunato2007resolution" role="doc-biblioref">Fortunato &amp; Barthélemy, 2007</a>)</span>.</p>
 </section>
 <section id="part-iii.-simulation-and-coding-exercises" class="level3">
 <h3 class="anchored" data-anchor-id="part-iii.-simulation-and-coding-exercises">Part III. Simulation and coding exercises</h3>
@@ -1689,81 +1689,84 @@ Build a complete analysis pipeline for a synthetic network with planted communit
 <p>Your final report should distinguish carefully between <em>detecting a partition</em>, <em>justifying a partition mathematically</em>, and <em>interpreting a partition scientifically</em>.</p>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
 <div id="ref-airoldi2008" class="csl-entry" role="listitem">
-Airoldi, Edoardo M., David M. Blei, Stephen E. Fienberg, and Eric P. Xing. 2008. <span>“Mixed Membership Stochastic Blockmodels.”</span> <em>Journal of Machine Learning Research</em> 9: 1981–2014.
+Airoldi, E. M., Blei, D. M., Fienberg, S. E., &amp; Xing, E. P. (2008). Mixed membership stochastic blockmodels. <em>Journal of Machine Learning Research</em>, <em>9</em>, 1981–2014.
 </div>
 <div id="ref-barabasi2016" class="csl-entry" role="listitem">
-Barabási, Albert-László, and Márton Pósfai. 2016. <em>Network Science</em>. Cambridge University Press.
+Barabási, A.-L., &amp; Pósfai, M. (2016). <em>Network science</em>. Cambridge University Press.
 </div>
 <div id="ref-blondel2008" class="csl-entry" role="listitem">
-Blondel, Vincent D., Jean-Loup Guillaume, Renaud Lambiotte, and Etienne Lefebvre. 2008. <span>“Fast Unfolding of Communities in Large Networks.”</span> <em>Journal of Statistical Mechanics: Theory and Experiment</em> 2008 (10): P10008. <a href="https://doi.org/10.1088/1742-5468/2008/10/P10008">https://doi.org/10.1088/1742-5468/2008/10/P10008</a>.
+Blondel, V. D., Guillaume, J.-L., Lambiotte, R., &amp; Lefebvre, E. (2008). Fast unfolding of communities in large networks. <em>Journal of Statistical Mechanics: Theory and Experiment</em>, <em>2008</em>(10), P10008. <a href="https://doi.org/10.1088/1742-5468/2008/10/P10008">https://doi.org/10.1088/1742-5468/2008/10/P10008</a>
 </div>
 <div id="ref-brandes2008modularity" class="csl-entry" role="listitem">
-Brandes, Ulrik, Daniel Delling, Marco Gaertler, Robert Görke, Martin Hoefer, Zoran Nikoloski, and Dorothea Wagner. 2008. <span>“On Modularity Clustering.”</span> <em>IEEE Transactions on Knowledge and Data Engineering</em> 20 (2): 172–88. <a href="https://doi.org/10.1109/TKDE.2007.190689">https://doi.org/10.1109/TKDE.2007.190689</a>.
+Brandes, U., Delling, D., Gaertler, M., Görke, R., Hoefer, M., Nikoloski, Z., &amp; Wagner, D. (2008). On modularity clustering. <em>IEEE Transactions on Knowledge and Data Engineering</em>, <em>20</em>(2), 172–188. <a href="https://doi.org/10.1109/TKDE.2007.190689">https://doi.org/10.1109/TKDE.2007.190689</a>
 </div>
 <div id="ref-chung1997" class="csl-entry" role="listitem">
-Chung, Fan R. K. 1997. <em>Spectral Graph Theory</em>. Vol. 92. CBMS Regional Conference Series in Mathematics. Providence, RI: American Mathematical Society.
+Chung, F. R. K. (1997). <em>Spectral graph theory</em> (Vol. 92). American Mathematical Society.
 </div>
 <div id="ref-decelle2011" class="csl-entry" role="listitem">
-Decelle, Aurélien, Florent Krzakala, Cristopher Moore, and Lenka Zdeborová. 2011. <span>“Asymptotic Analysis of the Stochastic Block Model for Modular Networks and Its Algorithmic Applications.”</span> <em>Physical Review E</em> 84 (6): 066106. <a href="https://doi.org/10.1103/PhysRevE.84.066106">https://doi.org/10.1103/PhysRevE.84.066106</a>.
+Decelle, A., Krzakala, F., Moore, C., &amp; Zdeborová, L. (2011). Asymptotic analysis of the stochastic block model for modular networks and its algorithmic applications. <em>Physical Review E</em>, <em>84</em>(6), 066106. <a href="https://doi.org/10.1103/PhysRevE.84.066106">https://doi.org/10.1103/PhysRevE.84.066106</a>
 </div>
 <div id="ref-dempster1977" class="csl-entry" role="listitem">
-Dempster, A. P., N. M. Laird, and D. B. Rubin. 1977. <span>“Maximum Likelihood from Incomplete Data via the EM Algorithm.”</span> <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 39 (1): 1–38.
+Dempster, A. P., Laird, N. M., &amp; Rubin, D. B. (1977). Maximum likelihood from incomplete data via the EM algorithm. <em>Journal of the Royal Statistical Society. Series B (Methodological)</em>, <em>39</em>(1), 1–38.
 </div>
 <div id="ref-fortunato2010" class="csl-entry" role="listitem">
-Fortunato, Santo. 2010. <span>“Community Detection in Graphs.”</span> <em>Physics Reports</em> 486 (3–5): 75–174. <a href="https://doi.org/10.1016/j.physrep.2009.11.002">https://doi.org/10.1016/j.physrep.2009.11.002</a>.
+Fortunato, S. (2010). Community detection in graphs. <em>Physics Reports</em>, <em>486</em>(3–5), 75–174. <a href="https://doi.org/10.1016/j.physrep.2009.11.002">https://doi.org/10.1016/j.physrep.2009.11.002</a>
 </div>
 <div id="ref-fortunato2007resolution" class="csl-entry" role="listitem">
-Fortunato, Santo, and Marc Barthélemy. 2007. <span>“Resolution Limit in Community Detection.”</span> <em>Proceedings of the National Academy of Sciences</em> 104 (1): 36–41. <a href="https://doi.org/10.1073/pnas.0605965104">https://doi.org/10.1073/pnas.0605965104</a>.
+Fortunato, S., &amp; Barthélemy, M. (2007). Resolution limit in community detection. <em>Proceedings of the National Academy of Sciences</em>, <em>104</em>(1), 36–41. <a href="https://doi.org/10.1073/pnas.0605965104">https://doi.org/10.1073/pnas.0605965104</a>
 </div>
 <div id="ref-girvan2002" class="csl-entry" role="listitem">
-Girvan, Michelle, and M. E. J. Newman. 2002. <span>“Community Structure in Social and Biological Networks.”</span> <em>Proceedings of the National Academy of Sciences</em> 99 (12): 7821–26. <a href="https://doi.org/10.1073/pnas.122653799">https://doi.org/10.1073/pnas.122653799</a>.
+Girvan, M., &amp; Newman, M. E. J. (2002). Community structure in social and biological networks. <em>Proceedings of the National Academy of Sciences</em>, <em>99</em>(12), 7821–7826. <a href="https://doi.org/10.1073/pnas.122653799">https://doi.org/10.1073/pnas.122653799</a>
 </div>
 <div id="ref-holland1983" class="csl-entry" role="listitem">
-Holland, Paul W., Kathryn Blackmond Laskey, and Samuel Leinhardt. 1983. <span>“Stochastic Blockmodels: First Steps.”</span> <em>Social Networks</em> 5 (2): 109–37. <a href="https://doi.org/10.1016/0378-8733(83)90021-7">https://doi.org/10.1016/0378-8733(83)90021-7</a>.
+Holland, P. W., Laskey, K. B., &amp; Leinhardt, S. (1983). Stochastic blockmodels: First steps. <em>Social Networks</em>, <em>5</em>(2), 109–137. <a href="https://doi.org/10.1016/0378-8733(83)90021-7">https://doi.org/10.1016/0378-8733(83)90021-7</a>
 </div>
 <div id="ref-karrer2011" class="csl-entry" role="listitem">
-Karrer, Brian, and M. E. J. Newman. 2011. <span>“Stochastic Blockmodels and Community Structure in Networks.”</span> <em>Physical Review E</em> 83 (1): 016107. <a href="https://doi.org/10.1103/PhysRevE.83.016107">https://doi.org/10.1103/PhysRevE.83.016107</a>.
+Karrer, B., &amp; Newman, M. E. J. (2011). Stochastic blockmodels and community structure in networks. <em>Physical Review E</em>, <em>83</em>(1), 016107. <a href="https://doi.org/10.1103/PhysRevE.83.016107">https://doi.org/10.1103/PhysRevE.83.016107</a>
 </div>
 <div id="ref-lancichinetti2008" class="csl-entry" role="listitem">
-Lancichinetti, Andrea, Santo Fortunato, and Filippo Radicchi. 2008. <span>“Benchmark Graphs for Testing Community Detection Algorithms.”</span> <em>Physical Review E</em> 78 (4): 046110. <a href="https://doi.org/10.1103/PhysRevE.78.046110">https://doi.org/10.1103/PhysRevE.78.046110</a>.
+Lancichinetti, A., Fortunato, S., &amp; Radicchi, F. (2008). Benchmark graphs for testing community detection algorithms. <em>Physical Review E</em>, <em>78</em>(4), 046110. <a href="https://doi.org/10.1103/PhysRevE.78.046110">https://doi.org/10.1103/PhysRevE.78.046110</a>
 </div>
 <div id="ref-von2007tutorial" class="csl-entry" role="listitem">
-Luxburg, Ulrike von. 2007. <span>“A Tutorial on Spectral Clustering.”</span> <em>Statistics and Computing</em> 17 (4): 395–416. <a href="https://doi.org/10.1007/s11222-007-9033-z">https://doi.org/10.1007/s11222-007-9033-z</a>.
+Luxburg, U. von. (2007). A tutorial on spectral clustering. <em>Statistics and Computing</em>, <em>17</em>(4), 395–416. <a href="https://doi.org/10.1007/s11222-007-9033-z">https://doi.org/10.1007/s11222-007-9033-z</a>
+</div>
+<div id="ref-massoulie2014" class="csl-entry" role="listitem">
+Massoulié, L. (2014). Community detection thresholds and the weak ramanujan property. <em>Proceedings of the 46th Annual ACM Symposium on Theory of Computing</em>, 694–703. <a href="https://doi.org/10.1145/2591796.2591857">https://doi.org/10.1145/2591796.2591857</a>
 </div>
 <div id="ref-meilua2003" class="csl-entry" role="listitem">
-Meilă, Marina. 2003. <span>“Comparing Clusterings by the Variation of Information.”</span> In <em>Learning Theory and Kernel Machines</em>, edited by Bernhard Schölkopf and Manfred K. Warmuth, 2777:173–87. Lecture Notes in Computer Science. Berlin, Heidelberg: Springer. <a href="https://doi.org/10.1007/978-3-540-45167-9_14">https://doi.org/10.1007/978-3-540-45167-9_14</a>.
+Meilă, M. (2003). Comparing clusterings by the variation of information. In B. Schölkopf &amp; M. K. Warmuth (Eds.), <em>Learning theory and kernel machines</em> (Vol. 2777, pp. 173–187). Springer. <a href="https://doi.org/10.1007/978-3-540-45167-9_14">https://doi.org/10.1007/978-3-540-45167-9_14</a>
 </div>
 <div id="ref-mossel2018" class="csl-entry" role="listitem">
-Mossel, Elchanan, Joe Neeman, and Allan Sly. 2018. <span>“A Proof of the Block Model Threshold Conjecture.”</span> <em>Combinatorica</em> 38 (3): 665–708. <a href="https://doi.org/10.1007/s00493-016-3291-z">https://doi.org/10.1007/s00493-016-3291-z</a>.
+Mossel, E., Neeman, J., &amp; Sly, A. (2018). A proof of the block model threshold conjecture. <em>Combinatorica</em>, <em>38</em>(3), 665–708. <a href="https://doi.org/10.1007/s00493-016-3291-z">https://doi.org/10.1007/s00493-016-3291-z</a>
 </div>
 <div id="ref-newman2006modularity" class="csl-entry" role="listitem">
-Newman, M. E. J. 2006. <span>“Modularity and Community Structure in Networks.”</span> <em>Proceedings of the National Academy of Sciences</em> 103 (23): 8577–82. <a href="https://doi.org/10.1073/pnas.0601602103">https://doi.org/10.1073/pnas.0601602103</a>.
+Newman, M. E. J. (2006). Modularity and community structure in networks. <em>Proceedings of the National Academy of Sciences</em>, <em>103</em>(23), 8577–8582. <a href="https://doi.org/10.1073/pnas.0601602103">https://doi.org/10.1073/pnas.0601602103</a>
 </div>
 <div id="ref-newman2010" class="csl-entry" role="listitem">
-———. 2010. <em>Networks: An Introduction</em>. Oxford University Press.
+Newman, M. E. J. (2010). <em>Networks: An introduction</em>. Oxford University Press.
 </div>
 <div id="ref-newman2004finding" class="csl-entry" role="listitem">
-Newman, M. E. J., and Michelle Girvan. 2004. <span>“Finding and Evaluating Community Structure in Networks.”</span> <em>Physical Review E</em> 69 (2): 026113. <a href="https://doi.org/10.1103/PhysRevE.69.026113">https://doi.org/10.1103/PhysRevE.69.026113</a>.
+Newman, M. E. J., &amp; Girvan, M. (2004). Finding and evaluating community structure in networks. <em>Physical Review E</em>, <em>69</em>(2), 026113. <a href="https://doi.org/10.1103/PhysRevE.69.026113">https://doi.org/10.1103/PhysRevE.69.026113</a>
 </div>
 <div id="ref-ng2002" class="csl-entry" role="listitem">
-Ng, Andrew Y., Michael I. Jordan, and Yair Weiss. 2002. <span>“On Spectral Clustering: Analysis and an Algorithm.”</span> In <em>Advances in Neural Information Processing Systems 14</em>, 849–56.
+Ng, A. Y., Jordan, M. I., &amp; Weiss, Y. (2002). On spectral clustering: Analysis and an algorithm. <em>Advances in Neural Information Processing Systems 14</em>, 849–856.
 </div>
 <div id="ref-nowicki2001" class="csl-entry" role="listitem">
-Nowicki, Krzysztof, and Tom A. B. Snijders. 2001. <span>“Estimation and Prediction for Stochastic Blockstructures.”</span> <em>Journal of the American Statistical Association</em> 96 (455): 1077–87. <a href="https://doi.org/10.1198/016214501753208735">https://doi.org/10.1198/016214501753208735</a>.
+Nowicki, K., &amp; Snijders, T. A. B. (2001). Estimation and prediction for stochastic blockstructures. <em>Journal of the American Statistical Association</em>, <em>96</em>(455), 1077–1087. <a href="https://doi.org/10.1198/016214501753208735">https://doi.org/10.1198/016214501753208735</a>
 </div>
 <div id="ref-shi2000" class="csl-entry" role="listitem">
-Shi, Jianbo, and Jitendra Malik. 2000. <span>“Normalized Cuts and Image Segmentation.”</span> <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em> 22 (8): 888–905. <a href="https://doi.org/10.1109/34.868688">https://doi.org/10.1109/34.868688</a>.
+Shi, J., &amp; Malik, J. (2000). Normalized cuts and image segmentation. <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em>, <em>22</em>(8), 888–905. <a href="https://doi.org/10.1109/34.868688">https://doi.org/10.1109/34.868688</a>
 </div>
 <div id="ref-traag2019leiden" class="csl-entry" role="listitem">
-Traag, Vincent A., Ludo Waltman, and Nees Jan van Eck. 2019. <span>“From Louvain to Leiden: Guaranteeing Well-Connected Communities.”</span> <em>Scientific Reports</em> 9: 5233. <a href="https://doi.org/10.1038/s41598-019-41695-z">https://doi.org/10.1038/s41598-019-41695-z</a>.
+Traag, V. A., Waltman, L., &amp; Eck, N. J. van. (2019). From louvain to leiden: Guaranteeing well-connected communities. <em>Scientific Reports</em>, <em>9</em>, 5233. <a href="https://doi.org/10.1038/s41598-019-41695-z">https://doi.org/10.1038/s41598-019-41695-z</a>
 </div>
 <div id="ref-wang1987" class="csl-entry" role="listitem">
-Wang, Y. J., and George Y. Wong. 1987. <span>“Stochastic Blockmodels for Directed Graphs.”</span> <em>Journal of the American Statistical Association</em> 82 (397): 8–19. <a href="https://doi.org/10.1080/01621459.1987.10478385">https://doi.org/10.1080/01621459.1987.10478385</a>.
+Wang, Y. J., &amp; Wong, G. Y. (1987). Stochastic blockmodels for directed graphs. <em>Journal of the American Statistical Association</em>, <em>82</em>(397), 8–19. <a href="https://doi.org/10.1080/01621459.1987.10478385">https://doi.org/10.1080/01621459.1987.10478385</a>
 </div>
 <div id="ref-yang2013" class="csl-entry" role="listitem">
-Yang, Jaewon, and Jure Leskovec. 2013. <span>“Overlapping Community Detection at Scale: A Nonnegative Matrix Factorization Approach.”</span> In <em>Proceedings of the Sixth ACM International Conference on Web Search and Data Mining</em>, 587–96. <a href="https://doi.org/10.1145/2433396.2433471">https://doi.org/10.1145/2433396.2433471</a>.
+Yang, J., &amp; Leskovec, J. (2013). Overlapping community detection at scale: A nonnegative matrix factorization approach. <em>Proceedings of the Sixth ACM International Conference on Web Search and Data Mining</em>, 587–596. <a href="https://doi.org/10.1145/2433396.2433471">https://doi.org/10.1145/2433396.2433471</a>
 </div>
 </div>
 </section>

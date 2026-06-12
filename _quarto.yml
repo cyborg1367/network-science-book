@@ -1,6 +1,9 @@
 project:
   type: book
   output-dir: docs
+  render:
+    - index.qmd
+    - chapters/*
 
 book:
   title: "Network Science"
@@ -19,8 +22,10 @@ book:
     - chapters/08-community-in-graphs.qmd
   page-navigation: true
   search: true
+  
 
 bibliography: references.bib
+csl: apa.csl
 
 execute:
   echo: true

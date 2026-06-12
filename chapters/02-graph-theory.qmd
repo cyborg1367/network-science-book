@@ -2,6 +2,7 @@
 title: "Graph Theory"
 subtitle: "The mathematical language of network structure"
 bibliography: ../references.bib
+csl: ../apa.csl
 ---
 
 ```{r}
@@ -23,39 +24,36 @@ ns_book_setup(
 )
 ```
 
-
 ## Introduction
 
-Network science rests on a mathematical foundation: **graph theory**. Before studying random graphs, small worlds, or scale-free networks, it is essential to establish the formal language used to describe networks. That language is graph theory.
+Network science rests on a mathematical foundation: **graph theory**. Before studying random graphs, small-world structure, or scale-free degree heterogeneity, it is essential to establish the formal language used to describe networks precisely.
 
-Graph theory is a branch of discrete mathematics that studies collections of objects and the pairwise connections between them. Its origins trace back to Leonhard Euler's 1736 solution to the *Königsberg bridge problem*, in which the question of whether a particular city could be traversed by crossing each of its seven bridges exactly once was reformulated as a purely combinatorial question about a drawing made of vertices and edges. Euler's insight — that only the pattern of connections, not the physical geography, determines the answer — is the founding idea of graph theory [@euler1736].
+Graph theory is a branch of discrete mathematics concerned with collections of objects and the pairwise relations between them. Its origins trace to Leonhard Euler's 1736 solution to the *Königsberg bridge problem*, in which the question of whether a city could be traversed by crossing each of its seven bridges exactly once was reformulated as a purely combinatorial question about a drawing of vertices and edges. Euler's insight — that only the pattern of connections, not the physical geography, determines the answer — is the founding idea of graph theory [@euler1736].
 
-In the context of network science, graph theory provides a common mathematical language for later topics such as random graphs, small-world structure, and scale-free degree heterogeneity [@diestel2017; @west2001; @newman2010]. Specifically, it provides:
+In the context of this course, graph theory provides:
 
--   a precise vocabulary for describing structures,
--   algebraic representations that enable computation,
--   combinatorial results that govern global properties,
--   and a rigorous basis for the probabilistic models studied in later chapters.
+-   a precise vocabulary for describing network structure,
+-   algebraic representations that connect combinatorics to linear algebra,
+-   combinatorial results that govern global properties such as connectivity and reachability,
+-   and the rigorous foundation on which the probabilistic models of later chapters are built [@diestel2017; @west2001; @newman2010; @barabasi2016].
+
+Standard graduate references for the material in this chapter are @diestel2017 for pure graph theory and @west2001 for a combinatorial treatment. For the network science perspective that motivates the choice of topics, see @newman2010 and @barabasi2016. Spectral properties of graphs, covered in @sec-matrix-representations, are treated in depth by @chung1997.
 
 ## Learning goals
 
-By the end of this chapter, it should be possible to:
+By the end of this chapter, a student should be able to:
 
--   define a graph, its vertices and edges, and give the standard notation
--   distinguish between undirected, directed, weighted, and multigraphs
--   define degree, degree sequence, and prove the handshaking lemma
--   construct the adjacency matrix and the Laplacian matrix
--   define walks, paths, trails, and cycles precisely
--   define connectivity, connected components, cut vertices, and bridges
--   define trees, spanning trees, and identify their key properties
--   identify bipartite graphs and apply König's criterion
--   describe standard graph families and recognise them
--   use `igraph` in `R` to construct and analyse graphs
-
+-   represent a network as $G = (V, E)$ and report its order, size, and degree structure,
+-   translate between edge lists, adjacency matrices, and `igraph` objects,
+-   state and apply the handshaking lemma and its immediate consequences,
+-   explain what matrix powers count, and how the Laplacian spectrum encodes connectivity,
+-   distinguish paths, components, cut vertices, and bridges — the vocabulary used later for robustness and percolation,
+-   recognise when a graph is bipartite and apply König's criterion,
+-   compute the summary quantities in @tbl-summary-table and interpret them structurally.
 
 ## Chapter roadmap
 
-This chapter moves from the most basic objects to the more structural concepts needed later in the book. It begins with the definition of a graph and the main graph types, then studies degree and matrix representations, and only after that turns to walks, connectivity, trees, bipartite structure, and standard graph families. The chapter ends with a compact computational toolkit in `R`, so that each theoretical definition is connected to a concrete representation that can be explored computationally.
+The chapter proceeds from basic objects to structural concepts. It begins with the formal definition of a graph and the main graph types, then studies degree and matrix representations, and turns to walks, connectivity, trees, and bipartite structure. It ends with a compact computational toolkit in `R`. Each theoretical definition is paired with a concrete representation that can be explored and verified computationally.
 
 ## What is a graph?
 
@@ -71,23 +69,23 @@ $$
 where $V$ is a finite non-empty set called the **vertex set** (or **node set**), and $E$ is a set of unordered pairs $\{u, v\}$ with $u, v \in V$ and $u \neq v$, called the **edge set**.
 :::
 
-The number of vertices is denoted by $N = |V|$ and is called the **order** of the graph. The number of edges is denoted by $M = |E|$ and is called the **size** of the graph.
+The number of vertices is denoted $N = |V|$ and called the **order** of the graph. The number of edges is denoted $M = |E|$ and called the **size** of the graph.
 
-Each element of $E$ is an unordered pair $\{u, v\}$, also written as $uv$ or $(u,v)$ when direction is irrelevant. The vertices $u$ and $v$ are said to be **adjacent** or **neighbors**, and the edge $uv$ is said to be **incident** to both $u$ and $v$.
+Two vertices $u$ and $v$ are **adjacent** (or **neighbors**) if $\{u, v\} \in E$. An edge $\{u, v\}$ is **incident** to each of $u$ and $v$. The **neighborhood** of $v$ is the set $N(v) = \{u \in V : \{u, v\} \in E\}$.
 
 ::: {.callout-note title="Convention"}
-Throughout this chapter, graphs are assumed to be **simple** unless stated otherwise. A simple graph has no self-loops (edges from a vertex to itself) and no multi-edges (more than one edge between the same pair of vertices).
+Throughout this chapter, all graphs are assumed to be **simple** unless stated otherwise. A simple graph contains no self-loops (edges from a vertex to itself) and no multi-edges (multiple edges between the same pair of vertices).
 :::
 
-### A motivating example
+### A motivating example {#sec-a-motivating-example}
 
-Consider a graph with vertex set $V = \{1, 2, 3, 4, 5\}$ and edge set
+Consider the graph with vertex set $V = \{1, 2, 3, 4, 5\}$ and edge set
 
 $$
 E = \bigl\{\{1,2\},\, \{1,3\},\, \{2,4\},\, \{3,4\},\, \{4,5\}\bigr\}.
 $$
 
-This graph has order $N = 5$ and size $M = 5$. Vertices 1, 2, and 3 are each reachable from vertex 4 through paths of length one or two, while vertex 5 hangs off vertex 4.
+This graph has order $N = 5$ and size $M = 5$. Vertex 4 is the only neighbor of vertex 5 and the only common neighbor of vertices 2 and 3 — structural features that will become precise once degree and connectivity are defined.
 
 ```{r}
 #| label: simple-graph-example
@@ -122,20 +120,16 @@ plot(
 
 ## Directed and undirected graphs
 
-The definition above assumes that each edge is unordered: if $u$ and $v$ are connected, the connection runs symmetrically in both directions. Such a graph is called **undirected**.
-
-In many real networks, connections are asymmetric. A hyperlink may point from page $u$ to page $v$ without the reverse link existing. A neuron may send signals to a target cell without receiving signals back.
+The definition above treats each edge as unordered: the relation $\{u, v\}$ is symmetric. Such a graph is **undirected**. In many real networks, relations are asymmetric — a hyperlink from page $u$ to page $v$ does not imply a link in the reverse direction; a neuron may send signals to a target without receiving signals back.
 
 ::: {#def-directed-graph}
-A **directed graph** (or **digraph**) is a pair $G = (V, A)$ where $V$ is the vertex set and $A$ is a set of **ordered** pairs $(u, v)$ with $u \neq v$, called **arcs** or **directed edges**.
+A **directed graph** (or **digraph**) is a pair $G = (V, A)$ where $V$ is the vertex set and $A$ is a set of **ordered** pairs $(u, v)$ with $u \neq v$, called **arcs**. The arc $(u, v)$ has **tail** $u$ and **head** $v$; it is distinct from $(v, u)$.
 :::
-
-The arc $(u, v)$ goes **from** $u$ **to** $v$. The vertex $u$ is called the **tail** and $v$ is called the **head**. The arc $(u, v)$ and the arc $(v, u)$ are distinct objects in a directed graph.
 
 ```{r}
 #| label: directed-vs-undirected
 #| echo: false
-#| fig-cap: "Left: an undirected graph where edges have no orientation. Right: a directed graph on the same vertex set where arcs carry direction."
+#| fig-cap: "Left: an undirected graph. Right: a directed graph on the same vertex set. Arcs carry orientation."
 
 g_undir <- graph_from_edgelist(
   matrix(c(1,2, 2,3, 3,4, 4,1, 1,3), ncol = 2, byrow = TRUE),
@@ -175,36 +169,34 @@ par(old_par)
 ### Weighted graphs
 
 ::: {#def-weighted-graph}
-A **weighted graph** is a graph $G = (V, E)$ together with a weight function $w : E \to \mathbb{R}$. Each edge $e \in E$ is assigned a real-valued weight $w(e)$.
+A **weighted graph** is a graph $G = (V, E)$ together with a weight function $w : E \to \mathbb{R}$, assigning a real-valued weight to each edge. Weights may represent distances, capacities, interaction strengths, or costs, depending on the application.
 :::
-
-Weights may represent distances, capacities, interaction strengths, or costs, depending on the application.
 
 ## Degree and the handshaking lemma
 
 ### Degree of a vertex
 
 ::: {#def-degree}
-Let $G = (V, E)$ be an undirected graph. The **degree** of a vertex $v \in V$, denoted $k_v$ or $\deg(v)$, is the number of edges incident to $v$:
+Let $G = (V, E)$ be an undirected graph. The **degree** of vertex $v \in V$, denoted $k_v$ or $\deg(v)$, is the number of edges incident to $v$:
 
 $$
-k_v = |\{u \in V : uv \in E\}|.
+k_v = |\{u \in V : \{u,v\} \in E\}| = |N(v)|.
 $$
 :::
 
-A vertex of degree $0$ is called **isolated**. A vertex of degree $1$ is called a **leaf** or **pendant vertex**. The maximum degree in the graph is denoted $\Delta(G)$ and the minimum degree is denoted $\delta(G)$.
+A vertex with $k_v = 0$ is **isolated**; one with $k_v = 1$ is a **leaf** or **pendant vertex**. The maximum and minimum degrees of $G$ are denoted $\Delta(G)$ and $\delta(G)$ respectively.
 
 ### Degree sequence
 
 ::: {#def-degree-sequence}
-The **degree sequence** of a graph $G$ is the list of degrees of all vertices, written in non-increasing order:
+The **degree sequence** of $G$ is the list of vertex degrees arranged in non-increasing order:
 
 $$
 k_1 \geq k_2 \geq \cdots \geq k_N.
 $$
 :::
 
-The degree sequence is a fundamental invariant of the graph. It captures the distribution of connections across all vertices.
+The degree sequence is a fundamental invariant of the graph. Not every integer sequence is graphical — the Erdős–Gallai theorem gives a necessary and sufficient condition for a sequence of non-negative integers to be realizable as a degree sequence of a simple graph.
 
 ### The handshaking lemma
 
@@ -216,10 +208,10 @@ $$
 $$
 :::
 
-**Proof.** Each edge $\{u, v\} \in E$ contributes exactly $1$ to the degree of $u$ and exactly $1$ to the degree of $v$. Summing over all vertices therefore counts each edge exactly twice. $\square$
+**Proof.** Consider the incidence sum $\sum_{v \in V} \sum_{e \in E} \mathbf{1}[v \in e]$. Evaluated by vertex, it equals $\sum_{v} k_v$. Evaluated by edge, each edge $\{u,v\}$ contributes exactly $1$ to $v = u$ and exactly $1$ to $v$, so the sum equals $2M$. $\square$
 
 ::: {.callout-note title="Immediate corollary"}
-The number of vertices with odd degree is always even. This follows because the sum of all degrees equals $2M$, which is even, and an even sum requires an even number of odd summands.
+Every graph has an even number of odd-degree vertices. Since $2M$ is even, the sum $\sum_v k_v$ is even; an even sum requires an even count of odd summands.
 :::
 
 ### Average degree
@@ -232,11 +224,11 @@ $$
 $$
 :::
 
-The identity $\langle k \rangle = 2M/N$ follows immediately from the handshaking lemma. It connects average degree, edge count, and graph order in one simple formula that will appear repeatedly throughout this book.
+The identity $\langle k \rangle = 2M/N$ follows immediately from the handshaking lemma. It connects average degree, edge count, and graph order in a single formula that recurs throughout this book.
 
 ### In-degree and out-degree in directed graphs
 
-In a directed graph, each arc contributes to the degree of two vertices in an asymmetric way.
+In a directed graph, each arc contributes asymmetrically to two vertices.
 
 ::: {#def-indegree-outdegree}
 Let $G = (V, A)$ be a directed graph and $v \in V$. The **in-degree** of $v$ is
@@ -258,12 +250,12 @@ $$
 \sum_{v \in V} k_v^{\text{in}} = \sum_{v \in V} k_v^{\text{out}} = |A|.
 $$
 
-This holds because every arc $(u, v)$ contributes exactly $1$ to the out-degree of $u$ and exactly $1$ to the in-degree of $v$.
+Every arc $(u, v)$ contributes $1$ to the out-degree of $u$ and $1$ to the in-degree of $v$.
 
 ```{r}
 #| label: degree-distribution-example
 #| echo: false
-#| fig-cap: "Degree sequence (sorted in decreasing order) of an example graph with 30 vertices. The dashed line marks the average degree."
+#| fig-cap: "Degree sequence (sorted in decreasing order) of a graph on 30 vertices. The dashed line marks the average degree."
 
 set.seed(42)
 g_deg <- sample_gnp(n = 30, p = 0.18)
@@ -283,16 +275,16 @@ ggplot(deg_df, aes(x = vertex, y = degree)) +
     color = course_cols$warm,
     linewidth = 0.9
   ) +
-annotate(
-  "text",
-  x = 27,
-  y = avg_deg + 0.55,
-  label = paste0("'\u27e8' * k * '\u27e9' == ", round(avg_deg, 2)),
-  parse = TRUE,
-  color = course_cols$warm,
-  size = 3.8,
-  hjust = 1
-) +
+  annotate(
+    "text",
+    x = 27,
+    y = avg_deg + 0.55,
+    label = paste0("'\u27e8' * k * '\u27e9' == ", round(avg_deg, 2)),
+    parse = TRUE,
+    color = course_cols$warm,
+    size = 3.8,
+    hjust = 1
+  ) +
   labs(
     title = "Degree sequence (sorted)",
     x = "Vertex rank",
@@ -301,37 +293,36 @@ annotate(
   scale_y_continuous(breaks = 0:10)
 ```
 
-## Matrix representations
+## Matrix representations {#sec-matrix-representations}
 
-Matrix representations are especially important in network science because they translate combinatorial structure into linear-algebraic objects. This makes it possible to study connectivity, diffusion, centrality, and spectral structure with computational tools that extend far beyond hand-drawn examples [@newman2010].
-
+Matrix representations are central to network science because they translate combinatorial graph structure into linear-algebraic objects, making it possible to study connectivity, diffusion, centrality, and spectral properties computationally [@newman2010; @chung1997]. The adjacency matrix and the Laplacian are the two most important representations; a comprehensive treatment of their spectral theory is given in @chung1997.
 
 ### The adjacency matrix
 
 ::: {#def-adjacency-matrix}
-Let $G = (V, E)$ be a graph with $V = \{1, 2, \ldots, N\}$. The **adjacency matrix** of $G$ is the $N \times N$ matrix $A$ defined by
+Let $G = (V, E)$ be a graph with $V = \{1, 2, \ldots, N\}$. The **adjacency matrix** of $G$ is the $N \times N$ matrix $A$ defined entry-wise by
 
 $$
 A_{ij} = \begin{cases} 1 & \text{if } \{i, j\} \in E, \\ 0 & \text{otherwise.} \end{cases}
 $$
 :::
 
-For an undirected graph, the adjacency matrix is **symmetric**: $A_{ij} = A_{ji}$ for all $i, j$. For a simple graph, all diagonal entries are zero: $A_{ii} = 0$.
+For an undirected graph, $A$ is **symmetric**: $A_{ij} = A_{ji}$ for all $i, j$. For a simple graph, $A_{ii} = 0$ for all $i$.
 
-#### Key properties of the adjacency matrix
+#### Key properties
 
-Several immediate properties follow from the definition:
+Several properties follow immediately from the definition:
 
--   The row sum of row $i$ equals the degree of vertex $i$: $\sum_{j} A_{ij} = k_i$.
--   The total sum of all entries equals twice the number of edges: $\sum_{i,j} A_{ij} = 2M$.
--   The entry $(A^r)_{ij}$ of the $r$-th power of $A$ counts the number of **walks** of length $r$ from vertex $i$ to vertex $j$.
+-   The row sum of row $i$ equals the degree of vertex $i$: $\sum_j A_{ij} = k_i$.
+-   The total sum of all entries equals $2M$: $\sum_{i,j} A_{ij} = 2M$.
+-   The entry $(A^r)_{ij}$ of the $r$-th matrix power counts the number of **walks** of length $r$ from vertex $i$ to vertex $j$.
 
-That last property is particularly powerful. It means that matrix exponentiation yields combinatorial information about paths in the graph.
+The third property follows from the definition of matrix multiplication: $(A^2)_{ij} = \sum_k A_{ik} A_{kj}$ counts the number of common neighbors of $i$ and $j$, which is exactly the number of walks of length $2$ connecting them. The argument extends by induction to any $r \geq 1$.
 
 ### The degree matrix
 
 ::: {#def-degree-matrix}
-The **degree matrix** of $G$ is the $N \times N$ diagonal matrix $D$ where $D_{ii} = k_i$ and $D_{ij} = 0$ for $i \neq j$.
+The **degree matrix** $D$ is the $N \times N$ diagonal matrix with $D_{ii} = k_i$ and $D_{ij} = 0$ for $i \neq j$.
 :::
 
 ### The Laplacian matrix
@@ -350,12 +341,15 @@ $$
 L_{ij} = \begin{cases} k_i & \text{if } i = j, \\ -1 & \text{if } \{i, j\} \in E, \\ 0 & \text{otherwise.} \end{cases}
 $$
 
-The smallest eigenvalue of $L$ is always $0$, with the all-ones vector $\mathbf{1}$ as eigenvector. The multiplicity of the zero eigenvalue equals the number of connected components. The second smallest eigenvalue, known as the **algebraic connectivity** or **Fiedler value** $\lambda_2$, measures how well-connected the graph is: larger $\lambda_2$ implies greater robustness to edge removal.
+Two structural facts about $L$ are fundamental:
+
+1. The smallest eigenvalue of $L$ is always $0$, with eigenvector $\mathbf{1}$ (the all-ones vector), because $L\mathbf{1} = D\mathbf{1} - A\mathbf{1} = \mathbf{k} - \mathbf{k} = \mathbf{0}$. The multiplicity of the zero eigenvalue equals the number of connected components.
+2. The **Fiedler value** $\lambda_2(L)$ — the second-smallest eigenvalue, introduced by @fiedler1973 — measures how well-connected the graph is. A larger $\lambda_2$ implies greater robustness: more edge-disjoint paths exist between typical pairs of vertices [@chung1997].
 
 ```{r}
 #| label: adjacency-matrix-visual
 #| echo: false
-#| fig-cap: "Left: a small graph on six vertices. Right: its adjacency matrix displayed as a heatmap. Coloured cells indicate edges (entry = 1)."
+#| fig-cap: "Left: a small graph on six vertices. Right: its adjacency matrix as a heatmap. Coloured cells indicate edges."
 
 set.seed(7)
 g_mat <- graph_from_edgelist(
@@ -397,76 +391,62 @@ par(old_par)
 
 ## Walks, paths, and cycles
 
-### Walk
+### Walk, trail, and path
 
 ::: {#def-walk}
-A **walk** in a graph $G = (V, E)$ is a finite sequence of vertices
+A **walk** of length $\ell$ in $G$ is a finite sequence of vertices
 
 $$
-v_0, v_1, v_2, \ldots, v_\ell
+v_0, v_1, \ldots, v_\ell
 $$
 
-such that $\{v_{i-1}, v_i\} \in E$ for every $i = 1, \ldots, \ell$. The integer $\ell$ is the **length** of the walk.
+such that $\{v_{i-1}, v_i\} \in E$ for every $i = 1, \ldots, \ell$. A walk may repeat vertices and edges.
 :::
-
-A walk may repeat vertices and edges. It simply requires that consecutive vertices in the sequence are adjacent.
-
-### Trail and path
 
 ::: {#def-trail-path}
-A **trail** is a walk in which no edge is repeated. A **path** is a walk in which no vertex is repeated (and therefore no edge is repeated either).
+A **trail** is a walk in which no edge is repeated. A **path** is a walk in which no vertex is repeated (which implies no edge is repeated).
 :::
 
-The path is the strictest concept: it visits each vertex at most once. A trail relaxes this to edges only. Euler's original Königsberg question was precisely about the existence of a **closed trail** — a trail that returns to its starting vertex, now called an **Eulerian circuit**.
+The **distance** $d(u, v)$ between two vertices is the length of a shortest path connecting them (or $\infty$ if no path exists). The **diameter** $D(G) = \max_{u,v} d(u,v)$ is the maximum distance over all pairs of vertices.
 
 ### Cycle
 
 ::: {#def-cycle}
-A **cycle** is a closed walk $v_0, v_1, \ldots, v_\ell = v_0$ of length $\ell \geq 3$ in which all vertices $v_0, v_1, \ldots, v_{\ell-1}$ are distinct.
+A **cycle** is a closed walk $v_0, v_1, \ldots, v_\ell = v_0$ of length $\ell \geq 3$ in which all vertices $v_0, \ldots, v_{\ell-1}$ are distinct. The **girth** of $G$ is the length of its shortest cycle. A graph with no cycles is **acyclic**.
 :::
 
-The **girth** of a graph is the length of its shortest cycle. A graph with no cycles is called **acyclic**.
-
-::: {.callout-note title="Connection to matrix powers"}
-Recall that $(A^r)_{ij}$ counts walks of length $r$ from $i$ to $j$. In particular, the diagonal entry $(A^3)_{ii}$ counts closed walks of length $3$ starting and ending at $i$. The number of triangles in $G$ is therefore
+::: {.callout-note title="Matrix powers and triangle counting"}
+Because $(A^r)_{ij}$ counts walks of length $r$ from $i$ to $j$, the diagonal entry $(A^3)_{ii}$ counts closed walks of length $3$ through $i$ — that is, the number of triangles containing $i$. Summing over all vertices and dividing by $6$ (two traversal directions $\times$ three starting vertices per triangle) gives:
 
 $$
 \text{triangles}(G) = \frac{1}{6} \operatorname{tr}(A^3).
 $$
 
-The factor $1/6$ accounts for the six ways to traverse each triangle (two directions $\times$ three starting vertices).
+This identity connects combinatorial structure to a straightforward matrix computation.
 :::
 
 ## Connectivity
 
-### Connected graphs and components
+### Connected components
 
 ::: {#def-connectivity}
-An undirected graph $G$ is **connected** if for every pair of distinct vertices $u, v \in V$, there exists a path from $u$ to $v$.
+An undirected graph $G$ is **connected** if for every pair of distinct vertices $u, v \in V$, there exists a path from $u$ to $v$. A **connected component** is a maximal connected subgraph of $G$.
 :::
 
-If $G$ is not connected, it decomposes into maximal connected subgraphs, called **connected components**.
-
-::: {#def-component}
-A **connected component** of $G$ is a maximal connected subgraph of $G$.
-:::
-
-The number of connected components is denoted $c(G)$. Note that $c(G) = 1$ if and only if $G$ is connected.
+The number of connected components is denoted $c(G)$; $c(G) = 1$ if and only if $G$ is connected. The multiplicity of the zero eigenvalue of $L$ equals $c(G)$ — providing an algebraic route to detecting components.
 
 ### Strong and weak connectivity in directed graphs
 
-For directed graphs, two notions of connectivity arise.
-
 ::: {#def-strong-weak-connectivity}
-A directed graph is **strongly connected** if for every ordered pair $(u, v)$ there exists a directed path from $u$ to $v$. It is **weakly connected** if the underlying undirected graph is connected.
+A directed graph is **strongly connected** if for every ordered pair $(u, v)$ there is a directed path from $u$ to $v$. It is **weakly connected** if the underlying undirected graph (obtained by ignoring arc directions) is connected.
 :::
 
-Strong connectivity requires reachability in both directions between every pair of vertices. Weak connectivity only requires that edge directions can be ignored.
+Strong connectivity requires reachability in both directions between every pair of vertices. A directed graph can be weakly connected without being strongly connected.
 
 ```{r}
 #| label: connected-components-plot
 #| echo: false
-#| fig-cap: "A disconnected graph with three connected components shown in distinct colours. Component membership is determined by reachability."
+#| fig-cap: "A disconnected graph with three connected components shown in distinct colours. Component membership is determined by mutual reachability."
 
 g_comp <- make_empty_graph(n = 12, directed = FALSE)
 g_comp <- add_edges(g_comp, c(1,2, 2,3, 3,1,
@@ -502,25 +482,17 @@ legend("bottomright",
 
 ### Cut vertices and bridges
 
-Two special structural elements are important for understanding how connectivity can be disrupted.
+Two structural elements are critical for understanding how connectivity can fail.
 
 ::: {#def-cut-vertex}
-A **cut vertex** (or **articulation point**) is a vertex $v$ whose removal increases the number of connected components:
-
-$$
-c(G - v) > c(G).
-$$
+A **cut vertex** (or **articulation point**) is a vertex $v$ whose removal strictly increases the number of connected components: $c(G - v) > c(G)$.
 :::
 
 ::: {#def-bridge}
-A **bridge** is an edge $e$ whose removal increases the number of connected components:
-
-$$
-c(G - e) > c(G).
-$$
+A **bridge** is an edge $e$ whose removal strictly increases the number of connected components: $c(G - e) > c(G)$.
 :::
 
-Cut vertices and bridges are the most vulnerable elements of a connected graph. Their removal disconnects the network. Identifying them has direct relevance to network robustness, which is examined in detail in Chapter 7.
+Cut vertices and bridges are the most fragile elements of a connected graph. Their removal disconnects the network — a property directly relevant to network robustness, examined in detail in Chapter 7. Note that every bridge $\{u,v\}$ is contained in no cycle: if it were, its removal would leave $u$ and $v$ connected via the cycle, contradicting the definition.
 
 ```{r}
 #| label: cut-vertex-bridge
@@ -528,9 +500,9 @@ Cut vertices and bridges are the most vulnerable elements of a connected graph. 
 #| fig-cap: "A graph with a cut vertex (red) and a bridge (dashed red edge). Removing either one disconnects the graph."
 
 g_cut <- graph_from_edgelist(
-  matrix(c(1,2, 2,3, 3,1,   # triangle on 1,2,3
-           3,4,              # bridge 3-4
-           4,5, 5,6, 6,4),  # triangle on 4,5,6
+  matrix(c(1,2, 2,3, 3,1,
+           3,4,
+           4,5, 5,6, 6,4),
          ncol = 2, byrow = TRUE),
   directed = FALSE
 )
@@ -568,38 +540,36 @@ plot(g_cut,
 
 ## Trees and spanning trees
 
-### Definition of a tree
+### Definition and characterisation
 
 ::: {#def-tree}
-A **tree** is a connected acyclic graph.
+A **tree** is a connected acyclic graph. A **forest** is an acyclic graph (whose connected components are trees).
 :::
 
-Trees are among the most important and well-understood graph families. Several equivalent characterizations exist.
-
 ::: {#thm-tree-equivalences}
-**Theorem.** Let $G$ be a graph with $N$ vertices. The following statements are equivalent:
+**Theorem.** Let $G$ be a graph with $N$ vertices. The following are equivalent:
 
 1.  $G$ is a tree.
 2.  $G$ is connected and has exactly $N - 1$ edges.
 3.  $G$ is acyclic and has exactly $N - 1$ edges.
-4.  Any two distinct vertices of $G$ are connected by exactly one path.
-5.  $G$ is connected, but removing any single edge disconnects it.
+4.  Any two distinct vertices are connected by exactly one path.
+5.  $G$ is connected, and removing any single edge disconnects it (equivalently, every edge is a bridge).
 :::
 
-The equivalence of these statements is a classical result. In particular, $M = N - 1$ is a necessary and sufficient condition for a connected graph to be a tree. A **forest** is an acyclic graph that is not necessarily connected; each connected component of a forest is a tree.
+The equivalence of these statements is classical; proofs appear in @diestel2017 [Ch. 1] and @west2001 [Ch. 2]. In particular, $M = N - 1$ is both necessary and sufficient for a connected graph to be a tree. This identity will resurface in Chapter 4 when characterising the giant component of a random graph near the phase transition.
 
 ### Spanning trees
 
 ::: {#def-spanning-tree}
-A **spanning tree** of a connected graph $G = (V, E)$ is a subgraph $T = (V, E')$ with $E' \subseteq E$ that is itself a tree — that is, it contains all $N$ vertices with exactly $N - 1$ edges, is connected, and is acyclic.
+A **spanning tree** of a connected graph $G = (V, E)$ is a subgraph $T = (V, E')$, with $E' \subseteq E$, that is itself a tree — it contains all $N$ vertices with exactly $N-1$ edges, is connected, and is acyclic.
 :::
 
-Every connected graph contains at least one spanning tree. When edge weights are present, the **minimum spanning tree** is the spanning tree for which the total edge weight is minimized. The Kruskal and Prim algorithms find minimum spanning trees in $O(M \log N)$ time.
+Every connected graph possesses at least one spanning tree. When edge weights are present, the **minimum spanning tree** minimises total edge weight; the Kruskal and Prim algorithms find it in $O(M \log N)$ time.
 
 ```{r}
 #| label: spanning-tree-plot
 #| echo: false
-#| fig-cap: "Left: a connected graph on nine vertices. Right: one spanning tree of the same graph — gold edges form the spanning tree, grey edges are excluded."
+#| fig-cap: "Left: a connected graph on nine vertices. Right: one spanning tree — gold edges are in the tree, grey edges are excluded."
 
 set.seed(99)
 g_span <- sample_gnp(n = 9, p = 0.42)
@@ -645,32 +615,30 @@ par(old_par)
 
 ## Bipartite graphs
 
-### Definition
+### Definition and König's criterion
 
 ::: {#def-bipartite}
-A graph $G = (V, E)$ is **bipartite** if the vertex set can be partitioned into two non-empty disjoint sets $V = X \cup Y$ such that every edge in $E$ has one endpoint in $X$ and one endpoint in $Y$. The partition $(X, Y)$ is called the **bipartition**.
+A graph $G = (V, E)$ is **bipartite** if $V$ can be partitioned into two non-empty disjoint sets $X$ and $Y$ such that every edge has one endpoint in $X$ and one in $Y$. The pair $(X, Y)$ is the **bipartition**.
 :::
 
-In a bipartite graph, there are no edges within $X$ and no edges within $Y$. All edges cross the bipartition. Bipartite graphs arise naturally in models of two-mode networks: actors and films, employees and projects, genes and diseases.
-
-### König's criterion
+Bipartite graphs admit no edges within $X$ or within $Y$. They arise naturally in two-mode network models: authors and papers, genes and diseases, employees and projects.
 
 ::: {#thm-koenig}
-**Theorem (König, 1916).** A graph $G$ is bipartite if and only if it contains no cycle of odd length.
+**Theorem [@koenig1916].** A graph $G$ is bipartite if and only if it contains no cycle of odd length.
 :::
 
-This criterion is both elegant and computationally useful. Bipartiteness can be detected by a simple two-coloring of the graph, which runs in $O(N + M)$ time using breadth-first search.
+This criterion is both elegant and computationally efficient: bipartiteness is detected by a two-coloring of $G$, executable in $O(N + M)$ time by breadth-first search [@west2001]. When BFS assigns the same color to both endpoints of any edge, an odd cycle has been found and the graph is not bipartite. Bipartite graphs arise naturally in two-mode network models — authors and papers, genes and diseases, employees and projects — and require adapted statistical tools; see @newman2010 [Ch. 6] for a discussion of projection methods.
 
 ### Complete bipartite graph
 
 ::: {#def-complete-bipartite}
-The **complete bipartite graph** $K_{m,n}$ is the bipartite graph with parts $|X| = m$ and $|Y| = n$ in which every vertex in $X$ is adjacent to every vertex in $Y$. It has $mn$ edges and its degree sequence consists of $n$ vertices of degree $m$ and $m$ vertices of degree $n$.
+The **complete bipartite graph** $K_{m,n}$ is the bipartite graph with $|X| = m$ and $|Y| = n$ in which every vertex of $X$ is adjacent to every vertex of $Y$. It has $mn$ edges, $n$ vertices of degree $m$, and $m$ vertices of degree $n$.
 :::
 
 ```{r}
 #| label: bipartite-plot
 #| echo: false
-#| fig-cap: "Left: a bipartite graph with bipartition (blue, teal). Right: the complete bipartite graph K(3,4) in which every vertex in one part connects to every vertex in the other."
+#| fig-cap: "Left: a bipartite graph with bipartition shown in blue and teal. Right: the complete bipartite graph K(3,4)."
 
 g_bip <- graph_from_biadjacency_matrix(
   matrix(c(1,0,1,1, 0,1,1,0, 1,1,0,1), nrow = 3, byrow = TRUE)
@@ -714,40 +682,26 @@ par(old_par)
 
 Several families appear repeatedly in network science as benchmarks and building blocks.
 
-### Complete graph
-
 ::: {#def-complete-graph}
-The **complete graph** $K_N$ is the simple graph on $N$ vertices in which every pair of distinct vertices is adjacent. It has
-
-$$
-M = \binom{N}{2} = \frac{N(N-1)}{2}
-$$
-
-edges and every vertex has degree $N - 1$.
+The **complete graph** $K_N$ is the simple graph on $N$ vertices in which every pair of distinct vertices is adjacent. It has $M = \binom{N}{2}$ edges and every vertex has degree $N - 1$.
 :::
 
-### Cycle and path graphs
-
 ::: {#def-cycle-graph}
-The **cycle graph** $C_N$ is the graph consisting of a single cycle through all $N$ vertices. Each vertex has degree $2$ and the graph has $N$ edges.
+The **cycle graph** $C_N$ is a single cycle through all $N$ vertices: every vertex has degree $2$ and the graph has $N$ edges.
 :::
 
 ::: {#def-path-graph}
-The **path graph** $P_N$ is the graph on $N$ vertices forming a single path. The two endpoints have degree $1$, all interior vertices have degree $2$, and the graph has $N - 1$ edges.
+The **path graph** $P_N$ has $N$ vertices forming a single path: the two endpoints have degree $1$, all interior vertices have degree $2$, and the graph has $N - 1$ edges.
 :::
-
-### Regular graphs
 
 ::: {#def-regular}
-A graph is $k$-regular if every vertex has exactly degree $k$.
+A graph is **$k$-regular** if every vertex has degree exactly $k$. The complete graph $K_N$ is $(N-1)$-regular; $C_N$ is $2$-regular.
 :::
-
-The complete graph $K_N$ is $(N-1)$-regular. The cycle graph $C_N$ is $2$-regular. The Petersen graph is a famous 3-regular graph used as a counterexample in many graph-theoretic conjectures.
 
 ```{r}
 #| label: special-graphs-plot
 #| echo: false
-#| fig-cap: "Four special graph families: the complete graph K5, the cycle C6, a 3-regular (cubic) graph on 10 vertices, and the path P6."
+#| fig-cap: "Four standard graph families: K5 (complete), C6 (cycle), a 3-regular graph on 10 vertices, and P6 (path)."
 
 g_k5  <- make_full_graph(5)
 g_c6  <- make_ring(6)
@@ -786,31 +740,23 @@ par(old_par)
 
 ## Subgraphs and graph isomorphism
 
-### Subgraph
-
 ::: {#def-subgraph}
-A graph $H = (V', E')$ is a **subgraph** of $G = (V, E)$ if $V' \subseteq V$ and $E' \subseteq E$. It is an **induced subgraph** on $V' \subseteq V$ if $E'$ contains exactly all edges of $G$ with both endpoints in $V'$.
+A graph $H = (V', E')$ is a **subgraph** of $G = (V, E)$ if $V' \subseteq V$ and $E' \subseteq E$. It is an **induced subgraph** on $V' \subseteq V$, written $G[V']$, if $E'$ contains every edge of $G$ with both endpoints in $V'$.
 :::
 
-The induced subgraph on a vertex set $S$ is written $G[S]$.
-
-### Graph isomorphism
-
 ::: {#def-isomorphism}
-Two graphs $G = (V_1, E_1)$ and $H = (V_2, E_2)$ are **isomorphic**, written $G \cong H$, if there exists a bijection $\phi : V_1 \to V_2$ such that
+Two graphs $G = (V_1, E_1)$ and $H = (V_2, E_2)$ are **isomorphic**, written $G \cong H$, if there exists a bijection $\phi : V_1 \to V_2$ preserving adjacency:
 
 $$
 \{u, v\} \in E_1 \iff \{\phi(u), \phi(v)\} \in E_2.
 $$
 
-The function $\phi$ is called a **graph isomorphism**.
+The function $\phi$ is a **graph isomorphism**.
 :::
 
-Isomorphic graphs are structurally identical: one is simply a relabeling of the other. Isomorphism captures the idea that only the pattern of connections — not the labels on vertices — defines a graph's structure.
+Isomorphic graphs are structurally identical: one is a relabeling of the other. A necessary condition for isomorphism is that the two graphs share the same degree sequence — but this is not sufficient. Constructing non-isomorphic graphs with the same degree sequence is a useful exercise in understanding what degree alone can and cannot determine.
 
-A necessary condition for isomorphism is that two graphs have the same degree sequence. This condition is easy to check but is not sufficient: non-isomorphic graphs can share the same degree sequence.
-
-## Working with graphs in R
+## Working with graphs in R {#sec-working-with-graphs-in-r}
 
 The `igraph` package provides a comprehensive toolkit for constructing, manipulating, and analysing graphs in R.
 
@@ -878,7 +824,7 @@ print(eigs)
 cat("\nFiedler value (algebraic connectivity):", eigs[2], "\n")
 ```
 
-The smallest eigenvalue is $0$ (the graph is connected, so there is exactly one zero eigenvalue). The second-smallest eigenvalue — the Fiedler value — quantifies algebraic connectivity: a larger Fiedler value indicates a more robustly connected graph.
+Since `g1` is connected, $L$ has exactly one zero eigenvalue. The Fiedler value $\lambda_2 > 0$ confirms connectivity; its magnitude quantifies how robustly the graph is connected.
 
 ### Triangle counting via matrix trace
 
@@ -897,7 +843,7 @@ cat("Number of triangles (igraph)        :", sum(count_triangles(g1)) / 3, "\n")
 The table below collects the most important quantities introduced in this chapter.
 
 ```{r}
-#| label: summary-table
+#| label: tbl-summary-table
 #| echo: false
 #| tbl-cap: "Core graph-theoretic quantities, their notation, and formulas."
 
@@ -908,11 +854,12 @@ summary_df <- data.frame(
   Quantity = c("Order", "Size", "Degree of $v$",
                "Average degree", "Adjacency matrix", "Laplacian matrix",
                "Distance", "Diameter", "Component count", "Fiedler value"),
-  Formula  = c("$\\lvert V \\rvert$", "$\\lvert E \\rvert$", "$\\lvert \\{u: uv\\in E\\} \\rvert$",
+  Formula  = c("$\\lvert V \\rvert$", "$\\lvert E \\rvert$",
+               "$\\lvert \\{u: uv\\in E\\} \\rvert$",
                "$2M/N$", "$A_{ij}=\\mathbf{1}[ij\\in E]$", "$D-A$",
                "Length of shortest $u$-$v$ path",
                "$\\max_{u,v} d(u,v)$",
-               "Maximal connected pieces",
+               "Maximal connected subgraph count",
                "2nd smallest eigenvalue of $L$")
 )
 
@@ -929,193 +876,114 @@ knitr::kable(
 
 ## Exercises
 
-------------------------------------------------------------------------
+The exercises below are designed for MSc-level students. They do not ask you to reproduce derivations from the text. Instead, they ask you to **apply, extend, and connect** the ideas introduced in this chapter. Several problems have no unique answer — the goal is precise reasoning, not a single correct number.
 
-### Part I. Computational and derivation exercises
+::: {.callout-important title="Orientation"}
+These problems train you to work with the quantities in @tbl-summary-table as diagnostic tools. The same tools reappear throughout the course — in random graph theory, small-world models, and network robustness. The habit of computing, interpreting, and questioning each quantity is what this chapter is building.
+:::
 
-#### Exercise 1. Handshaking lemma
+---
 
-Let $G$ be an undirected simple graph with $N = 8$ vertices and degree sequence $(5, 4, 4, 3, 3, 2, 1, 0)$.
+#### Exercise 1. Degree sequences: existence and uniqueness
 
-1.  Verify that the degree sequence satisfies the handshaking lemma.
-2.  Determine the number of edges $M$.
-3.  Compute the average degree $\langle k \rangle$.
+1.  Give an example of two non-isomorphic graphs on six vertices that share the same degree sequence. Prove they are not isomorphic.
+2.  State (without proof) the Erdős–Gallai condition [@erdosgallai1960] for a sequence of non-negative integers to be graphical. Apply it to determine which of the following sequences are degree sequences of a simple graph:
+    (a) $(4, 3, 3, 2, 2)$,
+    (b) $(5, 3, 3, 2, 1)$,
+    (c) $(4, 4, 3, 3, 2, 2)$.
+3.  Prove that there is no simple graph whose degree sequence is $(5, 4, 3, 2, 1)$ on five vertices. What goes wrong?
 
-------------------------------------------------------------------------
+---
 
-#### Exercise 2. Adjacency matrix
+#### Exercise 2. The Laplacian as a diagnostic tool
 
-Let $G$ have vertex set $\{1,2,3,4\}$ and edge set $\{\{1,2\},\{1,3\},\{2,3\},\{3,4\}\}$.
+Let $G$ be the graph on $\{1,2,3,4\}$ with edge set $\{\{1,2\},\{1,3\},\{2,3\},\{3,4\}\}$.
 
-1.  Write the adjacency matrix $A$ of $G$.
-2.  Compute $A^2$ by hand.
-3.  Identify what the diagonal entries of $A^2$ represent in terms of walks.
-4.  Compute the number of triangles using $\operatorname{tr}(A^3)$ and verify with `igraph`.
+1.  Write $A$ and $L = D - A$ explicitly.
+2.  Compute the eigenvalues of $L$ (numerically is fine). Verify that the smallest is $0$ and that its multiplicity matches $c(G)$.
+3.  Now delete the edge $\{3,4\}$ and recompute the Laplacian spectrum. What changes, and why? Interpret the Fiedler value before and after deletion.
+4.  A student claims: *"The Fiedler value tells us how many edges we need to remove to disconnect the graph."* Is this correct? Give a precise statement of what $\lambda_2$ does and does not tell us.
 
-------------------------------------------------------------------------
+---
 
-#### Exercise 3. Laplacian eigenvalues
+#### Exercise 3. Matrix powers and walk counting
 
-For the graph in Exercise 2:
+Let $A$ be the adjacency matrix of the motivating graph from @sec-a-motivating-example.
 
-1.  Construct the degree matrix $D$ and the Laplacian $L = D - A$.
-2.  Compute the eigenvalues of $L$.
-3.  Verify that the smallest eigenvalue is $0$ with eigenvector $\mathbf{1}$.
-4.  Interpret the second-smallest eigenvalue.
+1.  Compute $A^2$ and $A^3$ (by hand or in R).
+2.  Use $(A^2)_{ij}$ to identify all pairs of vertices at distance exactly $2$. Verify against the graph directly.
+3.  Use $\operatorname{tr}(A^3)/6$ to count triangles. Explain why the factor $6$ appears.
+4.  The entry $(A^r)_{ij}$ counts walks, not paths. Construct a specific example (using this or any other graph) where $(A^2)_{ij} > 0$ but the number of paths of length $2$ from $i$ to $j$ is strictly less than $(A^2)_{ij}$. Explain the discrepancy.
 
-------------------------------------------------------------------------
+---
 
-#### Exercise 4. Trees
+#### Exercise 4. Connectivity and fragility
 
-1.  Prove that any tree on $N$ vertices has exactly $N - 1$ edges.
-2.  How many distinct labeled trees exist on $N = 4$ vertices? Draw them all.
-3.  Give an example of a connected graph that is not a tree, and remove one edge to obtain a spanning tree.
+Consider the graph formed by two triangles, $\{1,2,3\}$ and $\{4,5,6\}$, joined by the single edge $\{3,4\}$.
 
-------------------------------------------------------------------------
+1.  Identify all cut vertices and bridges. Justify each answer using the definitions in @def-cut-vertex and @def-bridge.
+2.  Prove that every bridge is contained in no cycle. Use this to explain why $P_N$ has $N-2$ cut vertices and $N-1$ bridges, while $C_N$ has neither.
+3.  Compute the Fiedler value for the two-triangle graph and for $C_6$ (which has the same number of vertices and edges). Which is larger? Does the Fiedler value correctly predict which graph is more fragile? Discuss any limitations of this comparison.
+4.  In `igraph`, use `articulation_points()` and an edge-deletion loop to verify your classification. Report your code and output.
 
-#### Exercise 5. Bipartite graphs
+---
 
-1.  Draw $K_{2,3}$ and compute its number of edges.
-2.  Verify using König's criterion that $K_{2,3}$ contains no odd cycle.
-3.  Show that the cycle graph $C_5$ is **not** bipartite.
-4.  For which values of $N$ is the cycle graph $C_N$ bipartite?
+#### Exercise 5. Trees: characterisation and counting
 
-------------------------------------------------------------------------
+1.  Prove that a connected graph $G$ with $N$ vertices is a tree if and only if it has exactly $N-1$ edges. Your proof should use the equivalences in @thm-tree-equivalences.
+2.  How many distinct labeled trees exist on $N = 4$ vertices? List them explicitly and verify using Cayley's formula $N^{N-2}$ [@cayley1889].
+3.  A graph $G$ has $N = 10$ vertices and $M = 9$ edges. A student concludes it must be a tree. Is this necessarily true? If not, give a counterexample and state the missing condition.
+4.  In `igraph`, generate a random tree on 15 vertices using `sample_tree(15)`. Verify that it satisfies all five conditions in @thm-tree-equivalences computationally.
 
-#### Exercise 6. Cut vertices and bridges
+---
 
-For a path graph $P_N$ with $N \geq 3$:
+#### Exercise 6. Bipartite structure: theory and detection
 
-1.  Identify all cut vertices.
-2.  Identify all bridges.
-3.  What changes if $P_N$ is replaced by the cycle $C_N$?
-4.  Argue that any edge of a tree is a bridge.
+1.  Prove König's criterion: a graph is bipartite if and only if it contains no odd cycle. *(Hint: for the forward direction, show that a 2-colouring assigns opposite colours to endpoints of every edge; for the reverse, show BFS produces a valid 2-colouring when no odd cycle exists.)*
+2.  The complete bipartite graph $K_{m,n}$ has $mn$ edges. Derive a formula for its average degree $\langle k \rangle$ in terms of $m$ and $n$. For what value of $m$ (with $n$ fixed) is $\langle k \rangle$ maximised, and does this make sense intuitively?
+3.  Consider the following adjacency matrix:
 
-------------------------------------------------------------------------
+$$
+A = \begin{pmatrix}
+0 & 1 & 0 & 1 \\
+1 & 0 & 1 & 0 \\
+0 & 1 & 0 & 1 \\
+1 & 0 & 1 & 0
+\end{pmatrix}.
+$$
 
-### Part II. Conceptual and analytical exercises
+Without drawing the graph, determine whether it is bipartite using only the eigenvalues of $A$. *(Hint: a graph is bipartite if and only if its adjacency spectrum is symmetric about zero [@chung1997].)*
 
-#### Exercise 7. Degree sequence realizability
+4.  Give a concrete real-world example of a network that is naturally bipartite. Explain what would be structurally wrong with computing the standard clustering coefficient on this network without accounting for its bipartite nature.
 
-A sequence of non-negative integers $(d_1, d_2, \ldots, d_N)$ is called **graphical** if it is the degree sequence of some simple graph.
+---
 
-1.  Show that $(3, 3, 2, 2, 1, 1)$ is graphical by constructing a graph.
-2.  Show that $(4, 3, 2, 2, 1)$ is **not** graphical using the handshaking lemma.
-3.  State the Erdős--Gallai theorem and apply it to check whether $(3, 3, 2, 2, 2)$ is graphical.
+#### Exercise 7. Comparative network profile
 
-------------------------------------------------------------------------
+Using the `igraph` workflow from @sec-working-with-graphs-in-r, construct the following four graphs:
 
-#### Exercise 8. Isomorphism
+-   $K_5$,
+-   $C_{10}$,
+-   $P_{10}$,
+-   one connected realisation of $G(20, 0.20)$.
 
-1.  Determine whether the cycle $C_6$ and the graph consisting of two disjoint triangles are isomorphic. Use degree sequences and triangle counts as invariants.
-2.  Construct an explicit isomorphism or prove that none exists.
+For each graph, compute: order, size, $\langle k \rangle$, diameter, $c(G)$, and $\lambda_2(L)$ where applicable. Organise the results in a single table.
 
-------------------------------------------------------------------------
+1.  The path $P_{10}$ and cycle $C_{10}$ have the same number of vertices but very different diameters. Express both diameters in closed form and prove your answers.
+2.  Rank the four graphs by Fiedler value. Explain, in terms of graph structure, why the ranking comes out as it does.
+3.  The random graph $G(20, 0.20)$ is not deterministic. Repeat the construction five times. How stable are the quantities in your table across realisations? Which quantity varies most?
+4.  Write a short paragraph (5–8 sentences) identifying which of these graphs would make the most informative **null model** for comparison when, in the next chapter, we ask what a random graph typically looks like — and why.
 
-#### Exercise 9. Powers of the adjacency matrix
-
-Let $G = C_4$ (the 4-cycle with vertices arranged cyclically).
-
-1.  Write the adjacency matrix $A$.
-2.  Compute $A^2$ and $A^3$.
-3.  Use the entries of $A^2$ to identify all walks of length $2$ between non-adjacent pairs.
-4.  Explain why $(A^r)_{ij}$ counts walks, not paths.
-
-------------------------------------------------------------------------
-
-#### Exercise 10. Regular graphs
-
-1.  Show that in a $k$-regular graph with $N$ vertices, the number of edges is $M = kN/2$.
-2.  Deduce that $kN$ must be even. State a condition on $k$ and $N$ guaranteeing this.
-3.  Show that the eigenvalues of the adjacency matrix of a $k$-regular graph all lie in the interval $[-k, k]$, with $k$ itself always an eigenvalue.
-
-------------------------------------------------------------------------
-
-### Part III. Simulation and coding exercises
-
-#### Exercise 11. The Petersen graph
-
-Using `igraph`:
-
-1.  Construct the Petersen graph with `graph.famous("Petersen")`.
-2.  Report its order, size, degree sequence, diameter, girth, and clustering coefficient.
-3.  Plot it with vertex size proportional to degree.
-4.  Compute its Laplacian eigenvalues. Verify that the Fiedler value is positive.
-
-------------------------------------------------------------------------
-
-#### Exercise 12. Exploring graph families
-
-For each of $K_5$, $C_{10}$, $P_8$, and a random $G(20, 0.25)$ graph:
-
-1.  Compute the degree sequence, average degree, diameter, and clustering coefficient.
-2.  Determine whether the graph is bipartite using `is_bipartite()`.
-3.  Find a spanning tree with `mst()` and plot it alongside the original graph.
-
-------------------------------------------------------------------------
-
-#### Exercise 13. Adjacency matrix powers
-
-Write an R function that, given a graph $G$ and an integer $r$, returns the matrix $A^r$ and uses it to count:
-
-1.  All walks of length 3 in $C_5$.
-2.  The number of triangles in a random $G(15, 0.3)$ graph.
-
-Verify both results using `igraph`'s built-in functions.
-
-------------------------------------------------------------------------
-
-#### Exercise 14. Detecting cut vertices
-
-Write an R function that:
-
-1.  Generates a random connected graph on $N$ vertices.
-2.  Identifies all cut vertices using `articulation_points()`.
-3.  Visualizes the graph with cut vertices highlighted in a contrasting color.
-4.  Repeats this across a grid of values of $p$ from $0.1$ to $0.6$ and plots how the mean number of cut vertices changes with $p$.
-
-------------------------------------------------------------------------
-
-#### Exercise 15. Minimum spanning tree on a weighted graph
-
-Generate a random graph on 12 vertices. Assign edge weights sampled uniformly from $[1, 10]$.
-
-1.  Find the minimum spanning tree using `mst()`.
-2.  Compute and report the total weight of the MST versus the full graph.
-3.  Visualize the MST edges highlighted on the full graph.
-4.  Repeat with weights from an exponential distribution and compare.
-
-------------------------------------------------------------------------
-
-## Suggested mini-project
-
-A strong mini-project for this chapter is the following:
-
-> Investigate graph-theoretic properties across several graph families and at least one real-world network.
-
-A complete submission should include:
-
--   construction and visualization of at least four graph families,
--   computation of key quantities: degree sequence, diameter, clustering coefficient, algebraic connectivity,
--   analysis of at least one real network from the `igraphdata` package,
--   comparison of the real network's properties against the theoretical benchmarks,
--   a discussion of which graph-theoretic quantities are most informative for characterizing the network's structure.
-
+---
 
 ## Bridge to the next chapter
 
-This chapter has treated graphs as deterministic mathematical objects: the vertex set and edge set are specified, and the goal is to reason about the resulting structure. The next chapter changes that viewpoint. Instead of fixing one graph in advance, we will study probability models that generate many possible graphs. The language introduced here — degree, adjacency matrix, connectedness, trees, and components — will become the vocabulary used to describe what a random graph typically looks like.
+This chapter has treated graphs as deterministic mathematical objects: the vertex set and edge set are given, and the task is to reason about the resulting structure. The next chapter changes this viewpoint. Instead of fixing one graph in advance, we study probability models that generate many possible graphs. The language established here — degree, adjacency matrix, connectivity, trees, Laplacian spectrum — becomes the vocabulary used to describe what a random graph typically looks like and how its properties emerge from a simple probabilistic rule.
 
 ## Concluding remarks
 
-Graph theory provides the rigorous language that network science depends on. The definitions introduced in this chapter — graphs, adjacency matrices, degrees, paths, connectivity, trees — are not merely formal conventions. They are the precise tools that make it possible to state questions clearly, derive results exactly, and implement algorithms efficiently.
+Graph theory provides the rigorous language on which network science depends. The definitions introduced here — graphs, adjacency matrices, degrees, paths, connectivity, trees, bipartiteness — are not merely formal conventions. They are the precise tools that make it possible to state questions unambiguously, derive results exactly, and implement algorithms correctly.
 
-Several key ideas run through this chapter:
+Several structural themes run through this chapter: a graph encodes only the pattern of connections; the adjacency matrix links combinatorics to linear algebra; the handshaking lemma is a universal constraint; connectivity, trees, and bipartiteness are global properties that determine much of a graph's character; and the Laplacian spectrum connects graph structure to spectral properties, with $\lambda_2$ measuring robustness.
 
--   a graph encodes only the pattern of connections, not geometric or physical information,
--   the adjacency matrix links combinatorial structure to linear algebra,
--   the handshaking lemma is a universal constraint on any graph,
--   connectivity, trees, and bipartiteness are global properties that determine much of a graph's character,
--   the Laplacian matrix connects graph structure to spectral properties, with the Fiedler value measuring robustness.
-
-These foundations will be used throughout all subsequent chapters. The Erdős--Rényi model, the Watts--Strogatz model, and the Barabási--Albert model are all built on top of the graph-theoretic language established here. Before asking *how likely* a graph with certain properties is, one must first be able to describe those properties precisely — and that is what this chapter has provided.
+These foundations appear in every subsequent chapter. The Erdős–Rényi [@erdos1959; @erdos1960], Watts–Strogatz [@watts1998], and Barabási–Albert [@barabasi1999] models are all built on top of the graph-theoretic language established here. Before asking how likely a graph with certain properties is, one must be able to describe those properties precisely — and that is what this chapter has provided.

@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>5&nbsp; The Evolution of Random Graphs – Network Science</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -89,15 +92,14 @@ div.csl-indent {
 <link href="../chapters/03-random-graphs.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4dd0a3cd2d1f0c1ca65dcbe395e0d0e9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-07314a9cf6582ab18f4f031a2d4fd43d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b5d8c9ff6161f8ccf1af3142a66ed23c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-d4aa30a0361d4615301e0f27ccb5b562.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -199,9 +201,7 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="../index.html" class="sidebar-logo-link">
-      </a>
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Network Science</a> 
     </div>
@@ -279,59 +279,34 @@ window.Quarto = {
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">5.1</span> Introduction</a></li>
   <li><a href="#learning-goals" id="toc-learning-goals" class="nav-link" data-scroll-target="#learning-goals"><span class="header-section-number">5.2</span> Learning goals</a></li>
-  <li><a href="#chapter-roadmap" id="toc-chapter-roadmap" class="nav-link" data-scroll-target="#chapter-roadmap"><span class="header-section-number">5.3</span> Chapter roadmap</a></li>
-  <li><a href="#connectedness-and-components" id="toc-connectedness-and-components" class="nav-link" data-scroll-target="#connectedness-and-components"><span class="header-section-number">5.4</span> Connectedness and components</a>
+  <li><a href="#connectedness-and-components" id="toc-connectedness-and-components" class="nav-link" data-scroll-target="#connectedness-and-components"><span class="header-section-number">5.3</span> Connectedness and components</a>
   <ul class="collapse">
-  <li><a href="#connected-graph" id="toc-connected-graph" class="nav-link" data-scroll-target="#connected-graph">Connected graph</a></li>
-  <li><a href="#connected-component" id="toc-connected-component" class="nav-link" data-scroll-target="#connected-component">Connected component</a></li>
-  <li><a href="#size-of-a-component" id="toc-size-of-a-component" class="nav-link" data-scroll-target="#size-of-a-component">Size of a component</a></li>
-  <li><a href="#isolated-vertex" id="toc-isolated-vertex" class="nav-link" data-scroll-target="#isolated-vertex">Isolated vertex</a></li>
-  <li><a href="#example-component-structure" id="toc-example-component-structure" class="nav-link" data-scroll-target="#example-component-structure">Example: component structure</a></li>
-  <li><a href="#component-size-table" id="toc-component-size-table" class="nav-link" data-scroll-target="#component-size-table">Component-size table</a></li>
+  <li><a href="#definitions" id="toc-definitions" class="nav-link" data-scroll-target="#definitions">Definitions</a></li>
+  <li><a href="#component-structure-example" id="toc-component-structure-example" class="nav-link" data-scroll-target="#component-structure-example">Component structure example</a></li>
   </ul></li>
-  <li><a href="#giant-component" id="toc-giant-component" class="nav-link" data-scroll-target="#giant-component"><span class="header-section-number">5.5</span> Giant component</a>
+  <li><a href="#the-giant-component" id="toc-the-giant-component" class="nav-link" data-scroll-target="#the-giant-component"><span class="header-section-number">5.4</span> The giant component</a></li>
+  <li><a href="#evolution-of-a-random-graph" id="toc-evolution-of-a-random-graph" class="nav-link" data-scroll-target="#evolution-of-a-random-graph"><span class="header-section-number">5.5</span> Evolution of a random graph</a>
   <ul class="collapse">
-  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition">Definition</a></li>
-  <li><a href="#why-the-giant-component-matters" id="toc-why-the-giant-component-matters" class="nav-link" data-scroll-target="#why-the-giant-component-matters">Why the giant component matters</a></li>
+  <li><a href="#sec-four-regimes" id="toc-sec-four-regimes" class="nav-link" data-scroll-target="#sec-four-regimes">The four regimes</a></li>
+  <li><a href="#monotone-evolution" id="toc-monotone-evolution" class="nav-link" data-scroll-target="#monotone-evolution">Monotone evolution</a></li>
   </ul></li>
-  <li><a href="#the-evolution-of-a-random-graph" id="toc-the-evolution-of-a-random-graph" class="nav-link" data-scroll-target="#the-evolution-of-a-random-graph"><span class="header-section-number">5.6</span> The evolution of a random graph</a>
+  <li><a href="#the-self-consistency-equation" id="toc-the-self-consistency-equation" class="nav-link" data-scroll-target="#the-self-consistency-equation"><span class="header-section-number">5.6</span> The self-consistency equation</a>
   <ul class="collapse">
-  <li><a href="#evolution-through-snapshots" id="toc-evolution-through-snapshots" class="nav-link" data-scroll-target="#evolution-through-snapshots">Evolution through snapshots</a></li>
-  </ul></li>
-  <li><a href="#regimes-of-random-graph-evolution" id="toc-regimes-of-random-graph-evolution" class="nav-link" data-scroll-target="#regimes-of-random-graph-evolution"><span class="header-section-number">5.7</span> Regimes of random-graph evolution</a>
-  <ul class="collapse">
-  <li><a href="#subcritical-regime" id="toc-subcritical-regime" class="nav-link" data-scroll-target="#subcritical-regime">Subcritical regime</a></li>
-  <li><a href="#critical-regime" id="toc-critical-regime" class="nav-link" data-scroll-target="#critical-regime">Critical regime</a></li>
-  <li><a href="#supercritical-regime" id="toc-supercritical-regime" class="nav-link" data-scroll-target="#supercritical-regime">Supercritical regime</a></li>
-  <li><a href="#connected-regime" id="toc-connected-regime" class="nav-link" data-scroll-target="#connected-regime">Connected regime</a></li>
-  </ul></li>
-  <li><a href="#mathematical-description-of-the-giant-component" id="toc-mathematical-description-of-the-giant-component" class="nav-link" data-scroll-target="#mathematical-description-of-the-giant-component"><span class="header-section-number">5.8</span> Mathematical description of the giant component</a>
-  <ul class="collapse">
-  <li><a href="#interpretation-of-the-self-consistency-equation" id="toc-interpretation-of-the-self-consistency-equation" class="nav-link" data-scroll-target="#interpretation-of-the-self-consistency-equation">Interpretation of the self-consistency equation</a></li>
-  <li><a href="#near-threshold-behavior" id="toc-near-threshold-behavior" class="nav-link" data-scroll-target="#near-threshold-behavior">Near-threshold behavior</a></li>
-  <li><a href="#structure-in-the-supercritical-regime" id="toc-structure-in-the-supercritical-regime" class="nav-link" data-scroll-target="#structure-in-the-supercritical-regime">Structure in the supercritical regime</a></li>
+  <li><a href="#derivation" id="toc-derivation" class="nav-link" data-scroll-target="#derivation">Derivation</a></li>
+  <li><a href="#sec-near-threshold" id="toc-sec-near-threshold" class="nav-link" data-scroll-target="#sec-near-threshold">Near-threshold expansion</a></li>
   <li><a href="#connectedness-threshold" id="toc-connectedness-threshold" class="nav-link" data-scroll-target="#connectedness-threshold">Connectedness threshold</a></li>
   </ul></li>
-  <li><a href="#finite-size-interpretation-of-the-thresholds" id="toc-finite-size-interpretation-of-the-thresholds" class="nav-link" data-scroll-target="#finite-size-interpretation-of-the-thresholds"><span class="header-section-number">5.9</span> Finite-size interpretation of the thresholds</a></li>
-  <li><a href="#numerical-exploration" id="toc-numerical-exploration" class="nav-link" data-scroll-target="#numerical-exploration"><span class="header-section-number">5.10</span> Numerical exploration</a>
+  <li><a href="#numerical-exploration" id="toc-numerical-exploration" class="nav-link" data-scroll-target="#numerical-exploration"><span class="header-section-number">5.7</span> Numerical exploration</a>
   <ul class="collapse">
-  <li><a href="#largest-component-fraction" id="toc-largest-component-fraction" class="nav-link" data-scroll-target="#largest-component-fraction">Largest component fraction</a></li>
-  <li><a href="#number-of-connected-components" id="toc-number-of-connected-components" class="nav-link" data-scroll-target="#number-of-connected-components">Number of connected components</a></li>
-  <li><a href="#fraction-of-isolated-vertices" id="toc-fraction-of-isolated-vertices" class="nav-link" data-scroll-target="#fraction-of-isolated-vertices">Fraction of isolated vertices</a></li>
-  <li><a href="#probability-of-connectedness" id="toc-probability-of-connectedness" class="nav-link" data-scroll-target="#probability-of-connectedness">Probability of connectedness</a></li>
+  <li><a href="#giant-component-fraction" id="toc-giant-component-fraction" class="nav-link" data-scroll-target="#giant-component-fraction">Giant component fraction</a></li>
+  <li><a href="#connectedness-probability" id="toc-connectedness-probability" class="nav-link" data-scroll-target="#connectedness-probability">Connectedness probability</a></li>
   </ul></li>
-  <li><a href="#summary-of-regimes" id="toc-summary-of-regimes" class="nav-link" data-scroll-target="#summary-of-regimes"><span class="header-section-number">5.11</span> Summary of regimes</a></li>
-  <li><a href="#core-formulas-to-remember" id="toc-core-formulas-to-remember" class="nav-link" data-scroll-target="#core-formulas-to-remember"><span class="header-section-number">5.12</span> Core formulas to remember</a></li>
-  <li><a href="#in-class-questions" id="toc-in-class-questions" class="nav-link" data-scroll-target="#in-class-questions"><span class="header-section-number">5.13</span> In-class questions</a></li>
-  <li><a href="#end-of-chapter-exercises" id="toc-end-of-chapter-exercises" class="nav-link" data-scroll-target="#end-of-chapter-exercises"><span class="header-section-number">5.14</span> End-of-chapter exercises</a>
-  <ul class="collapse">
-  <li><a href="#part-i.-mathematical-exercises" id="toc-part-i.-mathematical-exercises" class="nav-link" data-scroll-target="#part-i.-mathematical-exercises">Part I. Mathematical exercises</a></li>
-  <li><a href="#part-ii.-conceptual-and-analytical-exercises" id="toc-part-ii.-conceptual-and-analytical-exercises" class="nav-link" data-scroll-target="#part-ii.-conceptual-and-analytical-exercises">Part II. Conceptual and analytical exercises</a></li>
-  <li><a href="#part-iii.-simulation-and-coding-exercises" id="toc-part-iii.-simulation-and-coding-exercises" class="nav-link" data-scroll-target="#part-iii.-simulation-and-coding-exercises">Part III. Simulation and coding exercises</a></li>
-  </ul></li>
-  <li><a href="#suggested-project-style-extension" id="toc-suggested-project-style-extension" class="nav-link" data-scroll-target="#suggested-project-style-extension"><span class="header-section-number">5.15</span> Suggested project-style extension</a></li>
-  <li><a href="#bridge-to-the-next-chapter" id="toc-bridge-to-the-next-chapter" class="nav-link" data-scroll-target="#bridge-to-the-next-chapter"><span class="header-section-number">5.16</span> Bridge to the next chapter</a></li>
-  <li><a href="#concluding-remarks" id="toc-concluding-remarks" class="nav-link" data-scroll-target="#concluding-remarks"><span class="header-section-number">5.17</span> Concluding remarks</a></li>
+  <li><a href="#summary-of-regimes" id="toc-summary-of-regimes" class="nav-link" data-scroll-target="#summary-of-regimes"><span class="header-section-number">5.8</span> Summary of regimes</a></li>
+  <li><a href="#core-formulas" id="toc-core-formulas" class="nav-link" data-scroll-target="#core-formulas"><span class="header-section-number">5.9</span> Core formulas</a></li>
+  <li><a href="#in-class-questions" id="toc-in-class-questions" class="nav-link" data-scroll-target="#in-class-questions"><span class="header-section-number">5.10</span> In-class questions</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">5.11</span> Exercises</a></li>
+  <li><a href="#bridge-to-the-next-chapter" id="toc-bridge-to-the-next-chapter" class="nav-link" data-scroll-target="#bridge-to-the-next-chapter"><span class="header-section-number">5.12</span> Bridge to the next chapter</a></li>
+  <li><a href="#concluding-remarks" id="toc-concluding-remarks" class="nav-link" data-scroll-target="#concluding-remarks"><span class="header-section-number">5.13</span> Concluding remarks</a></li>
   </ul>
 </nav>
     </div>
@@ -341,7 +316,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Evolution of Random Graphs</span></h1>
-<p class="subtitle lead">Thresholds, components, and the emergence of large-scale connectivity</p>
+<p class="subtitle lead">Thresholds, phase transitions, and the emergence of large-scale connectivity</p>
 </div>
 
 
@@ -360,355 +335,94 @@ window.Quarto = {
 
 <section id="introduction" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">5.1</span> Introduction</h2>
-<p>The previous chapter focused on the static properties of random graphs: the Erdős–Rényi models, average degree, degree distribution, and clustering coefficient. This chapter follows the classical line of work on how those graphs change as edges are added and how global connectivity emerges through threshold behavior <span class="citation" data-cites="erdos1960 bollobas2001book newman2010">(<a href="#ref-erdos1960" role="doc-biblioref">Erdős and Rényi 1960</a>; <a href="#ref-bollobas2001book" role="doc-biblioref">Bollobás 2001</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span>. Those quantities describe the graph at a fixed stage.</p>
-<p>A second and equally important question is how a random graph changes as links are gradually introduced. At the beginning there may be no links at all, so every vertex is isolated. When a small number of links is added, tiny connected groups appear. As the density of links increases, these groups merge into larger connected structures. Eventually one component becomes comparable in size to the full graph. This object is called the giant component.</p>
-<p>The central theme of this chapter is that the emergence of large-scale connectivity is governed by a threshold phenomenon. In the Erdős–Rényi model, the expected degree</p>
-<p><span class="math display">
-\langle k \rangle = p(N-1)
-</span></p>
-<p>is the key parameter controlling that transition.</p>
+<p>Chapter 3 described static properties of the Erdős–Rényi ensemble at a fixed edge probability <span class="math inline">p</span>: the degree distribution, expected average degree, and clustering coefficient. This chapter adopts a dynamic viewpoint. Instead of fixing <span class="math inline">p</span>, we ask how the graph changes as <span class="math inline">p</span> increases from <span class="math inline">0</span> to <span class="math inline">1</span>, and in particular how global connectivity emerges from local random wiring.</p>
+<p>The central result is that this process is not gradual and undifferentiated — it is organized by two sharp <strong>threshold phenomena</strong> <span class="citation" data-cites="erdos1960 bollobas2001book">(<a href="#ref-bollobas2001book" role="doc-biblioref">Bollobás, 2001</a>; <a href="#ref-erdos1960" role="doc-biblioref">Erdős &amp; Rényi, 1960</a>)</span>:</p>
+<ol type="1">
+<li>Near <span class="math inline">\langle k\rangle = 1</span>, a <strong>giant component</strong> — a connected subgraph containing a positive fraction of all vertices — emerges discontinuously.</li>
+<li>Near <span class="math inline">\langle k\rangle = \ln N</span>, the graph becomes <strong>fully connected</strong> with high probability.</li>
+</ol>
+<p>These two events are separated by a wide intermediate range in which the graph has a macroscopic backbone but also retains isolated vertices and small disconnected pieces. Understanding both thresholds, and the structural regimes between them, is the goal of this chapter.</p>
+<p>The theory of random graph evolution was initiated by <span class="citation" data-cites="erdos1960">Erdős &amp; Rényi (<a href="#ref-erdos1960" role="doc-biblioref">1960</a>)</span> and developed rigorously by <span class="citation" data-cites="bollobas2001book">Bollobás (<a href="#ref-bollobas2001book" role="doc-biblioref">2001</a>)</span>. The network science perspective is covered in <span class="citation" data-cites="newman2010">Newman (<a href="#ref-newman2010" role="doc-biblioref">2010</a>, Ch. 12)</span> and <span class="citation" data-cites="barabasi2016">Barabási &amp; Pósfai (<a href="#ref-barabasi2016" role="doc-biblioref">2016</a>, Ch. 3)</span>.</p>
 </section>
 <section id="learning-goals" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="learning-goals"><span class="header-section-number">5.2</span> Learning goals</h2>
-<p>By the end of this chapter, it should be possible to:</p>
+<p>By the end of this chapter, a student should be able to:</p>
 <ul>
-<li>define connected graphs and connected components precisely</li>
-<li>define the size of a component and the notion of a giant component</li>
-<li>explain how a random graph evolves as the edge probability increases</li>
-<li>distinguish the subcritical, critical, supercritical, and connected regimes</li>
-<li>explain why the threshold <span class="math inline">\langle k \rangle = 1</span> is important</li>
-<li>explain why the connectedness threshold occurs near <span class="math inline">\langle k \rangle = \ln N</span></li>
-<li>verify these ideas numerically in <code>R</code></li>
+<li>define connected components precisely and characterise their partition structure,</li>
+<li>state the giant component and connectedness thresholds and express each in terms of <span class="math inline">p</span> and <span class="math inline">\langle k\rangle</span>,</li>
+<li>derive the self-consistency equation <span class="math inline">S = 1 - e^{-\langle k\rangle S}</span> from a probabilistic argument,</li>
+<li>carry out the near-threshold expansion and obtain <span class="math inline">S \approx 2(\langle k\rangle - 1)</span>,</li>
+<li>distinguish the four structural regimes and describe the component structure in each,</li>
+<li>connect all theoretical results to simulation in <code>R</code> and interpret finite-size effects.</li>
 </ul>
 </section>
-<section id="chapter-roadmap" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="chapter-roadmap"><span class="header-section-number">5.3</span> Chapter roadmap</h2>
-<p>The chapter begins with the language of connectedness and components, since threshold phenomena cannot be understood without a precise notion of how a graph breaks into pieces. It then studies the giant component and the qualitative regimes of Erdős–Rényi evolution, before introducing the standard self-consistency equation and the connectedness threshold. Numerical experiments come only after the theory, so that the simulations can be interpreted rather than merely observed.</p>
-</section>
-<section id="connectedness-and-components" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="connectedness-and-components"><span class="header-section-number">5.4</span> Connectedness and components</h2>
-<section id="connected-graph" class="level3">
-<h3 class="anchored" data-anchor-id="connected-graph">Connected graph</h3>
-<div id="def-connected-graph" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 5.1</strong></span> Let <span class="math inline">G=(V,E)</span> be an undirected graph. The graph <span class="math inline">G</span> is called <strong>connected</strong> if for every pair of distinct vertices <span class="math inline">u,v \in V</span>, there exists a path in <span class="math inline">G</span> from <span class="math inline">u</span> to <span class="math inline">v</span>.</p>
-</div>
-<p>This definition means that the graph forms one reachable structure. Starting from any vertex, it is possible to move to any other vertex by following a sequence of existing edges.</p>
-<p>Connectedness is therefore a global property. It is not determined by one degree value or by one local motif. It asks whether the graph, as a whole, holds together.</p>
-<p>If this condition fails, then the graph is disconnected. In that case the graph splits into separate connected pieces.</p>
-</section>
-<section id="connected-component" class="level3">
-<h3 class="anchored" data-anchor-id="connected-component">Connected component</h3>
+<section id="connectedness-and-components" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="connectedness-and-components"><span class="header-section-number">5.3</span> Connectedness and components</h2>
+<section id="definitions" class="level3">
+<h3 class="anchored" data-anchor-id="definitions">Definitions</h3>
 <div id="def-connected-component" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 5.2</strong></span> Let <span class="math inline">G=(V,E)</span> be an undirected graph. A subgraph <span class="math inline">H</span> of <span class="math inline">G</span> is called a <strong>connected component</strong> of <span class="math inline">G</span> if:</p>
-<ol type="1">
-<li><span class="math inline">H</span> is connected, and</li>
-<li><span class="math inline">H</span> is maximal with respect to inclusion among connected subgraphs of <span class="math inline">G</span>.</li>
-</ol>
+<p><span class="theorem-title"><strong>Definition 5.1</strong></span> Let <span class="math inline">G = (V, E)</span> be an undirected graph. A <strong>connected component</strong> of <span class="math inline">G</span> is a maximal connected subgraph: a subgraph <span class="math inline">H \subseteq G</span> that is connected and to which no further vertex of <span class="math inline">G</span> can be added while preserving connectedness.</p>
 </div>
-<p>The word <em>connected</em> means that every pair of vertices in <span class="math inline">H</span> can be joined by a path entirely contained in <span class="math inline">H</span>.</p>
-<p>The word <em>maximal</em> is equally important. It means that <span class="math inline">H</span> cannot be enlarged by adding another vertex of <span class="math inline">G</span> while keeping the subgraph connected. So a connected component is not merely a connected part of the graph. It is a connected part that is already as large as possible.</p>
-<p>This gives a natural decomposition of a disconnected graph: the graph is partitioned into its connected components.</p>
-<div id="rem-components-partition" class="proof remark">
-<p><span class="proof-title"><em>Remark 5.1</em>. </span>The connected components of a graph form a partition of the vertex set <span class="math inline">V</span>. Every vertex belongs to exactly one connected component.</p>
+<p>The connected components of <span class="math inline">G</span> partition the vertex set <span class="math inline">V</span>: every vertex belongs to exactly one component, because if a vertex belonged to two distinct components, those components would share a vertex, contradicting their maximality. An <strong>isolated vertex</strong> — one with degree zero — forms a component of size <span class="math inline">1</span>.</p>
+<p>The <strong>size</strong> of a component is its number of vertices, <span class="math inline">|V(H)|</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Partition property">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Partition property
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Because components are maximal, the component decomposition is unique and the components tile <span class="math inline">V</span> without overlap. This is the key structural fact that makes component size a well-defined global quantity.</p>
+</div>
 </div>
 </section>
-<section id="size-of-a-component" class="level3">
-<h3 class="anchored" data-anchor-id="size-of-a-component">Size of a component</h3>
-<div id="def-component-size" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 5.3</strong></span> Let <span class="math inline">H</span> be a connected component of a graph <span class="math inline">G=(V,E)</span>. The <strong>size</strong> of <span class="math inline">H</span> is the number of vertices in <span class="math inline">H</span>, namely</p>
-<p><span class="math display">
-|V(H)|.
-</span></p>
-</div>
-<p>This quantity is simple, but it becomes crucial in random graph theory. As a random graph evolves, the central question is how the component-size pattern changes. Do only small components exist, or does one component become comparable to the full graph?</p>
-</section>
-<section id="isolated-vertex" class="level3">
-<h3 class="anchored" data-anchor-id="isolated-vertex">Isolated vertex</h3>
-<div id="def-isolated-vertex" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 5.4</strong></span> A vertex <span class="math inline">v \in V</span> is called <strong>isolated</strong> if its degree is zero.</p>
-</div>
-<p>An isolated vertex is a connected component of size <span class="math inline">1</span>. So isolated vertices are not exceptions to the theory of components. They are simply the smallest possible components.</p>
-</section>
-<section id="example-component-structure" class="level3">
-<h3 class="anchored" data-anchor-id="example-component-structure">Example: component structure</h3>
+<section id="component-structure-example" class="level3">
+<h3 class="anchored" data-anchor-id="component-structure-example">Component structure example</h3>
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="04-random-graph-evolution_files/figure-html/component-examples-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Three graphs with different component structure. Vertices in the same connected component share the same color.</figcaption>
+<figcaption>Three graphs on seven vertices with different component structures. Vertices in the same component share the same colour.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>The three graphs above illustrate the same idea in progressively more disconnected form:</p>
-<ul>
-<li>in the first graph, every vertex belongs to one single connected component</li>
-<li>in the second graph, the graph splits into two components</li>
-<li>in the third graph, the graph decomposes into several small pieces, including isolated vertices</li>
-</ul>
-</section>
-<section id="component-size-table" class="level3">
-<h3 class="anchored" data-anchor-id="component-size-table">Component-size table</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: center;">Graph</th>
-<th style="text-align: left;">Component sizes</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">One component</td>
-<td style="text-align: left;"><span class="math inline">7</span></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">Two components</td>
-<td style="text-align: left;"><span class="math inline">4, 3</span></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">Four components</td>
-<td style="text-align: left;"><span class="math inline">3, 2, 1, 1</span></td>
-</tr>
-</tbody>
-</table>
-<p>This table translates the picture into numerical structure and prepares the transition to the notion of a giant component.</p>
 </section>
 </section>
-<section id="giant-component" class="level2" data-number="5.5">
-<h2 data-number="5.5" class="anchored" data-anchor-id="giant-component"><span class="header-section-number">5.5</span> Giant component</h2>
-<section id="definition" class="level3">
-<h3 class="anchored" data-anchor-id="definition">Definition</h3>
+<section id="the-giant-component" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="the-giant-component"><span class="header-section-number">5.4</span> The giant component</h2>
 <div id="def-giant-component" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 5.5</strong></span> Let <span class="math inline">G_N</span> be a graph on <span class="math inline">N</span> vertices, and let <span class="math inline">C_{\max}(G_N)</span> denote its largest connected component. A sequence of random graphs is said to contain a <strong>giant component</strong> if</p>
+<p><span class="theorem-title"><strong>Definition 5.2</strong></span> Let <span class="math inline">C_{\max}(G_N)</span> denote the largest connected component of a graph on <span class="math inline">N</span> vertices. A sequence of random graphs contains a <strong>giant component</strong> if</p>
 <p><span class="math display">
-\frac{|C_{\max}(G_N)|}{N}
+\frac{|C_{\max}(G_N)|}{N} \;\xrightarrow{N\to\infty}\; c &gt; 0.
 </span></p>
-<p>converges to a positive quantity as <span class="math inline">N \to \infty</span>.</p>
 </div>
-<p>This definition should be interpreted carefully. Every finite graph has a largest connected component, but not every largest connected component is a giant component in the asymptotic sense.</p>
-<p>The term <em>giant</em> means that the component contains a nonvanishing fraction of all vertices. It is therefore a macroscopic object, not merely the largest among several still-small pieces.</p>
+<p>The term <em>giant</em> is reserved for components that constitute a <strong>positive fraction</strong> of all vertices in the large-<span class="math inline">N</span> limit. Every finite graph trivially has a largest component, but that component is giant only when it grows proportionally with the system size. Before the giant component emerges, all components have sizes of order <span class="math inline">O(\log N)</span> or smaller.</p>
 </section>
-<section id="why-the-giant-component-matters" class="level3">
-<h3 class="anchored" data-anchor-id="why-the-giant-component-matters">Why the giant component matters</h3>
-<p>The giant component marks the first stage at which the graph begins to behave like a true network at the global level.</p>
-<p>Before it appears:</p>
-<ul>
-<li>most vertices belong only to tiny disconnected groups</li>
-<li>reachability is local</li>
-<li>no global connected backbone exists</li>
-</ul>
-<p>After it appears:</p>
-<ul>
-<li>a positive fraction of vertices become mutually reachable</li>
-<li>one connected structure dominates the graph</li>
-<li>system-wide connectivity becomes possible</li>
-</ul>
-<p>So the emergence of the giant component is the key event in the evolution of a random graph.</p>
-</section>
-</section>
-<section id="the-evolution-of-a-random-graph" class="level2" data-number="5.6">
-<h2 data-number="5.6" class="anchored" data-anchor-id="the-evolution-of-a-random-graph"><span class="header-section-number">5.6</span> The evolution of a random graph</h2>
-<p>Consider the Erdős–Rényi model <span class="math inline">G(N,p)</span> with fixed <span class="math inline">N</span> and variable parameter <span class="math inline">p \in [0,1]</span>.</p>
-<p>At one extreme,</p>
+<section id="evolution-of-a-random-graph" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="evolution-of-a-random-graph"><span class="header-section-number">5.5</span> Evolution of a random graph</h2>
+<p>Consider <span class="math inline">G(N,p)</span> with <span class="math inline">N</span> fixed and <span class="math inline">p</span> increasing from <span class="math inline">0</span> to <span class="math inline">1</span>. The evolution passes through four qualitatively distinct structural regimes, controlled by the expected degree</p>
 <p><span class="math display">
-p = 0,
+\langle k\rangle = p(N-1).
 </span></p>
-<p>no edges are present, so every vertex is isolated.</p>
-<p>At the other extreme,</p>
-<p><span class="math display">
-p = 1,
-</span></p>
-<p>every possible edge is present, so the graph is complete and hence connected.</p>
-<p>The mathematically interesting behavior lies between these extremes. As <span class="math inline">p</span> increases,</p>
-<ol type="1">
-<li>isolated vertices begin to join into tiny components,</li>
-<li>small components merge into larger components,</li>
-<li>one component begins to dominate,</li>
-<li>eventually the graph becomes connected.</li>
-</ol>
-<p>So the evolution of the graph is most naturally described through the evolution of its component structure.</p>
-<section id="evolution-through-snapshots" class="level3">
-<h3 class="anchored" data-anchor-id="evolution-through-snapshots">Evolution through snapshots</h3>
-<p>To visualize this process clearly, the same vertex set and the same vertex positions are used in all snapshots below. The edge set evolves monotonically: once an edge appears, it remains present at later stages. This makes the sequence a true network evolution rather than a collection of unrelated random realizations.</p>
-<div class="cell">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="04-random-graph-evolution_files/figure-html/evolution-snapshots-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Evolution of a random graph on a fixed vertex set. Vertex positions are fixed across all snapshots, and the edge set grows monotonically with p.&nbsp;The largest connected component is highlighted.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<p>These snapshots show several distinct structural stages.</p>
-<ul>
-<li>At <span class="math inline">p=0</span>, all vertices are isolated.</li>
-<li>For very small <span class="math inline">p</span>, tiny components begin to appear.</li>
-<li>At intermediate values of <span class="math inline">p</span>, components merge and one of them starts to dominate.</li>
-<li>At larger values of <span class="math inline">p</span>, most vertices belong to a single large connected structure.</li>
-</ul>
-<p>The qualitative transition is therefore from fragmentation to macroscopic connectivity.</p>
-</section>
-</section>
-<section id="regimes-of-random-graph-evolution" class="level2" data-number="5.7">
-<h2 data-number="5.7" class="anchored" data-anchor-id="regimes-of-random-graph-evolution"><span class="header-section-number">5.7</span> Regimes of random-graph evolution</h2>
-<p>A convenient parameter for describing these regimes is the expected degree</p>
-<p><span class="math display">
-\langle k \rangle = p(N-1).
-</span></p>
-<p>This quantity is more informative than <span class="math inline">p</span> alone because it measures the expected number of neighbors per vertex.</p>
-<section id="subcritical-regime" class="level3">
-<h3 class="anchored" data-anchor-id="subcritical-regime">Subcritical regime</h3>
+<section id="sec-four-regimes" class="level3">
+<h3 class="anchored" data-anchor-id="sec-four-regimes">The four regimes</h3>
 <div id="def-subcritical" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 5.6</strong></span> The random graph is in the <strong>subcritical regime</strong> when</p>
-<p><span class="math display">
-\langle k \rangle &lt; 1.
-</span></p>
+<p><span class="theorem-title"><strong>Definition 5.3</strong></span> <strong>Subcritical regime: <span class="math inline">\langle k\rangle &lt; 1</span>.</strong> No giant component exists. Almost all connected components have size <span class="math inline">O(\log N)</span>. The largest component has size of order <span class="math inline">\log N</span> <span class="citation" data-cites="bollobas2001book">(<a href="#ref-bollobas2001book" role="doc-biblioref">Bollobás, 2001</a>, Ch. 6)</span>. Isolated vertices are common.</p>
 </div>
-<p>In this regime, no giant component exists. Almost all components are small, and isolated vertices are common. The graph contains connectivity, but only at a local scale.</p>
-</section>
-<section id="critical-regime" class="level3">
-<h3 class="anchored" data-anchor-id="critical-regime">Critical regime</h3>
 <div id="def-critical-regime" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 5.7</strong></span> The random graph is in the <strong>critical regime</strong> when</p>
-<p><span class="math display">
-\langle k \rangle \approx 1.
-</span></p>
+<p><span class="theorem-title"><strong>Definition 5.4</strong></span> <strong>Critical regime: <span class="math inline">\langle k\rangle \approx 1</span>.</strong> The phase transition. The largest component has size of order <span class="math inline">N^{2/3}</span> — macroscopic, but still a vanishing fraction of <span class="math inline">N</span> <span class="citation" data-cites="erdos1960">(<a href="#ref-erdos1960" role="doc-biblioref">Erdős &amp; Rényi, 1960</a>)</span>. This is the boundary at which the giant component is born.</p>
 </div>
-<p>This is the transition region. It is the stage at which the graph changes from a collection of small components into a graph containing a giant component.</p>
-<p>In finite networks, the transition is not perfectly sharp. But as the system becomes large, the threshold becomes more pronounced.</p>
-</section>
-<section id="supercritical-regime" class="level3">
-<h3 class="anchored" data-anchor-id="supercritical-regime">Supercritical regime</h3>
 <div id="def-supercritical" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 5.8</strong></span> The random graph is in the <strong>supercritical regime</strong> when</p>
-<p><span class="math display">
-\langle k \rangle &gt; 1.
-</span></p>
+<p><span class="theorem-title"><strong>Definition 5.5</strong></span> <strong>Supercritical regime: <span class="math inline">\langle k\rangle &gt; 1</span>.</strong> A unique giant component exists, containing a fraction <span class="math inline">S &gt; 0</span> of all vertices. The remaining vertices form many small finite components, predominantly tree-like near the threshold. The giant component itself contains cycles.</p>
 </div>
-<p>This is the first regime in which a giant component exists. One connected component contains a positive fraction of all vertices, while many smaller components continue to coexist with it.</p>
-<p>This regime is especially important because it is the first stage at which the graph has a genuine large-scale network structure.</p>
-</section>
-<section id="connected-regime" class="level3">
-<h3 class="anchored" data-anchor-id="connected-regime">Connected regime</h3>
 <div id="def-connected-regime" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 5.9</strong></span> The random graph enters the <strong>connected regime</strong> when the graph is connected with high probability as <span class="math inline">N</span> becomes large. In the Erdős–Rényi model this occurs near</p>
-<p><span class="math display">
-\langle k \rangle \approx \ln N,
-</span></p>
-<p>or equivalently,</p>
-<p><span class="math display">
-p \approx \frac{\ln N}{N}.
-</span></p>
+<p><span class="theorem-title"><strong>Definition 5.6</strong></span> <strong>Connected regime: <span class="math inline">\langle k\rangle \approx \ln N</span>.</strong> The graph is connected with high probability. More precisely, for <span class="math inline">p = (\ln N + c)/N</span> with <span class="math inline">c</span> a constant, the probability that <span class="math inline">G(N,p)</span> is connected converges to <span class="math inline">e^{-e^{-c}}</span> as <span class="math inline">N \to \infty</span> <span class="citation" data-cites="erdos1960 bollobas2001book">(<a href="#ref-erdos1960" role="doc-biblioref">Erdős &amp; Rényi, 1960</a>; <a href="#ref-bollobas2001book" role="doc-biblioref">Bollobás, 2001</a>, Ch. 7)</span>.</p>
 </div>
-<p>This threshold is much larger than the giant-component threshold <span class="math inline">\langle k \rangle = 1</span>. So the emergence of a giant component and the graph becoming connected are two different events.</p>
-<p>There is therefore a broad intermediate range in which the graph already has a giant component but is not yet fully connected.</p>
-</section>
-</section>
-<section id="mathematical-description-of-the-giant-component" class="level2" data-number="5.8">
-<h2 data-number="5.8" class="anchored" data-anchor-id="mathematical-description-of-the-giant-component"><span class="header-section-number">5.8</span> Mathematical description of the giant component</h2>
-<p>A central quantity is the relative size of the giant component,</p>
-<p><span class="math display">
-S = \frac{N_G}{N},
-</span></p>
-<p>where <span class="math inline">N_G</span> denotes the number of vertices in the largest connected component.</p>
-<p>In the Erdős–Rényi model, the asymptotic fraction <span class="math inline">S</span> of vertices contained in the giant component satisfies the self-consistency equation</p>
-<p><span class="math display">
-S = 1 - e^{-\langle k \rangle S}.
-</span></p>
-<p>This equation is a concise mathematical description of the giant component.</p>
-<section id="interpretation-of-the-self-consistency-equation" class="level3">
-<h3 class="anchored" data-anchor-id="interpretation-of-the-self-consistency-equation">Interpretation of the self-consistency equation</h3>
-<p>The quantity <span class="math inline">1-S</span> is the fraction of vertices that do <strong>not</strong> belong to the giant component.</p>
-<p>A vertex fails to belong to the giant component only if all of its potential connections lead to vertices that also fail to belong to the giant component. In the Erdős–Rényi setting, that logic leads to the exponential form above.</p>
-<p>So the equation</p>
-<p><span class="math display">
-S = 1 - e^{-\langle k \rangle S}
-</span></p>
-<p>expresses the self-consistent probability that a vertex belongs to the giant structure.</p>
-<div class="callout callout-style-default callout-note callout-titled" title="Key result: self-consistency equation">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Key result: self-consistency equation
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The fraction <span class="math inline">S</span> of vertices in the giant component satisfies</p>
-<p><span class="math display">
-S = 1 - e^{-\langle k \rangle S}.
-</span></p>
-<p>This equation has no positive solution when <span class="math inline">\langle k \rangle \leq 1</span>, and a unique positive solution when <span class="math inline">\langle k \rangle &gt; 1</span>.</p>
-</div>
-</div>
-</section>
-<section id="near-threshold-behavior" class="level3">
-<h3 class="anchored" data-anchor-id="near-threshold-behavior">Near-threshold behavior</h3>
-<p>When <span class="math inline">\langle k \rangle</span> is only slightly larger than <span class="math inline">1</span>, the giant component is still small relative to its later size, but it is already macroscopic. In that near-threshold region,</p>
-<p><span class="math display">
-S \sim 2(\langle k \rangle - 1)
-\qquad
-\text{as }
-\langle k \rangle \downarrow 1^{+}.
-</span></p>
-<p>Equivalently,</p>
-<p><span class="math display">
-N_G \sim 2(\langle k \rangle - 1)N.
-</span></p>
-<p>So near the transition, the giant component grows linearly with the distance from the threshold.</p>
-<div class="callout callout-style-default callout-tip callout-titled" title="Near-threshold scaling">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Near-threshold scaling
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Just above the threshold, the giant component size grows as</p>
-<p><span class="math display">
-S \approx 2(\langle k \rangle - 1), \qquad \langle k \rangle \downarrow 1^{+}.
-</span></p>
-<p>The transition is therefore continuous: the giant component emerges gradually, growing linearly with the excess degree.</p>
-</div>
-</div>
-</section>
-<section id="structure-in-the-supercritical-regime" class="level3">
-<h3 class="anchored" data-anchor-id="structure-in-the-supercritical-regime">Structure in the supercritical regime</h3>
-<p>In the supercritical regime, the graph has two coexisting structural parts:</p>
-<ol type="1">
-<li>one giant component containing a positive fraction of all vertices,</li>
-<li>many finite components outside the giant component.</li>
-</ol>
-<p>Near the threshold, those finite components are typically small and predominantly tree-like. By contrast, the giant component contains many cycles and loops. So the onset of the giant component is also the onset of genuinely complex global connectivity.</p>
-</section>
-<section id="connectedness-threshold" class="level3">
-<h3 class="anchored" data-anchor-id="connectedness-threshold">Connectedness threshold</h3>
-<p>The giant component threshold occurs near</p>
-<p><span class="math display">
-\langle k \rangle = 1,
-</span></p>
-<p>but the graph becomes connected only much later, near</p>
-<p><span class="math display">
-\langle k \rangle = \ln N.
-</span></p>
-<p>This is a major conceptual point. The existence of a giant component does <strong>not</strong> imply that the graph is connected.</p>
-<p>So there is an intermediate range,</p>
-<p><span class="math display">
-1 &lt; \langle k \rangle &lt; \ln N,
-</span></p>
-<p>in which</p>
-<ul>
-<li>the graph has a giant component,</li>
-<li>many smaller components still exist,</li>
-<li>isolated vertices may still be present,</li>
-<li>the full graph is not yet connected.</li>
-</ul>
-<p>Only when the average degree reaches order <span class="math inline">\ln N</span> do these remaining disconnected pieces disappear with high probability.</p>
 <div class="callout callout-style-default callout-important callout-titled" title="Two distinct thresholds">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -719,230 +433,276 @@ S \approx 2(\langle k \rangle - 1), \qquad \langle k \rangle \downarrow 1^{+}.
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The emergence of the giant component and the graph becoming fully connected are separate events:</p>
-<ul>
-<li><strong>Giant component threshold:</strong> <span class="math inline">\langle k \rangle = 1</span></li>
-<li><strong>Connectedness threshold:</strong> <span class="math inline">\langle k \rangle \approx \ln N</span></li>
-</ul>
-<p>Between these two thresholds, the graph has a macroscopic connected backbone but also retains isolated vertices and small disconnected pieces.</p>
+<p>The giant component emerges at <span class="math inline">\langle k\rangle = 1</span> (<span class="math inline">p_c \approx 1/N</span>). The graph becomes fully connected at <span class="math inline">\langle k\rangle \approx \ln N</span> (<span class="math inline">p \approx \ln N / N</span>). Between these thresholds, the graph has a macroscopic giant component but also retains isolated vertices and small disconnected pieces. A graph with a giant component is <strong>not</strong> necessarily connected.</p>
 </div>
 </div>
 </section>
+<section id="monotone-evolution" class="level3">
+<h3 class="anchored" data-anchor-id="monotone-evolution">Monotone evolution</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="04-random-graph-evolution_files/figure-html/evolution-snapshots-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Evolution of G(N,p) on a fixed vertex set of 40 vertices. Vertex positions are fixed; edges accumulate monotonically. The largest component is highlighted in red.</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
-<section id="finite-size-interpretation-of-the-thresholds" class="level2" data-number="5.9">
-<h2 data-number="5.9" class="anchored" data-anchor-id="finite-size-interpretation-of-the-thresholds"><span class="header-section-number">5.9</span> Finite-size interpretation of the thresholds</h2>
-<p>The thresholds discussed in this chapter are sharp in the large-<span class="math inline">N</span> limit, but numerical simulations are always finite. For finite graphs, the transition is therefore rounded rather than perfectly abrupt. In practice, one should read the threshold near <span class="math inline">\langle k \rangle = 1</span> as the location where the giant component begins to dominate, and the connectedness threshold near <span class="math inline">\langle k \rangle = \ln N</span> as the scale where isolated vertices become rare enough that full connectivity becomes likely <span class="citation" data-cites="newman2010 bollobas2001book">(<a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>; <a href="#ref-bollobas2001book" role="doc-biblioref">Bollobás 2001</a>)</span>.</p>
-<p>This finite-size viewpoint is important pedagogically. It prevents the theory from being interpreted too mechanically and helps explain why simulation curves are smooth even when the asymptotic theory speaks in terms of sharp transitions.</p>
 </section>
-<section id="numerical-exploration" class="level2" data-number="5.10">
-<h2 data-number="5.10" class="anchored" data-anchor-id="numerical-exploration"><span class="header-section-number">5.10</span> Numerical exploration</h2>
-<p>The structural transition can be observed numerically by generating many graphs for different values of <span class="math inline">p</span> and tracking several global quantities.</p>
+<section id="the-self-consistency-equation" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="the-self-consistency-equation"><span class="header-section-number">5.6</span> The self-consistency equation</h2>
+<section id="derivation" class="level3">
+<h3 class="anchored" data-anchor-id="derivation">Derivation</h3>
+<p>The fraction <span class="math inline">S</span> of vertices in the giant component satisfies a self-consistency equation that can be derived from first principles <span class="citation" data-cites="newman2010">(<a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>, Ch. 12)</span>.</p>
+<p>A vertex <span class="math inline">v</span> belongs to the giant component if and only if at least one of its neighbors also belongs to the giant component. Equivalently, <span class="math inline">v</span> does <strong>not</strong> belong to the giant component if and only if every one of its neighbors also lies outside the giant component.</p>
+<p>Let <span class="math inline">u</span> be a neighbor of <span class="math inline">v</span>, reached by following a random edge. The probability that <span class="math inline">u</span> does not lead to the giant component is <span class="math inline">e^{-\langle k\rangle S}</span>, derived as follows. Following an edge from <span class="math inline">v</span> to <span class="math inline">u</span> means <span class="math inline">u</span> has at least one neighbor (<span class="math inline">v</span>), so the remaining degree of <span class="math inline">u</span> (the number of further neighbors) is approximately Poisson<span class="math inline">(\langle k\rangle)</span> in the sparse large-<span class="math inline">N</span> limit. Each of those further neighbors independently fails to reach the giant with probability <span class="math inline">1-S</span>. Therefore the probability that <span class="math inline">u</span> itself does not reach the giant is</p>
+<p><span class="math display">
+\sum_{j=0}^{\infty} e^{-\langle k\rangle}\frac{\langle k\rangle^j}{j!}(1-S)^j = e^{-\langle k\rangle S}.
+</span></p>
+<p>Since <span class="math inline">v</span> has Poisson<span class="math inline">(\langle k\rangle)</span> neighbors (in the sparse limit), each independently failing to reach the giant with probability <span class="math inline">e^{-\langle k\rangle S}</span>, the probability that <span class="math inline">v</span> itself is not in the giant component is <span class="math inline">e^{-\langle k\rangle \cdot S}</span>… but <span class="math inline">S</span> here is the probability that a <em>neighbor reached by a random edge</em> belongs to the giant, which by the self-consistency argument equals <span class="math inline">S</span> itself. Therefore the probability that <span class="math inline">v</span> lies outside the giant is <span class="math inline">e^{-\langle k\rangle S}</span>, giving</p>
+<p><span class="math display">
+\boxed{S = 1 - e^{-\langle k\rangle S}.}
+</span></p>
+<div class="callout callout-style-default callout-note callout-titled" title="Existence of a positive solution">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Existence of a positive solution
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Define <span class="math inline">f(S) = 1 - e^{-\langle k\rangle S}</span>. Note <span class="math inline">f(0) = 0</span>, so <span class="math inline">S = 0</span> is always a solution. The derivative at <span class="math inline">S = 0</span> is <span class="math inline">f'(0) = \langle k\rangle</span>. A positive fixed point exists if and only if <span class="math inline">f'(0) &gt; 1</span>, i.e., <span class="math inline">\langle k\rangle &gt; 1</span>. This is the <strong>giant component threshold</strong>. When <span class="math inline">\langle k\rangle \leq 1</span>, the only solution is <span class="math inline">S = 0</span>; when <span class="math inline">\langle k\rangle &gt; 1</span>, a unique positive solution <span class="math inline">S^* \in (0,1)</span> exists <span class="citation" data-cites="bollobas2001book">(<a href="#ref-bollobas2001book" role="doc-biblioref">Bollobás, 2001</a>, Ch. 5)</span>.</p>
+</div>
+</div>
+</section>
+<section id="sec-near-threshold" class="level3">
+<h3 class="anchored" data-anchor-id="sec-near-threshold">Near-threshold expansion</h3>
+<p>When <span class="math inline">\langle k\rangle = 1 + \varepsilon</span> with <span class="math inline">\varepsilon &gt; 0</span> small, the positive solution <span class="math inline">S^*</span> is also small. Expand the exponential to second order in <span class="math inline">S</span>:</p>
+<p><span class="math display">
+S = 1 - e^{-\langle k\rangle S}
+\approx 1 - \left(1 - \langle k\rangle S + \frac{\langle k\rangle^2 S^2}{2} - \cdots\right)
+= \langle k\rangle S - \frac{\langle k\rangle^2 S^2}{2} + O(S^3).
+</span></p>
+<p>Rearranging (and discarding <span class="math inline">O(S^3)</span> since <span class="math inline">S</span> is small):</p>
+<p><span class="math display">
+S - \langle k\rangle S + \frac{\langle k\rangle^2 S^2}{2} \approx 0
+\implies
+S\!\left(1 - \langle k\rangle + \frac{\langle k\rangle^2 S}{2}\right) = 0.
+</span></p>
+<p>The non-zero solution satisfies <span class="math inline">\frac{\langle k\rangle^2 S}{2} \approx \langle k\rangle - 1 = \varepsilon</span>, giving</p>
+<p><span class="math display">
+\boxed{S \approx \frac{2(\langle k\rangle - 1)}{\langle k\rangle^2} \approx 2(\langle k\rangle - 1) \qquad \text{as } \langle k\rangle \downarrow 1^+.}
+</span></p>
+<p>The transition is <strong>continuous</strong>: the giant component size grows linearly with the distance <span class="math inline">\varepsilon = \langle k\rangle - 1</span> from the threshold. There is no jump discontinuity in <span class="math inline">S</span> — the giant component emerges gradually from zero.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Physical interpretation">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Physical interpretation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The linear growth <span class="math inline">S \approx 2(\langle k\rangle - 1)</span> means that doubling the excess degree doubles the fraction of vertices absorbed into the giant component, at least near the threshold. Far above the threshold, <span class="math inline">S</span> saturates toward <span class="math inline">1</span> as the graph approaches full connectivity.</p>
+</div>
+</div>
+</section>
+<section id="connectedness-threshold" class="level3">
+<h3 class="anchored" data-anchor-id="connectedness-threshold">Connectedness threshold</h3>
+<p>Connectivity requires more than a giant component: every vertex must be reachable from every other vertex. The binding constraint is isolated vertices. A vertex <span class="math inline">v</span> is isolated if none of its <span class="math inline">N-1</span> potential edges is present, which happens with probability <span class="math inline">(1-p)^{N-1}</span>. The expected number of isolated vertices is</p>
+<p><span class="math display">
+\mathbb{E}[\text{isolated}] = N(1-p)^{N-1} \approx N e^{-p(N-1)} = N e^{-\langle k\rangle}.
+</span></p>
+<p>Setting this equal to <span class="math inline">1</span> gives <span class="math inline">\langle k\rangle = \ln N</span>, or equivalently <span class="math inline">p = \ln N / N</span>. This is the <strong>connectedness threshold</strong>: below it, isolated vertices are expected and the graph is disconnected; above it, isolated vertices disappear and the graph becomes connected with high probability.</p>
+<p>More precisely <span class="citation" data-cites="erdos1960 bollobas2001book">(<a href="#ref-erdos1960" role="doc-biblioref">Erdős &amp; Rényi, 1960</a>; <a href="#ref-bollobas2001book" role="doc-biblioref">Bollobás, 2001</a>, Ch. 7)</span>, for <span class="math inline">p = (\ln N + c)/N</span>:</p>
+<p><span class="math display">
+P(G(N,p) \text{ is connected}) \;\xrightarrow{N\to\infty}\; e^{-e^{-c}}.
+</span></p>
+<p>Setting <span class="math inline">c = 0</span> gives <span class="math inline">P \to e^{-1} \approx 0.368</span>; the graph is connected with probability <span class="math inline">1/2</span> when <span class="math inline">c = \ln\ln 2 \approx -0.37</span>.</p>
+</section>
+</section>
+<section id="numerical-exploration" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="numerical-exploration"><span class="header-section-number">5.7</span> Numerical exploration</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>k_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">8.0</span>, <span class="at">length.out =</span> <span class="dv">45</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>p_grid <span class="ot">&lt;-</span> k_grid <span class="sc">/</span> (n <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>reps <span class="ot">&lt;-</span> <span class="dv">80</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>evolution_tbl <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(p_grid, <span class="cf">function</span>(p) {</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_dfr</span>(<span class="fu">seq_len</span>(reps), <span class="cf">function</span>(rep_id) {</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    g <span class="ot">&lt;-</span> <span class="fu">sample_gnp</span>(<span class="at">n =</span> n, <span class="at">p =</span> p, <span class="at">directed =</span> <span class="cn">FALSE</span>, <span class="at">loops =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    comp <span class="ot">&lt;-</span> <span class="fu">components</span>(g)<span class="sc">$</span>csize</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">p =</span> p,</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">mean_degree =</span> p <span class="sc">*</span> (n <span class="sc">-</span> <span class="dv">1</span>),</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">rep =</span> rep_id,</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">largest_component_fraction =</span> <span class="fu">max</span>(comp) <span class="sc">/</span> n,</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">number_of_components =</span> <span class="fu">length</span>(comp),</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">isolated_fraction =</span> <span class="fu">sum</span>(comp <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">/</span> n,</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">connected_indicator =</span> <span class="fu">as.integer</span>(<span class="fu">length</span>(comp) <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>evolution_summary <span class="ot">&lt;-</span> evolution_tbl <span class="sc">|&gt;</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(p, mean_degree) <span class="sc">|&gt;</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">largest_component_fraction =</span> <span class="fu">mean</span>(largest_component_fraction),</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">number_of_components =</span> <span class="fu">mean</span>(number_of_components),</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">isolated_fraction =</span> <span class="fu">mean</span>(isolated_fraction),</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">connected_probability =</span> <span class="fu">mean</span>(connected_indicator),</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">connected_probability_se =</span> <span class="fu">sqrt</span>(connected_probability <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> connected_probability) <span class="sc">/</span> <span class="fu">n</span>()),</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>iso_fit <span class="ot">&lt;-</span> <span class="fu">isoreg</span>(evolution_summary<span class="sc">$</span>mean_degree, evolution_summary<span class="sc">$</span>connected_probability)</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>evolution_summary<span class="sc">$</span>connected_probability_iso <span class="ot">&lt;-</span> iso_fit<span class="sc">$</span>yf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>n    <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>k_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">8.0</span>, <span class="at">length.out=</span><span class="dv">45</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>p_grid <span class="ot">&lt;-</span> k_grid <span class="sc">/</span> (n <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>reps   <span class="ot">&lt;-</span> <span class="dv">80</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>evolution_tbl <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(p_grid, <span class="cf">function</span>(p) {</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_dfr</span>(<span class="fu">seq_len</span>(reps), <span class="cf">function</span>(rep_id) {</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    g    <span class="ot">&lt;-</span> <span class="fu">sample_gnp</span>(<span class="at">n=</span>n, <span class="at">p=</span>p, <span class="at">directed=</span><span class="cn">FALSE</span>, <span class="at">loops=</span><span class="cn">FALSE</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    comp <span class="ot">&lt;-</span> <span class="fu">components</span>(g)<span class="sc">$</span>csize</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">p                         =</span> p,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">mean_degree               =</span> p<span class="sc">*</span>(n<span class="dv">-1</span>),</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">rep                       =</span> rep_id,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">largest_component_fraction =</span> <span class="fu">max</span>(comp)<span class="sc">/</span>n,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">number_of_components      =</span> <span class="fu">length</span>(comp),</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">isolated_fraction         =</span> <span class="fu">sum</span>(comp<span class="sc">==</span><span class="dv">1</span>)<span class="sc">/</span>n,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">connected_indicator       =</span> <span class="fu">as.integer</span>(<span class="fu">length</span>(comp)<span class="sc">==</span><span class="dv">1</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>evolution_summary <span class="ot">&lt;-</span> evolution_tbl <span class="sc">|&gt;</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(p, mean_degree) <span class="sc">|&gt;</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">largest_component_fraction =</span> <span class="fu">mean</span>(largest_component_fraction),</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">number_of_components       =</span> <span class="fu">mean</span>(number_of_components),</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">isolated_fraction          =</span> <span class="fu">mean</span>(isolated_fraction),</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">connected_probability      =</span> <span class="fu">mean</span>(connected_indicator),</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">connected_probability_se   =</span> <span class="fu">sqrt</span>(connected_probability<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>connected_probability)<span class="sc">/</span><span class="fu">n</span>()),</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>iso_fit <span class="ot">&lt;-</span> <span class="fu">isoreg</span>(evolution_summary<span class="sc">$</span>mean_degree,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>                  evolution_summary<span class="sc">$</span>connected_probability)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>evolution_summary<span class="sc">$</span>connected_probability_iso <span class="ot">&lt;-</span> iso_fit<span class="sc">$</span>yf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<section id="largest-component-fraction" class="level3">
-<h3 class="anchored" data-anchor-id="largest-component-fraction">Largest component fraction</h3>
+<section id="giant-component-fraction" class="level3">
+<h3 class="anchored" data-anchor-id="giant-component-fraction">Giant component fraction</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(evolution_summary, <span class="fu">aes</span>(<span class="at">x =</span> mean_degree, <span class="at">y =</span> largest_component_fraction)) <span class="sc">+</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> course_cols<span class="sc">$</span>teal, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> course_cols<span class="sc">$</span>gold, <span class="at">size =</span> <span class="fl">2.1</span>) <span class="sc">+</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">1</span>, <span class="at">color =</span> course_cols<span class="sc">$</span>coral, <span class="at">linewidth =</span> <span class="fl">1.0</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">log</span>(n), <span class="at">color =</span> course_cols<span class="sc">$</span>blue, <span class="at">linewidth =</span> <span class="fl">1.0</span>, <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Emergence of the giant component"</span>,</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Red dashed line: giant-component threshold. Blue dotted line: connectedness threshold."</span>,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Expected degree E[k]"</span>,</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Largest component fraction"</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Theoretical S from self-consistency equation</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>solve_S <span class="ot">&lt;-</span> <span class="cf">function</span>(k_mean, <span class="at">tol=</span><span class="fl">1e-8</span>, <span class="at">max_iter=</span><span class="dv">1000</span>) {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (k_mean <span class="sc">&lt;=</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="dv">0</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  S <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_len</span>(max_iter)) {</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    S_new <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>k_mean <span class="sc">*</span> S)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">abs</span>(S_new <span class="sc">-</span> S) <span class="sc">&lt;</span> tol) <span class="fu">return</span>(S_new)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    S <span class="ot">&lt;-</span> S_new</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  S</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>theory_tbl <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_degree =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">8.0</span>, <span class="at">length.out=</span><span class="dv">200</span>),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">S_theory    =</span> <span class="fu">sapply</span>(mean_degree, solve_S)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(evolution_summary, <span class="fu">aes</span>(<span class="at">x=</span>mean_degree, <span class="at">y=</span>largest_component_fraction)) <span class="sc">+</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color=</span>course_cols<span class="sc">$</span>gold, <span class="at">size=</span><span class="fl">2.1</span>, <span class="at">alpha=</span><span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data=</span>theory_tbl, <span class="fu">aes</span>(<span class="at">x=</span>mean_degree, <span class="at">y=</span>S_theory),</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">color=</span>course_cols<span class="sc">$</span>teal, <span class="at">linewidth=</span><span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="dv">1</span>, <span class="at">color=</span>course_cols<span class="sc">$</span>coral,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>             <span class="at">linewidth=</span><span class="fl">1.0</span>, <span class="at">linetype=</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="fu">log</span>(n), <span class="at">color=</span>course_cols<span class="sc">$</span>blue,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>             <span class="at">linewidth=</span><span class="fl">1.0</span>, <span class="at">linetype=</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Emergence of the giant component"</span>,</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">"Teal curve: theoretical S from self-consistency equation"</span>,</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">"Expected degree "</span>, langle<span class="sc">*</span>k<span class="sc">*</span>rangle)),</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Largest component fraction S"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="04-random-graph-evolution_files/figure-html/giant-component-plot-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Average fraction of vertices in the largest connected component as a function of expected degree. The dashed vertical lines indicate the giant-component threshold and the connectedness threshold.</figcaption>
+<div id="fig-giant-component-plot" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-giant-component-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="04-random-graph-evolution_files/figure-html/fig-giant-component-plot-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-giant-component-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.1: Average fraction of vertices in the largest component as a function of expected degree. The theoretical curve from the self-consistency equation is overlaid. Red dashed: giant-component threshold. Blue dotted: connectedness threshold.
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>This plot captures the main phase transition. For small expected degree, the largest component occupies only a small fraction of the graph. Near <span class="math inline">\langle k \rangle = 1</span>, the largest component begins to grow rapidly. Well before the graph becomes connected, one component already dominates the structure.</p>
 </section>
-<section id="number-of-connected-components" class="level3">
-<h3 class="anchored" data-anchor-id="number-of-connected-components">Number of connected components</h3>
+<section id="connectedness-probability" class="level3">
+<h3 class="anchored" data-anchor-id="connectedness-probability">Connectedness probability</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(evolution_summary, <span class="fu">aes</span>(<span class="at">x =</span> mean_degree, <span class="at">y =</span> number_of_components)) <span class="sc">+</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> course_cols<span class="sc">$</span>blue, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> course_cols<span class="sc">$</span>gold, <span class="at">size =</span> <span class="fl">2.1</span>) <span class="sc">+</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">1</span>, <span class="at">color =</span> course_cols<span class="sc">$</span>coral, <span class="at">linewidth =</span> <span class="fl">1.0</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">log</span>(n), <span class="at">color =</span> course_cols<span class="sc">$</span>blue, <span class="at">linewidth =</span> <span class="fl">1.0</span>, <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Decrease in the number of connected components"</span>,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Disconnected pieces merge as the graph evolves"</span>,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Expected degree E[k]"</span>,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Average number of components"</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="04-random-graph-evolution_files/figure-html/number-components-plot-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Average number of connected components as a function of expected degree.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<p>This second plot reveals the same transition from another viewpoint. At small expected degree, the graph contains many disconnected pieces. As more links are added, these components merge, and the total number of components decreases.</p>
-</section>
-<section id="fraction-of-isolated-vertices" class="level3">
-<h3 class="anchored" data-anchor-id="fraction-of-isolated-vertices">Fraction of isolated vertices</h3>
-<div class="cell">
-<details class="code-fold">
-<summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(evolution_summary, <span class="fu">aes</span>(<span class="at">x =</span> mean_degree, <span class="at">y =</span> isolated_fraction)) <span class="sc">+</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> course_cols<span class="sc">$</span>teal, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> course_cols<span class="sc">$</span>gold, <span class="at">size =</span> <span class="fl">2.1</span>) <span class="sc">+</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">1</span>, <span class="at">color =</span> course_cols<span class="sc">$</span>coral, <span class="at">linewidth =</span> <span class="fl">1.0</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">log</span>(n), <span class="at">color =</span> course_cols<span class="sc">$</span>blue, <span class="at">linewidth =</span> <span class="fl">1.0</span>, <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Disappearance of isolated vertices"</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Isolated vertices become rare as the network densifies"</span>,</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Expected degree E[k]"</span>,</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Fraction of isolated vertices"</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="04-random-graph-evolution_files/figure-html/isolated-fraction-plot-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Average fraction of isolated vertices as a function of expected degree.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<p>Isolated vertices are abundant at very small edge density, but they disappear as the graph evolves. Their disappearance is one of the main signals that the graph is approaching connectedness.</p>
-</section>
-<section id="probability-of-connectedness" class="level3">
-<h3 class="anchored" data-anchor-id="probability-of-connectedness">Probability of connectedness</h3>
-<div class="cell">
-<details class="code-fold">
-<summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(evolution_summary, <span class="fu">aes</span>(<span class="at">x =</span> mean_degree)) <span class="sc">+</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymin =</span> <span class="fu">pmax</span>(connected_probability <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> connected_probability_se, <span class="dv">0</span>),</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymax =</span> <span class="fu">pmin</span>(connected_probability <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> connected_probability_se, <span class="dv">1</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> course_cols<span class="sc">$</span>blue,</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.12</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> connected_probability), <span class="at">color =</span> course_cols<span class="sc">$</span>gold, <span class="at">size =</span> <span class="fl">1.9</span>) <span class="sc">+</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> connected_probability_iso), <span class="at">color =</span> course_cols<span class="sc">$</span>coral, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">1</span>, <span class="at">color =</span> course_cols<span class="sc">$</span>coral, <span class="at">linewidth =</span> <span class="fl">1.0</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">log</span>(n), <span class="at">color =</span> course_cols<span class="sc">$</span>blue, <span class="at">linewidth =</span> <span class="fl">1.0</span>, <span class="at">linetype =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Connectedness probability"</span>,</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"The true probability is monotone increasing; the fitted line enforces that theoretical property."</span>,</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Expected degree E[k]"</span>,</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Probability that the graph is connected"</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(evolution_summary, <span class="fu">aes</span>(<span class="at">x=</span>mean_degree)) <span class="sc">+</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">ymin=</span><span class="fu">pmax</span>(connected_probability <span class="sc">-</span> <span class="fl">1.96</span><span class="sc">*</span>connected_probability_se, <span class="dv">0</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">ymax=</span><span class="fu">pmin</span>(connected_probability <span class="sc">+</span> <span class="fl">1.96</span><span class="sc">*</span>connected_probability_se, <span class="dv">1</span>)),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill=</span>course_cols<span class="sc">$</span>blue, <span class="at">alpha=</span><span class="fl">0.12</span>) <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y=</span>connected_probability), <span class="at">color=</span>course_cols<span class="sc">$</span>gold, <span class="at">size=</span><span class="fl">1.9</span>) <span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>connected_probability_iso), <span class="at">color=</span>course_cols<span class="sc">$</span>coral, <span class="at">linewidth=</span><span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="dv">1</span>, <span class="at">color=</span>course_cols<span class="sc">$</span>coral,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">linewidth=</span><span class="fl">1.0</span>, <span class="at">linetype=</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="fu">log</span>(n), <span class="at">color=</span>course_cols<span class="sc">$</span>blue,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">linewidth=</span><span class="fl">1.0</span>, <span class="at">linetype=</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Connectedness probability"</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="fu">sprintf</span>(<span class="st">"N = %d; dashed = giant threshold; dotted = connectedness threshold (ln N = %.2f)"</span>, n, <span class="fu">log</span>(n)),</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">"Expected degree "</span>, langle<span class="sc">*</span>k<span class="sc">*</span>rangle)),</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"P(connected)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="04-random-graph-evolution_files/figure-html/connected-probability-plot-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Estimated connectedness probability as a function of expected degree. Points show Monte Carlo estimates; the solid curve is the monotone isotonic fit.</figcaption>
+<figcaption>Empirical connectedness probability with 95% confidence bands. The monotone isotonic fit (solid line) enforces the theoretical constraint that P(connected) is non-decreasing in p.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>For fixed <span class="math inline">N</span>, the true connectedness probability is a monotone increasing function of <span class="math inline">p</span>. Small downward wiggles in raw simulation estimates are caused by Monte Carlo noise. The points in the figure are the empirical estimates from a finite number of repetitions, while the solid line is an isotonic fit, which enforces the correct monotone behavior.</p>
-<p>This last plot makes the distinction between the two thresholds especially clear. The giant component appears near <span class="math inline">\langle k \rangle = 1</span>, but the probability that the graph is fully connected remains small until the expected degree is of order <span class="math inline">\ln N</span>.</p>
+<p>The two plots together make the structural distinction explicit: the giant component fraction begins rising sharply near <span class="math inline">\langle k\rangle = 1</span>, while the connectedness probability remains near zero until <span class="math inline">\langle k\rangle \approx \ln N \approx 6.2</span> for <span class="math inline">N = 500</span>.</p>
 </section>
 </section>
-<section id="summary-of-regimes" class="level2" data-number="5.11">
-<h2 data-number="5.11" class="anchored" data-anchor-id="summary-of-regimes"><span class="header-section-number">5.11</span> Summary of regimes</h2>
+<section id="summary-of-regimes" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="summary-of-regimes"><span class="header-section-number">5.8</span> Summary of regimes</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
+<col style="width: 16%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Regime</th>
-<th style="text-align: left;">Condition</th>
-<th style="text-align: left;">Main structural property</th>
+<th style="text-align: center;">Condition</th>
+<th style="text-align: center;">Largest component</th>
+<th style="text-align: center;">Isolated vertices</th>
+<th style="text-align: center;">Connected?</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Subcritical</td>
-<td style="text-align: left;"><span class="math inline">\langle k \rangle &lt; 1</span></td>
-<td style="text-align: left;">Only small connected components are present</td>
+<td style="text-align: center;"><span class="math inline">\langle k\rangle &lt; 1</span></td>
+<td style="text-align: center;"><span class="math inline">O(\log N)</span></td>
+<td style="text-align: center;">Common</td>
+<td style="text-align: center;">No</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Critical</td>
-<td style="text-align: left;"><span class="math inline">\langle k \rangle \approx 1</span></td>
-<td style="text-align: left;">The giant component begins to emerge</td>
+<td style="text-align: center;"><span class="math inline">\langle k\rangle \approx 1</span></td>
+<td style="text-align: center;"><span class="math inline">O(N^{2/3})</span></td>
+<td style="text-align: center;">Present</td>
+<td style="text-align: center;">No</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Supercritical</td>
-<td style="text-align: left;"><span class="math inline">\langle k \rangle &gt; 1</span></td>
-<td style="text-align: left;">A giant component coexists with many finite components</td>
+<td style="text-align: center;"><span class="math inline">1 &lt; \langle k\rangle &lt; \ln N</span></td>
+<td style="text-align: center;"><span class="math inline">\Theta(N)</span></td>
+<td style="text-align: center;">Decreasing</td>
+<td style="text-align: center;">No</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Connected</td>
-<td style="text-align: left;"><span class="math inline">\langle k \rangle \approx \ln N</span></td>
-<td style="text-align: left;">The full graph is connected with high probability</td>
+<td style="text-align: center;"><span class="math inline">\langle k\rangle \gtrsim \ln N</span></td>
+<td style="text-align: center;"><span class="math inline">N</span></td>
+<td style="text-align: center;">Absent (w.h.p.)</td>
+<td style="text-align: center;">Yes</td>
 </tr>
 </tbody>
 </table>
-<p>This table summarizes the evolution of the Erdős–Rényi random graph in terms of its component structure.</p>
 </section>
-<section id="core-formulas-to-remember" class="level2" data-number="5.12">
-<h2 data-number="5.12" class="anchored" data-anchor-id="core-formulas-to-remember"><span class="header-section-number">5.12</span> Core formulas to remember</h2>
+<section id="core-formulas" class="level2" data-number="5.9">
+<h2 data-number="5.9" class="anchored" data-anchor-id="core-formulas"><span class="header-section-number">5.9</span> Core formulas</h2>
 <div class="callout callout-style-default callout-important callout-titled" title="Summary">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -953,371 +713,169 @@ S \approx 2(\langle k \rangle - 1), \qquad \langle k \rangle \downarrow 1^{+}.
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>For the evolution of Erdős–Rényi random graphs <span class="math inline">G(N,p)</span>:</p>
-<ol type="1">
-<li><p><strong>Expected degree:</strong> <span class="math display">\langle k \rangle = p(N-1)</span></p></li>
-<li><p><strong>Giant-component threshold:</strong> <span class="math display">\langle k \rangle = 1 \quad \Leftrightarrow \quad p_c \approx \frac{1}{N}</span></p></li>
-<li><p><strong>Giant-component fraction</strong> (self-consistency equation): <span class="math display">S = 1 - e^{-\langle k \rangle S}</span></p></li>
-<li><p><strong>Near-threshold size:</strong> <span class="math display">S \approx 2(\langle k \rangle - 1), \qquad \langle k \rangle \downarrow 1^{+}</span></p></li>
-<li><p><strong>Connectedness threshold:</strong> <span class="math display">\langle k \rangle \approx \ln N \quad \Leftrightarrow \quad p \approx \frac{\ln N}{N}</span></p></li>
-</ol>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 44%">
+<col style="width: 55%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Result</th>
+<th style="text-align: center;">Formula</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Giant-component threshold</td>
+<td style="text-align: center;"><span class="math inline">\langle k\rangle = 1</span>, i.e., <span class="math inline">p_c \approx 1/N</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Self-consistency equation</td>
+<td style="text-align: center;"><span class="math inline">S = 1 - e^{-\langle k\rangle S}</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Near-threshold size</td>
+<td style="text-align: center;"><span class="math inline">S \approx 2(\langle k\rangle - 1)</span> for <span class="math inline">\langle k\rangle \downarrow 1^+</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Connectedness threshold</td>
+<td style="text-align: center;"><span class="math inline">\langle k\rangle \approx \ln N</span>, i.e., <span class="math inline">p \approx \ln N/N</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Isolated vertex count</td>
+<td style="text-align: center;"><span class="math inline">\mathbb{E}[\text{isolated}] \approx N e^{-\langle k\rangle}</span></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </section>
-<section id="in-class-questions" class="level2" data-number="5.13">
-<h2 data-number="5.13" class="anchored" data-anchor-id="in-class-questions"><span class="header-section-number">5.13</span> In-class questions</h2>
+<section id="in-class-questions" class="level2" data-number="5.10">
+<h2 data-number="5.10" class="anchored" data-anchor-id="in-class-questions"><span class="header-section-number">5.10</span> In-class questions</h2>
 <ol type="1">
-<li>Why is connectedness a global property of a graph?</li>
-<li>What role does maximality play in the definition of a connected component?</li>
-<li>Why is an isolated vertex still a connected component?</li>
-<li>What distinguishes a largest component from a giant component?</li>
-<li>Why does the threshold <span class="math inline">\langle k \rangle = 1</span> matter?</li>
-<li>Why does the connectedness threshold occur later, near <span class="math inline">\langle k \rangle = \ln N</span>?</li>
-<li>Why can a graph have a giant component and still be disconnected?</li>
+<li>Why do the connected components of a graph partition the vertex set?</li>
+<li>A graph has 1000 vertices and its largest component contains 600. Is this a giant component? Justify using the definition.</li>
+<li>Why does <span class="math inline">f'(0) &gt; 1</span> imply the existence of a positive fixed point of <span class="math inline">f(S) = 1 - e^{-\langle k\rangle S}</span>?</li>
+<li>Why does the connectedness threshold depend on <span class="math inline">\ln N</span> rather than a constant?</li>
+<li>A student observes that a graph with <span class="math inline">N = 100</span> and <span class="math inline">\langle k\rangle = 1.5</span> has no isolated vertices. Does this mean the graph is connected? Explain.</li>
+<li>In the near-threshold expansion, why is it valid to truncate the Taylor series at second order?</li>
 </ol>
 </section>
-<section id="end-of-chapter-exercises" class="level2" data-number="5.14">
-<h2 data-number="5.14" class="anchored" data-anchor-id="end-of-chapter-exercises"><span class="header-section-number">5.14</span> End-of-chapter exercises</h2>
-<p>The exercises below are grouped into three categories:</p>
+<section id="exercises" class="level2" data-number="5.11">
+<h2 data-number="5.11" class="anchored" data-anchor-id="exercises"><span class="header-section-number">5.11</span> Exercises</h2>
+<p>The seven exercises below cover the full theoretical and computational content of this chapter. They require derivation, analysis, and synthesis — not reproduction of lecture material.</p>
+<hr>
+<section id="exercise-1.-components-partitions-and-the-giant-component-criterion" class="level4">
+<h4 class="anchored" data-anchor-id="exercise-1.-components-partitions-and-the-giant-component-criterion">Exercise 1. Components, partitions, and the giant component criterion</h4>
 <ol type="1">
-<li>mathematical exercises,</li>
-<li>conceptual and analytical exercises,</li>
-<li>simulation and coding exercises.</li>
-</ol>
-<p>They are designed to move from formal understanding to computational verification.</p>
-<section id="part-i.-mathematical-exercises" class="level3">
-<h3 class="anchored" data-anchor-id="part-i.-mathematical-exercises">Part I. Mathematical exercises</h3>
-<section id="exercise-1.-components-and-partitions" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-1.-components-and-partitions">Exercise 1. Components and partitions</h4>
-<p>Let <span class="math inline">G=(V,E)</span> be an undirected graph.</p>
-<ol type="1">
-<li>Prove that every vertex of <span class="math inline">G</span> belongs to at least one connected component.</li>
-<li>Prove that no vertex can belong to two distinct connected components.</li>
-<li>Deduce that the connected components of <span class="math inline">G</span> form a partition of the vertex set <span class="math inline">V</span>.</li>
+<li>Let <span class="math inline">G = (V,E)</span> be any graph. Prove that the connected components partition <span class="math inline">V</span>: every vertex belongs to exactly one component. Your proof must use the definition of maximality precisely.</li>
+<li>Let <span class="math inline">G_N = P_N</span> (the path graph on <span class="math inline">N</span> vertices). Compute <span class="math inline">|C_{\max}(G_N)|/N</span> and determine whether <span class="math inline">P_N</span> contains a giant component in the sense of <a href="#def-giant-component" class="quarto-xref">Definition&nbsp;<span>5.2</span></a>.</li>
+<li>Let <span class="math inline">G_N = \lfloor N/2\rfloor \cdot K_2</span> (a perfect matching: <span class="math inline">\lfloor N/2\rfloor</span> disjoint edges). Compute <span class="math inline">|C_{\max}(G_N)|/N</span>. Does this sequence contain a giant component?</li>
+<li>Construct a sequence of graphs <span class="math inline">\{G_N\}</span> such that <span class="math inline">|C_{\max}(G_N)|/N \to 1/3</span>. Is this a giant component? Compare to the Erdős–Rényi case: at what value of <span class="math inline">\langle k\rangle</span> does the self-consistency equation give <span class="math inline">S = 1/3</span>?</li>
 </ol>
 <hr>
 </section>
-<section id="exercise-2.-isolated-vertices" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-2.-isolated-vertices">Exercise 2. Isolated vertices</h4>
-<p>Let <span class="math inline">v \in V</span> be a vertex with degree zero.</p>
+<section id="exercise-2.-the-self-consistency-equation-analysis-and-phase-transition" class="level4">
+<h4 class="anchored" data-anchor-id="exercise-2.-the-self-consistency-equation-analysis-and-phase-transition">Exercise 2. The self-consistency equation: analysis and phase transition</h4>
+<p>The self-consistency equation is <span class="math inline">S = 1 - e^{-\langle k\rangle S}</span>, with <span class="math inline">f(S) = 1 - e^{-\langle k\rangle S}</span>.</p>
 <ol type="1">
-<li>Prove that <span class="math inline">\{v\}</span> is a connected subgraph.</li>
-<li>Prove that <span class="math inline">\{v\}</span> is maximal among connected subgraphs containing <span class="math inline">v</span>.</li>
-<li>Conclude that an isolated vertex is a connected component of size <span class="math inline">1</span>.</li>
+<li>Show that <span class="math inline">S = 0</span> is always a solution. Show that any other fixed point <span class="math inline">S^* &gt; 0</span> satisfies <span class="math inline">S^* &lt; 1</span> for any finite <span class="math inline">\langle k\rangle</span>.</li>
+<li>Prove rigorously that a positive fixed point exists if and only if <span class="math inline">\langle k\rangle &gt; 1</span>. <em>(Hint: consider the slope <span class="math inline">f'(0) = \langle k\rangle</span> and the fact that <span class="math inline">f(S) &lt; S</span> for all <span class="math inline">S \in (0,1)</span> when <span class="math inline">\langle k\rangle \leq 1</span>.)</em></li>
+<li>For <span class="math inline">\langle k\rangle = 2</span>, find <span class="math inline">S^*</span> numerically and verify that <span class="math inline">S^* = 1 - e^{-2S^*}</span>. Repeat for <span class="math inline">\langle k\rangle \in \{1.5, 3, 5\}</span>. Plot <span class="math inline">S^*</span> as a function of <span class="math inline">\langle k\rangle</span> for <span class="math inline">\langle k\rangle \in [0, 5]</span>, overlaying the simulation estimates from <a href="#fig-giant-component-plot" class="quarto-xref">Figure&nbsp;<span>5.1</span></a>.</li>
+<li>The function <span class="math inline">\langle k\rangle \mapsto S^*(\langle k\rangle)</span> is continuous and equals zero for <span class="math inline">\langle k\rangle \leq 1</span>. This continuity is why the transition is called <strong>second-order</strong> (continuous) rather than <strong>first-order</strong> (discontinuous). Explain what it would mean physically if <span class="math inline">S</span> jumped discontinuously at <span class="math inline">\langle k\rangle = 1</span>.</li>
 </ol>
 <hr>
 </section>
-<section id="exercise-3.-giant-component-criterion" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-3.-giant-component-criterion">Exercise 3. Giant component criterion</h4>
-<p>Let <span class="math inline">C_{\max}(G_N)</span> denote the largest connected component of a graph on <span class="math inline">N</span> vertices.</p>
+<section id="exercise-3.-near-threshold-expansion" class="level4">
+<h4 class="anchored" data-anchor-id="exercise-3.-near-threshold-expansion">Exercise 3. Near-threshold expansion</h4>
+<p>The lecture derives <span class="math inline">S \approx 2(\langle k\rangle - 1)</span> near <span class="math inline">\langle k\rangle = 1</span>.</p>
 <ol type="1">
-<li>Explain why every finite graph has a largest connected component.</li>
-<li>Give an example of a sequence of graphs for which <span class="math display">
-\frac{|C_{\max}(G_N)|}{N} \to 0.
-</span></li>
-<li>Give an example of a sequence of graphs for which <span class="math display">
-\frac{|C_{\max}(G_N)|}{N} \to c &gt; 0.
-</span></li>
-<li>Explain why the second case corresponds to the existence of a giant component.</li>
+<li>Carry out the Taylor expansion of <span class="math inline">e^{-\langle k\rangle S}</span> to <strong>third</strong> order in <span class="math inline">S</span>. Show that the correction to the leading term <span class="math inline">S \approx 2(\langle k\rangle - 1)</span> is of order <span class="math inline">(\langle k\rangle - 1)^2</span>, so the linear approximation is valid to leading order.</li>
+<li>Write <span class="math inline">\langle k\rangle = 1 + \varepsilon</span> and expand <span class="math inline">S^*(\varepsilon)</span> as a power series in <span class="math inline">\varepsilon</span>: <span class="math inline">S^* = a_1\varepsilon + a_2\varepsilon^2 + \cdots</span>. Determine <span class="math inline">a_1</span> and <span class="math inline">a_2</span>.</li>
+<li>For <span class="math inline">N = 1000</span> and <span class="math inline">\langle k\rangle = 1.2</span>, compare: (a) the theoretical prediction <span class="math inline">S \approx 2(\langle k\rangle - 1) = 0.4</span>; (b) the exact numerical solution of the self-consistency equation; and (c) the simulation estimate. Which is more accurate at this distance from the threshold?</li>
+<li>The near-threshold formula is <span class="math inline">S \approx 2\varepsilon</span> with <span class="math inline">\varepsilon = \langle k\rangle - 1</span>. The analogous quantity in percolation theory is <span class="math inline">\varepsilon = p - p_c</span>, where <span class="math inline">p_c</span> is the critical bond probability. Does the linear scaling <span class="math inline">S \sim \varepsilon</span> hold in bond percolation on a 2D lattice? <em>(You need not derive this — look it up and cite your source.)</em></li>
 </ol>
 <hr>
 </section>
-<section id="exercise-4.-threshold-written-in-terms-of-p" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-4.-threshold-written-in-terms-of-p">Exercise 4. Threshold written in terms of <span class="math inline">p</span></h4>
-<p>In the Erdős–Rényi model <span class="math inline">G(N,p)</span>, the expected degree is</p>
+<section id="exercise-4.-the-connectedness-threshold" class="level4">
+<h4 class="anchored" data-anchor-id="exercise-4.-the-connectedness-threshold">Exercise 4. The connectedness threshold</h4>
+<ol type="1">
+<li>Show that the expected number of isolated vertices in <span class="math inline">G(N,p)</span> is <span class="math inline">N(1-p)^{N-1}</span>. Using the approximation <span class="math inline">(1-p)^{N-1} \approx e^{-p(N-1)}</span>, derive the condition under which the expected number of isolated vertices equals <span class="math inline">1</span>. Show this gives <span class="math inline">p \approx \ln N / N</span>.</li>
+<li>The exact result <span class="citation" data-cites="erdos1960">(<a href="#ref-erdos1960" role="doc-biblioref">Erdős &amp; Rényi, 1960</a>)</span> is: for <span class="math inline">p = (\ln N + c)/N</span>, <span class="math inline">P(G(N,p) \text{ connected}) \to e^{-e^{-c}}</span>. Verify numerically for <span class="math inline">N = 500</span>: (a) estimate the probability of connectivity by simulation for several values of <span class="math inline">c \in [-2, 3]</span>; (b) overlay the theoretical curve <span class="math inline">e^{-e^{-c}}</span>; (c) comment on the agreement.</li>
+<li>Express the ratio of the connectedness threshold to the giant-component threshold as a function of <span class="math inline">N</span>:</li>
+</ol>
 <p><span class="math display">
-\langle k \rangle = p(N-1).
+\frac{\langle k\rangle_{\text{connected}}}{\langle k\rangle_{\text{giant}}} = \frac{\ln N}{1}.
 </span></p>
-<ol type="1">
-<li>Show that the condition <span class="math display">
-\langle k \rangle = 1
-</span> implies <span class="math display">
-p_c = \frac{1}{N-1}.
-</span></li>
-<li>Show that for large <span class="math inline">N</span> this becomes <span class="math display">
-p_c \sim \frac{1}{N}.
-</span></li>
-<li>Explain why this implies that the critical edge density becomes very small in large networks.</li>
+<p>For <span class="math inline">N = 10^3</span>, <span class="math inline">10^6</span>, <span class="math inline">10^9</span> (sizes of typical real-world networks), compute this ratio. What does this say about the range of <span class="math inline">\langle k\rangle</span> in which a network has a giant component but is not fully connected?</p>
+<ol start="4" type="1">
+<li>The connectedness threshold is driven by isolated vertices — the <strong>last</strong> structural obstacle to full connectivity. Demonstrate this numerically: for <span class="math inline">N = 500</span>, plot simultaneously (a) the fraction of isolated vertices and (b) the connectedness probability as functions of <span class="math inline">\langle k\rangle</span>. Show that the two curves cross near the same threshold.</li>
 </ol>
 <hr>
 </section>
-<section id="exercise-5.-connectedness-threshold" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-5.-connectedness-threshold">Exercise 5. Connectedness threshold</h4>
-<p>The connectedness threshold in the Erdős–Rényi model occurs near</p>
-<p><span class="math display">
-\langle k \rangle \approx \ln N.
-</span></p>
+<section id="exercise-5.-structural-regimes-classification-and-transitions" class="level4">
+<h4 class="anchored" data-anchor-id="exercise-5.-structural-regimes-classification-and-transitions">Exercise 5. Structural regimes: classification and transitions</h4>
 <ol type="1">
-<li>Show that this corresponds to <span class="math display">
-p \approx \frac{\ln N}{N-1}.
-</span></li>
-<li>Compare this threshold with the giant-component threshold <span class="math display">
-p_c \approx \frac{1}{N-1}.
-</span></li>
-<li>Prove that <span class="math display">
-\ln N &gt; 1
-\qquad \text{for all } N&gt;e,
-</span> and explain why connectedness must occur later than the emergence of the giant component.</li>
+<li><p>A social network has <span class="math inline">N = 10^5</span> nodes and average degree <span class="math inline">\langle k\rangle = 3.2</span>. Classify it into one of the four regimes of <a href="#sec-four-regimes" class="quarto-xref"><span>Section 5.5.1</span></a>. Under the Erdős–Rényi model with the same parameters, compute: (a) the theoretical giant component fraction <span class="math inline">S^*</span>; (b) the expected number of isolated vertices; (c) whether the graph is likely connected.</p></li>
+<li><p>A network analyst reports observing two networks with the same <span class="math inline">N = 500</span> and <span class="math inline">\langle k\rangle = 4</span>, but different largest component fractions: Network A has <span class="math inline">S = 0.85</span>, Network B has <span class="math inline">S = 0.43</span>. Under the ER model, <span class="math inline">S^*</span> is uniquely determined by <span class="math inline">\langle k\rangle</span>. What does the discrepancy between Networks A and B suggest about their structure relative to the ER null model?</p></li>
+<li><p>The <strong>second-largest</strong> component in the supercritical ER model has size <span class="math inline">O(\log N)</span> — much smaller than the giant. Verify this numerically for <span class="math inline">N = 1000</span> and <span class="math inline">\langle k\rangle \in \{1.5, 2, 3\}</span>: generate 100 graphs at each value and plot the distribution of second-largest component sizes. Does the <span class="math inline">O(\log N)</span> prediction match?</p></li>
+<li><p>In the critical regime <span class="math inline">\langle k\rangle = 1</span>, the largest component has size <span class="math inline">O(N^{2/3})</span>. For <span class="math inline">N \in \{100, 500, 1000, 5000\}</span>, simulate 100 graphs at <span class="math inline">\langle k\rangle = 1</span> and plot the mean largest component size against <span class="math inline">N</span> on a log-log scale. Estimate the exponent empirically and compare with the theoretical value <span class="math inline">2/3</span>.</p></li>
 </ol>
 <hr>
 </section>
-<section id="exercise-6.-the-self-consistency-equation" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-6.-the-self-consistency-equation">Exercise 6. The self-consistency equation</h4>
-<p>The asymptotic fraction <span class="math inline">S</span> of nodes in the giant component satisfies</p>
-<p><span class="math display">
-S = 1 - e^{-\langle k \rangle S}.
-</span></p>
+<section id="exercise-6.-finite-size-effects-and-convergence" class="level4">
+<h4 class="anchored" data-anchor-id="exercise-6.-finite-size-effects-and-convergence">Exercise 6. Finite-size effects and convergence</h4>
+<p>The thresholds derived in this chapter are sharp in the limit <span class="math inline">N \to \infty</span>. For finite networks, transitions are rounded.</p>
 <ol type="1">
-<li>Verify that <span class="math inline">S=0</span> is always a solution.</li>
-<li>Show that if <span class="math inline">\langle k \rangle &lt; 1</span>, then the tangent of the right-hand side at <span class="math inline">S=0</span> has slope smaller than <span class="math inline">1</span>.</li>
-<li>Explain why this indicates that no positive solution exists in the subcritical regime.</li>
-<li>Show that when <span class="math inline">\langle k \rangle &gt; 1</span>, the slope at <span class="math inline">S=0</span> exceeds <span class="math inline">1</span>.</li>
-<li>Explain why this allows the existence of a positive solution corresponding to a giant component.</li>
+<li><p>For <span class="math inline">N \in \{100, 500, 1000, 5000\}</span>, simulate the largest-component fraction over a grid of <span class="math inline">\langle k\rangle \in [0, 4]</span>. Plot all four curves on the same axes. How does the sharpness of the transition near <span class="math inline">\langle k\rangle = 1</span> change with <span class="math inline">N</span>? Define a quantitative measure of sharpness (e.g., the width of the interval where <span class="math inline">S</span> goes from <span class="math inline">0.1</span> to <span class="math inline">0.9</span>) and compute it for each <span class="math inline">N</span>.</p></li>
+<li><p>Define the <strong>empirical threshold</strong> <span class="math inline">\hat{k}_c(N)</span> as the value of <span class="math inline">\langle k\rangle</span> at which the largest-component fraction first exceeds <span class="math inline">0.5</span> in simulation. Plot <span class="math inline">\hat{k}_c(N)</span> against <span class="math inline">N</span> for <span class="math inline">N \in \{50, 100, 250, 500, 1000\}</span>. Does <span class="math inline">\hat{k}_c(N) \to 1</span> as <span class="math inline">N</span> grows? At what rate?</p></li>
+<li><p>In finite graphs, the transition is governed by fluctuations of order <span class="math inline">N^{-1/3}</span> around the critical point — a result from the theory of random graph evolution <span class="citation" data-cites="bollobas2001book">(<a href="#ref-bollobas2001book" role="doc-biblioref">Bollobás, 2001</a>, Ch. 5)</span>. Explain qualitatively why larger graphs have sharper transitions, using the law of large numbers as an analogy.</p></li>
 </ol>
 <hr>
 </section>
-<section id="exercise-7.-near-threshold-expansion" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-7.-near-threshold-expansion">Exercise 7. Near-threshold expansion</h4>
-<p>Starting from</p>
-<p><span class="math display">
-S = 1 - e^{-\langle k \rangle S},
-</span></p>
-<p>assume that <span class="math inline">S</span> is small and that <span class="math inline">\langle k \rangle = 1+\varepsilon</span> with <span class="math inline">\varepsilon&gt;0</span> small.</p>
+<section id="exercise-7.-the-er-model-as-a-null-model-for-connectivity" class="level4">
+<h4 class="anchored" data-anchor-id="exercise-7.-the-er-model-as-a-null-model-for-connectivity">Exercise 7. The ER model as a null model for connectivity</h4>
+<p>A network scientist observes a real network with <span class="math inline">N = 500</span> vertices, <span class="math inline">M = 800</span> edges, and a largest component containing <span class="math inline">480</span> vertices.</p>
 <ol type="1">
-<li>Expand the exponential up to second order in <span class="math inline">S</span>.</li>
-<li>Show that, to leading order, <span class="math display">
-S \approx 2(\langle k \rangle - 1).
-</span></li>
-<li>Interpret this result in terms of the growth of the giant component just above the threshold.</li>
+<li><p>Fit an ER null model by computing <span class="math inline">\langle k\rangle = 2M/N</span> and the corresponding <span class="math inline">p</span>. Solve the self-consistency equation to get the theoretical <span class="math inline">S^*</span>. How does it compare to the observed value <span class="math inline">480/500 = 0.96</span>?</p></li>
+<li><p>Simulate 500 realisations of <span class="math inline">G(N,p)</span> with your fitted parameters. Plot the distribution of the largest component fraction. Where does the observed value <span class="math inline">0.96</span> fall in this distribution?</p></li>
+<li><p>For the fitted model, compute: (a) the expected number of isolated vertices; (b) the probability that the graph is connected; (c) the expected size of the second-largest component. Compare each to what you would observe in the real network if it were ER.</p></li>
+<li><p>Now suppose the real network has clustering <span class="math inline">\bar{C} = 0.35</span> whereas the ER model predicts <span class="math inline">\mathbb{E}[\bar{C}] = p \approx 0.006</span>. The large clustering coefficient is known to reduce the effective size of the giant component relative to the ER prediction <span class="citation" data-cites="newman2010">(<a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>, Ch. 13)</span>. Explain intuitively why high clustering — many triangles — makes it harder for the giant component to span the network efficiently.</p></li>
 </ol>
 <hr>
 </section>
 </section>
-<section id="part-ii.-conceptual-and-analytical-exercises" class="level3">
-<h3 class="anchored" data-anchor-id="part-ii.-conceptual-and-analytical-exercises">Part II. Conceptual and analytical exercises</h3>
-<section id="exercise-8.-regime-classification" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-8.-regime-classification">Exercise 8. Regime classification</h4>
-<p>For each of the following values of <span class="math inline">\langle k \rangle</span>, determine whether the graph is expected to be in the subcritical, critical, supercritical, or connected regime:</p>
-<ol type="1">
-<li><span class="math inline">\langle k \rangle = 0.4</span></li>
-<li><span class="math inline">\langle k \rangle = 0.95</span></li>
-<li><span class="math inline">\langle k \rangle = 1.8</span></li>
-<li><span class="math inline">\langle k \rangle = \ln 500</span></li>
-</ol>
-<p>In each case, describe the expected component structure.</p>
-<hr>
+<section id="bridge-to-the-next-chapter" class="level2" data-number="5.12">
+<h2 data-number="5.12" class="anchored" data-anchor-id="bridge-to-the-next-chapter"><span class="header-section-number">5.12</span> Bridge to the next chapter</h2>
+<p>The Erdős–Rényi process shows how a giant component emerges from uniform random wiring, but it produces networks with two properties that contradict empirical observations: negligibly low clustering (<span class="math inline">\mathbb{E}[\bar{C}] = p \to 0</span> in the sparse regime) and short average path length of order <span class="math inline">\ln N / \ln\langle k\rangle</span>. Real networks — social, biological, technological — simultaneously exhibit much higher clustering and comparably short path lengths <span class="citation" data-cites="watts1998 milgram1967">(<a href="#ref-milgram1967" role="doc-biblioref">Milgram, 1967</a>; <a href="#ref-watts1998" role="doc-biblioref">Watts &amp; Strogatz, 1998</a>)</span>. This combination, which cannot be produced by either a regular lattice or an Erdős–Rényi graph alone, defines the <strong>small-world</strong> property studied in the next chapter <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-strogatz2001" role="doc-biblioref">Strogatz, 2001</a>; <a href="#ref-watts1998" role="doc-biblioref">Watts &amp; Strogatz, 1998</a>)</span>.</p>
 </section>
-<section id="exercise-9.-giant-component-versus-connected-graph" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-9.-giant-component-versus-connected-graph">Exercise 9. Giant component versus connected graph</h4>
-<p>Explain carefully why the following two statements are not equivalent:</p>
-<ol type="1">
-<li>the graph has a giant component,</li>
-<li>the graph is connected.</li>
-</ol>
-<p>Your answer should include:</p>
-<ul>
-<li>a formal distinction,</li>
-<li>an explanation in terms of component sizes,</li>
-<li>an example of a graph that has a giant component but is not connected.</li>
-</ul>
-<hr>
-</section>
-<section id="exercise-10.-structural-interpretation-of-the-regimes" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-10.-structural-interpretation-of-the-regimes">Exercise 10. Structural interpretation of the regimes</h4>
-<p>Write a short mathematical discussion comparing the four regimes:</p>
-<ul>
-<li>subcritical,</li>
-<li>critical,</li>
-<li>supercritical,</li>
-<li>connected.</li>
-</ul>
-<p>For each regime, describe:</p>
-<ul>
-<li>the typical component sizes,</li>
-<li>whether isolated vertices are common,</li>
-<li>whether a giant component exists,</li>
-<li>whether the graph is connected.</li>
-</ul>
-<hr>
-</section>
-<section id="exercise-11.-why-the-emergence-is-a-phase-transition" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-11.-why-the-emergence-is-a-phase-transition">Exercise 11. Why the emergence is a phase transition</h4>
-<p>The emergence of the giant component is often described as a phase transition.</p>
-<p>Write a short explanation of this statement. Your answer should address:</p>
-<ul>
-<li>what quantity changes qualitatively,</li>
-<li>what the threshold parameter is,</li>
-<li>why the transition is not merely a gradual visual change,</li>
-<li>why this phenomenon is global rather than local.</li>
-</ul>
-<hr>
-</section>
-<section id="exercise-12.-trees-and-cycles-outside-the-giant-component" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-12.-trees-and-cycles-outside-the-giant-component">Exercise 12. Trees and cycles outside the giant component</h4>
-<p>In the supercritical regime, many finite components outside the giant component are tree-like.</p>
-<ol type="1">
-<li>Explain why a finite tree on <span class="math inline">m</span> vertices has exactly <span class="math inline">m-1</span> edges.</li>
-<li>Explain why the appearance of cycles indicates additional structural complexity.</li>
-<li>Discuss why the giant component is expected to contain cycles, whereas many small finite components remain tree-like near the threshold.</li>
-</ol>
-<hr>
-</section>
-</section>
-<section id="part-iii.-simulation-and-coding-exercises" class="level3">
-<h3 class="anchored" data-anchor-id="part-iii.-simulation-and-coding-exercises">Part III. Simulation and coding exercises</h3>
-<section id="exercise-13.-component-size-computation" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-13.-component-size-computation">Exercise 13. Component-size computation</h4>
-<p>Write an <code>R</code> function that takes an undirected graph <code>g</code> and returns:</p>
-<ul>
-<li>the number of connected components,</li>
-<li>the vector of component sizes,</li>
-<li>the size of the largest connected component,</li>
-<li>the fraction of vertices in the largest connected component.</li>
-</ul>
-<p>Test the function on at least three hand-constructed graphs.</p>
-<hr>
-</section>
-<section id="exercise-14.-evolution-of-the-largest-component" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-14.-evolution-of-the-largest-component">Exercise 14. Evolution of the largest component</h4>
-<p>For fixed <span class="math inline">N=500</span>, simulate the model <span class="math inline">G(N,p)</span> over a grid of <span class="math inline">p</span> values corresponding to</p>
-<p><span class="math display">
-0.1 \le \langle k \rangle \le 8.
-</span></p>
-<p>For each value of <span class="math inline">p</span>, estimate the average largest-component fraction over repeated realizations.</p>
-<p>Tasks:</p>
-<ol type="1">
-<li>plot the largest-component fraction against <span class="math inline">\langle k \rangle</span>,</li>
-<li>indicate the line <span class="math inline">\langle k \rangle = 1</span>,</li>
-<li>explain where the giant component begins to emerge.</li>
-</ol>
-<hr>
-</section>
-<section id="exercise-15.-number-of-components-and-isolated-vertices" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-15.-number-of-components-and-isolated-vertices">Exercise 15. Number of components and isolated vertices</h4>
-<p>Using the same simulations as in Exercise 14, compute and plot:</p>
-<ol type="1">
-<li>the average number of connected components,</li>
-<li>the average fraction of isolated vertices.</li>
-</ol>
-<p>Discuss how these two quantities evolve as <span class="math inline">\langle k \rangle</span> increases.</p>
-<hr>
-</section>
-<section id="exercise-16.-empirical-connectedness-probability" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-16.-empirical-connectedness-probability">Exercise 16. Empirical connectedness probability</h4>
-<p>For fixed <span class="math inline">N=500</span>, estimate the probability that <span class="math inline">G(N,p)</span> is connected for a grid of values of <span class="math inline">p</span>.</p>
-<p>Tasks:</p>
-<ol type="1">
-<li>plot the empirical connectedness probability against <span class="math inline">\langle k \rangle</span>,</li>
-<li>indicate the line <span class="math inline">\langle k \rangle = \ln N</span>,</li>
-<li>explain why the curve should be monotone increasing in theory,</li>
-<li>explain why Monte Carlo estimates may show small fluctuations.</li>
-</ol>
-<hr>
-</section>
-<section id="exercise-17.-finite-size-comparison" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-17.-finite-size-comparison">Exercise 17. Finite-size comparison</h4>
-<p>Repeat the largest-component simulation for</p>
-<p><span class="math display">
-N = 100,\quad 250,\quad 500,\quad 1000.
-</span></p>
-<p>For each value of <span class="math inline">N</span>:</p>
-<ol type="1">
-<li>plot the largest-component fraction against <span class="math inline">\langle k \rangle</span>,</li>
-<li>compare the sharpness of the transition near <span class="math inline">\langle k \rangle = 1</span>,</li>
-<li>discuss how the finite-size behavior changes as <span class="math inline">N</span> increases.</li>
-</ol>
-<hr>
-</section>
-<section id="exercise-18.-connectedness-threshold-and-system-size" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-18.-connectedness-threshold-and-system-size">Exercise 18. Connectedness threshold and system size</h4>
-<p>For each of the values</p>
-<p><span class="math display">
-N = 100,\quad 250,\quad 500,\quad 1000,
-</span></p>
-<p>estimate numerically the value of <span class="math inline">\langle k \rangle</span> at which the graph becomes connected with probability approximately <span class="math inline">0.5</span>.</p>
-<p>Then compare your estimates with <span class="math inline">\ln N</span>.</p>
-<p>Discuss whether the numerical behavior supports the theoretical scaling of the connectedness threshold.</p>
-<hr>
-</section>
-<section id="exercise-19.-monotone-network-evolution" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-19.-monotone-network-evolution">Exercise 19. Monotone network evolution</h4>
-<p>Construct a sequence of graphs on a fixed set of vertices such that the edge set grows monotonically as <span class="math inline">p</span> increases.</p>
-<p>Tasks:</p>
-<ol type="1">
-<li>keep vertex positions fixed across all snapshots,</li>
-<li>display at least six stages of evolution,</li>
-<li>highlight the largest component at each stage,</li>
-<li>explain how the component structure changes visually.</li>
-</ol>
-<hr>
-</section>
-<section id="exercise-20.-numerical-solution-of-the-giant-component-equation" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-20.-numerical-solution-of-the-giant-component-equation">Exercise 20. Numerical solution of the giant-component equation</h4>
-<p>Consider the equation</p>
-<p><span class="math display">
-S = 1 - e^{-\langle k \rangle S}.
-</span></p>
-<ol type="1">
-<li>Write an <code>R</code> function that solves this equation numerically for a given value of <span class="math inline">\langle k \rangle</span>.</li>
-<li>Compute the solution for a grid of values of <span class="math inline">\langle k \rangle</span> between <span class="math inline">0</span> and <span class="math inline">5</span>.</li>
-<li>Plot the resulting theoretical curve.</li>
-<li>Compare it with your simulation-based estimate of the largest-component fraction.</li>
-</ol>
-<hr>
-</section>
-<section id="exercise-21.-short-computational-report" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-21.-short-computational-report">Exercise 21. Short computational report</h4>
-<p>Prepare a short report of approximately two pages based on your simulations. The report should include:</p>
-<ul>
-<li>a brief statement of the model,</li>
-<li>at least two figures,</li>
-<li>one discussion of the threshold near <span class="math inline">\langle k \rangle = 1</span>,</li>
-<li>one discussion of the connectedness threshold near <span class="math inline">\langle k \rangle = \ln N</span>,</li>
-<li>a concluding paragraph interpreting the emergence of global connectivity.</li>
-</ul>
-</section>
-</section>
-</section>
-<section id="suggested-project-style-extension" class="level2" data-number="5.15">
-<h2 data-number="5.15" class="anchored" data-anchor-id="suggested-project-style-extension"><span class="header-section-number">5.15</span> Suggested project-style extension</h2>
-<p>A strong mini-project for this chapter is the following:</p>
-<blockquote class="blockquote">
-<p>Compare the simulated evolution of <span class="math inline">G(N,p)</span> with the theoretical equations for giant-component emergence and connectedness threshold.</p>
-</blockquote>
-<p>A complete submission should contain:</p>
-<ul>
-<li>mathematical derivations,</li>
-<li>simulation code,</li>
-<li>plots,</li>
-<li>interpretation of the results.</li>
-</ul>
-</section>
-<section id="bridge-to-the-next-chapter" class="level2" data-number="5.16">
-<h2 data-number="5.16" class="anchored" data-anchor-id="bridge-to-the-next-chapter"><span class="header-section-number">5.16</span> Bridge to the next chapter</h2>
-<p>The Erdős–Rényi process explains how a giant component appears in a graph assembled by chance, but it does not explain why many real networks simultaneously exhibit short path lengths and substantial local clustering. The next chapter addresses that gap by studying small-world networks, where a small number of shortcuts can dramatically reduce distances while preserving neighborhood structure <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-watts1998" role="doc-biblioref">Watts and Strogatz 1998</a>; <a href="#ref-strogatz2001" role="doc-biblioref">Strogatz 2001</a>)</span>.</p>
-</section>
-<section id="concluding-remarks" class="level2" data-number="5.17">
-<h2 data-number="5.17" class="anchored" data-anchor-id="concluding-remarks"><span class="header-section-number">5.17</span> Concluding remarks</h2>
-<p>The evolution of a random graph is one of the clearest demonstrations of how global structure can arise from simple local randomness.</p>
-<p>At first the graph contains only isolated vertices and very small components. As edges are added, these small pieces merge. Near the threshold <span class="math inline">\langle k \rangle = 1</span>, a giant component emerges. Much later, near <span class="math inline">\langle k \rangle = \ln N</span>, the graph becomes connected with high probability.</p>
-<p>So the emergence of a network is not a smooth undifferentiated process. It is organized by precise structural thresholds, and those thresholds can be described mathematically in terms of component size and expected degree.</p>
+<section id="concluding-remarks" class="level2" data-number="5.13">
+<h2 data-number="5.13" class="anchored" data-anchor-id="concluding-remarks"><span class="header-section-number">5.13</span> Concluding remarks</h2>
+<p>The evolution of a random graph is one of the clearest examples of emergent global structure arising from simple local randomness. Starting from a collection of isolated vertices, adding edges at random produces first small tree-like components, then a macroscopic giant component at <span class="math inline">\langle k\rangle = 1</span>, and finally a fully connected graph at <span class="math inline">\langle k\rangle = \ln N</span>. Each transition is governed by a precise mathematical threshold, derived from the self-consistency equation and the isolated vertex argument <span class="citation" data-cites="erdos1960 bollobas2001book">(<a href="#ref-bollobas2001book" role="doc-biblioref">Bollobás, 2001</a>; <a href="#ref-erdos1960" role="doc-biblioref">Erdős &amp; Rényi, 1960</a>)</span>.</p>
+<p>The two thresholds are conceptually distinct: the giant component threshold reflects the onset of global reachability for a positive fraction of vertices, while the connectedness threshold reflects the elimination of the last isolated pieces. Between them lies a wide supercritical regime that is the most relevant for real sparse networks: <span class="math inline">\langle k\rangle</span> is typically of order <span class="math inline">3</span>–<span class="math inline">10</span> for biological and social networks, well above <span class="math inline">1</span> but far below <span class="math inline">\ln N</span> for large <span class="math inline">N</span>. Understanding the structure of this intermediate regime — giant component size, second-largest component, cycle structure — provides the analytical foundations for the models studied in subsequent chapters.</p>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-barabasi2016" class="csl-entry" role="listitem">
+Barabási, A.-L., &amp; Pósfai, M. (2016). <em>Network science</em>. Cambridge University Press.
+</div>
 <div id="ref-bollobas2001book" class="csl-entry" role="listitem">
-Bollobás, Béla. 2001. <em>Random Graphs</em>. 2nd ed. Cambridge University Press. <a href="https://doi.org/10.1017/CBO9780511814068">https://doi.org/10.1017/CBO9780511814068</a>.
+Bollobás, B. (2001). <em>Random graphs</em> (2nd ed.). Cambridge University Press. <a href="https://doi.org/10.1017/CBO9780511814068">https://doi.org/10.1017/CBO9780511814068</a>
 </div>
 <div id="ref-erdos1960" class="csl-entry" role="listitem">
-Erdős, Paul, and Alfréd Rényi. 1960. <span>“On the Evolution of Random Graphs.”</span> <em>Publications of the Mathematical Institute of the Hungarian Academy of Sciences</em> 5: 17–61.
+Erdős, P., &amp; Rényi, A. (1960). On the evolution of random graphs. <em>Publications of the Mathematical Institute of the Hungarian Academy of Sciences</em>, <em>5</em>, 17–61.
+</div>
+<div id="ref-milgram1967" class="csl-entry" role="listitem">
+Milgram, S. (1967). The small world problem. <em>Psychology Today</em>, <em>2</em>(1), 60–67.
 </div>
 <div id="ref-newman2010" class="csl-entry" role="listitem">
-Newman, M. E. J. 2010. <em>Networks: An Introduction</em>. Oxford University Press.
+Newman, M. E. J. (2010). <em>Networks: An introduction</em>. Oxford University Press.
 </div>
 <div id="ref-strogatz2001" class="csl-entry" role="listitem">
-Strogatz, Steven H. 2001. <span>“Exploring Complex Networks.”</span> <em>Nature</em> 410 (6825): 268–76. <a href="https://doi.org/10.1038/35065725">https://doi.org/10.1038/35065725</a>.
+Strogatz, S. H. (2001). Exploring complex networks. <em>Nature</em>, <em>410</em>(6825), 268–276. <a href="https://doi.org/10.1038/35065725">https://doi.org/10.1038/35065725</a>
 </div>
 <div id="ref-watts1998" class="csl-entry" role="listitem">
-Watts, Duncan J., and Steven H. Strogatz. 1998. <span>“Collective Dynamics of ’Small-World’ Networks.”</span> <em>Nature</em> 393 (6684): 440–42. <a href="https://doi.org/10.1038/30918">https://doi.org/10.1038/30918</a>.
+Watts, D. J., &amp; Strogatz, S. H. (1998). Collective dynamics of ’small-world’ networks. <em>Nature</em>, <em>393</em>(6684), 440–442. <a href="https://doi.org/10.1038/30918">https://doi.org/10.1038/30918</a>
 </div>
 </div>
 </section>

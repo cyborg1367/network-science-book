@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>3&nbsp; Graph Theory – Network Science</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -89,15 +92,14 @@ div.csl-indent {
 <link href="../chapters/01-preface.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4dd0a3cd2d1f0c1ca65dcbe395e0d0e9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-07314a9cf6582ab18f4f031a2d4fd43d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b5d8c9ff6161f8ccf1af3142a66ed23c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-d4aa30a0361d4615301e0f27ccb5b562.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -199,9 +201,7 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="../index.html" class="sidebar-logo-link">
-      </a>
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Network Science</a> 
     </div>
@@ -283,7 +283,7 @@ window.Quarto = {
   <li><a href="#what-is-a-graph" id="toc-what-is-a-graph" class="nav-link" data-scroll-target="#what-is-a-graph"><span class="header-section-number">3.4</span> What is a graph?</a>
   <ul class="collapse">
   <li><a href="#formal-definition" id="toc-formal-definition" class="nav-link" data-scroll-target="#formal-definition">Formal definition</a></li>
-  <li><a href="#a-motivating-example" id="toc-a-motivating-example" class="nav-link" data-scroll-target="#a-motivating-example">A motivating example</a></li>
+  <li><a href="#sec-a-motivating-example" id="toc-sec-a-motivating-example" class="nav-link" data-scroll-target="#sec-a-motivating-example">A motivating example</a></li>
   </ul></li>
   <li><a href="#directed-and-undirected-graphs" id="toc-directed-and-undirected-graphs" class="nav-link" data-scroll-target="#directed-and-undirected-graphs"><span class="header-section-number">3.5</span> Directed and undirected graphs</a>
   <ul class="collapse">
@@ -297,7 +297,7 @@ window.Quarto = {
   <li><a href="#average-degree" id="toc-average-degree" class="nav-link" data-scroll-target="#average-degree">Average degree</a></li>
   <li><a href="#in-degree-and-out-degree-in-directed-graphs" id="toc-in-degree-and-out-degree-in-directed-graphs" class="nav-link" data-scroll-target="#in-degree-and-out-degree-in-directed-graphs">In-degree and out-degree in directed graphs</a></li>
   </ul></li>
-  <li><a href="#matrix-representations" id="toc-matrix-representations" class="nav-link" data-scroll-target="#matrix-representations"><span class="header-section-number">3.7</span> Matrix representations</a>
+  <li><a href="#sec-matrix-representations" id="toc-sec-matrix-representations" class="nav-link" data-scroll-target="#sec-matrix-representations"><span class="header-section-number">3.7</span> Matrix representations</a>
   <ul class="collapse">
   <li><a href="#the-adjacency-matrix" id="toc-the-adjacency-matrix" class="nav-link" data-scroll-target="#the-adjacency-matrix">The adjacency matrix</a></li>
   <li><a href="#the-degree-matrix" id="toc-the-degree-matrix" class="nav-link" data-scroll-target="#the-degree-matrix">The degree matrix</a></li>
@@ -305,39 +305,28 @@ window.Quarto = {
   </ul></li>
   <li><a href="#walks-paths-and-cycles" id="toc-walks-paths-and-cycles" class="nav-link" data-scroll-target="#walks-paths-and-cycles"><span class="header-section-number">3.8</span> Walks, paths, and cycles</a>
   <ul class="collapse">
-  <li><a href="#walk" id="toc-walk" class="nav-link" data-scroll-target="#walk">Walk</a></li>
-  <li><a href="#trail-and-path" id="toc-trail-and-path" class="nav-link" data-scroll-target="#trail-and-path">Trail and path</a></li>
+  <li><a href="#walk-trail-and-path" id="toc-walk-trail-and-path" class="nav-link" data-scroll-target="#walk-trail-and-path">Walk, trail, and path</a></li>
   <li><a href="#cycle" id="toc-cycle" class="nav-link" data-scroll-target="#cycle">Cycle</a></li>
   </ul></li>
   <li><a href="#connectivity" id="toc-connectivity" class="nav-link" data-scroll-target="#connectivity"><span class="header-section-number">3.9</span> Connectivity</a>
   <ul class="collapse">
-  <li><a href="#connected-graphs-and-components" id="toc-connected-graphs-and-components" class="nav-link" data-scroll-target="#connected-graphs-and-components">Connected graphs and components</a></li>
+  <li><a href="#connected-components" id="toc-connected-components" class="nav-link" data-scroll-target="#connected-components">Connected components</a></li>
   <li><a href="#strong-and-weak-connectivity-in-directed-graphs" id="toc-strong-and-weak-connectivity-in-directed-graphs" class="nav-link" data-scroll-target="#strong-and-weak-connectivity-in-directed-graphs">Strong and weak connectivity in directed graphs</a></li>
   <li><a href="#cut-vertices-and-bridges" id="toc-cut-vertices-and-bridges" class="nav-link" data-scroll-target="#cut-vertices-and-bridges">Cut vertices and bridges</a></li>
   </ul></li>
   <li><a href="#trees-and-spanning-trees" id="toc-trees-and-spanning-trees" class="nav-link" data-scroll-target="#trees-and-spanning-trees"><span class="header-section-number">3.10</span> Trees and spanning trees</a>
   <ul class="collapse">
-  <li><a href="#definition-of-a-tree" id="toc-definition-of-a-tree" class="nav-link" data-scroll-target="#definition-of-a-tree">Definition of a tree</a></li>
+  <li><a href="#definition-and-characterisation" id="toc-definition-and-characterisation" class="nav-link" data-scroll-target="#definition-and-characterisation">Definition and characterisation</a></li>
   <li><a href="#spanning-trees" id="toc-spanning-trees" class="nav-link" data-scroll-target="#spanning-trees">Spanning trees</a></li>
   </ul></li>
   <li><a href="#bipartite-graphs" id="toc-bipartite-graphs" class="nav-link" data-scroll-target="#bipartite-graphs"><span class="header-section-number">3.11</span> Bipartite graphs</a>
   <ul class="collapse">
-  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition">Definition</a></li>
-  <li><a href="#königs-criterion" id="toc-königs-criterion" class="nav-link" data-scroll-target="#königs-criterion">König’s criterion</a></li>
+  <li><a href="#definition-and-königs-criterion" id="toc-definition-and-königs-criterion" class="nav-link" data-scroll-target="#definition-and-königs-criterion">Definition and König’s criterion</a></li>
   <li><a href="#complete-bipartite-graph" id="toc-complete-bipartite-graph" class="nav-link" data-scroll-target="#complete-bipartite-graph">Complete bipartite graph</a></li>
   </ul></li>
-  <li><a href="#special-graph-families" id="toc-special-graph-families" class="nav-link" data-scroll-target="#special-graph-families"><span class="header-section-number">3.12</span> Special graph families</a>
-  <ul class="collapse">
-  <li><a href="#complete-graph" id="toc-complete-graph" class="nav-link" data-scroll-target="#complete-graph">Complete graph</a></li>
-  <li><a href="#cycle-and-path-graphs" id="toc-cycle-and-path-graphs" class="nav-link" data-scroll-target="#cycle-and-path-graphs">Cycle and path graphs</a></li>
-  <li><a href="#regular-graphs" id="toc-regular-graphs" class="nav-link" data-scroll-target="#regular-graphs">Regular graphs</a></li>
-  </ul></li>
-  <li><a href="#subgraphs-and-graph-isomorphism" id="toc-subgraphs-and-graph-isomorphism" class="nav-link" data-scroll-target="#subgraphs-and-graph-isomorphism"><span class="header-section-number">3.13</span> Subgraphs and graph isomorphism</a>
-  <ul class="collapse">
-  <li><a href="#subgraph" id="toc-subgraph" class="nav-link" data-scroll-target="#subgraph">Subgraph</a></li>
-  <li><a href="#graph-isomorphism" id="toc-graph-isomorphism" class="nav-link" data-scroll-target="#graph-isomorphism">Graph isomorphism</a></li>
-  </ul></li>
-  <li><a href="#working-with-graphs-in-r" id="toc-working-with-graphs-in-r" class="nav-link" data-scroll-target="#working-with-graphs-in-r"><span class="header-section-number">3.14</span> Working with graphs in R</a>
+  <li><a href="#special-graph-families" id="toc-special-graph-families" class="nav-link" data-scroll-target="#special-graph-families"><span class="header-section-number">3.12</span> Special graph families</a></li>
+  <li><a href="#subgraphs-and-graph-isomorphism" id="toc-subgraphs-and-graph-isomorphism" class="nav-link" data-scroll-target="#subgraphs-and-graph-isomorphism"><span class="header-section-number">3.13</span> Subgraphs and graph isomorphism</a></li>
+  <li><a href="#sec-working-with-graphs-in-r" id="toc-sec-working-with-graphs-in-r" class="nav-link" data-scroll-target="#sec-working-with-graphs-in-r"><span class="header-section-number">3.14</span> Working with graphs in R</a>
   <ul class="collapse">
   <li><a href="#constructing-graphs" id="toc-constructing-graphs" class="nav-link" data-scroll-target="#constructing-graphs">Constructing graphs</a></li>
   <li><a href="#basic-graph-attributes" id="toc-basic-graph-attributes" class="nav-link" data-scroll-target="#basic-graph-attributes">Basic graph attributes</a></li>
@@ -345,15 +334,9 @@ window.Quarto = {
   <li><a href="#triangle-counting-via-matrix-trace" id="toc-triangle-counting-via-matrix-trace" class="nav-link" data-scroll-target="#triangle-counting-via-matrix-trace">Triangle counting via matrix trace</a></li>
   </ul></li>
   <li><a href="#summary-of-key-definitions" id="toc-summary-of-key-definitions" class="nav-link" data-scroll-target="#summary-of-key-definitions"><span class="header-section-number">3.15</span> Summary of key definitions</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">3.16</span> Exercises</a>
-  <ul class="collapse">
-  <li><a href="#part-i.-computational-and-derivation-exercises" id="toc-part-i.-computational-and-derivation-exercises" class="nav-link" data-scroll-target="#part-i.-computational-and-derivation-exercises">Part I. Computational and derivation exercises</a></li>
-  <li><a href="#part-ii.-conceptual-and-analytical-exercises" id="toc-part-ii.-conceptual-and-analytical-exercises" class="nav-link" data-scroll-target="#part-ii.-conceptual-and-analytical-exercises">Part II. Conceptual and analytical exercises</a></li>
-  <li><a href="#part-iii.-simulation-and-coding-exercises" id="toc-part-iii.-simulation-and-coding-exercises" class="nav-link" data-scroll-target="#part-iii.-simulation-and-coding-exercises">Part III. Simulation and coding exercises</a></li>
-  </ul></li>
-  <li><a href="#suggested-mini-project" id="toc-suggested-mini-project" class="nav-link" data-scroll-target="#suggested-mini-project"><span class="header-section-number">3.17</span> Suggested mini-project</a></li>
-  <li><a href="#bridge-to-the-next-chapter" id="toc-bridge-to-the-next-chapter" class="nav-link" data-scroll-target="#bridge-to-the-next-chapter"><span class="header-section-number">3.18</span> Bridge to the next chapter</a></li>
-  <li><a href="#concluding-remarks" id="toc-concluding-remarks" class="nav-link" data-scroll-target="#concluding-remarks"><span class="header-section-number">3.19</span> Concluding remarks</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">3.16</span> Exercises</a></li>
+  <li><a href="#bridge-to-the-next-chapter" id="toc-bridge-to-the-next-chapter" class="nav-link" data-scroll-target="#bridge-to-the-next-chapter"><span class="header-section-number">3.17</span> Bridge to the next chapter</a></li>
+  <li><a href="#concluding-remarks" id="toc-concluding-remarks" class="nav-link" data-scroll-target="#concluding-remarks"><span class="header-section-number">3.18</span> Concluding remarks</a></li>
   </ul>
 </nav>
     </div>
@@ -382,35 +365,33 @@ window.Quarto = {
 
 <section id="introduction" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">3.1</span> Introduction</h2>
-<p>Network science rests on a mathematical foundation: <strong>graph theory</strong>. Before studying random graphs, small worlds, or scale-free networks, it is essential to establish the formal language used to describe networks. That language is graph theory.</p>
-<p>Graph theory is a branch of discrete mathematics that studies collections of objects and the pairwise connections between them. Its origins trace back to Leonhard Euler’s 1736 solution to the <em>Königsberg bridge problem</em>, in which the question of whether a particular city could be traversed by crossing each of its seven bridges exactly once was reformulated as a purely combinatorial question about a drawing made of vertices and edges. Euler’s insight — that only the pattern of connections, not the physical geography, determines the answer — is the founding idea of graph theory <span class="citation" data-cites="euler1736">(<a href="#ref-euler1736" role="doc-biblioref">Euler 1736</a>)</span>.</p>
-<p>In the context of network science, graph theory provides a common mathematical language for later topics such as random graphs, small-world structure, and scale-free degree heterogeneity <span class="citation" data-cites="diestel2017 west2001 newman2010">(<a href="#ref-diestel2017" role="doc-biblioref">Diestel 2017</a>; <a href="#ref-west2001" role="doc-biblioref">West 2001</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span>. Specifically, it provides:</p>
+<p>Network science rests on a mathematical foundation: <strong>graph theory</strong>. Before studying random graphs, small-world structure, or scale-free degree heterogeneity, it is essential to establish the formal language used to describe networks precisely.</p>
+<p>Graph theory is a branch of discrete mathematics concerned with collections of objects and the pairwise relations between them. Its origins trace to Leonhard Euler’s 1736 solution to the <em>Königsberg bridge problem</em>, in which the question of whether a city could be traversed by crossing each of its seven bridges exactly once was reformulated as a purely combinatorial question about a drawing of vertices and edges. Euler’s insight — that only the pattern of connections, not the physical geography, determines the answer — is the founding idea of graph theory <span class="citation" data-cites="euler1736">(<a href="#ref-euler1736" role="doc-biblioref">Euler, 1736</a>)</span>.</p>
+<p>In the context of this course, graph theory provides:</p>
 <ul>
-<li>a precise vocabulary for describing structures,</li>
-<li>algebraic representations that enable computation,</li>
-<li>combinatorial results that govern global properties,</li>
-<li>and a rigorous basis for the probabilistic models studied in later chapters.</li>
+<li>a precise vocabulary for describing network structure,</li>
+<li>algebraic representations that connect combinatorics to linear algebra,</li>
+<li>combinatorial results that govern global properties such as connectivity and reachability,</li>
+<li>and the rigorous foundation on which the probabilistic models of later chapters are built <span class="citation" data-cites="diestel2017 west2001 newman2010 barabasi2016">(<a href="#ref-barabasi2016" role="doc-biblioref">Barabási &amp; Pósfai, 2016</a>; <a href="#ref-diestel2017" role="doc-biblioref">Diestel, 2017</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>; <a href="#ref-west2001" role="doc-biblioref">West, 2001</a>)</span>.</li>
 </ul>
+<p>Standard graduate references for the material in this chapter are <span class="citation" data-cites="diestel2017">Diestel (<a href="#ref-diestel2017" role="doc-biblioref">2017</a>)</span> for pure graph theory and <span class="citation" data-cites="west2001">West (<a href="#ref-west2001" role="doc-biblioref">2001</a>)</span> for a combinatorial treatment. For the network science perspective that motivates the choice of topics, see <span class="citation" data-cites="newman2010">Newman (<a href="#ref-newman2010" role="doc-biblioref">2010</a>)</span> and <span class="citation" data-cites="barabasi2016">Barabási &amp; Pósfai (<a href="#ref-barabasi2016" role="doc-biblioref">2016</a>)</span>. Spectral properties of graphs, covered in <a href="#sec-matrix-representations" class="quarto-xref"><span>Section 3.7</span></a>, are treated in depth by <span class="citation" data-cites="chung1997">Chung (<a href="#ref-chung1997" role="doc-biblioref">1997</a>)</span>.</p>
 </section>
 <section id="learning-goals" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="learning-goals"><span class="header-section-number">3.2</span> Learning goals</h2>
-<p>By the end of this chapter, it should be possible to:</p>
+<p>By the end of this chapter, a student should be able to:</p>
 <ul>
-<li>define a graph, its vertices and edges, and give the standard notation</li>
-<li>distinguish between undirected, directed, weighted, and multigraphs</li>
-<li>define degree, degree sequence, and prove the handshaking lemma</li>
-<li>construct the adjacency matrix and the Laplacian matrix</li>
-<li>define walks, paths, trails, and cycles precisely</li>
-<li>define connectivity, connected components, cut vertices, and bridges</li>
-<li>define trees, spanning trees, and identify their key properties</li>
-<li>identify bipartite graphs and apply König’s criterion</li>
-<li>describe standard graph families and recognise them</li>
-<li>use <code>igraph</code> in <code>R</code> to construct and analyse graphs</li>
+<li>represent a network as <span class="math inline">G = (V, E)</span> and report its order, size, and degree structure,</li>
+<li>translate between edge lists, adjacency matrices, and <code>igraph</code> objects,</li>
+<li>state and apply the handshaking lemma and its immediate consequences,</li>
+<li>explain what matrix powers count, and how the Laplacian spectrum encodes connectivity,</li>
+<li>distinguish paths, components, cut vertices, and bridges — the vocabulary used later for robustness and percolation,</li>
+<li>recognise when a graph is bipartite and apply König’s criterion,</li>
+<li>compute the summary quantities in <a href="#tbl-summary-table" class="quarto-xref">Table&nbsp;<span>3.1</span></a> and interpret them structurally.</li>
 </ul>
 </section>
 <section id="chapter-roadmap" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="chapter-roadmap"><span class="header-section-number">3.3</span> Chapter roadmap</h2>
-<p>This chapter moves from the most basic objects to the more structural concepts needed later in the book. It begins with the definition of a graph and the main graph types, then studies degree and matrix representations, and only after that turns to walks, connectivity, trees, bipartite structure, and standard graph families. The chapter ends with a compact computational toolkit in <code>R</code>, so that each theoretical definition is connected to a concrete representation that can be explored computationally.</p>
+<p>The chapter proceeds from basic objects to structural concepts. It begins with the formal definition of a graph and the main graph types, then studies degree and matrix representations, and turns to walks, connectivity, trees, and bipartite structure. It ends with a compact computational toolkit in <code>R</code>. Each theoretical definition is paired with a concrete representation that can be explored and verified computationally.</p>
 </section>
 <section id="what-is-a-graph" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="what-is-a-graph"><span class="header-section-number">3.4</span> What is a graph?</h2>
@@ -423,8 +404,8 @@ G = (V, E)
 </span></p>
 <p>where <span class="math inline">V</span> is a finite non-empty set called the <strong>vertex set</strong> (or <strong>node set</strong>), and <span class="math inline">E</span> is a set of unordered pairs <span class="math inline">\{u, v\}</span> with <span class="math inline">u, v \in V</span> and <span class="math inline">u \neq v</span>, called the <strong>edge set</strong>.</p>
 </div>
-<p>The number of vertices is denoted by <span class="math inline">N = |V|</span> and is called the <strong>order</strong> of the graph. The number of edges is denoted by <span class="math inline">M = |E|</span> and is called the <strong>size</strong> of the graph.</p>
-<p>Each element of <span class="math inline">E</span> is an unordered pair <span class="math inline">\{u, v\}</span>, also written as <span class="math inline">uv</span> or <span class="math inline">(u,v)</span> when direction is irrelevant. The vertices <span class="math inline">u</span> and <span class="math inline">v</span> are said to be <strong>adjacent</strong> or <strong>neighbors</strong>, and the edge <span class="math inline">uv</span> is said to be <strong>incident</strong> to both <span class="math inline">u</span> and <span class="math inline">v</span>.</p>
+<p>The number of vertices is denoted <span class="math inline">N = |V|</span> and called the <strong>order</strong> of the graph. The number of edges is denoted <span class="math inline">M = |E|</span> and called the <strong>size</strong> of the graph.</p>
+<p>Two vertices <span class="math inline">u</span> and <span class="math inline">v</span> are <strong>adjacent</strong> (or <strong>neighbors</strong>) if <span class="math inline">\{u, v\} \in E</span>. An edge <span class="math inline">\{u, v\}</span> is <strong>incident</strong> to each of <span class="math inline">u</span> and <span class="math inline">v</span>. The <strong>neighborhood</strong> of <span class="math inline">v</span> is the set <span class="math inline">N(v) = \{u \in V : \{u, v\} \in E\}</span>.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Convention">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -435,17 +416,17 @@ G = (V, E)
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Throughout this chapter, graphs are assumed to be <strong>simple</strong> unless stated otherwise. A simple graph has no self-loops (edges from a vertex to itself) and no multi-edges (more than one edge between the same pair of vertices).</p>
+<p>Throughout this chapter, all graphs are assumed to be <strong>simple</strong> unless stated otherwise. A simple graph contains no self-loops (edges from a vertex to itself) and no multi-edges (multiple edges between the same pair of vertices).</p>
 </div>
 </div>
 </section>
-<section id="a-motivating-example" class="level3">
-<h3 class="anchored" data-anchor-id="a-motivating-example">A motivating example</h3>
-<p>Consider a graph with vertex set <span class="math inline">V = \{1, 2, 3, 4, 5\}</span> and edge set</p>
+<section id="sec-a-motivating-example" class="level3">
+<h3 class="anchored" data-anchor-id="sec-a-motivating-example">A motivating example</h3>
+<p>Consider the graph with vertex set <span class="math inline">V = \{1, 2, 3, 4, 5\}</span> and edge set</p>
 <p><span class="math display">
 E = \bigl\{\{1,2\},\, \{1,3\},\, \{2,4\},\, \{3,4\},\, \{4,5\}\bigr\}.
 </span></p>
-<p>This graph has order <span class="math inline">N = 5</span> and size <span class="math inline">M = 5</span>. Vertices 1, 2, and 3 are each reachable from vertex 4 through paths of length one or two, while vertex 5 hangs off vertex 4.</p>
+<p>This graph has order <span class="math inline">N = 5</span> and size <span class="math inline">M = 5</span>. Vertex 4 is the only neighbor of vertex 5 and the only common neighbor of vertices 2 and 3 — structural features that will become precise once degree and connectivity are defined.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -460,18 +441,16 @@ E = \bigl\{\{1,2\},\, \{1,3\},\, \{2,4\},\, \{3,4\},\, \{4,5\}\bigr\}.
 </section>
 <section id="directed-and-undirected-graphs" class="level2" data-number="3.5">
 <h2 data-number="3.5" class="anchored" data-anchor-id="directed-and-undirected-graphs"><span class="header-section-number">3.5</span> Directed and undirected graphs</h2>
-<p>The definition above assumes that each edge is unordered: if <span class="math inline">u</span> and <span class="math inline">v</span> are connected, the connection runs symmetrically in both directions. Such a graph is called <strong>undirected</strong>.</p>
-<p>In many real networks, connections are asymmetric. A hyperlink may point from page <span class="math inline">u</span> to page <span class="math inline">v</span> without the reverse link existing. A neuron may send signals to a target cell without receiving signals back.</p>
+<p>The definition above treats each edge as unordered: the relation <span class="math inline">\{u, v\}</span> is symmetric. Such a graph is <strong>undirected</strong>. In many real networks, relations are asymmetric — a hyperlink from page <span class="math inline">u</span> to page <span class="math inline">v</span> does not imply a link in the reverse direction; a neuron may send signals to a target without receiving signals back.</p>
 <div id="def-directed-graph" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.2</strong></span> A <strong>directed graph</strong> (or <strong>digraph</strong>) is a pair <span class="math inline">G = (V, A)</span> where <span class="math inline">V</span> is the vertex set and <span class="math inline">A</span> is a set of <strong>ordered</strong> pairs <span class="math inline">(u, v)</span> with <span class="math inline">u \neq v</span>, called <strong>arcs</strong> or <strong>directed edges</strong>.</p>
+<p><span class="theorem-title"><strong>Definition 3.2</strong></span> A <strong>directed graph</strong> (or <strong>digraph</strong>) is a pair <span class="math inline">G = (V, A)</span> where <span class="math inline">V</span> is the vertex set and <span class="math inline">A</span> is a set of <strong>ordered</strong> pairs <span class="math inline">(u, v)</span> with <span class="math inline">u \neq v</span>, called <strong>arcs</strong>. The arc <span class="math inline">(u, v)</span> has <strong>tail</strong> <span class="math inline">u</span> and <strong>head</strong> <span class="math inline">v</span>; it is distinct from <span class="math inline">(v, u)</span>.</p>
 </div>
-<p>The arc <span class="math inline">(u, v)</span> goes <strong>from</strong> <span class="math inline">u</span> <strong>to</strong> <span class="math inline">v</span>. The vertex <span class="math inline">u</span> is called the <strong>tail</strong> and <span class="math inline">v</span> is called the <strong>head</strong>. The arc <span class="math inline">(u, v)</span> and the arc <span class="math inline">(v, u)</span> are distinct objects in a directed graph.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="02-graph-theory_files/figure-html/directed-vs-undirected-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Left: an undirected graph where edges have no orientation. Right: a directed graph on the same vertex set where arcs carry direction.</figcaption>
+<figcaption>Left: an undirected graph. Right: a directed graph on the same vertex set. Arcs carry orientation.</figcaption>
 </figure>
 </div>
 </div>
@@ -479,9 +458,8 @@ E = \bigl\{\{1,2\},\, \{1,3\},\, \{2,4\},\, \{3,4\},\, \{4,5\}\bigr\}.
 <section id="weighted-graphs" class="level3">
 <h3 class="anchored" data-anchor-id="weighted-graphs">Weighted graphs</h3>
 <div id="def-weighted-graph" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.3</strong></span> A <strong>weighted graph</strong> is a graph <span class="math inline">G = (V, E)</span> together with a weight function <span class="math inline">w : E \to \mathbb{R}</span>. Each edge <span class="math inline">e \in E</span> is assigned a real-valued weight <span class="math inline">w(e)</span>.</p>
+<p><span class="theorem-title"><strong>Definition 3.3</strong></span> A <strong>weighted graph</strong> is a graph <span class="math inline">G = (V, E)</span> together with a weight function <span class="math inline">w : E \to \mathbb{R}</span>, assigning a real-valued weight to each edge. Weights may represent distances, capacities, interaction strengths, or costs, depending on the application.</p>
 </div>
-<p>Weights may represent distances, capacities, interaction strengths, or costs, depending on the application.</p>
 </section>
 </section>
 <section id="degree-and-the-handshaking-lemma" class="level2" data-number="3.6">
@@ -489,22 +467,22 @@ E = \bigl\{\{1,2\},\, \{1,3\},\, \{2,4\},\, \{3,4\},\, \{4,5\}\bigr\}.
 <section id="degree-of-a-vertex" class="level3">
 <h3 class="anchored" data-anchor-id="degree-of-a-vertex">Degree of a vertex</h3>
 <div id="def-degree" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.4</strong></span> Let <span class="math inline">G = (V, E)</span> be an undirected graph. The <strong>degree</strong> of a vertex <span class="math inline">v \in V</span>, denoted <span class="math inline">k_v</span> or <span class="math inline">\deg(v)</span>, is the number of edges incident to <span class="math inline">v</span>:</p>
+<p><span class="theorem-title"><strong>Definition 3.4</strong></span> Let <span class="math inline">G = (V, E)</span> be an undirected graph. The <strong>degree</strong> of vertex <span class="math inline">v \in V</span>, denoted <span class="math inline">k_v</span> or <span class="math inline">\deg(v)</span>, is the number of edges incident to <span class="math inline">v</span>:</p>
 <p><span class="math display">
-k_v = |\{u \in V : uv \in E\}|.
+k_v = |\{u \in V : \{u,v\} \in E\}| = |N(v)|.
 </span></p>
 </div>
-<p>A vertex of degree <span class="math inline">0</span> is called <strong>isolated</strong>. A vertex of degree <span class="math inline">1</span> is called a <strong>leaf</strong> or <strong>pendant vertex</strong>. The maximum degree in the graph is denoted <span class="math inline">\Delta(G)</span> and the minimum degree is denoted <span class="math inline">\delta(G)</span>.</p>
+<p>A vertex with <span class="math inline">k_v = 0</span> is <strong>isolated</strong>; one with <span class="math inline">k_v = 1</span> is a <strong>leaf</strong> or <strong>pendant vertex</strong>. The maximum and minimum degrees of <span class="math inline">G</span> are denoted <span class="math inline">\Delta(G)</span> and <span class="math inline">\delta(G)</span> respectively.</p>
 </section>
 <section id="degree-sequence" class="level3">
 <h3 class="anchored" data-anchor-id="degree-sequence">Degree sequence</h3>
 <div id="def-degree-sequence" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.5</strong></span> The <strong>degree sequence</strong> of a graph <span class="math inline">G</span> is the list of degrees of all vertices, written in non-increasing order:</p>
+<p><span class="theorem-title"><strong>Definition 3.5</strong></span> The <strong>degree sequence</strong> of <span class="math inline">G</span> is the list of vertex degrees arranged in non-increasing order:</p>
 <p><span class="math display">
 k_1 \geq k_2 \geq \cdots \geq k_N.
 </span></p>
 </div>
-<p>The degree sequence is a fundamental invariant of the graph. It captures the distribution of connections across all vertices.</p>
+<p>The degree sequence is a fundamental invariant of the graph. Not every integer sequence is graphical — the Erdős–Gallai theorem gives a necessary and sufficient condition for a sequence of non-negative integers to be realizable as a degree sequence of a simple graph.</p>
 </section>
 <section id="the-handshaking-lemma" class="level3">
 <h3 class="anchored" data-anchor-id="the-handshaking-lemma">The handshaking lemma</h3>
@@ -514,7 +492,7 @@ k_1 \geq k_2 \geq \cdots \geq k_N.
 \sum_{v \in V} k_v = 2M.
 </span></p>
 </div>
-<p><strong>Proof.</strong> Each edge <span class="math inline">\{u, v\} \in E</span> contributes exactly <span class="math inline">1</span> to the degree of <span class="math inline">u</span> and exactly <span class="math inline">1</span> to the degree of <span class="math inline">v</span>. Summing over all vertices therefore counts each edge exactly twice. <span class="math inline">\square</span></p>
+<p><strong>Proof.</strong> Consider the incidence sum <span class="math inline">\sum_{v \in V} \sum_{e \in E} \mathbf{1}[v \in e]</span>. Evaluated by vertex, it equals <span class="math inline">\sum_{v} k_v</span>. Evaluated by edge, each edge <span class="math inline">\{u,v\}</span> contributes exactly <span class="math inline">1</span> to <span class="math inline">v = u</span> and exactly <span class="math inline">1</span> to <span class="math inline">v</span>, so the sum equals <span class="math inline">2M</span>. <span class="math inline">\square</span></p>
 <div class="callout callout-style-default callout-note callout-titled" title="Immediate corollary">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -525,7 +503,7 @@ k_1 \geq k_2 \geq \cdots \geq k_N.
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The number of vertices with odd degree is always even. This follows because the sum of all degrees equals <span class="math inline">2M</span>, which is even, and an even sum requires an even number of odd summands.</p>
+<p>Every graph has an even number of odd-degree vertices. Since <span class="math inline">2M</span> is even, the sum <span class="math inline">\sum_v k_v</span> is even; an even sum requires an even count of odd summands.</p>
 </div>
 </div>
 </section>
@@ -537,11 +515,11 @@ k_1 \geq k_2 \geq \cdots \geq k_N.
 \langle k \rangle = \frac{1}{N} \sum_{v \in V} k_v = \frac{2M}{N}.
 </span></p>
 </div>
-<p>The identity <span class="math inline">\langle k \rangle = 2M/N</span> follows immediately from the handshaking lemma. It connects average degree, edge count, and graph order in one simple formula that will appear repeatedly throughout this book.</p>
+<p>The identity <span class="math inline">\langle k \rangle = 2M/N</span> follows immediately from the handshaking lemma. It connects average degree, edge count, and graph order in a single formula that recurs throughout this book.</p>
 </section>
 <section id="in-degree-and-out-degree-in-directed-graphs" class="level3">
 <h3 class="anchored" data-anchor-id="in-degree-and-out-degree-in-directed-graphs">In-degree and out-degree in directed graphs</h3>
-<p>In a directed graph, each arc contributes to the degree of two vertices in an asymmetric way.</p>
+<p>In a directed graph, each arc contributes asymmetrically to two vertices.</p>
 <div id="def-indegree-outdegree" class="theorem definition">
 <p><span class="theorem-title"><strong>Definition 3.7</strong></span> Let <span class="math inline">G = (V, A)</span> be a directed graph and <span class="math inline">v \in V</span>. The <strong>in-degree</strong> of <span class="math inline">v</span> is</p>
 <p><span class="math display">
@@ -556,46 +534,46 @@ k_v^{\text{out}} = |\{u \in V : (v, u) \in A\}|.
 <p><span class="math display">
 \sum_{v \in V} k_v^{\text{in}} = \sum_{v \in V} k_v^{\text{out}} = |A|.
 </span></p>
-<p>This holds because every arc <span class="math inline">(u, v)</span> contributes exactly <span class="math inline">1</span> to the out-degree of <span class="math inline">u</span> and exactly <span class="math inline">1</span> to the in-degree of <span class="math inline">v</span>.</p>
+<p>Every arc <span class="math inline">(u, v)</span> contributes <span class="math inline">1</span> to the out-degree of <span class="math inline">u</span> and <span class="math inline">1</span> to the in-degree of <span class="math inline">v</span>.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="02-graph-theory_files/figure-html/degree-distribution-example-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Degree sequence (sorted in decreasing order) of an example graph with 30 vertices. The dashed line marks the average degree.</figcaption>
+<figcaption>Degree sequence (sorted in decreasing order) of a graph on 30 vertices. The dashed line marks the average degree.</figcaption>
 </figure>
 </div>
 </div>
 </div>
 </section>
 </section>
-<section id="matrix-representations" class="level2" data-number="3.7">
-<h2 data-number="3.7" class="anchored" data-anchor-id="matrix-representations"><span class="header-section-number">3.7</span> Matrix representations</h2>
-<p>Matrix representations are especially important in network science because they translate combinatorial structure into linear-algebraic objects. This makes it possible to study connectivity, diffusion, centrality, and spectral structure with computational tools that extend far beyond hand-drawn examples <span class="citation" data-cites="newman2010">(<a href="#ref-newman2010" role="doc-biblioref">Newman 2010</a>)</span>.</p>
+<section id="sec-matrix-representations" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="sec-matrix-representations"><span class="header-section-number">3.7</span> Matrix representations</h2>
+<p>Matrix representations are central to network science because they translate combinatorial graph structure into linear-algebraic objects, making it possible to study connectivity, diffusion, centrality, and spectral properties computationally <span class="citation" data-cites="newman2010 chung1997">(<a href="#ref-chung1997" role="doc-biblioref">Chung, 1997</a>; <a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>)</span>. The adjacency matrix and the Laplacian are the two most important representations; a comprehensive treatment of their spectral theory is given in <span class="citation" data-cites="chung1997">Chung (<a href="#ref-chung1997" role="doc-biblioref">1997</a>)</span>.</p>
 <section id="the-adjacency-matrix" class="level3">
 <h3 class="anchored" data-anchor-id="the-adjacency-matrix">The adjacency matrix</h3>
 <div id="def-adjacency-matrix" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.8</strong></span> Let <span class="math inline">G = (V, E)</span> be a graph with <span class="math inline">V = \{1, 2, \ldots, N\}</span>. The <strong>adjacency matrix</strong> of <span class="math inline">G</span> is the <span class="math inline">N \times N</span> matrix <span class="math inline">A</span> defined by</p>
+<p><span class="theorem-title"><strong>Definition 3.8</strong></span> Let <span class="math inline">G = (V, E)</span> be a graph with <span class="math inline">V = \{1, 2, \ldots, N\}</span>. The <strong>adjacency matrix</strong> of <span class="math inline">G</span> is the <span class="math inline">N \times N</span> matrix <span class="math inline">A</span> defined entry-wise by</p>
 <p><span class="math display">
 A_{ij} = \begin{cases} 1 &amp; \text{if } \{i, j\} \in E, \\ 0 &amp; \text{otherwise.} \end{cases}
 </span></p>
 </div>
-<p>For an undirected graph, the adjacency matrix is <strong>symmetric</strong>: <span class="math inline">A_{ij} = A_{ji}</span> for all <span class="math inline">i, j</span>. For a simple graph, all diagonal entries are zero: <span class="math inline">A_{ii} = 0</span>.</p>
-<section id="key-properties-of-the-adjacency-matrix" class="level4">
-<h4 class="anchored" data-anchor-id="key-properties-of-the-adjacency-matrix">Key properties of the adjacency matrix</h4>
-<p>Several immediate properties follow from the definition:</p>
+<p>For an undirected graph, <span class="math inline">A</span> is <strong>symmetric</strong>: <span class="math inline">A_{ij} = A_{ji}</span> for all <span class="math inline">i, j</span>. For a simple graph, <span class="math inline">A_{ii} = 0</span> for all <span class="math inline">i</span>.</p>
+<section id="key-properties" class="level4">
+<h4 class="anchored" data-anchor-id="key-properties">Key properties</h4>
+<p>Several properties follow immediately from the definition:</p>
 <ul>
-<li>The row sum of row <span class="math inline">i</span> equals the degree of vertex <span class="math inline">i</span>: <span class="math inline">\sum_{j} A_{ij} = k_i</span>.</li>
-<li>The total sum of all entries equals twice the number of edges: <span class="math inline">\sum_{i,j} A_{ij} = 2M</span>.</li>
-<li>The entry <span class="math inline">(A^r)_{ij}</span> of the <span class="math inline">r</span>-th power of <span class="math inline">A</span> counts the number of <strong>walks</strong> of length <span class="math inline">r</span> from vertex <span class="math inline">i</span> to vertex <span class="math inline">j</span>.</li>
+<li>The row sum of row <span class="math inline">i</span> equals the degree of vertex <span class="math inline">i</span>: <span class="math inline">\sum_j A_{ij} = k_i</span>.</li>
+<li>The total sum of all entries equals <span class="math inline">2M</span>: <span class="math inline">\sum_{i,j} A_{ij} = 2M</span>.</li>
+<li>The entry <span class="math inline">(A^r)_{ij}</span> of the <span class="math inline">r</span>-th matrix power counts the number of <strong>walks</strong> of length <span class="math inline">r</span> from vertex <span class="math inline">i</span> to vertex <span class="math inline">j</span>.</li>
 </ul>
-<p>That last property is particularly powerful. It means that matrix exponentiation yields combinatorial information about paths in the graph.</p>
+<p>The third property follows from the definition of matrix multiplication: <span class="math inline">(A^2)_{ij} = \sum_k A_{ik} A_{kj}</span> counts the number of common neighbors of <span class="math inline">i</span> and <span class="math inline">j</span>, which is exactly the number of walks of length <span class="math inline">2</span> connecting them. The argument extends by induction to any <span class="math inline">r \geq 1</span>.</p>
 </section>
 </section>
 <section id="the-degree-matrix" class="level3">
 <h3 class="anchored" data-anchor-id="the-degree-matrix">The degree matrix</h3>
 <div id="def-degree-matrix" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.9</strong></span> The <strong>degree matrix</strong> of <span class="math inline">G</span> is the <span class="math inline">N \times N</span> diagonal matrix <span class="math inline">D</span> where <span class="math inline">D_{ii} = k_i</span> and <span class="math inline">D_{ij} = 0</span> for <span class="math inline">i \neq j</span>.</p>
+<p><span class="theorem-title"><strong>Definition 3.9</strong></span> The <strong>degree matrix</strong> <span class="math inline">D</span> is the <span class="math inline">N \times N</span> diagonal matrix with <span class="math inline">D_{ii} = k_i</span> and <span class="math inline">D_{ij} = 0</span> for <span class="math inline">i \neq j</span>.</p>
 </div>
 </section>
 <section id="the-laplacian-matrix" class="level3">
@@ -610,13 +588,17 @@ L = D - A.
 <p><span class="math display">
 L_{ij} = \begin{cases} k_i &amp; \text{if } i = j, \\ -1 &amp; \text{if } \{i, j\} \in E, \\ 0 &amp; \text{otherwise.} \end{cases}
 </span></p>
-<p>The smallest eigenvalue of <span class="math inline">L</span> is always <span class="math inline">0</span>, with the all-ones vector <span class="math inline">\mathbf{1}</span> as eigenvector. The multiplicity of the zero eigenvalue equals the number of connected components. The second smallest eigenvalue, known as the <strong>algebraic connectivity</strong> or <strong>Fiedler value</strong> <span class="math inline">\lambda_2</span>, measures how well-connected the graph is: larger <span class="math inline">\lambda_2</span> implies greater robustness to edge removal.</p>
+<p>Two structural facts about <span class="math inline">L</span> are fundamental:</p>
+<ol type="1">
+<li>The smallest eigenvalue of <span class="math inline">L</span> is always <span class="math inline">0</span>, with eigenvector <span class="math inline">\mathbf{1}</span> (the all-ones vector), because <span class="math inline">L\mathbf{1} = D\mathbf{1} - A\mathbf{1} = \mathbf{k} - \mathbf{k} = \mathbf{0}</span>. The multiplicity of the zero eigenvalue equals the number of connected components.</li>
+<li>The <strong>Fiedler value</strong> <span class="math inline">\lambda_2(L)</span> — the second-smallest eigenvalue, introduced by <span class="citation" data-cites="fiedler1973">Fiedler (<a href="#ref-fiedler1973" role="doc-biblioref">1973</a>)</span> — measures how well-connected the graph is. A larger <span class="math inline">\lambda_2</span> implies greater robustness: more edge-disjoint paths exist between typical pairs of vertices <span class="citation" data-cites="chung1997">(<a href="#ref-chung1997" role="doc-biblioref">Chung, 1997</a>)</span>.</li>
+</ol>
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="02-graph-theory_files/figure-html/adjacency-matrix-visual-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Left: a small graph on six vertices. Right: its adjacency matrix displayed as a heatmap. Coloured cells indicate edges (entry = 1).</figcaption>
+<figcaption>Left: a small graph on six vertices. Right: its adjacency matrix as a heatmap. Coloured cells indicate edges.</figcaption>
 </figure>
 </div>
 </div>
@@ -625,75 +607,65 @@ L_{ij} = \begin{cases} k_i &amp; \text{if } i = j, \\ -1 &amp; \text{if } \{i, j
 </section>
 <section id="walks-paths-and-cycles" class="level2" data-number="3.8">
 <h2 data-number="3.8" class="anchored" data-anchor-id="walks-paths-and-cycles"><span class="header-section-number">3.8</span> Walks, paths, and cycles</h2>
-<section id="walk" class="level3">
-<h3 class="anchored" data-anchor-id="walk">Walk</h3>
+<section id="walk-trail-and-path" class="level3">
+<h3 class="anchored" data-anchor-id="walk-trail-and-path">Walk, trail, and path</h3>
 <div id="def-walk" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.11</strong></span> A <strong>walk</strong> in a graph <span class="math inline">G = (V, E)</span> is a finite sequence of vertices</p>
+<p><span class="theorem-title"><strong>Definition 3.11</strong></span> A <strong>walk</strong> of length <span class="math inline">\ell</span> in <span class="math inline">G</span> is a finite sequence of vertices</p>
 <p><span class="math display">
-v_0, v_1, v_2, \ldots, v_\ell
+v_0, v_1, \ldots, v_\ell
 </span></p>
-<p>such that <span class="math inline">\{v_{i-1}, v_i\} \in E</span> for every <span class="math inline">i = 1, \ldots, \ell</span>. The integer <span class="math inline">\ell</span> is the <strong>length</strong> of the walk.</p>
+<p>such that <span class="math inline">\{v_{i-1}, v_i\} \in E</span> for every <span class="math inline">i = 1, \ldots, \ell</span>. A walk may repeat vertices and edges.</p>
 </div>
-<p>A walk may repeat vertices and edges. It simply requires that consecutive vertices in the sequence are adjacent.</p>
-</section>
-<section id="trail-and-path" class="level3">
-<h3 class="anchored" data-anchor-id="trail-and-path">Trail and path</h3>
 <div id="def-trail-path" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.12</strong></span> A <strong>trail</strong> is a walk in which no edge is repeated. A <strong>path</strong> is a walk in which no vertex is repeated (and therefore no edge is repeated either).</p>
+<p><span class="theorem-title"><strong>Definition 3.12</strong></span> A <strong>trail</strong> is a walk in which no edge is repeated. A <strong>path</strong> is a walk in which no vertex is repeated (which implies no edge is repeated).</p>
 </div>
-<p>The path is the strictest concept: it visits each vertex at most once. A trail relaxes this to edges only. Euler’s original Königsberg question was precisely about the existence of a <strong>closed trail</strong> — a trail that returns to its starting vertex, now called an <strong>Eulerian circuit</strong>.</p>
+<p>The <strong>distance</strong> <span class="math inline">d(u, v)</span> between two vertices is the length of a shortest path connecting them (or <span class="math inline">\infty</span> if no path exists). The <strong>diameter</strong> <span class="math inline">D(G) = \max_{u,v} d(u,v)</span> is the maximum distance over all pairs of vertices.</p>
 </section>
 <section id="cycle" class="level3">
 <h3 class="anchored" data-anchor-id="cycle">Cycle</h3>
 <div id="def-cycle" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.13</strong></span> A <strong>cycle</strong> is a closed walk <span class="math inline">v_0, v_1, \ldots, v_\ell = v_0</span> of length <span class="math inline">\ell \geq 3</span> in which all vertices <span class="math inline">v_0, v_1, \ldots, v_{\ell-1}</span> are distinct.</p>
+<p><span class="theorem-title"><strong>Definition 3.13</strong></span> A <strong>cycle</strong> is a closed walk <span class="math inline">v_0, v_1, \ldots, v_\ell = v_0</span> of length <span class="math inline">\ell \geq 3</span> in which all vertices <span class="math inline">v_0, \ldots, v_{\ell-1}</span> are distinct. The <strong>girth</strong> of <span class="math inline">G</span> is the length of its shortest cycle. A graph with no cycles is <strong>acyclic</strong>.</p>
 </div>
-<p>The <strong>girth</strong> of a graph is the length of its shortest cycle. A graph with no cycles is called <strong>acyclic</strong>.</p>
-<div class="callout callout-style-default callout-note callout-titled" title="Connection to matrix powers">
+<div class="callout callout-style-default callout-note callout-titled" title="Matrix powers and triangle counting">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Connection to matrix powers
+<span class="screen-reader-only">Note</span>Matrix powers and triangle counting
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Recall that <span class="math inline">(A^r)_{ij}</span> counts walks of length <span class="math inline">r</span> from <span class="math inline">i</span> to <span class="math inline">j</span>. In particular, the diagonal entry <span class="math inline">(A^3)_{ii}</span> counts closed walks of length <span class="math inline">3</span> starting and ending at <span class="math inline">i</span>. The number of triangles in <span class="math inline">G</span> is therefore</p>
+<p>Because <span class="math inline">(A^r)_{ij}</span> counts walks of length <span class="math inline">r</span> from <span class="math inline">i</span> to <span class="math inline">j</span>, the diagonal entry <span class="math inline">(A^3)_{ii}</span> counts closed walks of length <span class="math inline">3</span> through <span class="math inline">i</span> — that is, the number of triangles containing <span class="math inline">i</span>. Summing over all vertices and dividing by <span class="math inline">6</span> (two traversal directions <span class="math inline">\times</span> three starting vertices per triangle) gives:</p>
 <p><span class="math display">
 \text{triangles}(G) = \frac{1}{6} \operatorname{tr}(A^3).
 </span></p>
-<p>The factor <span class="math inline">1/6</span> accounts for the six ways to traverse each triangle (two directions <span class="math inline">\times</span> three starting vertices).</p>
+<p>This identity connects combinatorial structure to a straightforward matrix computation.</p>
 </div>
 </div>
 </section>
 </section>
 <section id="connectivity" class="level2" data-number="3.9">
 <h2 data-number="3.9" class="anchored" data-anchor-id="connectivity"><span class="header-section-number">3.9</span> Connectivity</h2>
-<section id="connected-graphs-and-components" class="level3">
-<h3 class="anchored" data-anchor-id="connected-graphs-and-components">Connected graphs and components</h3>
+<section id="connected-components" class="level3">
+<h3 class="anchored" data-anchor-id="connected-components">Connected components</h3>
 <div id="def-connectivity" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.14</strong></span> An undirected graph <span class="math inline">G</span> is <strong>connected</strong> if for every pair of distinct vertices <span class="math inline">u, v \in V</span>, there exists a path from <span class="math inline">u</span> to <span class="math inline">v</span>.</p>
+<p><span class="theorem-title"><strong>Definition 3.14</strong></span> An undirected graph <span class="math inline">G</span> is <strong>connected</strong> if for every pair of distinct vertices <span class="math inline">u, v \in V</span>, there exists a path from <span class="math inline">u</span> to <span class="math inline">v</span>. A <strong>connected component</strong> is a maximal connected subgraph of <span class="math inline">G</span>.</p>
 </div>
-<p>If <span class="math inline">G</span> is not connected, it decomposes into maximal connected subgraphs, called <strong>connected components</strong>.</p>
-<div id="def-component" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.15</strong></span> A <strong>connected component</strong> of <span class="math inline">G</span> is a maximal connected subgraph of <span class="math inline">G</span>.</p>
-</div>
-<p>The number of connected components is denoted <span class="math inline">c(G)</span>. Note that <span class="math inline">c(G) = 1</span> if and only if <span class="math inline">G</span> is connected.</p>
+<p>The number of connected components is denoted <span class="math inline">c(G)</span>; <span class="math inline">c(G) = 1</span> if and only if <span class="math inline">G</span> is connected. The multiplicity of the zero eigenvalue of <span class="math inline">L</span> equals <span class="math inline">c(G)</span> — providing an algebraic route to detecting components.</p>
 </section>
 <section id="strong-and-weak-connectivity-in-directed-graphs" class="level3">
 <h3 class="anchored" data-anchor-id="strong-and-weak-connectivity-in-directed-graphs">Strong and weak connectivity in directed graphs</h3>
-<p>For directed graphs, two notions of connectivity arise.</p>
 <div id="def-strong-weak-connectivity" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.16</strong></span> A directed graph is <strong>strongly connected</strong> if for every ordered pair <span class="math inline">(u, v)</span> there exists a directed path from <span class="math inline">u</span> to <span class="math inline">v</span>. It is <strong>weakly connected</strong> if the underlying undirected graph is connected.</p>
+<p><span class="theorem-title"><strong>Definition 3.15</strong></span> A directed graph is <strong>strongly connected</strong> if for every ordered pair <span class="math inline">(u, v)</span> there is a directed path from <span class="math inline">u</span> to <span class="math inline">v</span>. It is <strong>weakly connected</strong> if the underlying undirected graph (obtained by ignoring arc directions) is connected.</p>
 </div>
-<p>Strong connectivity requires reachability in both directions between every pair of vertices. Weak connectivity only requires that edge directions can be ignored.</p>
+<p>Strong connectivity requires reachability in both directions between every pair of vertices. A directed graph can be weakly connected without being strongly connected.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="02-graph-theory_files/figure-html/connected-components-plot-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>A disconnected graph with three connected components shown in distinct colours. Component membership is determined by reachability.</figcaption>
+<figcaption>A disconnected graph with three connected components shown in distinct colours. Component membership is determined by mutual reachability.</figcaption>
 </figure>
 </div>
 </div>
@@ -701,20 +673,14 @@ v_0, v_1, v_2, \ldots, v_\ell
 </section>
 <section id="cut-vertices-and-bridges" class="level3">
 <h3 class="anchored" data-anchor-id="cut-vertices-and-bridges">Cut vertices and bridges</h3>
-<p>Two special structural elements are important for understanding how connectivity can be disrupted.</p>
+<p>Two structural elements are critical for understanding how connectivity can fail.</p>
 <div id="def-cut-vertex" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.17</strong></span> A <strong>cut vertex</strong> (or <strong>articulation point</strong>) is a vertex <span class="math inline">v</span> whose removal increases the number of connected components:</p>
-<p><span class="math display">
-c(G - v) &gt; c(G).
-</span></p>
+<p><span class="theorem-title"><strong>Definition 3.16</strong></span> A <strong>cut vertex</strong> (or <strong>articulation point</strong>) is a vertex <span class="math inline">v</span> whose removal strictly increases the number of connected components: <span class="math inline">c(G - v) &gt; c(G)</span>.</p>
 </div>
 <div id="def-bridge" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.18</strong></span> A <strong>bridge</strong> is an edge <span class="math inline">e</span> whose removal increases the number of connected components:</p>
-<p><span class="math display">
-c(G - e) &gt; c(G).
-</span></p>
+<p><span class="theorem-title"><strong>Definition 3.17</strong></span> A <strong>bridge</strong> is an edge <span class="math inline">e</span> whose removal strictly increases the number of connected components: <span class="math inline">c(G - e) &gt; c(G)</span>.</p>
 </div>
-<p>Cut vertices and bridges are the most vulnerable elements of a connected graph. Their removal disconnects the network. Identifying them has direct relevance to network robustness, which is examined in detail in Chapter 7.</p>
+<p>Cut vertices and bridges are the most fragile elements of a connected graph. Their removal disconnects the network — a property directly relevant to network robustness, examined in detail in Chapter 7. Note that every bridge <span class="math inline">\{u,v\}</span> is contained in no cycle: if it were, its removal would leave <span class="math inline">u</span> and <span class="math inline">v</span> connected via the cycle, contradicting the definition.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -729,36 +695,35 @@ c(G - e) &gt; c(G).
 </section>
 <section id="trees-and-spanning-trees" class="level2" data-number="3.10">
 <h2 data-number="3.10" class="anchored" data-anchor-id="trees-and-spanning-trees"><span class="header-section-number">3.10</span> Trees and spanning trees</h2>
-<section id="definition-of-a-tree" class="level3">
-<h3 class="anchored" data-anchor-id="definition-of-a-tree">Definition of a tree</h3>
+<section id="definition-and-characterisation" class="level3">
+<h3 class="anchored" data-anchor-id="definition-and-characterisation">Definition and characterisation</h3>
 <div id="def-tree" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.19</strong></span> A <strong>tree</strong> is a connected acyclic graph.</p>
+<p><span class="theorem-title"><strong>Definition 3.18</strong></span> A <strong>tree</strong> is a connected acyclic graph. A <strong>forest</strong> is an acyclic graph (whose connected components are trees).</p>
 </div>
-<p>Trees are among the most important and well-understood graph families. Several equivalent characterizations exist.</p>
 <div id="thm-tree-equivalences" class="theorem">
-<p><span class="theorem-title"><strong>Theorem 3.2</strong></span> <strong>Theorem.</strong> Let <span class="math inline">G</span> be a graph with <span class="math inline">N</span> vertices. The following statements are equivalent:</p>
+<p><span class="theorem-title"><strong>Theorem 3.2</strong></span> <strong>Theorem.</strong> Let <span class="math inline">G</span> be a graph with <span class="math inline">N</span> vertices. The following are equivalent:</p>
 <ol type="1">
 <li><span class="math inline">G</span> is a tree.</li>
 <li><span class="math inline">G</span> is connected and has exactly <span class="math inline">N - 1</span> edges.</li>
 <li><span class="math inline">G</span> is acyclic and has exactly <span class="math inline">N - 1</span> edges.</li>
-<li>Any two distinct vertices of <span class="math inline">G</span> are connected by exactly one path.</li>
-<li><span class="math inline">G</span> is connected, but removing any single edge disconnects it.</li>
+<li>Any two distinct vertices are connected by exactly one path.</li>
+<li><span class="math inline">G</span> is connected, and removing any single edge disconnects it (equivalently, every edge is a bridge).</li>
 </ol>
 </div>
-<p>The equivalence of these statements is a classical result. In particular, <span class="math inline">M = N - 1</span> is a necessary and sufficient condition for a connected graph to be a tree. A <strong>forest</strong> is an acyclic graph that is not necessarily connected; each connected component of a forest is a tree.</p>
+<p>The equivalence of these statements is classical; proofs appear in <span class="citation" data-cites="diestel2017">Diestel (<a href="#ref-diestel2017" role="doc-biblioref">2017</a>, Ch. 1)</span> and <span class="citation" data-cites="west2001">West (<a href="#ref-west2001" role="doc-biblioref">2001</a>, Ch. 2)</span>. In particular, <span class="math inline">M = N - 1</span> is both necessary and sufficient for a connected graph to be a tree. This identity will resurface in Chapter 4 when characterising the giant component of a random graph near the phase transition.</p>
 </section>
 <section id="spanning-trees" class="level3">
 <h3 class="anchored" data-anchor-id="spanning-trees">Spanning trees</h3>
 <div id="def-spanning-tree" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.20</strong></span> A <strong>spanning tree</strong> of a connected graph <span class="math inline">G = (V, E)</span> is a subgraph <span class="math inline">T = (V, E')</span> with <span class="math inline">E' \subseteq E</span> that is itself a tree — that is, it contains all <span class="math inline">N</span> vertices with exactly <span class="math inline">N - 1</span> edges, is connected, and is acyclic.</p>
+<p><span class="theorem-title"><strong>Definition 3.19</strong></span> A <strong>spanning tree</strong> of a connected graph <span class="math inline">G = (V, E)</span> is a subgraph <span class="math inline">T = (V, E')</span>, with <span class="math inline">E' \subseteq E</span>, that is itself a tree — it contains all <span class="math inline">N</span> vertices with exactly <span class="math inline">N-1</span> edges, is connected, and is acyclic.</p>
 </div>
-<p>Every connected graph contains at least one spanning tree. When edge weights are present, the <strong>minimum spanning tree</strong> is the spanning tree for which the total edge weight is minimized. The Kruskal and Prim algorithms find minimum spanning trees in <span class="math inline">O(M \log N)</span> time.</p>
+<p>Every connected graph possesses at least one spanning tree. When edge weights are present, the <strong>minimum spanning tree</strong> minimises total edge weight; the Kruskal and Prim algorithms find it in <span class="math inline">O(M \log N)</span> time.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="02-graph-theory_files/figure-html/spanning-tree-plot-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Left: a connected graph on nine vertices. Right: one spanning tree of the same graph — gold edges form the spanning tree, grey edges are excluded.</figcaption>
+<figcaption>Left: a connected graph on nine vertices. Right: one spanning tree — gold edges are in the tree, grey edges are excluded.</figcaption>
 </figure>
 </div>
 </div>
@@ -767,31 +732,28 @@ c(G - e) &gt; c(G).
 </section>
 <section id="bipartite-graphs" class="level2" data-number="3.11">
 <h2 data-number="3.11" class="anchored" data-anchor-id="bipartite-graphs"><span class="header-section-number">3.11</span> Bipartite graphs</h2>
-<section id="definition" class="level3">
-<h3 class="anchored" data-anchor-id="definition">Definition</h3>
+<section id="definition-and-königs-criterion" class="level3">
+<h3 class="anchored" data-anchor-id="definition-and-königs-criterion">Definition and König’s criterion</h3>
 <div id="def-bipartite" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.21</strong></span> A graph <span class="math inline">G = (V, E)</span> is <strong>bipartite</strong> if the vertex set can be partitioned into two non-empty disjoint sets <span class="math inline">V = X \cup Y</span> such that every edge in <span class="math inline">E</span> has one endpoint in <span class="math inline">X</span> and one endpoint in <span class="math inline">Y</span>. The partition <span class="math inline">(X, Y)</span> is called the <strong>bipartition</strong>.</p>
+<p><span class="theorem-title"><strong>Definition 3.20</strong></span> A graph <span class="math inline">G = (V, E)</span> is <strong>bipartite</strong> if <span class="math inline">V</span> can be partitioned into two non-empty disjoint sets <span class="math inline">X</span> and <span class="math inline">Y</span> such that every edge has one endpoint in <span class="math inline">X</span> and one in <span class="math inline">Y</span>. The pair <span class="math inline">(X, Y)</span> is the <strong>bipartition</strong>.</p>
 </div>
-<p>In a bipartite graph, there are no edges within <span class="math inline">X</span> and no edges within <span class="math inline">Y</span>. All edges cross the bipartition. Bipartite graphs arise naturally in models of two-mode networks: actors and films, employees and projects, genes and diseases.</p>
-</section>
-<section id="königs-criterion" class="level3">
-<h3 class="anchored" data-anchor-id="königs-criterion">König’s criterion</h3>
+<p>Bipartite graphs admit no edges within <span class="math inline">X</span> or within <span class="math inline">Y</span>. They arise naturally in two-mode network models: authors and papers, genes and diseases, employees and projects.</p>
 <div id="thm-koenig" class="theorem">
-<p><span class="theorem-title"><strong>Theorem 3.3</strong></span> <strong>Theorem (König, 1916).</strong> A graph <span class="math inline">G</span> is bipartite if and only if it contains no cycle of odd length.</p>
+<p><span class="theorem-title"><strong>Theorem 3.3</strong></span> <strong>Theorem <span class="citation" data-cites="koenig1916">(<a href="#ref-koenig1916" role="doc-biblioref">Kőnig, 1916</a>)</span>.</strong> A graph <span class="math inline">G</span> is bipartite if and only if it contains no cycle of odd length.</p>
 </div>
-<p>This criterion is both elegant and computationally useful. Bipartiteness can be detected by a simple two-coloring of the graph, which runs in <span class="math inline">O(N + M)</span> time using breadth-first search.</p>
+<p>This criterion is both elegant and computationally efficient: bipartiteness is detected by a two-coloring of <span class="math inline">G</span>, executable in <span class="math inline">O(N + M)</span> time by breadth-first search <span class="citation" data-cites="west2001">(<a href="#ref-west2001" role="doc-biblioref">West, 2001</a>)</span>. When BFS assigns the same color to both endpoints of any edge, an odd cycle has been found and the graph is not bipartite. Bipartite graphs arise naturally in two-mode network models — authors and papers, genes and diseases, employees and projects — and require adapted statistical tools; see <span class="citation" data-cites="newman2010">Newman (<a href="#ref-newman2010" role="doc-biblioref">2010</a>, Ch. 6)</span> for a discussion of projection methods.</p>
 </section>
 <section id="complete-bipartite-graph" class="level3">
 <h3 class="anchored" data-anchor-id="complete-bipartite-graph">Complete bipartite graph</h3>
 <div id="def-complete-bipartite" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.22</strong></span> The <strong>complete bipartite graph</strong> <span class="math inline">K_{m,n}</span> is the bipartite graph with parts <span class="math inline">|X| = m</span> and <span class="math inline">|Y| = n</span> in which every vertex in <span class="math inline">X</span> is adjacent to every vertex in <span class="math inline">Y</span>. It has <span class="math inline">mn</span> edges and its degree sequence consists of <span class="math inline">n</span> vertices of degree <span class="math inline">m</span> and <span class="math inline">m</span> vertices of degree <span class="math inline">n</span>.</p>
+<p><span class="theorem-title"><strong>Definition 3.21</strong></span> The <strong>complete bipartite graph</strong> <span class="math inline">K_{m,n}</span> is the bipartite graph with <span class="math inline">|X| = m</span> and <span class="math inline">|Y| = n</span> in which every vertex of <span class="math inline">X</span> is adjacent to every vertex of <span class="math inline">Y</span>. It has <span class="math inline">mn</span> edges, <span class="math inline">n</span> vertices of degree <span class="math inline">m</span>, and <span class="math inline">m</span> vertices of degree <span class="math inline">n</span>.</p>
 </div>
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="02-graph-theory_files/figure-html/bipartite-plot-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Left: a bipartite graph with bipartition (blue, teal). Right: the complete bipartite graph K(3,4) in which every vertex in one part connects to every vertex in the other.</figcaption>
+<figcaption>Left: a bipartite graph with bipartition shown in blue and teal. Right: the complete bipartite graph K(3,4).</figcaption>
 </figure>
 </div>
 </div>
@@ -801,67 +763,45 @@ c(G - e) &gt; c(G).
 <section id="special-graph-families" class="level2" data-number="3.12">
 <h2 data-number="3.12" class="anchored" data-anchor-id="special-graph-families"><span class="header-section-number">3.12</span> Special graph families</h2>
 <p>Several families appear repeatedly in network science as benchmarks and building blocks.</p>
-<section id="complete-graph" class="level3">
-<h3 class="anchored" data-anchor-id="complete-graph">Complete graph</h3>
 <div id="def-complete-graph" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.23</strong></span> The <strong>complete graph</strong> <span class="math inline">K_N</span> is the simple graph on <span class="math inline">N</span> vertices in which every pair of distinct vertices is adjacent. It has</p>
-<p><span class="math display">
-M = \binom{N}{2} = \frac{N(N-1)}{2}
-</span></p>
-<p>edges and every vertex has degree <span class="math inline">N - 1</span>.</p>
+<p><span class="theorem-title"><strong>Definition 3.22</strong></span> The <strong>complete graph</strong> <span class="math inline">K_N</span> is the simple graph on <span class="math inline">N</span> vertices in which every pair of distinct vertices is adjacent. It has <span class="math inline">M = \binom{N}{2}</span> edges and every vertex has degree <span class="math inline">N - 1</span>.</p>
 </div>
-</section>
-<section id="cycle-and-path-graphs" class="level3">
-<h3 class="anchored" data-anchor-id="cycle-and-path-graphs">Cycle and path graphs</h3>
 <div id="def-cycle-graph" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.24</strong></span> The <strong>cycle graph</strong> <span class="math inline">C_N</span> is the graph consisting of a single cycle through all <span class="math inline">N</span> vertices. Each vertex has degree <span class="math inline">2</span> and the graph has <span class="math inline">N</span> edges.</p>
+<p><span class="theorem-title"><strong>Definition 3.23</strong></span> The <strong>cycle graph</strong> <span class="math inline">C_N</span> is a single cycle through all <span class="math inline">N</span> vertices: every vertex has degree <span class="math inline">2</span> and the graph has <span class="math inline">N</span> edges.</p>
 </div>
 <div id="def-path-graph" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.25</strong></span> The <strong>path graph</strong> <span class="math inline">P_N</span> is the graph on <span class="math inline">N</span> vertices forming a single path. The two endpoints have degree <span class="math inline">1</span>, all interior vertices have degree <span class="math inline">2</span>, and the graph has <span class="math inline">N - 1</span> edges.</p>
+<p><span class="theorem-title"><strong>Definition 3.24</strong></span> The <strong>path graph</strong> <span class="math inline">P_N</span> has <span class="math inline">N</span> vertices forming a single path: the two endpoints have degree <span class="math inline">1</span>, all interior vertices have degree <span class="math inline">2</span>, and the graph has <span class="math inline">N - 1</span> edges.</p>
 </div>
-</section>
-<section id="regular-graphs" class="level3">
-<h3 class="anchored" data-anchor-id="regular-graphs">Regular graphs</h3>
 <div id="def-regular" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.26</strong></span> A graph is <span class="math inline">k</span>-regular if every vertex has exactly degree <span class="math inline">k</span>.</p>
+<p><span class="theorem-title"><strong>Definition 3.25</strong></span> A graph is <strong><span class="math inline">k</span>-regular</strong> if every vertex has degree exactly <span class="math inline">k</span>. The complete graph <span class="math inline">K_N</span> is <span class="math inline">(N-1)</span>-regular; <span class="math inline">C_N</span> is <span class="math inline">2</span>-regular.</p>
 </div>
-<p>The complete graph <span class="math inline">K_N</span> is <span class="math inline">(N-1)</span>-regular. The cycle graph <span class="math inline">C_N</span> is <span class="math inline">2</span>-regular. The Petersen graph is a famous 3-regular graph used as a counterexample in many graph-theoretic conjectures.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="02-graph-theory_files/figure-html/special-graphs-plot-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Four special graph families: the complete graph K5, the cycle C6, a 3-regular (cubic) graph on 10 vertices, and the path P6.</figcaption>
+<figcaption>Four standard graph families: K5 (complete), C6 (cycle), a 3-regular graph on 10 vertices, and P6 (path).</figcaption>
 </figure>
 </div>
 </div>
 </div>
 </section>
-</section>
 <section id="subgraphs-and-graph-isomorphism" class="level2" data-number="3.13">
 <h2 data-number="3.13" class="anchored" data-anchor-id="subgraphs-and-graph-isomorphism"><span class="header-section-number">3.13</span> Subgraphs and graph isomorphism</h2>
-<section id="subgraph" class="level3">
-<h3 class="anchored" data-anchor-id="subgraph">Subgraph</h3>
 <div id="def-subgraph" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.27</strong></span> A graph <span class="math inline">H = (V', E')</span> is a <strong>subgraph</strong> of <span class="math inline">G = (V, E)</span> if <span class="math inline">V' \subseteq V</span> and <span class="math inline">E' \subseteq E</span>. It is an <strong>induced subgraph</strong> on <span class="math inline">V' \subseteq V</span> if <span class="math inline">E'</span> contains exactly all edges of <span class="math inline">G</span> with both endpoints in <span class="math inline">V'</span>.</p>
+<p><span class="theorem-title"><strong>Definition 3.26</strong></span> A graph <span class="math inline">H = (V', E')</span> is a <strong>subgraph</strong> of <span class="math inline">G = (V, E)</span> if <span class="math inline">V' \subseteq V</span> and <span class="math inline">E' \subseteq E</span>. It is an <strong>induced subgraph</strong> on <span class="math inline">V' \subseteq V</span>, written <span class="math inline">G[V']</span>, if <span class="math inline">E'</span> contains every edge of <span class="math inline">G</span> with both endpoints in <span class="math inline">V'</span>.</p>
 </div>
-<p>The induced subgraph on a vertex set <span class="math inline">S</span> is written <span class="math inline">G[S]</span>.</p>
-</section>
-<section id="graph-isomorphism" class="level3">
-<h3 class="anchored" data-anchor-id="graph-isomorphism">Graph isomorphism</h3>
 <div id="def-isomorphism" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.28</strong></span> Two graphs <span class="math inline">G = (V_1, E_1)</span> and <span class="math inline">H = (V_2, E_2)</span> are <strong>isomorphic</strong>, written <span class="math inline">G \cong H</span>, if there exists a bijection <span class="math inline">\phi : V_1 \to V_2</span> such that</p>
+<p><span class="theorem-title"><strong>Definition 3.27</strong></span> Two graphs <span class="math inline">G = (V_1, E_1)</span> and <span class="math inline">H = (V_2, E_2)</span> are <strong>isomorphic</strong>, written <span class="math inline">G \cong H</span>, if there exists a bijection <span class="math inline">\phi : V_1 \to V_2</span> preserving adjacency:</p>
 <p><span class="math display">
 \{u, v\} \in E_1 \iff \{\phi(u), \phi(v)\} \in E_2.
 </span></p>
-<p>The function <span class="math inline">\phi</span> is called a <strong>graph isomorphism</strong>.</p>
+<p>The function <span class="math inline">\phi</span> is a <strong>graph isomorphism</strong>.</p>
 </div>
-<p>Isomorphic graphs are structurally identical: one is simply a relabeling of the other. Isomorphism captures the idea that only the pattern of connections — not the labels on vertices — defines a graph’s structure.</p>
-<p>A necessary condition for isomorphism is that two graphs have the same degree sequence. This condition is easy to check but is not sufficient: non-isomorphic graphs can share the same degree sequence.</p>
+<p>Isomorphic graphs are structurally identical: one is a relabeling of the other. A necessary condition for isomorphism is that the two graphs share the same degree sequence — but this is not sufficient. Constructing non-isomorphic graphs with the same degree sequence is a useful exercise in understanding what degree alone can and cannot determine.</p>
 </section>
-</section>
-<section id="working-with-graphs-in-r" class="level2" data-number="3.14">
-<h2 data-number="3.14" class="anchored" data-anchor-id="working-with-graphs-in-r"><span class="header-section-number">3.14</span> Working with graphs in R</h2>
+<section id="sec-working-with-graphs-in-r" class="level2" data-number="3.14">
+<h2 data-number="3.14" class="anchored" data-anchor-id="sec-working-with-graphs-in-r"><span class="header-section-number">3.14</span> Working with graphs in R</h2>
 <p>The <code>igraph</code> package provides a comprehensive toolkit for constructing, manipulating, and analysing graphs in R.</p>
 <section id="constructing-graphs" class="level3">
 <h3 class="anchored" data-anchor-id="constructing-graphs">Constructing graphs</h3>
@@ -1003,7 +943,7 @@ Laplacian eigenvalues:</code></pre>
 Fiedler value (algebraic connectivity): 0.518806 </code></pre>
 </div>
 </div>
-<p>The smallest eigenvalue is <span class="math inline">0</span> (the graph is connected, so there is exactly one zero eigenvalue). The second-smallest eigenvalue — the Fiedler value — quantifies algebraic connectivity: a larger Fiedler value indicates a more robustly connected graph.</p>
+<p>Since <code>g1</code> is connected, <span class="math inline">L</span> has exactly one zero eigenvalue. The Fiedler value <span class="math inline">\lambda_2 &gt; 0</span> confirms connectivity; its magnitude quantifies how robustly the graph is connected.</p>
 </section>
 <section id="triangle-counting-via-matrix-trace" class="level3">
 <h3 class="anchored" data-anchor-id="triangle-counting-via-matrix-trace">Triangle counting via matrix trace</h3>
@@ -1030,14 +970,19 @@ Fiedler value (algebraic connectivity): 0.518806 </code></pre>
 <section id="summary-of-key-definitions" class="level2" data-number="3.15">
 <h2 data-number="3.15" class="anchored" data-anchor-id="summary-of-key-definitions"><span class="header-section-number">3.15</span> Summary of key definitions</h2>
 <p>The table below collects the most important quantities introduced in this chapter.</p>
-<div class="cell" data-tbl-cap="Core graph-theoretic quantities, their notation, and formulas.">
+<div class="cell">
+<div id="tbl-summary-table" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-summary-table-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3.1: Core graph-theoretic quantities, their notation, and formulas.
+</figcaption>
+<div aria-describedby="tbl-summary-table-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>Core graph-theoretic quantities, their notation, and formulas.</caption>
+<table class="cell caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 31%">
 <col style="width: 23%">
-<col style="width: 44%">
+<col style="width: 45%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1090,7 +1035,7 @@ Fiedler value (algebraic connectivity): 0.518806 </code></pre>
 <tr class="odd">
 <td style="text-align: center;"><span class="math inline">c(G)</span></td>
 <td style="text-align: left;">Component count</td>
-<td style="text-align: left;">Maximal connected pieces</td>
+<td style="text-align: left;">Maximal connected subgraph count</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;"><span class="math inline">\lambda_2(L)</span></td>
@@ -1101,218 +1046,177 @@ Fiedler value (algebraic connectivity): 0.518806 </code></pre>
 </table>
 </div>
 </div>
+</figure>
+</div>
+</div>
 </section>
 <section id="exercises" class="level2" data-number="3.16">
 <h2 data-number="3.16" class="anchored" data-anchor-id="exercises"><span class="header-section-number">3.16</span> Exercises</h2>
+<p>The exercises below are designed for MSc-level students. They do not ask you to reproduce derivations from the text. Instead, they ask you to <strong>apply, extend, and connect</strong> the ideas introduced in this chapter. Several problems have no unique answer — the goal is precise reasoning, not a single correct number.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="Orientation">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Orientation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>These problems train you to work with the quantities in <a href="#tbl-summary-table" class="quarto-xref">Table&nbsp;<span>3.1</span></a> as diagnostic tools. The same tools reappear throughout the course — in random graph theory, small-world models, and network robustness. The habit of computing, interpreting, and questioning each quantity is what this chapter is building.</p>
+</div>
+</div>
 <hr>
-<section id="part-i.-computational-and-derivation-exercises" class="level3">
-<h3 class="anchored" data-anchor-id="part-i.-computational-and-derivation-exercises">Part I. Computational and derivation exercises</h3>
-<section id="exercise-1.-handshaking-lemma" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-1.-handshaking-lemma">Exercise 1. Handshaking lemma</h4>
-<p>Let <span class="math inline">G</span> be an undirected simple graph with <span class="math inline">N = 8</span> vertices and degree sequence <span class="math inline">(5, 4, 4, 3, 3, 2, 1, 0)</span>.</p>
+<section id="exercise-1.-degree-sequences-existence-and-uniqueness" class="level4">
+<h4 class="anchored" data-anchor-id="exercise-1.-degree-sequences-existence-and-uniqueness">Exercise 1. Degree sequences: existence and uniqueness</h4>
 <ol type="1">
-<li>Verify that the degree sequence satisfies the handshaking lemma.</li>
-<li>Determine the number of edges <span class="math inline">M</span>.</li>
-<li>Compute the average degree <span class="math inline">\langle k \rangle</span>.</li>
+<li>Give an example of two non-isomorphic graphs on six vertices that share the same degree sequence. Prove they are not isomorphic.</li>
+<li>State (without proof) the Erdős–Gallai condition <span class="citation" data-cites="erdosgallai1960">(<a href="#ref-erdosgallai1960" role="doc-biblioref">Erdős &amp; Gallai, 1960</a>)</span> for a sequence of non-negative integers to be graphical. Apply it to determine which of the following sequences are degree sequences of a simple graph:
+<ol type="a">
+<li><span class="math inline">(4, 3, 3, 2, 2)</span>,</li>
+<li><span class="math inline">(5, 3, 3, 2, 1)</span>,</li>
+<li><span class="math inline">(4, 4, 3, 3, 2, 2)</span>.</li>
+</ol></li>
+<li>Prove that there is no simple graph whose degree sequence is <span class="math inline">(5, 4, 3, 2, 1)</span> on five vertices. What goes wrong?</li>
 </ol>
 <hr>
 </section>
-<section id="exercise-2.-adjacency-matrix" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-2.-adjacency-matrix">Exercise 2. Adjacency matrix</h4>
-<p>Let <span class="math inline">G</span> have vertex set <span class="math inline">\{1,2,3,4\}</span> and edge set <span class="math inline">\{\{1,2\},\{1,3\},\{2,3\},\{3,4\}\}</span>.</p>
+<section id="exercise-2.-the-laplacian-as-a-diagnostic-tool" class="level4">
+<h4 class="anchored" data-anchor-id="exercise-2.-the-laplacian-as-a-diagnostic-tool">Exercise 2. The Laplacian as a diagnostic tool</h4>
+<p>Let <span class="math inline">G</span> be the graph on <span class="math inline">\{1,2,3,4\}</span> with edge set <span class="math inline">\{\{1,2\},\{1,3\},\{2,3\},\{3,4\}\}</span>.</p>
 <ol type="1">
-<li>Write the adjacency matrix <span class="math inline">A</span> of <span class="math inline">G</span>.</li>
-<li>Compute <span class="math inline">A^2</span> by hand.</li>
-<li>Identify what the diagonal entries of <span class="math inline">A^2</span> represent in terms of walks.</li>
-<li>Compute the number of triangles using <span class="math inline">\operatorname{tr}(A^3)</span> and verify with <code>igraph</code>.</li>
+<li>Write <span class="math inline">A</span> and <span class="math inline">L = D - A</span> explicitly.</li>
+<li>Compute the eigenvalues of <span class="math inline">L</span> (numerically is fine). Verify that the smallest is <span class="math inline">0</span> and that its multiplicity matches <span class="math inline">c(G)</span>.</li>
+<li>Now delete the edge <span class="math inline">\{3,4\}</span> and recompute the Laplacian spectrum. What changes, and why? Interpret the Fiedler value before and after deletion.</li>
+<li>A student claims: <em>“The Fiedler value tells us how many edges we need to remove to disconnect the graph.”</em> Is this correct? Give a precise statement of what <span class="math inline">\lambda_2</span> does and does not tell us.</li>
 </ol>
 <hr>
 </section>
-<section id="exercise-3.-laplacian-eigenvalues" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-3.-laplacian-eigenvalues">Exercise 3. Laplacian eigenvalues</h4>
-<p>For the graph in Exercise 2:</p>
+<section id="exercise-3.-matrix-powers-and-walk-counting" class="level4">
+<h4 class="anchored" data-anchor-id="exercise-3.-matrix-powers-and-walk-counting">Exercise 3. Matrix powers and walk counting</h4>
+<p>Let <span class="math inline">A</span> be the adjacency matrix of the motivating graph from <a href="#sec-a-motivating-example" class="quarto-xref"><span>Section 3.4.2</span></a>.</p>
 <ol type="1">
-<li>Construct the degree matrix <span class="math inline">D</span> and the Laplacian <span class="math inline">L = D - A</span>.</li>
-<li>Compute the eigenvalues of <span class="math inline">L</span>.</li>
-<li>Verify that the smallest eigenvalue is <span class="math inline">0</span> with eigenvector <span class="math inline">\mathbf{1}</span>.</li>
-<li>Interpret the second-smallest eigenvalue.</li>
+<li>Compute <span class="math inline">A^2</span> and <span class="math inline">A^3</span> (by hand or in R).</li>
+<li>Use <span class="math inline">(A^2)_{ij}</span> to identify all pairs of vertices at distance exactly <span class="math inline">2</span>. Verify against the graph directly.</li>
+<li>Use <span class="math inline">\operatorname{tr}(A^3)/6</span> to count triangles. Explain why the factor <span class="math inline">6</span> appears.</li>
+<li>The entry <span class="math inline">(A^r)_{ij}</span> counts walks, not paths. Construct a specific example (using this or any other graph) where <span class="math inline">(A^2)_{ij} &gt; 0</span> but the number of paths of length <span class="math inline">2</span> from <span class="math inline">i</span> to <span class="math inline">j</span> is strictly less than <span class="math inline">(A^2)_{ij}</span>. Explain the discrepancy.</li>
 </ol>
 <hr>
 </section>
-<section id="exercise-4.-trees" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-4.-trees">Exercise 4. Trees</h4>
+<section id="exercise-4.-connectivity-and-fragility" class="level4">
+<h4 class="anchored" data-anchor-id="exercise-4.-connectivity-and-fragility">Exercise 4. Connectivity and fragility</h4>
+<p>Consider the graph formed by two triangles, <span class="math inline">\{1,2,3\}</span> and <span class="math inline">\{4,5,6\}</span>, joined by the single edge <span class="math inline">\{3,4\}</span>.</p>
 <ol type="1">
-<li>Prove that any tree on <span class="math inline">N</span> vertices has exactly <span class="math inline">N - 1</span> edges.</li>
-<li>How many distinct labeled trees exist on <span class="math inline">N = 4</span> vertices? Draw them all.</li>
-<li>Give an example of a connected graph that is not a tree, and remove one edge to obtain a spanning tree.</li>
+<li>Identify all cut vertices and bridges. Justify each answer using the definitions in <a href="#def-cut-vertex" class="quarto-xref">Definition&nbsp;<span>3.16</span></a> and <a href="#def-bridge" class="quarto-xref">Definition&nbsp;<span>3.17</span></a>.</li>
+<li>Prove that every bridge is contained in no cycle. Use this to explain why <span class="math inline">P_N</span> has <span class="math inline">N-2</span> cut vertices and <span class="math inline">N-1</span> bridges, while <span class="math inline">C_N</span> has neither.</li>
+<li>Compute the Fiedler value for the two-triangle graph and for <span class="math inline">C_6</span> (which has the same number of vertices and edges). Which is larger? Does the Fiedler value correctly predict which graph is more fragile? Discuss any limitations of this comparison.</li>
+<li>In <code>igraph</code>, use <code>articulation_points()</code> and an edge-deletion loop to verify your classification. Report your code and output.</li>
 </ol>
 <hr>
 </section>
-<section id="exercise-5.-bipartite-graphs" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-5.-bipartite-graphs">Exercise 5. Bipartite graphs</h4>
+<section id="exercise-5.-trees-characterisation-and-counting" class="level4">
+<h4 class="anchored" data-anchor-id="exercise-5.-trees-characterisation-and-counting">Exercise 5. Trees: characterisation and counting</h4>
 <ol type="1">
-<li>Draw <span class="math inline">K_{2,3}</span> and compute its number of edges.</li>
-<li>Verify using König’s criterion that <span class="math inline">K_{2,3}</span> contains no odd cycle.</li>
-<li>Show that the cycle graph <span class="math inline">C_5</span> is <strong>not</strong> bipartite.</li>
-<li>For which values of <span class="math inline">N</span> is the cycle graph <span class="math inline">C_N</span> bipartite?</li>
+<li>Prove that a connected graph <span class="math inline">G</span> with <span class="math inline">N</span> vertices is a tree if and only if it has exactly <span class="math inline">N-1</span> edges. Your proof should use the equivalences in <a href="#thm-tree-equivalences" class="quarto-xref">Theorem&nbsp;<span>3.2</span></a>.</li>
+<li>How many distinct labeled trees exist on <span class="math inline">N = 4</span> vertices? List them explicitly and verify using Cayley’s formula <span class="math inline">N^{N-2}</span> <span class="citation" data-cites="cayley1889">(<a href="#ref-cayley1889" role="doc-biblioref">Cayley, 1889</a>)</span>.</li>
+<li>A graph <span class="math inline">G</span> has <span class="math inline">N = 10</span> vertices and <span class="math inline">M = 9</span> edges. A student concludes it must be a tree. Is this necessarily true? If not, give a counterexample and state the missing condition.</li>
+<li>In <code>igraph</code>, generate a random tree on 15 vertices using <code>sample_tree(15)</code>. Verify that it satisfies all five conditions in <a href="#thm-tree-equivalences" class="quarto-xref">Theorem&nbsp;<span>3.2</span></a> computationally.</li>
 </ol>
 <hr>
 </section>
-<section id="exercise-6.-cut-vertices-and-bridges" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-6.-cut-vertices-and-bridges">Exercise 6. Cut vertices and bridges</h4>
-<p>For a path graph <span class="math inline">P_N</span> with <span class="math inline">N \geq 3</span>:</p>
+<section id="exercise-6.-bipartite-structure-theory-and-detection" class="level4">
+<h4 class="anchored" data-anchor-id="exercise-6.-bipartite-structure-theory-and-detection">Exercise 6. Bipartite structure: theory and detection</h4>
 <ol type="1">
-<li>Identify all cut vertices.</li>
-<li>Identify all bridges.</li>
-<li>What changes if <span class="math inline">P_N</span> is replaced by the cycle <span class="math inline">C_N</span>?</li>
-<li>Argue that any edge of a tree is a bridge.</li>
+<li>Prove König’s criterion: a graph is bipartite if and only if it contains no odd cycle. <em>(Hint: for the forward direction, show that a 2-colouring assigns opposite colours to endpoints of every edge; for the reverse, show BFS produces a valid 2-colouring when no odd cycle exists.)</em></li>
+<li>The complete bipartite graph <span class="math inline">K_{m,n}</span> has <span class="math inline">mn</span> edges. Derive a formula for its average degree <span class="math inline">\langle k \rangle</span> in terms of <span class="math inline">m</span> and <span class="math inline">n</span>. For what value of <span class="math inline">m</span> (with <span class="math inline">n</span> fixed) is <span class="math inline">\langle k \rangle</span> maximised, and does this make sense intuitively?</li>
+<li>Consider the following adjacency matrix:</li>
+</ol>
+<p><span class="math display">
+A = \begin{pmatrix}
+0 &amp; 1 &amp; 0 &amp; 1 \\
+1 &amp; 0 &amp; 1 &amp; 0 \\
+0 &amp; 1 &amp; 0 &amp; 1 \\
+1 &amp; 0 &amp; 1 &amp; 0
+\end{pmatrix}.
+</span></p>
+<p>Without drawing the graph, determine whether it is bipartite using only the eigenvalues of <span class="math inline">A</span>. <em>(Hint: a graph is bipartite if and only if its adjacency spectrum is symmetric about zero <span class="citation" data-cites="chung1997">(<a href="#ref-chung1997" role="doc-biblioref">Chung, 1997</a>)</span>.)</em></p>
+<ol start="4" type="1">
+<li>Give a concrete real-world example of a network that is naturally bipartite. Explain what would be structurally wrong with computing the standard clustering coefficient on this network without accounting for its bipartite nature.</li>
 </ol>
 <hr>
 </section>
-</section>
-<section id="part-ii.-conceptual-and-analytical-exercises" class="level3">
-<h3 class="anchored" data-anchor-id="part-ii.-conceptual-and-analytical-exercises">Part II. Conceptual and analytical exercises</h3>
-<section id="exercise-7.-degree-sequence-realizability" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-7.-degree-sequence-realizability">Exercise 7. Degree sequence realizability</h4>
-<p>A sequence of non-negative integers <span class="math inline">(d_1, d_2, \ldots, d_N)</span> is called <strong>graphical</strong> if it is the degree sequence of some simple graph.</p>
-<ol type="1">
-<li>Show that <span class="math inline">(3, 3, 2, 2, 1, 1)</span> is graphical by constructing a graph.</li>
-<li>Show that <span class="math inline">(4, 3, 2, 2, 1)</span> is <strong>not</strong> graphical using the handshaking lemma.</li>
-<li>State the Erdős–Gallai theorem and apply it to check whether <span class="math inline">(3, 3, 2, 2, 2)</span> is graphical.</li>
-</ol>
-<hr>
-</section>
-<section id="exercise-8.-isomorphism" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-8.-isomorphism">Exercise 8. Isomorphism</h4>
-<ol type="1">
-<li>Determine whether the cycle <span class="math inline">C_6</span> and the graph consisting of two disjoint triangles are isomorphic. Use degree sequences and triangle counts as invariants.</li>
-<li>Construct an explicit isomorphism or prove that none exists.</li>
-</ol>
-<hr>
-</section>
-<section id="exercise-9.-powers-of-the-adjacency-matrix" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-9.-powers-of-the-adjacency-matrix">Exercise 9. Powers of the adjacency matrix</h4>
-<p>Let <span class="math inline">G = C_4</span> (the 4-cycle with vertices arranged cyclically).</p>
-<ol type="1">
-<li>Write the adjacency matrix <span class="math inline">A</span>.</li>
-<li>Compute <span class="math inline">A^2</span> and <span class="math inline">A^3</span>.</li>
-<li>Use the entries of <span class="math inline">A^2</span> to identify all walks of length <span class="math inline">2</span> between non-adjacent pairs.</li>
-<li>Explain why <span class="math inline">(A^r)_{ij}</span> counts walks, not paths.</li>
-</ol>
-<hr>
-</section>
-<section id="exercise-10.-regular-graphs" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-10.-regular-graphs">Exercise 10. Regular graphs</h4>
-<ol type="1">
-<li>Show that in a <span class="math inline">k</span>-regular graph with <span class="math inline">N</span> vertices, the number of edges is <span class="math inline">M = kN/2</span>.</li>
-<li>Deduce that <span class="math inline">kN</span> must be even. State a condition on <span class="math inline">k</span> and <span class="math inline">N</span> guaranteeing this.</li>
-<li>Show that the eigenvalues of the adjacency matrix of a <span class="math inline">k</span>-regular graph all lie in the interval <span class="math inline">[-k, k]</span>, with <span class="math inline">k</span> itself always an eigenvalue.</li>
-</ol>
-<hr>
-</section>
-</section>
-<section id="part-iii.-simulation-and-coding-exercises" class="level3">
-<h3 class="anchored" data-anchor-id="part-iii.-simulation-and-coding-exercises">Part III. Simulation and coding exercises</h3>
-<section id="exercise-11.-the-petersen-graph" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-11.-the-petersen-graph">Exercise 11. The Petersen graph</h4>
-<p>Using <code>igraph</code>:</p>
-<ol type="1">
-<li>Construct the Petersen graph with <code>graph.famous("Petersen")</code>.</li>
-<li>Report its order, size, degree sequence, diameter, girth, and clustering coefficient.</li>
-<li>Plot it with vertex size proportional to degree.</li>
-<li>Compute its Laplacian eigenvalues. Verify that the Fiedler value is positive.</li>
-</ol>
-<hr>
-</section>
-<section id="exercise-12.-exploring-graph-families" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-12.-exploring-graph-families">Exercise 12. Exploring graph families</h4>
-<p>For each of <span class="math inline">K_5</span>, <span class="math inline">C_{10}</span>, <span class="math inline">P_8</span>, and a random <span class="math inline">G(20, 0.25)</span> graph:</p>
-<ol type="1">
-<li>Compute the degree sequence, average degree, diameter, and clustering coefficient.</li>
-<li>Determine whether the graph is bipartite using <code>is_bipartite()</code>.</li>
-<li>Find a spanning tree with <code>mst()</code> and plot it alongside the original graph.</li>
-</ol>
-<hr>
-</section>
-<section id="exercise-13.-adjacency-matrix-powers" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-13.-adjacency-matrix-powers">Exercise 13. Adjacency matrix powers</h4>
-<p>Write an R function that, given a graph <span class="math inline">G</span> and an integer <span class="math inline">r</span>, returns the matrix <span class="math inline">A^r</span> and uses it to count:</p>
-<ol type="1">
-<li>All walks of length 3 in <span class="math inline">C_5</span>.</li>
-<li>The number of triangles in a random <span class="math inline">G(15, 0.3)</span> graph.</li>
-</ol>
-<p>Verify both results using <code>igraph</code>’s built-in functions.</p>
-<hr>
-</section>
-<section id="exercise-14.-detecting-cut-vertices" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-14.-detecting-cut-vertices">Exercise 14. Detecting cut vertices</h4>
-<p>Write an R function that:</p>
-<ol type="1">
-<li>Generates a random connected graph on <span class="math inline">N</span> vertices.</li>
-<li>Identifies all cut vertices using <code>articulation_points()</code>.</li>
-<li>Visualizes the graph with cut vertices highlighted in a contrasting color.</li>
-<li>Repeats this across a grid of values of <span class="math inline">p</span> from <span class="math inline">0.1</span> to <span class="math inline">0.6</span> and plots how the mean number of cut vertices changes with <span class="math inline">p</span>.</li>
-</ol>
-<hr>
-</section>
-<section id="exercise-15.-minimum-spanning-tree-on-a-weighted-graph" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-15.-minimum-spanning-tree-on-a-weighted-graph">Exercise 15. Minimum spanning tree on a weighted graph</h4>
-<p>Generate a random graph on 12 vertices. Assign edge weights sampled uniformly from <span class="math inline">[1, 10]</span>.</p>
-<ol type="1">
-<li>Find the minimum spanning tree using <code>mst()</code>.</li>
-<li>Compute and report the total weight of the MST versus the full graph.</li>
-<li>Visualize the MST edges highlighted on the full graph.</li>
-<li>Repeat with weights from an exponential distribution and compare.</li>
-</ol>
-<hr>
-</section>
-</section>
-</section>
-<section id="suggested-mini-project" class="level2" data-number="3.17">
-<h2 data-number="3.17" class="anchored" data-anchor-id="suggested-mini-project"><span class="header-section-number">3.17</span> Suggested mini-project</h2>
-<p>A strong mini-project for this chapter is the following:</p>
-<blockquote class="blockquote">
-<p>Investigate graph-theoretic properties across several graph families and at least one real-world network.</p>
-</blockquote>
-<p>A complete submission should include:</p>
+<section id="exercise-7.-comparative-network-profile" class="level4">
+<h4 class="anchored" data-anchor-id="exercise-7.-comparative-network-profile">Exercise 7. Comparative network profile</h4>
+<p>Using the <code>igraph</code> workflow from <a href="#sec-working-with-graphs-in-r" class="quarto-xref"><span>Section 3.14</span></a>, construct the following four graphs:</p>
 <ul>
-<li>construction and visualization of at least four graph families,</li>
-<li>computation of key quantities: degree sequence, diameter, clustering coefficient, algebraic connectivity,</li>
-<li>analysis of at least one real network from the <code>igraphdata</code> package,</li>
-<li>comparison of the real network’s properties against the theoretical benchmarks,</li>
-<li>a discussion of which graph-theoretic quantities are most informative for characterizing the network’s structure.</li>
+<li><span class="math inline">K_5</span>,</li>
+<li><span class="math inline">C_{10}</span>,</li>
+<li><span class="math inline">P_{10}</span>,</li>
+<li>one connected realisation of <span class="math inline">G(20, 0.20)</span>.</li>
 </ul>
+<p>For each graph, compute: order, size, <span class="math inline">\langle k \rangle</span>, diameter, <span class="math inline">c(G)</span>, and <span class="math inline">\lambda_2(L)</span> where applicable. Organise the results in a single table.</p>
+<ol type="1">
+<li>The path <span class="math inline">P_{10}</span> and cycle <span class="math inline">C_{10}</span> have the same number of vertices but very different diameters. Express both diameters in closed form and prove your answers.</li>
+<li>Rank the four graphs by Fiedler value. Explain, in terms of graph structure, why the ranking comes out as it does.</li>
+<li>The random graph <span class="math inline">G(20, 0.20)</span> is not deterministic. Repeat the construction five times. How stable are the quantities in your table across realisations? Which quantity varies most?</li>
+<li>Write a short paragraph (5–8 sentences) identifying which of these graphs would make the most informative <strong>null model</strong> for comparison when, in the next chapter, we ask what a random graph typically looks like — and why.</li>
+</ol>
+<hr>
 </section>
-<section id="bridge-to-the-next-chapter" class="level2" data-number="3.18">
-<h2 data-number="3.18" class="anchored" data-anchor-id="bridge-to-the-next-chapter"><span class="header-section-number">3.18</span> Bridge to the next chapter</h2>
-<p>This chapter has treated graphs as deterministic mathematical objects: the vertex set and edge set are specified, and the goal is to reason about the resulting structure. The next chapter changes that viewpoint. Instead of fixing one graph in advance, we will study probability models that generate many possible graphs. The language introduced here — degree, adjacency matrix, connectedness, trees, and components — will become the vocabulary used to describe what a random graph typically looks like.</p>
 </section>
-<section id="concluding-remarks" class="level2" data-number="3.19">
-<h2 data-number="3.19" class="anchored" data-anchor-id="concluding-remarks"><span class="header-section-number">3.19</span> Concluding remarks</h2>
-<p>Graph theory provides the rigorous language that network science depends on. The definitions introduced in this chapter — graphs, adjacency matrices, degrees, paths, connectivity, trees — are not merely formal conventions. They are the precise tools that make it possible to state questions clearly, derive results exactly, and implement algorithms efficiently.</p>
-<p>Several key ideas run through this chapter:</p>
-<ul>
-<li>a graph encodes only the pattern of connections, not geometric or physical information,</li>
-<li>the adjacency matrix links combinatorial structure to linear algebra,</li>
-<li>the handshaking lemma is a universal constraint on any graph,</li>
-<li>connectivity, trees, and bipartiteness are global properties that determine much of a graph’s character,</li>
-<li>the Laplacian matrix connects graph structure to spectral properties, with the Fiedler value measuring robustness.</li>
-</ul>
-<p>These foundations will be used throughout all subsequent chapters. The Erdős–Rényi model, the Watts–Strogatz model, and the Barabási–Albert model are all built on top of the graph-theoretic language established here. Before asking <em>how likely</em> a graph with certain properties is, one must first be able to describe those properties precisely — and that is what this chapter has provided.</p>
+<section id="bridge-to-the-next-chapter" class="level2" data-number="3.17">
+<h2 data-number="3.17" class="anchored" data-anchor-id="bridge-to-the-next-chapter"><span class="header-section-number">3.17</span> Bridge to the next chapter</h2>
+<p>This chapter has treated graphs as deterministic mathematical objects: the vertex set and edge set are given, and the task is to reason about the resulting structure. The next chapter changes this viewpoint. Instead of fixing one graph in advance, we study probability models that generate many possible graphs. The language established here — degree, adjacency matrix, connectivity, trees, Laplacian spectrum — becomes the vocabulary used to describe what a random graph typically looks like and how its properties emerge from a simple probabilistic rule.</p>
+</section>
+<section id="concluding-remarks" class="level2" data-number="3.18">
+<h2 data-number="3.18" class="anchored" data-anchor-id="concluding-remarks"><span class="header-section-number">3.18</span> Concluding remarks</h2>
+<p>Graph theory provides the rigorous language on which network science depends. The definitions introduced here — graphs, adjacency matrices, degrees, paths, connectivity, trees, bipartiteness — are not merely formal conventions. They are the precise tools that make it possible to state questions unambiguously, derive results exactly, and implement algorithms correctly.</p>
+<p>Several structural themes run through this chapter: a graph encodes only the pattern of connections; the adjacency matrix links combinatorics to linear algebra; the handshaking lemma is a universal constraint; connectivity, trees, and bipartiteness are global properties that determine much of a graph’s character; and the Laplacian spectrum connects graph structure to spectral properties, with <span class="math inline">\lambda_2</span> measuring robustness.</p>
+<p>These foundations appear in every subsequent chapter. The Erdős–Rényi <span class="citation" data-cites="erdos1959 erdos1960">(<a href="#ref-erdos1959" role="doc-biblioref">Erdős &amp; Rényi, 1959</a>, <a href="#ref-erdos1960" role="doc-biblioref">1960</a>)</span>, Watts–Strogatz <span class="citation" data-cites="watts1998">(<a href="#ref-watts1998" role="doc-biblioref">Watts &amp; Strogatz, 1998</a>)</span>, and Barabási–Albert <span class="citation" data-cites="barabasi1999">(<a href="#ref-barabasi1999" role="doc-biblioref">Barabási &amp; Albert, 1999</a>)</span> models are all built on top of the graph-theoretic language established here. Before asking how likely a graph with certain properties is, one must be able to describe those properties precisely — and that is what this chapter has provided.</p>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-barabasi1999" class="csl-entry" role="listitem">
+Barabási, A.-L., &amp; Albert, R. (1999). Emergence of scaling in random networks. <em>Science</em>, <em>286</em>(5439), 509–512. <a href="https://doi.org/10.1126/science.286.5439.509">https://doi.org/10.1126/science.286.5439.509</a>
+</div>
+<div id="ref-barabasi2016" class="csl-entry" role="listitem">
+Barabási, A.-L., &amp; Pósfai, M. (2016). <em>Network science</em>. Cambridge University Press.
+</div>
+<div id="ref-cayley1889" class="csl-entry" role="listitem">
+Cayley, A. (1889). A theorem on trees. <em>Quarterly Journal of Pure and Applied Mathematics</em>, <em>23</em>, 376–378.
+</div>
+<div id="ref-chung1997" class="csl-entry" role="listitem">
+Chung, F. R. K. (1997). <em>Spectral graph theory</em> (Vol. 92). American Mathematical Society.
+</div>
 <div id="ref-diestel2017" class="csl-entry" role="listitem">
-Diestel, Reinhard. 2017. <em>Graph Theory</em>. 5th ed. Springer. <a href="https://doi.org/10.1007/978-3-662-53622-3">https://doi.org/10.1007/978-3-662-53622-3</a>.
+Diestel, R. (2017). <em>Graph theory</em> (5th ed.). Springer. <a href="https://doi.org/10.1007/978-3-662-53622-3">https://doi.org/10.1007/978-3-662-53622-3</a>
+</div>
+<div id="ref-erdosgallai1960" class="csl-entry" role="listitem">
+Erdős, P., &amp; Gallai, T. (1960). Graphs with prescribed degrees of vertices. <em>Matematikai Lapok</em>, <em>11</em>, 264–274.
+</div>
+<div id="ref-erdos1959" class="csl-entry" role="listitem">
+Erdős, P., &amp; Rényi, A. (1959). On random graphs i. <em>Publicationes Mathematicae</em>, <em>6</em>, 290–297.
+</div>
+<div id="ref-erdos1960" class="csl-entry" role="listitem">
+Erdős, P., &amp; Rényi, A. (1960). On the evolution of random graphs. <em>Publications of the Mathematical Institute of the Hungarian Academy of Sciences</em>, <em>5</em>, 17–61.
 </div>
 <div id="ref-euler1736" class="csl-entry" role="listitem">
-Euler, Leonhard. 1736. <span>“Solutio Problematis Ad Geometriam Situs Pertinentis.”</span> <em>Commentarii Academiae Scientiarum Imperialis Petropolitanae</em> 8: 128–40.
+Euler, L. (1736). Solutio problematis ad geometriam situs pertinentis. <em>Commentarii Academiae Scientiarum Imperialis Petropolitanae</em>, <em>8</em>, 128–140.
+</div>
+<div id="ref-fiedler1973" class="csl-entry" role="listitem">
+Fiedler, M. (1973). Algebraic connectivity of graphs. <em>Czechoslovak Mathematical Journal</em>, <em>23</em>(2), 298–305.
+</div>
+<div id="ref-koenig1916" class="csl-entry" role="listitem">
+Kőnig, D. (1916). Über graphen und ihre anwendung auf determinantentheorie und mengenlehre. <em>Mathematische Annalen</em>, <em>77</em>(4), 453–465. <a href="https://doi.org/10.1007/BF01456961">https://doi.org/10.1007/BF01456961</a>
 </div>
 <div id="ref-newman2010" class="csl-entry" role="listitem">
-Newman, M. E. J. 2010. <em>Networks: An Introduction</em>. Oxford University Press.
+Newman, M. E. J. (2010). <em>Networks: An introduction</em>. Oxford University Press.
+</div>
+<div id="ref-watts1998" class="csl-entry" role="listitem">
+Watts, D. J., &amp; Strogatz, S. H. (1998). Collective dynamics of ’small-world’ networks. <em>Nature</em>, <em>393</em>(6684), 440–442. <a href="https://doi.org/10.1038/30918">https://doi.org/10.1038/30918</a>
 </div>
 <div id="ref-west2001" class="csl-entry" role="listitem">
-West, Douglas B. 2001. <em>Introduction to Graph Theory</em>. 2nd ed. Prentice Hall.
+West, D. B. (2001). <em>Introduction to graph theory</em> (2nd ed.). Prentice Hall.
 </div>
 </div>
 </section>

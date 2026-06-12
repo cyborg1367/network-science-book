@@ -1,7 +1,8 @@
 ---
 title: "The Evolution of Random Graphs"
-subtitle: "Thresholds, components, and the emergence of large-scale connectivity"
+subtitle: "Thresholds, phase transitions, and the emergence of large-scale connectivity"
 bibliography: ../references.bib
+csl: ../apa.csl
 ---
 
 ```{r}
@@ -23,264 +24,141 @@ ns_book_setup(
 )
 ```
 
-
 ## Introduction
 
-The previous chapter focused on the static properties of random graphs: the Erdős--Rényi models, average degree, degree distribution, and clustering coefficient. This chapter follows the classical line of work on how those graphs change as edges are added and how global connectivity emerges through threshold behavior [@erdos1960; @bollobas2001book; @newman2010]. Those quantities describe the graph at a fixed stage.
+Chapter 3 described static properties of the Erdős–Rényi ensemble at a fixed edge probability $p$: the degree distribution, expected average degree, and clustering coefficient. This chapter adopts a dynamic viewpoint. Instead of fixing $p$, we ask how the graph changes as $p$ increases from $0$ to $1$, and in particular how global connectivity emerges from local random wiring.
 
-A second and equally important question is how a random graph changes as links are gradually introduced. At the beginning there may be no links at all, so every vertex is isolated. When a small number of links is added, tiny connected groups appear. As the density of links increases, these groups merge into larger connected structures. Eventually one component becomes comparable in size to the full graph. This object is called the giant component.
+The central result is that this process is not gradual and undifferentiated — it is organized by two sharp **threshold phenomena** [@erdos1960; @bollobas2001book]:
 
-The central theme of this chapter is that the emergence of large-scale connectivity is governed by a threshold phenomenon. In the Erdős--Rényi model, the expected degree
+1. Near $\langle k\rangle = 1$, a **giant component** — a connected subgraph containing a positive fraction of all vertices — emerges discontinuously.
+2. Near $\langle k\rangle = \ln N$, the graph becomes **fully connected** with high probability.
 
-$$
-\langle k \rangle = p(N-1)
-$$
+These two events are separated by a wide intermediate range in which the graph has a macroscopic backbone but also retains isolated vertices and small disconnected pieces. Understanding both thresholds, and the structural regimes between them, is the goal of this chapter.
 
-is the key parameter controlling that transition.
+The theory of random graph evolution was initiated by @erdos1960 and developed rigorously by @bollobas2001book. The network science perspective is covered in @newman2010 [Ch. 12] and @barabasi2016 [Ch. 3].
 
 ## Learning goals
 
-By the end of this chapter, it should be possible to:
+By the end of this chapter, a student should be able to:
 
--   define connected graphs and connected components precisely
--   define the size of a component and the notion of a giant component
--   explain how a random graph evolves as the edge probability increases
--   distinguish the subcritical, critical, supercritical, and connected regimes
--   explain why the threshold $\langle k \rangle = 1$ is important
--   explain why the connectedness threshold occurs near $\langle k \rangle = \ln N$
--   verify these ideas numerically in `R`
-
-
-## Chapter roadmap
-
-The chapter begins with the language of connectedness and components, since threshold phenomena cannot be understood without a precise notion of how a graph breaks into pieces. It then studies the giant component and the qualitative regimes of Erdős--Rényi evolution, before introducing the standard self-consistency equation and the connectedness threshold. Numerical experiments come only after the theory, so that the simulations can be interpreted rather than merely observed.
+-   define connected components precisely and characterise their partition structure,
+-   state the giant component and connectedness thresholds and express each in terms of $p$ and $\langle k\rangle$,
+-   derive the self-consistency equation $S = 1 - e^{-\langle k\rangle S}$ from a probabilistic argument,
+-   carry out the near-threshold expansion and obtain $S \approx 2(\langle k\rangle - 1)$,
+-   distinguish the four structural regimes and describe the component structure in each,
+-   connect all theoretical results to simulation in `R` and interpret finite-size effects.
 
 ## Connectedness and components
 
-### Connected graph
-
-::: {#def-connected-graph}
-Let $G=(V,E)$ be an undirected graph. The graph $G$ is called **connected** if for every pair of distinct vertices $u,v \in V$, there exists a path in $G$ from $u$ to $v$.
-:::
-
-This definition means that the graph forms one reachable structure. Starting from any vertex, it is possible to move to any other vertex by following a sequence of existing edges.
-
-Connectedness is therefore a global property. It is not determined by one degree value or by one local motif. It asks whether the graph, as a whole, holds together.
-
-If this condition fails, then the graph is disconnected. In that case the graph splits into separate connected pieces.
-
-### Connected component
+### Definitions
 
 ::: {#def-connected-component}
-Let $G=(V,E)$ be an undirected graph. A subgraph $H$ of $G$ is called a **connected component** of $G$ if:
-
-1.  $H$ is connected, and
-2.  $H$ is maximal with respect to inclusion among connected subgraphs of $G$.
+Let $G = (V, E)$ be an undirected graph. A **connected component** of $G$ is a maximal connected subgraph: a subgraph $H \subseteq G$ that is connected and to which no further vertex of $G$ can be added while preserving connectedness.
 :::
 
-The word *connected* means that every pair of vertices in $H$ can be joined by a path entirely contained in $H$.
+The connected components of $G$ partition the vertex set $V$: every vertex belongs to exactly one component, because if a vertex belonged to two distinct components, those components would share a vertex, contradicting their maximality. An **isolated vertex** — one with degree zero — forms a component of size $1$.
 
-The word *maximal* is equally important. It means that $H$ cannot be enlarged by adding another vertex of $G$ while keeping the subgraph connected. So a connected component is not merely a connected part of the graph. It is a connected part that is already as large as possible.
+The **size** of a component is its number of vertices, $|V(H)|$.
 
-This gives a natural decomposition of a disconnected graph: the graph is partitioned into its connected components.
-
-::: {#rem-components-partition}
-The connected components of a graph form a partition of the vertex set $V$. Every vertex belongs to exactly one connected component.
+::: {.callout-note title="Partition property"}
+Because components are maximal, the component decomposition is unique and the components tile $V$ without overlap. This is the key structural fact that makes component size a well-defined global quantity.
 :::
 
-### Size of a component
-
-::: {#def-component-size}
-Let $H$ be a connected component of a graph $G=(V,E)$. The **size** of $H$ is the number of vertices in $H$, namely
-
-$$
-|V(H)|.
-$$
-:::
-
-This quantity is simple, but it becomes crucial in random graph theory. As a random graph evolves, the central question is how the component-size pattern changes. Do only small components exist, or does one component become comparable to the full graph?
-
-### Isolated vertex
-
-::: {#def-isolated-vertex}
-A vertex $v \in V$ is called **isolated** if its degree is zero.
-:::
-
-An isolated vertex is a connected component of size $1$. So isolated vertices are not exceptions to the theory of components. They are simply the smallest possible components.
-
-### Example: component structure
+### Component structure example
 
 ```{r}
 #| label: component-examples
 #| echo: false
-#| fig-cap: "Three graphs with different component structure. Vertices in the same connected component share the same color."
+#| fig-cap: "Three graphs on seven vertices with different component structures. Vertices in the same component share the same colour."
 
 make_component_plot <- function(g, main_text) {
   comp <- components(g)$membership
-  palette_vals <- c(course_cols$teal, course_cols$blue, course_cols$gold, course_cols$coral, "#8B5CF6", "#10B981")
+  palette_vals <- c(course_cols$teal, course_cols$blue,
+                    course_cols$gold, course_cols$coral,
+                    "#8B5CF6", "#10B981")
   cols <- palette_vals[comp]
-
-  plot(
-    g,
-    layout = layout_with_fr(g),
-    vertex.size = 28,
-    vertex.color = cols,
-    vertex.frame.color = "white",
-    vertex.label.color = "white",
-    vertex.label.cex = 0.9,
-    edge.color = scales::alpha(course_cols$ink, 0.45),
-    edge.width = 2.2,
-    main = main_text
-  )
+  plot(g, layout=layout_with_fr(g),
+       vertex.size=28, vertex.color=cols,
+       vertex.frame.color="white", vertex.label.color="white",
+       vertex.label.cex=0.9,
+       edge.color=scales::alpha(course_cols$ink, 0.45),
+       edge.width=2.2, main=main_text)
 }
 
 g_comp_1 <- graph_from_edgelist(
-  matrix(
-    c(
-      "1","2",
-      "2","3",
-      "3","4",
-      "4","5",
-      "5","6",
-      "6","7"
-    ),
-    byrow = TRUE,
-    ncol = 2
-  ),
-  directed = FALSE
-)
+  matrix(c("1","2","2","3","3","4","4","5","5","6","6","7"),
+         byrow=TRUE, ncol=2), directed=FALSE)
 
 g_comp_2 <- graph_from_edgelist(
-  matrix(
-    c(
-      "1","2",
-      "2","3",
-      "3","4",
-      "5","6",
-      "6","7"
-    ),
-    byrow = TRUE,
-    ncol = 2
-  ),
-  directed = FALSE
-)
+  matrix(c("1","2","2","3","3","4","5","6","6","7"),
+         byrow=TRUE, ncol=2), directed=FALSE)
 
 g_comp_3 <- graph_from_edgelist(
-  matrix(
-    c(
-      "1","2",
-      "2","3",
-      "4","5"
-    ),
-    byrow = TRUE,
-    ncol = 2
-  ),
-  directed = FALSE
-)
-g_comp_3 <- add_vertices(g_comp_3, 2, name = c("6", "7"))
+  matrix(c("1","2","2","3","4","5"), byrow=TRUE, ncol=2), directed=FALSE)
+g_comp_3 <- add_vertices(g_comp_3, 2, name=c("6","7"))
 
-old_par <- par(no.readonly = TRUE)
-par(mfrow = c(1, 3), mar = c(1, 1, 3, 1))
-
-make_component_plot(g_comp_1, "One component")
-make_component_plot(g_comp_2, "Two components")
-make_component_plot(g_comp_3, "Four components")
-
+old_par <- par(no.readonly=TRUE)
+par(mfrow=c(1,3), mar=c(1,1,3,1))
+make_component_plot(g_comp_1, "One component (sizes: 7)")
+make_component_plot(g_comp_2, "Two components (sizes: 4, 3)")
+make_component_plot(g_comp_3, "Four components (sizes: 3, 2, 1, 1)")
 par(old_par)
 ```
 
-The three graphs above illustrate the same idea in progressively more disconnected form:
-
--   in the first graph, every vertex belongs to one single connected component
--   in the second graph, the graph splits into two components
--   in the third graph, the graph decomposes into several small pieces, including isolated vertices
-
-### Component-size table
-
-|      Graph      | Component sizes |
-|:---------------:|:----------------|
-|  One component  | $7$             |
-| Two components  | $4, 3$          |
-| Four components | $3, 2, 1, 1$    |
-
-This table translates the picture into numerical structure and prepares the transition to the notion of a giant component.
-
-## Giant component
-
-### Definition
+## The giant component
 
 ::: {#def-giant-component}
-Let $G_N$ be a graph on $N$ vertices, and let $C_{\max}(G_N)$ denote its largest connected component. A sequence of random graphs is said to contain a **giant component** if
+Let $C_{\max}(G_N)$ denote the largest connected component of a graph on $N$ vertices. A sequence of random graphs contains a **giant component** if
 
 $$
-\frac{|C_{\max}(G_N)|}{N}
+\frac{|C_{\max}(G_N)|}{N} \;\xrightarrow{N\to\infty}\; c > 0.
 $$
-
-converges to a positive quantity as $N \to \infty$.
 :::
 
-This definition should be interpreted carefully. Every finite graph has a largest connected component, but not every largest connected component is a giant component in the asymptotic sense.
+The term *giant* is reserved for components that constitute a **positive fraction** of all vertices in the large-$N$ limit. Every finite graph trivially has a largest component, but that component is giant only when it grows proportionally with the system size. Before the giant component emerges, all components have sizes of order $O(\log N)$ or smaller.
 
-The term *giant* means that the component contains a nonvanishing fraction of all vertices. It is therefore a macroscopic object, not merely the largest among several still-small pieces.
+## Evolution of a random graph
 
-### Why the giant component matters
-
-The giant component marks the first stage at which the graph begins to behave like a true network at the global level.
-
-Before it appears:
-
--   most vertices belong only to tiny disconnected groups
--   reachability is local
--   no global connected backbone exists
-
-After it appears:
-
--   a positive fraction of vertices become mutually reachable
--   one connected structure dominates the graph
--   system-wide connectivity becomes possible
-
-So the emergence of the giant component is the key event in the evolution of a random graph.
-
-## The evolution of a random graph
-
-Consider the Erdős--Rényi model $G(N,p)$ with fixed $N$ and variable parameter $p \in [0,1]$.
-
-At one extreme,
+Consider $G(N,p)$ with $N$ fixed and $p$ increasing from $0$ to $1$. The evolution passes through four qualitatively distinct structural regimes, controlled by the expected degree
 
 $$
-p = 0,
+\langle k\rangle = p(N-1).
 $$
 
-no edges are present, so every vertex is isolated.
+### The four regimes {#sec-four-regimes}
 
-At the other extreme,
+::: {#def-subcritical}
+**Subcritical regime: $\langle k\rangle < 1$.**
+No giant component exists. Almost all connected components have size $O(\log N)$. The largest component has size of order $\log N$ [@bollobas2001book, Ch. 6]. Isolated vertices are common.
+:::
 
-$$
-p = 1,
-$$
+::: {#def-critical-regime}
+**Critical regime: $\langle k\rangle \approx 1$.**
+The phase transition. The largest component has size of order $N^{2/3}$ — macroscopic, but still a vanishing fraction of $N$ [@erdos1960]. This is the boundary at which the giant component is born.
+:::
 
-every possible edge is present, so the graph is complete and hence connected.
+::: {#def-supercritical}
+**Supercritical regime: $\langle k\rangle > 1$.**
+A unique giant component exists, containing a fraction $S > 0$ of all vertices. The remaining vertices form many small finite components, predominantly tree-like near the threshold. The giant component itself contains cycles.
+:::
 
-The mathematically interesting behavior lies between these extremes. As $p$ increases,
+::: {#def-connected-regime}
+**Connected regime: $\langle k\rangle \approx \ln N$.**
+The graph is connected with high probability. More precisely, for $p = (\ln N + c)/N$ with $c$ a constant, the probability that $G(N,p)$ is connected converges to $e^{-e^{-c}}$ as $N \to \infty$ [@erdos1960; @bollobas2001book, Ch. 7].
+:::
 
-1.  isolated vertices begin to join into tiny components,
-2.  small components merge into larger components,
-3.  one component begins to dominate,
-4.  eventually the graph becomes connected.
+::: {.callout-important title="Two distinct thresholds"}
+The giant component emerges at $\langle k\rangle = 1$ ($p_c \approx 1/N$). The graph becomes fully connected at $\langle k\rangle \approx \ln N$ ($p \approx \ln N / N$). Between these thresholds, the graph has a macroscopic giant component but also retains isolated vertices and small disconnected pieces. A graph with a giant component is **not** necessarily connected.
+:::
 
-So the evolution of the graph is most naturally described through the evolution of its component structure.
-
-### Evolution through snapshots
-
-To visualize this process clearly, the same vertex set and the same vertex positions are used in all snapshots below. The edge set evolves monotonically: once an edge appears, it remains present at later stages. This makes the sequence a true network evolution rather than a collection of unrelated random realizations.
+### Monotone evolution
 
 ```{r}
 #| label: evolution-snapshots
 #| echo: false
-#| fig-cap: "Evolution of a random graph on a fixed vertex set. Vertex positions are fixed across all snapshots, and the edge set grows monotonically with p. The largest connected component is highlighted."
+#| fig-cap: "Evolution of G(N,p) on a fixed vertex set of 40 vertices. Vertex positions are fixed; edges accumulate monotonically. The largest component is highlighted in red."
 
 set.seed(2026)
-
 n_snap <- 40
 p_vals <- c(0.00, 0.01, 0.03, 0.06, 0.12, 0.22)
 
@@ -288,11 +166,9 @@ all_pairs <- t(combn(1:n_snap, 2))
 edge_order_u <- runif(nrow(all_pairs))
 
 make_evolving_graph <- function(p) {
-  chosen <- all_pairs[edge_order_u <= p, , drop = FALSE]
-  g <- make_empty_graph(n = n_snap, directed = FALSE)
-  if (nrow(chosen) > 0) {
-    g <- add_edges(g, as.vector(t(chosen)))
-  }
+  chosen <- all_pairs[edge_order_u <= p, , drop=FALSE]
+  g <- make_empty_graph(n=n_snap, directed=FALSE)
+  if (nrow(chosen) > 0) g <- add_edges(g, as.vector(t(chosen)))
   g
 }
 
@@ -305,278 +181,120 @@ plot_snapshot <- function(p, title_text) {
   memb <- comp$membership
   sizes <- comp$csize
   largest_id <- if (length(sizes) > 0) which.max(sizes) else 1
-
   vcols <- ifelse(memb == largest_id, course_cols$coral, course_cols$blue)
-
   if (ecount(g) > 0) {
-    e_ends <- ends(g, E(g), names = FALSE)
-    ecol <- apply(e_ends, 1, function(x) {
-      if (memb[x[1]] == largest_id && memb[x[2]] == largest_id) {
+    e_ends <- ends(g, E(g), names=FALSE)
+    ecol <- apply(e_ends, 1, function(x)
+      if (memb[x[1]] == largest_id && memb[x[2]] == largest_id)
         scales::alpha(course_cols$coral, 0.55)
-      } else {
-        scales::alpha(course_cols$ink, 0.22)
-      }
-    })
-  } else {
-    ecol <- NULL
-  }
-
-  plot(
-    g,
-    layout = layout_fixed,
-    vertex.size = 14,
-    vertex.color = vcols,
-    vertex.frame.color = "white",
-    vertex.label = NA,
-    edge.color = ecol,
-    edge.width = 1.4,
-    main = title_text
-  )
+      else scales::alpha(course_cols$ink, 0.22))
+  } else ecol <- NULL
+  plot(g, layout=layout_fixed, vertex.size=14, vertex.color=vcols,
+       vertex.frame.color="white", vertex.label=NA,
+       edge.color=ecol, edge.width=1.4, main=title_text)
 }
 
-old_par <- par(no.readonly = TRUE)
-par(mfrow = c(2, 3), mar = c(1, 1, 3, 1))
-
-for (p in p_vals) {
-  plot_snapshot(p, paste0("p = ", sprintf("%.2f", p)))
-}
-
+old_par <- par(no.readonly=TRUE)
+par(mfrow=c(2,3), mar=c(1,1,3,1))
+for (p in p_vals) plot_snapshot(p, paste0("p = ", sprintf("%.2f", p)))
 par(old_par)
 ```
 
-These snapshots show several distinct structural stages.
+## The self-consistency equation
 
--   At $p=0$, all vertices are isolated.
--   For very small $p$, tiny components begin to appear.
--   At intermediate values of $p$, components merge and one of them starts to dominate.
--   At larger values of $p$, most vertices belong to a single large connected structure.
+### Derivation
 
-The qualitative transition is therefore from fragmentation to macroscopic connectivity.
+The fraction $S$ of vertices in the giant component satisfies a self-consistency equation that can be derived from first principles [@newman2010, Ch. 12].
 
-## Regimes of random-graph evolution
+A vertex $v$ belongs to the giant component if and only if at least one of its neighbors also belongs to the giant component. Equivalently, $v$ does **not** belong to the giant component if and only if every one of its neighbors also lies outside the giant component.
 
-A convenient parameter for describing these regimes is the expected degree
+Let $u$ be a neighbor of $v$, reached by following a random edge. The probability that $u$ does not lead to the giant component is $e^{-\langle k\rangle S}$, derived as follows. Following an edge from $v$ to $u$ means $u$ has at least one neighbor ($v$), so the remaining degree of $u$ (the number of further neighbors) is approximately Poisson$(\langle k\rangle)$ in the sparse large-$N$ limit. Each of those further neighbors independently fails to reach the giant with probability $1-S$. Therefore the probability that $u$ itself does not reach the giant is
 
 $$
-\langle k \rangle = p(N-1).
+\sum_{j=0}^{\infty} e^{-\langle k\rangle}\frac{\langle k\rangle^j}{j!}(1-S)^j = e^{-\langle k\rangle S}.
 $$
 
-This quantity is more informative than $p$ alone because it measures the expected number of neighbors per vertex.
-
-### Subcritical regime
-
-::: {#def-subcritical}
-The random graph is in the **subcritical regime** when
+Since $v$ has Poisson$(\langle k\rangle)$ neighbors (in the sparse limit), each independently failing to reach the giant with probability $e^{-\langle k\rangle S}$, the probability that $v$ itself is not in the giant component is $e^{-\langle k\rangle \cdot S}$... but $S$ here is the probability that a *neighbor reached by a random edge* belongs to the giant, which by the self-consistency argument equals $S$ itself. Therefore the probability that $v$ lies outside the giant is $e^{-\langle k\rangle S}$, giving
 
 $$
-\langle k \rangle < 1.
+\boxed{S = 1 - e^{-\langle k\rangle S}.}
 $$
+
+::: {.callout-note title="Existence of a positive solution"}
+Define $f(S) = 1 - e^{-\langle k\rangle S}$. Note $f(0) = 0$, so $S = 0$ is always a solution. The derivative at $S = 0$ is $f'(0) = \langle k\rangle$. A positive fixed point exists if and only if $f'(0) > 1$, i.e., $\langle k\rangle > 1$. This is the **giant component threshold**. When $\langle k\rangle \leq 1$, the only solution is $S = 0$; when $\langle k\rangle > 1$, a unique positive solution $S^* \in (0,1)$ exists [@bollobas2001book, Ch. 5].
 :::
 
-In this regime, no giant component exists. Almost all components are small, and isolated vertices are common. The graph contains connectivity, but only at a local scale.
+### Near-threshold expansion {#sec-near-threshold}
 
-### Critical regime
-
-::: {#def-critical-regime}
-The random graph is in the **critical regime** when
+When $\langle k\rangle = 1 + \varepsilon$ with $\varepsilon > 0$ small, the positive solution $S^*$ is also small. Expand the exponential to second order in $S$:
 
 $$
-\langle k \rangle \approx 1.
+S = 1 - e^{-\langle k\rangle S}
+\approx 1 - \left(1 - \langle k\rangle S + \frac{\langle k\rangle^2 S^2}{2} - \cdots\right)
+= \langle k\rangle S - \frac{\langle k\rangle^2 S^2}{2} + O(S^3).
 $$
+
+Rearranging (and discarding $O(S^3)$ since $S$ is small):
+
+$$
+S - \langle k\rangle S + \frac{\langle k\rangle^2 S^2}{2} \approx 0
+\implies
+S\!\left(1 - \langle k\rangle + \frac{\langle k\rangle^2 S}{2}\right) = 0.
+$$
+
+The non-zero solution satisfies $\frac{\langle k\rangle^2 S}{2} \approx \langle k\rangle - 1 = \varepsilon$, giving
+
+$$
+\boxed{S \approx \frac{2(\langle k\rangle - 1)}{\langle k\rangle^2} \approx 2(\langle k\rangle - 1) \qquad \text{as } \langle k\rangle \downarrow 1^+.}
+$$
+
+The transition is **continuous**: the giant component size grows linearly with the distance $\varepsilon = \langle k\rangle - 1$ from the threshold. There is no jump discontinuity in $S$ — the giant component emerges gradually from zero.
+
+::: {.callout-tip title="Physical interpretation"}
+The linear growth $S \approx 2(\langle k\rangle - 1)$ means that doubling the excess degree doubles the fraction of vertices absorbed into the giant component, at least near the threshold. Far above the threshold, $S$ saturates toward $1$ as the graph approaches full connectivity.
 :::
-
-This is the transition region. It is the stage at which the graph changes from a collection of small components into a graph containing a giant component.
-
-In finite networks, the transition is not perfectly sharp. But as the system becomes large, the threshold becomes more pronounced.
-
-### Supercritical regime
-
-::: {#def-supercritical}
-The random graph is in the **supercritical regime** when
-
-$$
-\langle k \rangle > 1.
-$$
-:::
-
-This is the first regime in which a giant component exists. One connected component contains a positive fraction of all vertices, while many smaller components continue to coexist with it.
-
-This regime is especially important because it is the first stage at which the graph has a genuine large-scale network structure.
-
-### Connected regime
-
-::: {#def-connected-regime}
-The random graph enters the **connected regime** when the graph is connected with high probability as $N$ becomes large. In the Erdős--Rényi model this occurs near
-
-$$
-\langle k \rangle \approx \ln N,
-$$
-
-or equivalently,
-
-$$
-p \approx \frac{\ln N}{N}.
-$$
-:::
-
-This threshold is much larger than the giant-component threshold $\langle k \rangle = 1$. So the emergence of a giant component and the graph becoming connected are two different events.
-
-There is therefore a broad intermediate range in which the graph already has a giant component but is not yet fully connected.
-
-## Mathematical description of the giant component
-
-A central quantity is the relative size of the giant component,
-
-$$
-S = \frac{N_G}{N},
-$$
-
-where $N_G$ denotes the number of vertices in the largest connected component.
-
-In the Erdős--Rényi model, the asymptotic fraction $S$ of vertices contained in the giant component satisfies the self-consistency equation
-
-$$
-S = 1 - e^{-\langle k \rangle S}.
-$$
-
-This equation is a concise mathematical description of the giant component.
-
-### Interpretation of the self-consistency equation
-
-The quantity $1-S$ is the fraction of vertices that do **not** belong to the giant component.
-
-A vertex fails to belong to the giant component only if all of its potential connections lead to vertices that also fail to belong to the giant component. In the Erdős--Rényi setting, that logic leads to the exponential form above.
-
-So the equation
-
-$$
-S = 1 - e^{-\langle k \rangle S}
-$$
-
-expresses the self-consistent probability that a vertex belongs to the giant structure.
-
-::: {.callout-note title="Key result: self-consistency equation"}
-The fraction $S$ of vertices in the giant component satisfies
-
-$$
-S = 1 - e^{-\langle k \rangle S}.
-$$
-
-This equation has no positive solution when $\langle k \rangle \leq 1$, and a unique positive solution when $\langle k \rangle > 1$.
-:::
-
-### Near-threshold behavior
-
-When $\langle k \rangle$ is only slightly larger than $1$, the giant component is still small relative to its later size, but it is already macroscopic. In that near-threshold region,
-
-$$
-S \sim 2(\langle k \rangle - 1)
-\qquad
-\text{as }
-\langle k \rangle \downarrow 1^{+}.
-$$
-
-Equivalently,
-
-$$
-N_G \sim 2(\langle k \rangle - 1)N.
-$$
-
-So near the transition, the giant component grows linearly with the distance from the threshold.
-
-::: {.callout-tip title="Near-threshold scaling"}
-Just above the threshold, the giant component size grows as
-
-$$
-S \approx 2(\langle k \rangle - 1), \qquad \langle k \rangle \downarrow 1^{+}.
-$$
-
-The transition is therefore continuous: the giant component emerges gradually, growing linearly with the excess degree.
-:::
-
-### Structure in the supercritical regime
-
-In the supercritical regime, the graph has two coexisting structural parts:
-
-1.  one giant component containing a positive fraction of all vertices,
-2.  many finite components outside the giant component.
-
-Near the threshold, those finite components are typically small and predominantly tree-like. By contrast, the giant component contains many cycles and loops. So the onset of the giant component is also the onset of genuinely complex global connectivity.
 
 ### Connectedness threshold
 
-The giant component threshold occurs near
+Connectivity requires more than a giant component: every vertex must be reachable from every other vertex. The binding constraint is isolated vertices. A vertex $v$ is isolated if none of its $N-1$ potential edges is present, which happens with probability $(1-p)^{N-1}$. The expected number of isolated vertices is
 
 $$
-\langle k \rangle = 1,
+\mathbb{E}[\text{isolated}] = N(1-p)^{N-1} \approx N e^{-p(N-1)} = N e^{-\langle k\rangle}.
 $$
 
-but the graph becomes connected only much later, near
+Setting this equal to $1$ gives $\langle k\rangle = \ln N$, or equivalently $p = \ln N / N$. This is the **connectedness threshold**: below it, isolated vertices are expected and the graph is disconnected; above it, isolated vertices disappear and the graph becomes connected with high probability.
+
+More precisely [@erdos1960; @bollobas2001book, Ch. 7], for $p = (\ln N + c)/N$:
 
 $$
-\langle k \rangle = \ln N.
+P(G(N,p) \text{ is connected}) \;\xrightarrow{N\to\infty}\; e^{-e^{-c}}.
 $$
 
-This is a major conceptual point. The existence of a giant component does **not** imply that the graph is connected.
-
-So there is an intermediate range,
-
-$$
-1 < \langle k \rangle < \ln N,
-$$
-
-in which
-
--   the graph has a giant component,
--   many smaller components still exist,
--   isolated vertices may still be present,
--   the full graph is not yet connected.
-
-Only when the average degree reaches order $\ln N$ do these remaining disconnected pieces disappear with high probability.
-
-::: {.callout-important title="Two distinct thresholds"}
-The emergence of the giant component and the graph becoming fully connected are separate events:
-
--   **Giant component threshold:** $\langle k \rangle = 1$
--   **Connectedness threshold:** $\langle k \rangle \approx \ln N$
-
-Between these two thresholds, the graph has a macroscopic connected backbone but also retains isolated vertices and small disconnected pieces.
-:::
-
-
-## Finite-size interpretation of the thresholds
-
-The thresholds discussed in this chapter are sharp in the large-$N$ limit, but numerical simulations are always finite. For finite graphs, the transition is therefore rounded rather than perfectly abrupt. In practice, one should read the threshold near $\langle k \rangle = 1$ as the location where the giant component begins to dominate, and the connectedness threshold near $\langle k \rangle = \ln N$ as the scale where isolated vertices become rare enough that full connectivity becomes likely [@newman2010; @bollobas2001book].
-
-This finite-size viewpoint is important pedagogically. It prevents the theory from being interpreted too mechanically and helps explain why simulation curves are smooth even when the asymptotic theory speaks in terms of sharp transitions.
+Setting $c = 0$ gives $P \to e^{-1} \approx 0.368$; the graph is connected with probability $1/2$ when $c = \ln\ln 2 \approx -0.37$.
 
 ## Numerical exploration
-
-The structural transition can be observed numerically by generating many graphs for different values of $p$ and tracking several global quantities.
 
 ```{r}
 #| label: giant-component-scan
 
 set.seed(2026)
-
-n <- 500
-k_grid <- seq(0.1, 8.0, length.out = 45)
+n    <- 500
+k_grid <- seq(0.1, 8.0, length.out=45)
 p_grid <- k_grid / (n - 1)
-reps <- 80
+reps   <- 80
 
 evolution_tbl <- map_dfr(p_grid, function(p) {
   map_dfr(seq_len(reps), function(rep_id) {
-    g <- sample_gnp(n = n, p = p, directed = FALSE, loops = FALSE)
+    g    <- sample_gnp(n=n, p=p, directed=FALSE, loops=FALSE)
     comp <- components(g)$csize
-
     tibble(
-      p = p,
-      mean_degree = p * (n - 1),
-      rep = rep_id,
-      largest_component_fraction = max(comp) / n,
-      number_of_components = length(comp),
-      isolated_fraction = sum(comp == 1) / n,
-      connected_indicator = as.integer(length(comp) == 1)
+      p                         = p,
+      mean_degree               = p*(n-1),
+      rep                       = rep_id,
+      largest_component_fraction = max(comp)/n,
+      number_of_components      = length(comp),
+      isolated_fraction         = sum(comp==1)/n,
+      connected_indicator       = as.integer(length(comp)==1)
     )
   })
 })
@@ -585,490 +303,206 @@ evolution_summary <- evolution_tbl |>
   group_by(p, mean_degree) |>
   summarise(
     largest_component_fraction = mean(largest_component_fraction),
-    number_of_components = mean(number_of_components),
-    isolated_fraction = mean(isolated_fraction),
-    connected_probability = mean(connected_indicator),
-    connected_probability_se = sqrt(connected_probability * (1 - connected_probability) / n()),
+    number_of_components       = mean(number_of_components),
+    isolated_fraction          = mean(isolated_fraction),
+    connected_probability      = mean(connected_indicator),
+    connected_probability_se   = sqrt(connected_probability*(1-connected_probability)/n()),
     .groups = "drop"
   )
 
-iso_fit <- isoreg(evolution_summary$mean_degree, evolution_summary$connected_probability)
+iso_fit <- isoreg(evolution_summary$mean_degree,
+                  evolution_summary$connected_probability)
 evolution_summary$connected_probability_iso <- iso_fit$yf
 ```
 
-### Largest component fraction
+### Giant component fraction
 
 ```{r}
-#| label: giant-component-plot
-#| fig-cap: "Average fraction of vertices in the largest connected component as a function of expected degree. The dashed vertical lines indicate the giant-component threshold and the connectedness threshold."
+#| label: fig-giant-component-plot
+#| fig-cap: "Average fraction of vertices in the largest component as a function of expected degree. The theoretical curve from the self-consistency equation is overlaid. Red dashed: giant-component threshold. Blue dotted: connectedness threshold."
 
-ggplot(evolution_summary, aes(x = mean_degree, y = largest_component_fraction)) +
-  geom_line(color = course_cols$teal, linewidth = 1.2) +
-  geom_point(color = course_cols$gold, size = 2.1) +
-  geom_vline(xintercept = 1, color = course_cols$coral, linewidth = 1.0, linetype = 2) +
-  geom_vline(xintercept = log(n), color = course_cols$blue, linewidth = 1.0, linetype = 3) +
-  labs(
-    title = "Emergence of the giant component",
-    subtitle = "Red dashed line: giant-component threshold. Blue dotted line: connectedness threshold.",
-    x = "Expected degree E[k]",
-    y = "Largest component fraction"
-  )
+# Theoretical S from self-consistency equation
+solve_S <- function(k_mean, tol=1e-8, max_iter=1000) {
+  if (k_mean <= 0) return(0)
+  S <- 0.5
+  for (i in seq_len(max_iter)) {
+    S_new <- 1 - exp(-k_mean * S)
+    if (abs(S_new - S) < tol) return(S_new)
+    S <- S_new
+  }
+  S
+}
+theory_tbl <- tibble(
+  mean_degree = seq(0.1, 8.0, length.out=200),
+  S_theory    = sapply(mean_degree, solve_S)
+)
+
+ggplot(evolution_summary, aes(x=mean_degree, y=largest_component_fraction)) +
+  geom_point(color=course_cols$gold, size=2.1, alpha=0.8) +
+  geom_line(data=theory_tbl, aes(x=mean_degree, y=S_theory),
+            color=course_cols$teal, linewidth=1.2) +
+  geom_vline(xintercept=1, color=course_cols$coral,
+             linewidth=1.0, linetype=2) +
+  geom_vline(xintercept=log(n), color=course_cols$blue,
+             linewidth=1.0, linetype=3) +
+  labs(title="Emergence of the giant component",
+       subtitle="Teal curve: theoretical S from self-consistency equation",
+       x=expression(paste("Expected degree ", langle*k*rangle)),
+       y="Largest component fraction S")
 ```
 
-This plot captures the main phase transition. For small expected degree, the largest component occupies only a small fraction of the graph. Near $\langle k \rangle = 1$, the largest component begins to grow rapidly. Well before the graph becomes connected, one component already dominates the structure.
-
-### Number of connected components
-
-```{r}
-#| label: number-components-plot
-#| fig-cap: "Average number of connected components as a function of expected degree."
-
-ggplot(evolution_summary, aes(x = mean_degree, y = number_of_components)) +
-  geom_line(color = course_cols$blue, linewidth = 1.2) +
-  geom_point(color = course_cols$gold, size = 2.1) +
-  geom_vline(xintercept = 1, color = course_cols$coral, linewidth = 1.0, linetype = 2) +
-  geom_vline(xintercept = log(n), color = course_cols$blue, linewidth = 1.0, linetype = 3) +
-  labs(
-    title = "Decrease in the number of connected components",
-    subtitle = "Disconnected pieces merge as the graph evolves",
-    x = "Expected degree E[k]",
-    y = "Average number of components"
-  )
-```
-
-This second plot reveals the same transition from another viewpoint. At small expected degree, the graph contains many disconnected pieces. As more links are added, these components merge, and the total number of components decreases.
-
-### Fraction of isolated vertices
-
-```{r}
-#| label: isolated-fraction-plot
-#| fig-cap: "Average fraction of isolated vertices as a function of expected degree."
-
-ggplot(evolution_summary, aes(x = mean_degree, y = isolated_fraction)) +
-  geom_line(color = course_cols$teal, linewidth = 1.2) +
-  geom_point(color = course_cols$gold, size = 2.1) +
-  geom_vline(xintercept = 1, color = course_cols$coral, linewidth = 1.0, linetype = 2) +
-  geom_vline(xintercept = log(n), color = course_cols$blue, linewidth = 1.0, linetype = 3) +
-  labs(
-    title = "Disappearance of isolated vertices",
-    subtitle = "Isolated vertices become rare as the network densifies",
-    x = "Expected degree E[k]",
-    y = "Fraction of isolated vertices"
-  )
-```
-
-Isolated vertices are abundant at very small edge density, but they disappear as the graph evolves. Their disappearance is one of the main signals that the graph is approaching connectedness.
-
-### Probability of connectedness
+### Connectedness probability
 
 ```{r}
 #| label: connected-probability-plot
-#| fig-cap: "Estimated connectedness probability as a function of expected degree. Points show Monte Carlo estimates; the solid curve is the monotone isotonic fit."
+#| fig-cap: "Empirical connectedness probability with 95% confidence bands. The monotone isotonic fit (solid line) enforces the theoretical constraint that P(connected) is non-decreasing in p."
 
-ggplot(evolution_summary, aes(x = mean_degree)) +
+ggplot(evolution_summary, aes(x=mean_degree)) +
   geom_ribbon(
-    aes(
-      ymin = pmax(connected_probability - 1.96 * connected_probability_se, 0),
-      ymax = pmin(connected_probability + 1.96 * connected_probability_se, 1)
-    ),
-    fill = course_cols$blue,
-    alpha = 0.12
-  ) +
-  geom_point(aes(y = connected_probability), color = course_cols$gold, size = 1.9) +
-  geom_line(aes(y = connected_probability_iso), color = course_cols$coral, linewidth = 1.2) +
-  geom_vline(xintercept = 1, color = course_cols$coral, linewidth = 1.0, linetype = 2) +
-  geom_vline(xintercept = log(n), color = course_cols$blue, linewidth = 1.0, linetype = 3) +
-  labs(
-    title = "Connectedness probability",
-    subtitle = "The true probability is monotone increasing; the fitted line enforces that theoretical property.",
-    x = "Expected degree E[k]",
-    y = "Probability that the graph is connected"
-  )
+    aes(ymin=pmax(connected_probability - 1.96*connected_probability_se, 0),
+        ymax=pmin(connected_probability + 1.96*connected_probability_se, 1)),
+    fill=course_cols$blue, alpha=0.12) +
+  geom_point(aes(y=connected_probability), color=course_cols$gold, size=1.9) +
+  geom_line(aes(y=connected_probability_iso), color=course_cols$coral, linewidth=1.2) +
+  geom_vline(xintercept=1, color=course_cols$coral,
+             linewidth=1.0, linetype=2) +
+  geom_vline(xintercept=log(n), color=course_cols$blue,
+             linewidth=1.0, linetype=3) +
+  labs(title="Connectedness probability",
+       subtitle=sprintf("N = %d; dashed = giant threshold; dotted = connectedness threshold (ln N = %.2f)", n, log(n)),
+       x=expression(paste("Expected degree ", langle*k*rangle)),
+       y="P(connected)")
 ```
 
-For fixed $N$, the true connectedness probability is a monotone increasing function of $p$. Small downward wiggles in raw simulation estimates are caused by Monte Carlo noise. The points in the figure are the empirical estimates from a finite number of repetitions, while the solid line is an isotonic fit, which enforces the correct monotone behavior.
-
-This last plot makes the distinction between the two thresholds especially clear. The giant component appears near $\langle k \rangle = 1$, but the probability that the graph is fully connected remains small until the expected degree is of order $\ln N$.
+The two plots together make the structural distinction explicit: the giant component fraction begins rising sharply near $\langle k\rangle = 1$, while the connectedness probability remains near zero until $\langle k\rangle \approx \ln N \approx 6.2$ for $N = 500$.
 
 ## Summary of regimes
 
-| Regime | Condition | Main structural property |
-|:---|:---|:---|
-| Subcritical | $\langle k \rangle < 1$ | Only small connected components are present |
-| Critical | $\langle k \rangle \approx 1$ | The giant component begins to emerge |
-| Supercritical | $\langle k \rangle > 1$ | A giant component coexists with many finite components |
-| Connected | $\langle k \rangle \approx \ln N$ | The full graph is connected with high probability |
+| Regime | Condition | Largest component | Isolated vertices | Connected? |
+|:---|:---:|:---:|:---:|:---:|
+| Subcritical | $\langle k\rangle < 1$ | $O(\log N)$ | Common | No |
+| Critical | $\langle k\rangle \approx 1$ | $O(N^{2/3})$ | Present | No |
+| Supercritical | $1 < \langle k\rangle < \ln N$ | $\Theta(N)$ | Decreasing | No |
+| Connected | $\langle k\rangle \gtrsim \ln N$ | $N$ | Absent (w.h.p.) | Yes |
 
-This table summarizes the evolution of the Erdős--Rényi random graph in terms of its component structure.
-
-## Core formulas to remember
+## Core formulas
 
 ::: {.callout-important title="Summary"}
-For the evolution of Erdős--Rényi random graphs $G(N,p)$:
-
-1.  **Expected degree:** $$\langle k \rangle = p(N-1)$$
-
-2.  **Giant-component threshold:** $$\langle k \rangle = 1 \quad \Leftrightarrow \quad p_c \approx \frac{1}{N}$$
-
-3.  **Giant-component fraction** (self-consistency equation): $$S = 1 - e^{-\langle k \rangle S}$$
-
-4.  **Near-threshold size:** $$S \approx 2(\langle k \rangle - 1), \qquad \langle k \rangle \downarrow 1^{+}$$
-
-5.  **Connectedness threshold:** $$\langle k \rangle \approx \ln N \quad \Leftrightarrow \quad p \approx \frac{\ln N}{N}$$
+| Result | Formula |
+|:---|:---:|
+| Giant-component threshold | $\langle k\rangle = 1$, i.e., $p_c \approx 1/N$ |
+| Self-consistency equation | $S = 1 - e^{-\langle k\rangle S}$ |
+| Near-threshold size | $S \approx 2(\langle k\rangle - 1)$ for $\langle k\rangle \downarrow 1^+$ |
+| Connectedness threshold | $\langle k\rangle \approx \ln N$, i.e., $p \approx \ln N/N$ |
+| Isolated vertex count | $\mathbb{E}[\text{isolated}] \approx N e^{-\langle k\rangle}$ |
 :::
 
 ## In-class questions
 
-1.  Why is connectedness a global property of a graph?
-2.  What role does maximality play in the definition of a connected component?
-3.  Why is an isolated vertex still a connected component?
-4.  What distinguishes a largest component from a giant component?
-5.  Why does the threshold $\langle k \rangle = 1$ matter?
-6.  Why does the connectedness threshold occur later, near $\langle k \rangle = \ln N$?
-7.  Why can a graph have a giant component and still be disconnected?
+1.  Why do the connected components of a graph partition the vertex set?
+2.  A graph has 1000 vertices and its largest component contains 600. Is this a giant component? Justify using the definition.
+3.  Why does $f'(0) > 1$ imply the existence of a positive fixed point of $f(S) = 1 - e^{-\langle k\rangle S}$?
+4.  Why does the connectedness threshold depend on $\ln N$ rather than a constant?
+5.  A student observes that a graph with $N = 100$ and $\langle k\rangle = 1.5$ has no isolated vertices. Does this mean the graph is connected? Explain.
+6.  In the near-threshold expansion, why is it valid to truncate the Taylor series at second order?
 
-## End-of-chapter exercises
+## Exercises
 
-The exercises below are grouped into three categories:
+The seven exercises below cover the full theoretical and computational content of this chapter. They require derivation, analysis, and synthesis — not reproduction of lecture material.
 
-1.  mathematical exercises,
-2.  conceptual and analytical exercises,
-3.  simulation and coding exercises.
+---
 
-They are designed to move from formal understanding to computational verification.
+#### Exercise 1. Components, partitions, and the giant component criterion
 
-### Part I. Mathematical exercises
+1. Let $G = (V,E)$ be any graph. Prove that the connected components partition $V$: every vertex belongs to exactly one component. Your proof must use the definition of maximality precisely.
+2. Let $G_N = P_N$ (the path graph on $N$ vertices). Compute $|C_{\max}(G_N)|/N$ and determine whether $P_N$ contains a giant component in the sense of @def-giant-component.
+3. Let $G_N = \lfloor N/2\rfloor \cdot K_2$ (a perfect matching: $\lfloor N/2\rfloor$ disjoint edges). Compute $|C_{\max}(G_N)|/N$. Does this sequence contain a giant component?
+4. Construct a sequence of graphs $\{G_N\}$ such that $|C_{\max}(G_N)|/N \to 1/3$. Is this a giant component? Compare to the Erdős–Rényi case: at what value of $\langle k\rangle$ does the self-consistency equation give $S = 1/3$?
 
-#### Exercise 1. Components and partitions
+---
 
-Let $G=(V,E)$ be an undirected graph.
+#### Exercise 2. The self-consistency equation: analysis and phase transition
 
-1.  Prove that every vertex of $G$ belongs to at least one connected component.
-2.  Prove that no vertex can belong to two distinct connected components.
-3.  Deduce that the connected components of $G$ form a partition of the vertex set $V$.
+The self-consistency equation is $S = 1 - e^{-\langle k\rangle S}$, with $f(S) = 1 - e^{-\langle k\rangle S}$.
 
-------------------------------------------------------------------------
+1. Show that $S = 0$ is always a solution. Show that any other fixed point $S^* > 0$ satisfies $S^* < 1$ for any finite $\langle k\rangle$.
+2. Prove rigorously that a positive fixed point exists if and only if $\langle k\rangle > 1$. *(Hint: consider the slope $f'(0) = \langle k\rangle$ and the fact that $f(S) < S$ for all $S \in (0,1)$ when $\langle k\rangle \leq 1$.)*
+3. For $\langle k\rangle = 2$, find $S^*$ numerically and verify that $S^* = 1 - e^{-2S^*}$. Repeat for $\langle k\rangle \in \{1.5, 3, 5\}$. Plot $S^*$ as a function of $\langle k\rangle$ for $\langle k\rangle \in [0, 5]$, overlaying the simulation estimates from @fig-giant-component-plot.
+4. The function $\langle k\rangle \mapsto S^*(\langle k\rangle)$ is continuous and equals zero for $\langle k\rangle \leq 1$. This continuity is why the transition is called **second-order** (continuous) rather than **first-order** (discontinuous). Explain what it would mean physically if $S$ jumped discontinuously at $\langle k\rangle = 1$.
 
-#### Exercise 2. Isolated vertices
+---
 
-Let $v \in V$ be a vertex with degree zero.
+#### Exercise 3. Near-threshold expansion
 
-1.  Prove that $\{v\}$ is a connected subgraph.
-2.  Prove that $\{v\}$ is maximal among connected subgraphs containing $v$.
-3.  Conclude that an isolated vertex is a connected component of size $1$.
+The lecture derives $S \approx 2(\langle k\rangle - 1)$ near $\langle k\rangle = 1$.
 
-------------------------------------------------------------------------
+1. Carry out the Taylor expansion of $e^{-\langle k\rangle S}$ to **third** order in $S$. Show that the correction to the leading term $S \approx 2(\langle k\rangle - 1)$ is of order $(\langle k\rangle - 1)^2$, so the linear approximation is valid to leading order.
+2. Write $\langle k\rangle = 1 + \varepsilon$ and expand $S^*(\varepsilon)$ as a power series in $\varepsilon$: $S^* = a_1\varepsilon + a_2\varepsilon^2 + \cdots$. Determine $a_1$ and $a_2$.
+3. For $N = 1000$ and $\langle k\rangle = 1.2$, compare: (a) the theoretical prediction $S \approx 2(\langle k\rangle - 1) = 0.4$; (b) the exact numerical solution of the self-consistency equation; and (c) the simulation estimate. Which is more accurate at this distance from the threshold?
+4. The near-threshold formula is $S \approx 2\varepsilon$ with $\varepsilon = \langle k\rangle - 1$. The analogous quantity in percolation theory is $\varepsilon = p - p_c$, where $p_c$ is the critical bond probability. Does the linear scaling $S \sim \varepsilon$ hold in bond percolation on a 2D lattice? *(You need not derive this — look it up and cite your source.)*
 
-#### Exercise 3. Giant component criterion
+---
 
-Let $C_{\max}(G_N)$ denote the largest connected component of a graph on $N$ vertices.
+#### Exercise 4. The connectedness threshold
 
-1.  Explain why every finite graph has a largest connected component.
-2.  Give an example of a sequence of graphs for which $$
-    \frac{|C_{\max}(G_N)|}{N} \to 0.
-    $$
-3.  Give an example of a sequence of graphs for which $$
-    \frac{|C_{\max}(G_N)|}{N} \to c > 0.
-    $$
-4.  Explain why the second case corresponds to the existence of a giant component.
-
-------------------------------------------------------------------------
-
-#### Exercise 4. Threshold written in terms of $p$
-
-In the Erdős--Rényi model $G(N,p)$, the expected degree is
+1. Show that the expected number of isolated vertices in $G(N,p)$ is $N(1-p)^{N-1}$. Using the approximation $(1-p)^{N-1} \approx e^{-p(N-1)}$, derive the condition under which the expected number of isolated vertices equals $1$. Show this gives $p \approx \ln N / N$.
+2. The exact result [@erdos1960] is: for $p = (\ln N + c)/N$, $P(G(N,p) \text{ connected}) \to e^{-e^{-c}}$. Verify numerically for $N = 500$: (a) estimate the probability of connectivity by simulation for several values of $c \in [-2, 3]$; (b) overlay the theoretical curve $e^{-e^{-c}}$; (c) comment on the agreement.
+3. Express the ratio of the connectedness threshold to the giant-component threshold as a function of $N$:
 
 $$
-\langle k \rangle = p(N-1).
+\frac{\langle k\rangle_{\text{connected}}}{\langle k\rangle_{\text{giant}}} = \frac{\ln N}{1}.
 $$
 
-1.  Show that the condition $$
-    \langle k \rangle = 1
-    $$ implies $$
-    p_c = \frac{1}{N-1}.
-    $$
-2.  Show that for large $N$ this becomes $$
-    p_c \sim \frac{1}{N}.
-    $$
-3.  Explain why this implies that the critical edge density becomes very small in large networks.
+For $N = 10^3$, $10^6$, $10^9$ (sizes of typical real-world networks), compute this ratio. What does this say about the range of $\langle k\rangle$ in which a network has a giant component but is not fully connected?
 
-------------------------------------------------------------------------
+4. The connectedness threshold is driven by isolated vertices — the **last** structural obstacle to full connectivity. Demonstrate this numerically: for $N = 500$, plot simultaneously (a) the fraction of isolated vertices and (b) the connectedness probability as functions of $\langle k\rangle$. Show that the two curves cross near the same threshold.
 
-#### Exercise 5. Connectedness threshold
+---
 
-The connectedness threshold in the Erdős--Rényi model occurs near
+#### Exercise 5. Structural regimes: classification and transitions
 
-$$
-\langle k \rangle \approx \ln N.
-$$
+1. A social network has $N = 10^5$ nodes and average degree $\langle k\rangle = 3.2$. Classify it into one of the four regimes of @sec-four-regimes. Under the Erdős–Rényi model with the same parameters, compute: (a) the theoretical giant component fraction $S^*$; (b) the expected number of isolated vertices; (c) whether the graph is likely connected.
 
-1.  Show that this corresponds to $$
-    p \approx \frac{\ln N}{N-1}.
-    $$
-2.  Compare this threshold with the giant-component threshold $$
-    p_c \approx \frac{1}{N-1}.
-    $$
-3.  Prove that $$
-    \ln N > 1
-    \qquad \text{for all } N>e,
-    $$ and explain why connectedness must occur later than the emergence of the giant component.
+2. A network analyst reports observing two networks with the same $N = 500$ and $\langle k\rangle = 4$, but different largest component fractions: Network A has $S = 0.85$, Network B has $S = 0.43$. Under the ER model, $S^*$ is uniquely determined by $\langle k\rangle$. What does the discrepancy between Networks A and B suggest about their structure relative to the ER null model?
 
-------------------------------------------------------------------------
+3. The **second-largest** component in the supercritical ER model has size $O(\log N)$ — much smaller than the giant. Verify this numerically for $N = 1000$ and $\langle k\rangle \in \{1.5, 2, 3\}$: generate 100 graphs at each value and plot the distribution of second-largest component sizes. Does the $O(\log N)$ prediction match?
 
-#### Exercise 6. The self-consistency equation
+4. In the critical regime $\langle k\rangle = 1$, the largest component has size $O(N^{2/3})$. For $N \in \{100, 500, 1000, 5000\}$, simulate 100 graphs at $\langle k\rangle = 1$ and plot the mean largest component size against $N$ on a log-log scale. Estimate the exponent empirically and compare with the theoretical value $2/3$.
 
-The asymptotic fraction $S$ of nodes in the giant component satisfies
+---
 
-$$
-S = 1 - e^{-\langle k \rangle S}.
-$$
+#### Exercise 6. Finite-size effects and convergence
 
-1.  Verify that $S=0$ is always a solution.
-2.  Show that if $\langle k \rangle < 1$, then the tangent of the right-hand side at $S=0$ has slope smaller than $1$.
-3.  Explain why this indicates that no positive solution exists in the subcritical regime.
-4.  Show that when $\langle k \rangle > 1$, the slope at $S=0$ exceeds $1$.
-5.  Explain why this allows the existence of a positive solution corresponding to a giant component.
+The thresholds derived in this chapter are sharp in the limit $N \to \infty$. For finite networks, transitions are rounded.
 
-------------------------------------------------------------------------
+1. For $N \in \{100, 500, 1000, 5000\}$, simulate the largest-component fraction over a grid of $\langle k\rangle \in [0, 4]$. Plot all four curves on the same axes. How does the sharpness of the transition near $\langle k\rangle = 1$ change with $N$? Define a quantitative measure of sharpness (e.g., the width of the interval where $S$ goes from $0.1$ to $0.9$) and compute it for each $N$.
 
-#### Exercise 7. Near-threshold expansion
+2. Define the **empirical threshold** $\hat{k}_c(N)$ as the value of $\langle k\rangle$ at which the largest-component fraction first exceeds $0.5$ in simulation. Plot $\hat{k}_c(N)$ against $N$ for $N \in \{50, 100, 250, 500, 1000\}$. Does $\hat{k}_c(N) \to 1$ as $N$ grows? At what rate?
 
-Starting from
+3. In finite graphs, the transition is governed by fluctuations of order $N^{-1/3}$ around the critical point — a result from the theory of random graph evolution [@bollobas2001book, Ch. 5]. Explain qualitatively why larger graphs have sharper transitions, using the law of large numbers as an analogy.
 
-$$
-S = 1 - e^{-\langle k \rangle S},
-$$
+---
 
-assume that $S$ is small and that $\langle k \rangle = 1+\varepsilon$ with $\varepsilon>0$ small.
+#### Exercise 7. The ER model as a null model for connectivity
 
-1.  Expand the exponential up to second order in $S$.
-2.  Show that, to leading order, $$
-    S \approx 2(\langle k \rangle - 1).
-    $$
-3.  Interpret this result in terms of the growth of the giant component just above the threshold.
+A network scientist observes a real network with $N = 500$ vertices, $M = 800$ edges, and a largest component containing $480$ vertices.
 
-------------------------------------------------------------------------
+1. Fit an ER null model by computing $\langle k\rangle = 2M/N$ and the corresponding $p$. Solve the self-consistency equation to get the theoretical $S^*$. How does it compare to the observed value $480/500 = 0.96$?
 
-### Part II. Conceptual and analytical exercises
+2. Simulate 500 realisations of $G(N,p)$ with your fitted parameters. Plot the distribution of the largest component fraction. Where does the observed value $0.96$ fall in this distribution?
 
-#### Exercise 8. Regime classification
+3. For the fitted model, compute: (a) the expected number of isolated vertices; (b) the probability that the graph is connected; (c) the expected size of the second-largest component. Compare each to what you would observe in the real network if it were ER.
 
-For each of the following values of $\langle k \rangle$, determine whether the graph is expected to be in the subcritical, critical, supercritical, or connected regime:
+4. Now suppose the real network has clustering $\bar{C} = 0.35$ whereas the ER model predicts $\mathbb{E}[\bar{C}] = p \approx 0.006$. The large clustering coefficient is known to reduce the effective size of the giant component relative to the ER prediction [@newman2010, Ch. 13]. Explain intuitively why high clustering — many triangles — makes it harder for the giant component to span the network efficiently.
 
-1.  $\langle k \rangle = 0.4$
-2.  $\langle k \rangle = 0.95$
-3.  $\langle k \rangle = 1.8$
-4.  $\langle k \rangle = \ln 500$
-
-In each case, describe the expected component structure.
-
-------------------------------------------------------------------------
-
-#### Exercise 9. Giant component versus connected graph
-
-Explain carefully why the following two statements are not equivalent:
-
-1.  the graph has a giant component,
-2.  the graph is connected.
-
-Your answer should include:
-
--   a formal distinction,
--   an explanation in terms of component sizes,
--   an example of a graph that has a giant component but is not connected.
-
-------------------------------------------------------------------------
-
-#### Exercise 10. Structural interpretation of the regimes
-
-Write a short mathematical discussion comparing the four regimes:
-
--   subcritical,
--   critical,
--   supercritical,
--   connected.
-
-For each regime, describe:
-
--   the typical component sizes,
--   whether isolated vertices are common,
--   whether a giant component exists,
--   whether the graph is connected.
-
-------------------------------------------------------------------------
-
-#### Exercise 11. Why the emergence is a phase transition
-
-The emergence of the giant component is often described as a phase transition.
-
-Write a short explanation of this statement. Your answer should address:
-
--   what quantity changes qualitatively,
--   what the threshold parameter is,
--   why the transition is not merely a gradual visual change,
--   why this phenomenon is global rather than local.
-
-------------------------------------------------------------------------
-
-#### Exercise 12. Trees and cycles outside the giant component
-
-In the supercritical regime, many finite components outside the giant component are tree-like.
-
-1.  Explain why a finite tree on $m$ vertices has exactly $m-1$ edges.
-2.  Explain why the appearance of cycles indicates additional structural complexity.
-3.  Discuss why the giant component is expected to contain cycles, whereas many small finite components remain tree-like near the threshold.
-
-------------------------------------------------------------------------
-
-### Part III. Simulation and coding exercises
-
-#### Exercise 13. Component-size computation
-
-Write an `R` function that takes an undirected graph `g` and returns:
-
--   the number of connected components,
--   the vector of component sizes,
--   the size of the largest connected component,
--   the fraction of vertices in the largest connected component.
-
-Test the function on at least three hand-constructed graphs.
-
-------------------------------------------------------------------------
-
-#### Exercise 14. Evolution of the largest component
-
-For fixed $N=500$, simulate the model $G(N,p)$ over a grid of $p$ values corresponding to
-
-$$
-0.1 \le \langle k \rangle \le 8.
-$$
-
-For each value of $p$, estimate the average largest-component fraction over repeated realizations.
-
-Tasks:
-
-1.  plot the largest-component fraction against $\langle k \rangle$,
-2.  indicate the line $\langle k \rangle = 1$,
-3.  explain where the giant component begins to emerge.
-
-------------------------------------------------------------------------
-
-#### Exercise 15. Number of components and isolated vertices
-
-Using the same simulations as in Exercise 14, compute and plot:
-
-1.  the average number of connected components,
-2.  the average fraction of isolated vertices.
-
-Discuss how these two quantities evolve as $\langle k \rangle$ increases.
-
-------------------------------------------------------------------------
-
-#### Exercise 16. Empirical connectedness probability
-
-For fixed $N=500$, estimate the probability that $G(N,p)$ is connected for a grid of values of $p$.
-
-Tasks:
-
-1.  plot the empirical connectedness probability against $\langle k \rangle$,
-2.  indicate the line $\langle k \rangle = \ln N$,
-3.  explain why the curve should be monotone increasing in theory,
-4.  explain why Monte Carlo estimates may show small fluctuations.
-
-------------------------------------------------------------------------
-
-#### Exercise 17. Finite-size comparison
-
-Repeat the largest-component simulation for
-
-$$
-N = 100,\quad 250,\quad 500,\quad 1000.
-$$
-
-For each value of $N$:
-
-1.  plot the largest-component fraction against $\langle k \rangle$,
-2.  compare the sharpness of the transition near $\langle k \rangle = 1$,
-3.  discuss how the finite-size behavior changes as $N$ increases.
-
-------------------------------------------------------------------------
-
-#### Exercise 18. Connectedness threshold and system size
-
-For each of the values
-
-$$
-N = 100,\quad 250,\quad 500,\quad 1000,
-$$
-
-estimate numerically the value of $\langle k \rangle$ at which the graph becomes connected with probability approximately $0.5$.
-
-Then compare your estimates with $\ln N$.
-
-Discuss whether the numerical behavior supports the theoretical scaling of the connectedness threshold.
-
-------------------------------------------------------------------------
-
-#### Exercise 19. Monotone network evolution
-
-Construct a sequence of graphs on a fixed set of vertices such that the edge set grows monotonically as $p$ increases.
-
-Tasks:
-
-1.  keep vertex positions fixed across all snapshots,
-2.  display at least six stages of evolution,
-3.  highlight the largest component at each stage,
-4.  explain how the component structure changes visually.
-
-------------------------------------------------------------------------
-
-#### Exercise 20. Numerical solution of the giant-component equation
-
-Consider the equation
-
-$$
-S = 1 - e^{-\langle k \rangle S}.
-$$
-
-1.  Write an `R` function that solves this equation numerically for a given value of $\langle k \rangle$.
-2.  Compute the solution for a grid of values of $\langle k \rangle$ between $0$ and $5$.
-3.  Plot the resulting theoretical curve.
-4.  Compare it with your simulation-based estimate of the largest-component fraction.
-
-------------------------------------------------------------------------
-
-#### Exercise 21. Short computational report
-
-Prepare a short report of approximately two pages based on your simulations. The report should include:
-
--   a brief statement of the model,
--   at least two figures,
--   one discussion of the threshold near $\langle k \rangle = 1$,
--   one discussion of the connectedness threshold near $\langle k \rangle = \ln N$,
--   a concluding paragraph interpreting the emergence of global connectivity.
-
-## Suggested project-style extension
-
-A strong mini-project for this chapter is the following:
-
-> Compare the simulated evolution of $G(N,p)$ with the theoretical equations for giant-component emergence and connectedness threshold.
-
-A complete submission should contain:
-
--   mathematical derivations,
--   simulation code,
--   plots,
--   interpretation of the results.
-
+---
 
 ## Bridge to the next chapter
 
-The Erdős--Rényi process explains how a giant component appears in a graph assembled by chance, but it does not explain why many real networks simultaneously exhibit short path lengths and substantial local clustering. The next chapter addresses that gap by studying small-world networks, where a small number of shortcuts can dramatically reduce distances while preserving neighborhood structure [@watts1998; @strogatz2001].
+The Erdős–Rényi process shows how a giant component emerges from uniform random wiring, but it produces networks with two properties that contradict empirical observations: negligibly low clustering ($\mathbb{E}[\bar{C}] = p \to 0$ in the sparse regime) and short average path length of order $\ln N / \ln\langle k\rangle$. Real networks — social, biological, technological — simultaneously exhibit much higher clustering and comparably short path lengths [@watts1998; @milgram1967]. This combination, which cannot be produced by either a regular lattice or an Erdős–Rényi graph alone, defines the **small-world** property studied in the next chapter [@watts1998; @strogatz2001].
 
 ## Concluding remarks
 
-The evolution of a random graph is one of the clearest demonstrations of how global structure can arise from simple local randomness.
+The evolution of a random graph is one of the clearest examples of emergent global structure arising from simple local randomness. Starting from a collection of isolated vertices, adding edges at random produces first small tree-like components, then a macroscopic giant component at $\langle k\rangle = 1$, and finally a fully connected graph at $\langle k\rangle = \ln N$. Each transition is governed by a precise mathematical threshold, derived from the self-consistency equation and the isolated vertex argument [@erdos1960; @bollobas2001book].
 
-At first the graph contains only isolated vertices and very small components. As edges are added, these small pieces merge. Near the threshold $\langle k \rangle = 1$, a giant component emerges. Much later, near $\langle k \rangle = \ln N$, the graph becomes connected with high probability.
-
-So the emergence of a network is not a smooth undifferentiated process. It is organized by precise structural thresholds, and those thresholds can be described mathematically in terms of component size and expected degree.
+The two thresholds are conceptually distinct: the giant component threshold reflects the onset of global reachability for a positive fraction of vertices, while the connectedness threshold reflects the elimination of the last isolated pieces. Between them lies a wide supercritical regime that is the most relevant for real sparse networks: $\langle k\rangle$ is typically of order $3$–$10$ for biological and social networks, well above $1$ but far below $\ln N$ for large $N$. Understanding the structure of this intermediate regime — giant component size, second-largest component, cycle structure — provides the analytical foundations for the models studied in subsequent chapters.

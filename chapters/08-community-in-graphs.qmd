@@ -901,7 +901,7 @@ Consider the symmetric two-block planted partition model: $n$ vertices, two equa
 
 ### The Kesten--Stigum threshold
 
-A remarkable phase transition was established by Decelle et al. [@decelle2011] (conjectured) and proved rigorously by Massoulié [@massouli2014] and Mossel et al. [@mossel2018]:
+A remarkable phase transition was established by Decelle et al. [@decelle2011] (conjectured) and proved rigorously by Massoulié [@massoulie2014] and Mossel et al. [@mossel2018]:
 
 ::: {.callout-note title="Theorem (Kesten--Stigum, community detection)"}
 Let $\mu = (a - b)/2$ be the signal-to-noise parameter and $c = (a + b)/2$ the average degree. Then:
