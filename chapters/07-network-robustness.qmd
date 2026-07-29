@@ -1,4 +1,4 @@
----
+﻿---
 title: "Network Robustness"
 subtitle: "Percolation, Failure, and Resilience in Complex Networks"
 ---
@@ -847,209 +847,71 @@ Before moving to the exercises, it is helpful to pause and connect the chapter's
 
 ## Exercises
 
-------------------------------------------------------------------------
+The seven exercises below cover the full content of this chapter. They require derivation, interpretation, and computation — not reproduction of results already in the text. The first three are mathematical and derivation exercises, the next two are conceptual and analytical, and the final two are simulation and coding exercises.
 
-### Part I. Computational and derivation exercises
+---
 
-#### Exercise 1. Molloy--Reed criterion
+#### Exercise 1. Molloy--Reed criterion and critical thresholds
 
 Let a network have degree distribution $p_k$ for $k = 1, 2, 3, 4$ with $p_1 = 0.3$, $p_2 = 0.4$, $p_3 = 0.2$, $p_4 = 0.1$.
 
 1.  Compute $\langle k \rangle$ and $\langle k^2 \rangle$.
-2.  Compute $\kappa_0 = \langle k^2 \rangle / \langle k \rangle$.
-3.  Determine whether the network has a giant component.
-4.  Compute the critical threshold $f_c$ under random node removal.
+2.  Compute $\kappa_0 = \langle k^2 \rangle / \langle k \rangle$ and determine whether the network has a giant component.
+3.  Compute the critical threshold $f_c$ under random node removal using $f_c = 1 - 1/(\kappa_0 - 1)$.
+4.  Now consider a second network with degree distribution concentrated on $\{1, 2, 7\}$ with $p_1 = 0.4$, $p_2 = 0.3$, $p_7 = 0.3$ (note: this gives a higher average degree $\langle k \rangle = 3.1$). Compute $\kappa_0$ and $f_c$ for this network. Even after accounting for the higher mean degree, explain why the much larger $\langle k^2 \rangle$ — driven by degree heterogeneity — is the main reason $f_c$ increases so substantially.
 
-------------------------------------------------------------------------
+---
 
-#### Exercise 2. Erdős--Rényi threshold derivation
+#### Exercise 2. Erdős--Rényi threshold derivation and bond percolation
 
-Starting from the Poisson degree distribution,
+1.  Starting from the Poisson degree distribution, derive $\kappa_0 = \langle k \rangle + 1$ for ER networks.
+2.  Derive the critical threshold $f_c^{\text{ER}} = 1 - 1/\langle k \rangle$ under random node removal.
+3.  Now consider bond percolation: edges are removed independently with probability $q$. Show that for an ER network, the bond percolation threshold is $q_c = 1 - 1/\langle k \rangle$. Explain why site and bond thresholds coincide for ER networks.
+4.  Compute $f_c$ numerically for $\langle k \rangle \in \{2, 3, 5, 10\}$ and interpret the trend.
 
-1.  Derive the formula $\kappa_0 = \langle k \rangle + 1$ for ER networks.
-2.  Derive the critical threshold $f_c^{\text{ER}} = 1 - 1/\langle k \rangle$.
-3.  Verify this formula numerically for $\langle k \rangle = 3$ using a simulation.
+---
 
-------------------------------------------------------------------------
+#### Exercise 3. Robustness index
 
-#### Exercise 3. Effect of degree distribution on $f_c$
+Let $S(f)$ denote the giant component size under removal fraction $f$, and define $R = \int_0^1 S(f)\,df$.
 
-Consider two networks with the same average degree $\langle k \rangle = 4$ but different degree distributions:
+1.  Suppose a network has a piecewise-linear robustness curve $S(f) = (1 - f/f_c)_+$ where $(x)_+ = \max(x, 0)$. Show that $R = f_c/2$.
+2.  A second network has $S(f) = (1 - f)^2$ for $0 \leq f \leq 1$. Compute its robustness index and compare with the piecewise-linear model.
+3.  Explain why $R$ alone is not sufficient to characterize a network's robustness. What additional information does the full robustness curve $S(f)$ provide?
 
--   Network A: $p_k$ uniform on $\{3, 4, 5\}$,
--   Network B: $p_k$ concentrated on $\{1, 7\}$ equally.
+---
 
-1.  Compute $\langle k^2 \rangle$ for each network.
-2.  Compute $\kappa_0$ for each.
-3.  Compute $f_c$ for each and interpret the difference.
+#### Exercise 4. Scale-free robustness and the Achilles heel
 
-------------------------------------------------------------------------
+1.  Provide a mathematical explanation of why scale-free networks with $2 < \gamma \leq 3$ have $f_c \to 1$ under random node removal. In your answer, discuss the role of $\langle k^2 \rangle$ diverging for such exponents and the low probability of randomly hitting a hub.
+2.  Explain why these same networks are extremely vulnerable to targeted attack. What happens to $\kappa_0$ when the highest-degree hubs are removed first?
+3.  A network engineer proposes: *"We should build our communication network with a scale-free topology because it is the most robust."* Write a short critical response identifying the flaw in this reasoning and discussing the design tension between error tolerance and attack vulnerability.
 
-#### Exercise 4. Bond percolation
+---
 
-For an Erdős--Rényi network with $\langle k \rangle = 5$:
+#### Exercise 5. Cascading failures and beyond the giant component
 
-1.  Compute the bond percolation threshold $q_c$.
-2.  Compare it with the site percolation threshold $f_c$.
-3.  Explain why both thresholds are equal for ER networks.
+1.  Explain qualitatively how a cascading failure differs from the simple percolation model. In your answer, address: (a) what triggers a cascade; (b) why networks near their percolation threshold are most vulnerable; (c) one real-world example.
+2.  The giant component size $S(f)$ is the standard robustness observable, but it does not capture everything. Discuss at least two additional observables (e.g. average path length, network efficiency, second-largest component size) and explain what information each adds beyond $S(f)$.
+3.  Compare the qualitative robustness profiles of ER, WS, and BA networks under both random failure and targeted attack. Organize your answer in terms of degree distribution shape, expected $f_c$, and transition sharpness.
 
-------------------------------------------------------------------------
+---
 
-#### Exercise 5. Betweenness centrality by hand
+#### Exercise 6. Robustness curves: ER versus BA
 
-For the path graph $P_5$ with vertices $\{1, 2, 3, 4, 5\}$:
+Write R code to perform the following:
 
-1.  Identify all shortest paths between every pair of vertices.
-2.  Compute the betweenness centrality of each vertex.
-3.  Identify the vertex with highest betweenness and explain geometrically why it has this value.
+1.  Generate an Erdős--Rényi network ($N = 400$, $\langle k \rangle = 4$) and a Barabási--Albert network ($N = 400$, $m = 2$). For each, simulate random node removal at fractions $f = 0, 0.02, 0.04, \ldots, 0.98$, recording $S(f)$. Average over at least 5 realisations and plot the two robustness curves on the same figure. Overlay the theoretical $f_c^{\text{ER}}$ as a vertical dashed line.
+2.  Repeat the experiment using targeted attack (removing nodes in decreasing order of degree, recalculating degrees after each removal). Plot the targeted-attack curves for both networks on a second figure.
+3.  Compute the robustness index $R$ for all four combinations (ER random, ER targeted, BA random, BA targeted) and present the results in a table. Discuss the asymmetry.
 
-------------------------------------------------------------------------
+---
 
-#### Exercise 6. Robustness index
+#### Exercise 7. Betweenness attack and finite-size effects
 
-Let $S(f) = (1 - f/f_c)_+$ for a network with critical threshold $f_c$ (where $(x)_+ = \max(x, 0)$).
-
-1.  Compute the robustness index $R = \int_0^1 S(f) \, df$.
-2.  Show that $R = f_c / 2$.
-3.  What does this result say about networks with large $f_c$?
-
-------------------------------------------------------------------------
-
-### Part II. Conceptual and analytical exercises
-
-#### Exercise 7. Why scale-free networks are robust to random failure
-
-Provide a mathematical and conceptual explanation of why scale-free networks with $2 < \gamma \leq 3$ have $f_c \to 1$ under random node removal.
-
-Your answer should address:
-
--   the role of the second moment $\langle k^2 \rangle$ in the Molloy--Reed criterion,
--   the probability that a randomly removed node is a hub,
--   the implication for network connectivity.
-
-------------------------------------------------------------------------
-
-#### Exercise 8. The Achilles heel of scale-free networks
-
-Write a short analytical discussion of why scale-free networks are vulnerable to targeted attack.
-
-Your answer should address:
-
--   the definition of targeted attack in terms of degree ordering,
--   what happens to $\langle k^2 \rangle$ after high-degree hubs are removed,
--   why the critical threshold under targeted attack is small.
-
-------------------------------------------------------------------------
-
-#### Exercise 9. Cascading failures
-
-Explain qualitatively how a cascading failure differs from the simple percolation model.
-
-Your answer should address:
-
--   what triggers a cascade (overload, threshold dynamics),
--   why networks near their percolation threshold are most vulnerable,
--   one real-world example of a cascading failure.
-
-------------------------------------------------------------------------
-
-#### Exercise 10. Comparing robustness of graph families
-
-For each of the following network types — Erdős--Rényi, Watts--Strogatz, Barabási--Albert — describe qualitatively:
-
--   the degree distribution,
--   the expected robustness under random failure,
--   the expected robustness under targeted attack,
--   the location and sharpness of the percolation transition.
-
-------------------------------------------------------------------------
-
-### Part III. Simulation and coding exercises
-
-#### Exercise 11. Robustness curve for ER networks
-
-Write an R function that:
-
-1.  Generates a $G(N, p)$ network.
-2.  Simulates random node removal at steps $f = 0, 0.02, 0.04, \ldots, 0.98$.
-3.  Records the giant component size at each step.
-4.  Plots the robustness curve and overlays the theoretical critical threshold.
-
-Run the function for $\langle k \rangle \in \{2, 3, 5, 10\}$ and compare.
-
-------------------------------------------------------------------------
-
-#### Exercise 12. Targeted attack on BA networks
-
-Write an R function that:
-
-1.  Generates a Barabási--Albert network using `sample_pa()`.
-2.  Removes nodes in decreasing order of degree (recalculate degrees after each removal).
-3.  Records and plots the giant component size.
-4.  Compares the targeted attack curve with the random failure curve on the same plot.
-
-Verify that targeted attack destroys the giant component much sooner than random failure.
-
-------------------------------------------------------------------------
-
-#### Exercise 13. Betweenness centrality attack
-
-Modify the targeted attack simulation from Exercise 12 to remove nodes in decreasing order of **betweenness centrality** (recalculating after each removal).
-
-1.  Plot the betweenness-based attack curve alongside the degree-based attack curve.
-2.  Discuss which strategy is more destructive for the BA network.
-3.  Repeat for an ER network and compare the results.
-
-------------------------------------------------------------------------
-
-#### Exercise 14. Robustness index comparison
-
-For a grid of network types and attack strategies, compute the robustness index $R$ for:
-
--   ER networks with $\langle k \rangle \in \{3, 5, 8\}$,
--   BA networks with $m \in \{2, 3, 4\}$,
--   WS networks with rewiring probabilities $p \in \{0.05, 0.1, 0.5\}$,
-
-under both random failure and targeted attack.
-
-Present the results as a heatmap or grouped bar chart and discuss the patterns.
-
-------------------------------------------------------------------------
-
-#### Exercise 15. Bond percolation simulation
-
-Implement bond percolation (edge removal) in R:
-
-1.  Generate an ER network and a BA network.
-2.  Remove edges independently at random with probability $q$.
-3.  Measure the giant component size as a function of $q$.
-4.  Identify the empirical bond percolation threshold and compare with the theoretical value $q_c = 1 - 1/\langle k \rangle$ for the ER network.
-
-------------------------------------------------------------------------
-
-#### Exercise 16. Finite-size effects
-
-Repeat the robustness simulation for ER networks with the same average degree but different sizes, for example $N \in \{200, 500, 1000, 3000\}$.
-
-1.  Plot the robustness curves on the same figure.
-2.  Explain why the transition becomes sharper as $N$ increases.
-3.  Compute the size of the second-largest component and show that it peaks near the empirical transition.
-
-------------------------------------------------------------------------
-
-## Suggested mini-project
-
-A strong mini-project for this chapter is the following:
-
-> Conduct a full robustness analysis of two networks — one Erdős--Rényi and one scale-free — under random failure, targeted attack by degree, and targeted attack by betweenness centrality.
-
-A complete submission should include:
-
--   mathematical derivation of the theoretical critical threshold for each network,
--   simulation of all three attack strategies with robustness curves,
--   computation of the robustness index $R$ for all combinations,
--   discussion of the asymmetry between error tolerance and attack vulnerability in the scale-free case,
--   a short concluding section on implications for the design of robust real-world networks.
+1.  Modify the targeted attack from Exercise 6 to remove nodes in decreasing order of betweenness centrality (recalculating after each removal). For the BA network ($N = 300$, $m = 2$), plot robustness curves under degree-based attack and betweenness-based attack on the same figure. Which strategy is more destructive?
+2.  Repeat the random-failure robustness simulation for ER networks with $\langle k \rangle = 4$ and sizes $N \in \{200, 500, 1000\}$. Plot all three curves on one figure and explain why the percolation transition becomes sharper as $N$ increases.
+3.  For $N = 500$, plot the size of the second-largest component as a function of $f$ alongside the giant component curve. Show that the second-largest component peaks near the critical threshold and explain the significance of this observation.
 
 ## Concluding remarks
 

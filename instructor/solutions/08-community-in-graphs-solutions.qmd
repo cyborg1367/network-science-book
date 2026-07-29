@@ -14,62 +14,362 @@ if (is.na(setup_file)) {
   stop("Could not locate R/book-setup.R", call. = FALSE)
 }
 
-source(setup_file, local = TRUE)
-ns_book_setup(preset = "advanced")
+source(setup_file, local = knitr::knit_global())
+ns_book_setup(
+  preset = "advanced",
+  packages = c(ns_package_profile("advanced"), "tibble", "scales"),
+  seed = 2081
+)
 ```
 
-### Part I. Computational and derivation exercises
+```{r}
+#| label: solution-helpers
+#| include: false
 
-#### Exercise 8.1. Internal density, cut size, and conductance
+make_planted_partition <- function(sizes, p_in = 0.25, p_out = 0.03) {
+  n <- sum(sizes)
+  block <- rep(seq_along(sizes), sizes)
+  A <- matrix(0, n, n)
+  for (i in seq_len(n - 1)) {
+    for (j in (i + 1):n) {
+      p <- if (block[i] == block[j]) p_in else p_out
+      A[i, j] <- rbinom(1, 1, p)
+      A[j, i] <- A[i, j]
+    }
+  }
+  g <- igraph::graph_from_adjacency_matrix(A, mode = "undirected", diag = FALSE)
+  igraph::V(g)$block <- factor(block)
+  g
+}
 
-*(Instructor: add solution.)*
+compute_nmi <- function(true_labels, detected_labels) {
+  n <- length(true_labels)
+  tbl <- table(true_labels, detected_labels)
+  n_r <- rowSums(tbl); n_s <- colSums(tbl)
+  H_C <- -sum((n_r / n) * log(n_r / n + 1e-15))
+  H_Cp <- -sum((n_s / n) * log(n_s / n + 1e-15))
+  MI <- sum((tbl / n) * log(n * tbl / outer(n_r, n_s) + 1e-15))
+  2 * MI / (H_C + H_Cp + 1e-15)
+}
 
-#### Exercise 8.2. Edge betweenness and bridge identification
+compute_ari <- function(true_labels, detected_labels) {
+  tbl <- table(true_labels, detected_labels)
+  sum_sq_rows <- sum(choose(rowSums(tbl), 2))
+  sum_sq_cols <- sum(choose(colSums(tbl), 2))
+  sum_sq_all <- sum(choose(tbl, 2))
+  n_pairs <- choose(length(true_labels), 2)
+  expected <- sum_sq_rows * sum_sq_cols / n_pairs
+  maximum <- (sum_sq_rows + sum_sq_cols) / 2
+  (sum_sq_all - expected) / (maximum - expected + 1e-15)
+}
+```
 
-*(Instructor: add solution.)*
+## Exercise 1. Internal density, cut size, conductance, and the modularity formula
 
-#### Exercise 8.3. Interpreting the modularity formula
+**Part 1.**
 
-*(Instructor: add solution.)*
+- **Internal density** of $S$: $\rho_{\mathrm{in}}(S) = \frac{|E(S)|}{\binom{|S|}{2}}$, the fraction of possible internal edges that are present.
+- **Cut size**: $\operatorname{cut}(S, V \setminus S) = |\{(i,j) \in E : i \in S, j \notin S\}|$, the number of edges crossing the partition boundary.
+- **Conductance**: $\phi(S) = \frac{\operatorname{cut}(S, V \setminus S)}{\min(\operatorname{vol}(S), \operatorname{vol}(V \setminus S))}$, where $\operatorname{vol}(S) = \sum_{i \in S} k_i$.
 
-### Part II. Conceptual and analytical exercises
+These three do not always agree because they measure different aspects. Internal density rewards tightness within $S$ but ignores the boundary. Cut size penalizes boundary edges but ignores how well-connected $S$ is internally. Conductance normalizes the cut by volume, accounting for degree heterogeneity. A subset could have high internal density but also many outgoing edges (high cut, moderate conductance), or low cut but also low internal density (sparse but isolated).
 
-#### Exercise 8.4. Clustering versus community structure
+**Part 2.** Define $e_{rr} = \frac{1}{2m}\sum_{i,j \in C_r} A_{ij}$ (fraction of edges within community $r$) and $a_r = \frac{\operatorname{vol}(C_r)}{2m} = \frac{\sum_{i \in C_r} k_i}{2m}$ (fraction of edge endpoints in community $r$).
 
-*(Instructor: add solution.)*
+Starting from $Q = \frac{1}{2m}\sum_{i,j}(A_{ij} - k_i k_j / 2m)\delta(c_i, c_j)$, group terms by community:
 
-#### Exercise 8.5. Modularity versus SBM
+$$
+Q = \sum_r \left[\frac{1}{2m}\sum_{i,j \in C_r} A_{ij} - \frac{1}{2m}\sum_{i,j \in C_r} \frac{k_i k_j}{2m}\right] = \sum_r \left[e_{rr} - \frac{1}{(2m)^2}\left(\sum_{i \in C_r} k_i\right)^2\right] = \sum_r (e_{rr} - a_r^2).
+$$
 
-*(Instructor: add solution.)*
+**Part 3.** In the configuration model, each edge endpoint is a "half-edge" or "stub." Vertex $i$ has $k_i$ stubs. The probability that a random pairing connects a stub of $i$ to a stub of $j$ is $k_i k_j / (2m)$ (for large graphs, ignoring self-loops). This is the expected number of edges between $i$ and $j$ under the degree-preserving null. Modularity measures the excess of within-community edges relative to this baseline, making it a measure of community structure that controls for degree heterogeneity.
 
-#### Exercise 8.6. Detectability threshold
+## Exercise 2. Spectral clustering and the graph Laplacian
 
-*(Instructor: add solution.)*
+**Part 1.** The unnormalized graph Laplacian is $L = D - A$, where $D$ is the diagonal degree matrix ($D_{ii} = k_i$) and $A$ is the adjacency matrix. For any vector $\mathbf{x}$:
 
-#### Exercise 8.7. Resolution limit and interpretation
+$$
+\mathbf{x}^T L \mathbf{x} = \sum_{(i,j) \in E} (x_i - x_j)^2 \geq 0,
+$$
 
-*(Instructor: add solution.)*
+so $L$ is positive semidefinite. The all-ones vector $\mathbf{1}$ satisfies $L\mathbf{1} = \mathbf{0}$ because each row of $L$ sums to zero ($D_{ii} - \sum_j A_{ij} = k_i - k_i = 0$). Therefore $\lambda_1 = 0$ with eigenvector $\mathbf{1}$.
 
-### Part III. Simulation and coding exercises
+**Part 2.** Cheeger's inequality states:
 
-#### Exercise 8.8. Failure of Girvan--Newman under weak separation
+$$
+\frac{\lambda_2}{2} \leq \phi^* \leq \sqrt{2\lambda_2},
+$$
 
-*(Instructor: add solution.)*
+where $\phi^* = \min_S \phi(S)$ is the minimum conductance over all non-trivial subsets. If $\lambda_2$ is small (the "spectral gap" is narrow), then the graph has a subset with low conductance — meaning there exists a good community-like split with few edges crossing the boundary relative to volume. If $\lambda_2$ is large, every possible bisection has high conductance, meaning the graph has no good two-way split.
 
-#### Exercise 8.9. Comparing algorithms on the same benchmark
+**Part 3.** The minimum conductance problem is NP-hard, but minimizing the Rayleigh quotient $\mathbf{x}^T L \mathbf{x} / \mathbf{x}^T D \mathbf{x}$ subject to $\mathbf{x} \perp \mathbf{1}$ is a continuous relaxation that can be solved by eigenvalue computation. The solution is the Fiedler vector (eigenvector of $\lambda_2$). The sign pattern of the Fiedler vector approximately separates vertices that are weakly connected, producing a partition whose conductance is bounded by Cheeger's inequality. This is why spectral bisection works: it finds a continuous proxy for the discrete minimum-cut problem.
 
-*(Instructor: add solution.)*
+## Exercise 3. Detectability and the Kesten--Stigum threshold
 
-#### Exercise 8.10. SBM recovery and confusion matrices
+**Part 1.** With $c = (a + b)/2$ and $\mu = (a - b)/2$:
 
-*(Instructor: add solution.)*
+$$
+\mathrm{SNR} = \frac{\mu^2}{c} = \frac{[(a-b)/2]^2}{(a+b)/2} = \frac{(a-b)^2}{4} \cdot \frac{2}{a+b} = \frac{(a-b)^2}{2(a+b)}.
+$$
 
-#### Exercise 8.11. Degree correction experiment
+**Part 2.** When $\mathrm{SNR} < 1$, the community signal (the difference between within-block and between-block connection rates) is weaker than the statistical noise inherent in the sparse random graph. The mutual information $I(\mathbf{z}; A) \to 0$ as $n \to \infty$: the observed graph carries essentially no information about the planted labels. This is information-theoretic because even an algorithm with unlimited computation, given the full adjacency matrix, cannot extract the labels — the data itself does not contain the signal. It is not about algorithmic weakness but about the fundamental limit of what the data reveals.
 
-*(Instructor: add solution.)*
+**Part 3.**
 
-### Mini-project
+```{r}
+#| label: ex3-snr
+#| echo: true
 
-#### Mini-project 8.1. A full community-detection workflow on a benchmark network
+tibble::tibble(
+  a = c(10, 5),
+  b = c(2, 3),
+  SNR = (a - b)^2 / (2 * (a + b)),
+  detectable = SNR > 1
+)
+```
 
-*(Instructor: add solution.)*
+For $a = 10, b = 2$: $\mathrm{SNR} = 64/24 \approx 2.67 > 1$ — communities are detectable. For $a = 5, b = 3$: $\mathrm{SNR} = 4/16 = 0.25 < 1$ — communities are below the detectability threshold.
+
+## Exercise 4. Modularity versus SBM and the resolution limit
+
+**Part 1.**
+
+| Aspect | Modularity | SBM |
+|---|---|---|
+| **Core idea** | Optimize a quality function $Q$ measuring excess internal edges relative to a null model | Fit a generative probabilistic model with latent block assignments |
+| **Degree effects** | The null model accounts for degree via $k_i k_j / 2m$, but modularity does not model degree heterogeneity within blocks | The DC-SBM explicitly models vertex-specific degree parameters $\theta_i$ |
+| **Interpretability** | $Q$ is a single scalar; easy to compute and compare | Provides full likelihood, posterior probabilities, and model comparison (e.g., number of blocks) |
+| **Weak signal** | Cannot detect communities below a quality-function-dependent threshold | The SBM's detectability threshold is information-theoretically optimal (Kesten--Stigum) |
+
+**Part 2.** Modularity's null-model term for community $r$ is $a_r^2 = [\operatorname{vol}(C_r)/(2m)]^2$. For a small community in a large graph, $a_r$ is tiny, so $a_r^2$ is negligible. The modularity gain from splitting this community off is therefore small — even if it is internally very dense and externally very sparse. Fortunato and Barthélemy showed that communities with fewer than $\sim\sqrt{m}$ internal edges cannot be resolved by modularity maximization, regardless of how isolated they are. This is a global property of the objective function: the normalization by the total number of edges $2m$ creates a scale-dependent blindness to small communities.
+
+**Part 3.** The standard SBM assumes all vertices in a block have similar expected degree ($\omega_{rr}$ is the same for all pairs within block $r$). A hub within a block connects to many vertices in other blocks purely because of its high degree, not because of inter-community affinity. The standard SBM may interpret this as evidence for multiple communities, splitting the hub's block. The DC-SBM introduces $\theta_i$ to absorb individual degree variation, so that $\omega_{rs}$ captures only block-level affinity after controlling for degree. This prevents high-degree vertices from being erroneously assigned to separate communities.
+
+## Exercise 5. Clustering, communities, and practical interpretation
+
+**Part 1.**
+
+- *High clustering, weak community structure:* A ring lattice where every vertex connects to its $k$ nearest neighbors. The clustering coefficient is high (many triangles among neighbors), but there is no natural partition into communities — the graph is homogeneous and any bisection has roughly equal cut.
+- *Modest clustering, clear block structure:* A planted partition model with two blocks of 50 vertices, $p_{\mathrm{in}} = 0.15$, $p_{\mathrm{out}} = 0.01$. Within each block, edges are random (Erdős--Rényi-like), so clustering is low ($\sim p_{\mathrm{in}}$). But the blocks are clearly separated.
+
+Clustering measures local triangle density — a vertex-level property. Community structure is a mesoscopic property — a partition-level statement about groups of vertices. A graph can have many triangles without any meaningful group division, and it can have clear groups without many triangles.
+
+**Part 2.** Three principles:
+
+1. **Stability under perturbation:** Remove 5--10% of edges at random and rerun the algorithm. Communities that persist across perturbations are more credible than those that change.
+2. **Comparison of multiple methods:** If Louvain, Walktrap, and spectral clustering all find similar partitions, confidence increases. If they disagree, the result is ambiguous and requires further investigation.
+3. **Validation against metadata:** If node attributes (e.g. geographic region, function, topic) are available, compute NMI or ARI between the detected partition and the metadata. Agreement strengthens interpretation; disagreement demands explanation.
+
+**Part 3.** Two problems:
+
+1. Modularity has a resolution limit: $Q = 0.45$ could arise from merging small genuine communities into larger ones. A high $Q$ does not guarantee that the partition captures the true mesoscale structure.
+2. $Q$ is always positive for any non-trivial partition of a graph with heterogeneous degree. A high modularity value could simply reflect degree heterogeneity rather than genuine community organization. The appropriate comparison is not $Q > 0$ but $Q$ compared to the distribution of modularity under a null model (random partitions or configuration-model graphs).
+
+## Exercise 6. Planted partition recovery and algorithm comparison
+
+**Part 1.**
+
+```{r}
+#| label: ex6-algorithm-comparison
+#| echo: true
+
+set.seed(2081)
+g_pp <- make_planted_partition(sizes = c(25, 25, 25), p_in = 0.25, p_out = 0.03)
+truth <- as.integer(igraph::V(g_pp)$block)
+
+fit_gn <- igraph::cluster_edge_betweenness(g_pp)
+fit_wt <- igraph::cluster_walktrap(g_pp)
+fit_lv <- igraph::cluster_louvain(g_pp)
+
+results <- tibble::tibble(
+  method = c("Girvan-Newman", "Walktrap", "Louvain"),
+  Q = c(igraph::modularity(fit_gn), igraph::modularity(fit_wt), igraph::modularity(fit_lv)),
+  n_communities = c(length(igraph::sizes(fit_gn)),
+                    length(igraph::sizes(fit_wt)),
+                    length(igraph::sizes(fit_lv))),
+  NMI = c(compute_nmi(truth, igraph::membership(fit_gn)),
+          compute_nmi(truth, igraph::membership(fit_wt)),
+          compute_nmi(truth, igraph::membership(fit_lv)))
+)
+
+knitr::kable(results, digits = 3,
+             caption = "Algorithm comparison on planted partition (3 blocks, p_in=0.25, p_out=0.03)")
+```
+
+With strong separation ($p_{\mathrm{out}}/p_{\mathrm{in}} = 0.12$), all three methods typically achieve near-perfect recovery (NMI $\approx 1$). Louvain is fastest; Girvan--Newman is slowest but produces a dendrogram.
+
+**Part 2.**
+
+```{r}
+#| label: ex6-mixing-sweep
+#| echo: true
+
+set.seed(2081)
+p_in <- 0.25
+p_out_vals <- seq(0.03, 0.20, by = 0.01)
+
+mixing_results <- purrr::map_dfr(p_out_vals, function(po) {
+  g <- make_planted_partition(sizes = c(25, 25, 25), p_in = p_in, p_out = po)
+  truth_local <- as.integer(igraph::V(g)$block)
+  fit <- igraph::cluster_louvain(g)
+  tibble::tibble(
+    p_out = po,
+    ratio = po / p_in,
+    NMI = compute_nmi(truth_local, igraph::membership(fit))
+  )
+})
+
+ggplot(mixing_results, aes(x = ratio, y = NMI)) +
+  geom_line(color = course_cols$blue, linewidth = 1.0) +
+  geom_point(color = course_cols$blue, size = 2) +
+  labs(title = "Recovery quality versus mixing ratio",
+       subtitle = "Louvain on 3-block planted partition",
+       x = expression(p[out] / p[in]),
+       y = "NMI with planted partition") +
+  scale_y_continuous(limits = c(0, 1))
+```
+
+Recovery degrades as $p_{\mathrm{out}}/p_{\mathrm{in}}$ increases. NMI typically drops sharply once the mixing ratio exceeds approximately 0.4--0.5, consistent with the planted blocks becoming indistinguishable from random connectivity.
+
+**Part 3.**
+
+```{r}
+#| label: ex6-confusion-matrix
+#| echo: true
+
+set.seed(2081)
+g_conf <- make_planted_partition(sizes = c(25, 25, 25), p_in = 0.25, p_out = 0.03)
+truth_conf <- igraph::V(g_conf)$block
+fit_conf <- igraph::cluster_louvain(g_conf)
+det_conf <- factor(igraph::membership(fit_conf))
+
+conf_tbl <- as.data.frame(table(planted = truth_conf, detected = det_conf))
+
+ggplot(conf_tbl, aes(x = detected, y = planted, fill = Freq)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = Freq), color = "white", size = 4) +
+  scale_fill_gradient(low = course_cols$blue, high = course_cols$violet) +
+  labs(title = "Confusion matrix: planted vs. Louvain",
+       x = "Detected community", y = "Planted block", fill = "Vertices")
+```
+
+Community labels are arbitrary: the algorithm may label planted block 1 as community 3, etc. What matters is that the confusion matrix concentrates along some permutation of the diagonal. If each row has its mass concentrated in a single column (and vice versa), recovery is near-perfect regardless of the label assignment.
+
+## Exercise 7. SBM recovery, degree correction, and finite-size detectability
+
+**Part 1.**
+
+```{r}
+#| label: ex7-snr-sweep
+#| echo: true
+
+set.seed(2081)
+n_block <- 30
+p_in_sbm <- 0.30
+p_out_vals_sbm <- c(0.02, 0.05, 0.10, 0.15, 0.20, 0.25)
+
+snr_results <- purrr::map_dfr(p_out_vals_sbm, function(po) {
+  a <- p_in_sbm * 2 * n_block
+  b <- po * 2 * n_block
+  snr <- (a - b)^2 / (2 * (a + b))
+
+  g <- make_planted_partition(sizes = c(n_block, n_block), p_in = p_in_sbm, p_out = po)
+  truth_local <- as.integer(igraph::V(g)$block)
+  fit <- igraph::cluster_louvain(g)
+  mem <- igraph::membership(fit)
+
+  tibble::tibble(
+    p_out = po,
+    SNR = snr,
+    NMI = compute_nmi(truth_local, mem),
+    ARI = compute_ari(truth_local, mem)
+  )
+})
+
+snr_long <- snr_results |>
+  tidyr::pivot_longer(cols = c(NMI, ARI), names_to = "metric", values_to = "value")
+
+ggplot(snr_long, aes(x = SNR, y = value, color = metric)) +
+  geom_line(linewidth = 1.0) +
+  geom_point(size = 2) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "grey40") +
+  annotate("text", x = 1.1, y = 0.9, label = "KS threshold", hjust = 0, size = 3.5) +
+  scale_color_manual(values = c("NMI" = course_cols$blue, "ARI" = course_cols$gold)) +
+  labs(title = "Recovery quality versus SNR",
+       subtitle = "Two-block planted partition, N = 60",
+       x = "Signal-to-noise ratio", y = "Partition similarity", color = "Metric") +
+  scale_y_continuous(limits = c(0, 1))
+```
+
+As SNR decreases toward 1, both NMI and ARI drop sharply. Below $\mathrm{SNR} = 1$, recovery is at or near chance level, consistent with the Kesten--Stigum threshold.
+
+**Part 2.**
+
+```{r}
+#| label: ex7-degree-correction
+#| echo: true
+
+set.seed(2081)
+n_per_block <- 25
+n_total <- 3 * n_per_block
+
+block_labels <- rep(1:3, each = n_per_block)
+A_dc <- matrix(0, n_total, n_total)
+p_in_dc <- 0.20
+p_out_dc <- 0.03
+
+for (i in seq_len(n_total - 1)) {
+  for (j in (i + 1):n_total) {
+    p <- if (block_labels[i] == block_labels[j]) p_in_dc else p_out_dc
+    A_dc[i, j] <- rbinom(1, 1, p)
+    A_dc[j, i] <- A_dc[i, j]
+  }
+}
+
+hub_vertices <- c(1, 2, 3)
+for (h in hub_vertices) {
+  for (j in seq_len(n_total)) {
+    if (j != h && A_dc[h, j] == 0 && block_labels[j] != block_labels[h]) {
+      if (runif(1) < 0.25) {
+        A_dc[h, j] <- 1; A_dc[j, h] <- 1
+      }
+    }
+  }
+}
+
+g_dc <- igraph::graph_from_adjacency_matrix(A_dc, mode = "undirected", diag = FALSE)
+igraph::V(g_dc)$block <- factor(block_labels)
+
+fit_dc <- igraph::cluster_louvain(g_dc)
+truth_dc <- as.integer(igraph::V(g_dc)$block)
+mem_dc <- igraph::membership(fit_dc)
+
+cat("Planted blocks: 3\n")
+cat("Louvain communities:", length(igraph::sizes(fit_dc)), "\n")
+cat("NMI:", round(compute_nmi(truth_dc, mem_dc), 3), "\n")
+
+conf_dc <- table(planted = truth_dc, detected = mem_dc)
+print(conf_dc)
+```
+
+When block 1 contains hubs with many inter-block connections, Louvain may split block 1 or merge parts of it with other blocks. The hub vertices "look like" they belong to multiple communities because their edges span block boundaries. This illustrates how degree heterogeneity can be confused with community structure — precisely the problem the DC-SBM is designed to address.
+
+**Part 3.**
+
+```{r}
+#| label: ex7-walktrap-comparison
+#| echo: true
+
+fit_wt_dc <- igraph::cluster_walktrap(g_dc)
+mem_wt_dc <- igraph::membership(fit_wt_dc)
+
+tibble::tibble(
+  method = c("Louvain", "Walktrap"),
+  n_communities = c(length(igraph::sizes(fit_dc)), length(igraph::sizes(fit_wt_dc))),
+  NMI_vs_truth = c(compute_nmi(truth_dc, mem_dc), compute_nmi(truth_dc, mem_wt_dc)),
+  NMI_between_methods = compute_nmi(mem_dc, mem_wt_dc)
+) |> knitr::kable(digits = 3,
+                  caption = "Louvain vs. Walktrap on hub-containing graph")
+```
+
+The two methods may disagree on the partition, especially around the hub vertices. If NMI between methods is substantially below 1, this signals that the community structure is ambiguous in the hub region. Walktrap uses random walks which can be less sensitive to degree heterogeneity than modularity optimization, though the effect depends on the specific graph.

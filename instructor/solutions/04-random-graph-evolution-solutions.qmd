@@ -524,7 +524,7 @@ ggplot(tibble(S=sim_S_null), aes(x=S)) +
 #| echo: true
 
 E_iso        <- N_obs * exp(-k_obs)
-conn_prob_th <- exp(-exp(-(log(N_obs) - k_obs)))   # approx from Erdos-Renyi formula
+conn_prob_th <- exp(-exp(-(k_obs - log(N_obs))))
 # Second largest: O(log N) under ER
 E_second     <- log(N_obs)
 

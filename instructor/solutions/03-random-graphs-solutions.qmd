@@ -291,7 +291,6 @@ cat(sprintf("E[L] = pK = %.2f, Var(L) = Kp(1-p) = %.2f\n",
 reps <- 500
 sim_gnp <- map_dfr(seq_len(reps), function(i) {
   g <- sample_gnp(N, p, directed=FALSE, loops=FALSE)
-  A <- as.matrix(as_adjacency_matrix(g, sparse=FALSE))
   tibble(
     edges       = ecount(g),
     avg_degree  = mean(degree(g)),
@@ -458,4 +457,4 @@ cat(sprintf("\nSimulated max degree: mean = %.1f, max over reps = %d\n",
             mean(sim_null$max_degree), max(sim_null$max_degree)))
 ```
 
-The probability of observing a vertex with degree $\geq 25$ under $G(N,p)$ is essentially zero — far below $1/N$, so the expected count of such vertices is negligible. Yet the real network has such a vertex. This is a hallmark of **heavy-tailed degree distributions**: real networks (particularly those exhibiting preferential attachment, as in the Barabási–Albert model studied in Chapter 5) contain high-degree hubs that the ER model cannot account for [@barabasi1999; @albert2002]. The Poisson (and binomial) degree distributions have exponentially decaying tails, making extreme degrees very rare; real networks often have power-law tails [@clauset2009], making them far more common.
+The probability of observing a vertex with degree $\geq 25$ under $G(N,p)$ is essentially zero — far below $1/N$, so the expected count of such vertices is negligible. Yet the real network has such a vertex. This is a hallmark of **heavy-tailed degree distributions**: real networks (particularly those exhibiting preferential attachment, as in the Barabási–Albert model studied in Chapter 6) contain high-degree hubs that the ER model cannot account for [@barabasi1999; @albert2002]. The Poisson (and binomial) degree distributions have exponentially decaying tails, making extreme degrees very rare; real networks often have power-law tails [@clauset2009], making them far more common.

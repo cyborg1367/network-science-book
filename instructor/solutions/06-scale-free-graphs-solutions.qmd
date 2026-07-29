@@ -14,78 +14,366 @@ if (is.na(setup_file)) {
   stop("Could not locate R/book-setup.R", call. = FALSE)
 }
 
-source(setup_file, local = TRUE)
-ns_book_setup(preset = "advanced")
+source(setup_file, local = knitr::knit_global())
+ns_book_setup(
+  preset = "advanced",
+  packages = c(ns_package_profile("core"), "tibble", "scales"),
+  seed = 2060
+)
 ```
 
-### Part I. Conceptual and structural exercises
+## Exercise 1. Scale-free structure: definition and scaling
 
-#### Exercise 1. Hubs and heterogeneity
+**Part 1.** By direct substitution into the power-law tail,
 
-*(Instructor: add solution.)*
+$$
+P(ak) \sim C(ak)^{-\gamma} = Ca^{-\gamma}k^{-\gamma} = a^{-\gamma}\,P(k).
+$$
 
-#### Exercise 2. What "scale-free" means
+So rescaling the degree by any factor $a > 0$ multiplies the probability by the constant $a^{-\gamma}$, which depends only on the rescaling factor and the exponent. There is no characteristic degree scale that is preferred by the distribution — the functional form is the same at every scale. This is why the term *scale-free* is used: the distribution lacks an intrinsic scale in the tail.
 
-*(Instructor: add solution.)*
+**Part 2.** Approximate the tail sum by a continuous integral:
 
-#### Exercise 3. Universality
+$$
+P(K \geq k) = \sum_{j=k}^{\infty} P(j) \approx \int_k^\infty C\,x^{-\gamma}\,dx.
+$$
 
-*(Instructor: add solution.)*
+For $\gamma > 1$ the integral converges:
 
-#### Exercise 4. Ultra-small distances
+$$
+\int_k^\infty Cx^{-\gamma}\,dx = C\,\frac{x^{-\gamma+1}}{-\gamma+1}\bigg|_k^\infty = \frac{C}{\gamma - 1}\,k^{-(\gamma-1)}.
+$$
 
-*(Instructor: add solution.)*
+So $P(K \geq k) \sim C'k^{-(\gamma-1)}$ with $C' = C/(\gamma - 1)$. The CCDF therefore also follows a power law, but with exponent reduced by one.
 
-### Part II. Mathematical exercises
+**Part 3.** The raw distribution $P(k)$ assigns one probability value to each integer $k$. At large $k$, these individual probabilities become very small and are estimated from very few observations, making the histogram noisy and difficult to interpret. The CCDF aggregates the tail — each value $P(K \geq k)$ is based on all observations with degree $\geq k$, not just degree exactly $k$. This produces a much smoother and statistically more stable curve. In practice, log-log plots of the CCDF are therefore preferred for visual assessment of heavy-tailed behavior.
 
-#### Exercise 5. Cumulative power-law tail
+**Part 4.** In any real finite network, the degree distribution is bounded above by $N - 1$. This produces a sharp truncation in the upper tail that a pure power law does not have. Additionally, at small degrees the distribution often deviates from power-law behavior because of minimum-degree constraints or other structural effects. The power law is therefore an asymptotic statement about intermediate-to-large degrees, not a claim about the entire distribution. Finally, the appearance of approximate linearity on a log-log plot is necessary but not sufficient: rigorous statistical methods (such as those of Clauset et al., 2009) are needed to assess whether a power law is a good fit compared to alternative heavy-tailed distributions (e.g. log-normal, stretched exponential).
 
-*(Instructor: add solution.)*
+## Exercise 2. Preferential attachment and average degree in the BA model
 
-#### Exercise 6. Preferential-attachment probability
+**Part 1.** The preferential-attachment probability for vertex $i$ at time $t$ is
 
-*(Instructor: add solution.)*
+$$
+\Pi_i(t) = \frac{k_i(t)}{\sum_j k_j(t)}.
+$$
 
-#### Exercise 7. Average degree in the BA model
+To verify normalization:
 
-*(Instructor: add solution.)*
+$$
+\sum_i \Pi_i(t) = \sum_i \frac{k_i(t)}{\sum_j k_j(t)} = \frac{\sum_i k_i(t)}{\sum_j k_j(t)} = 1.
+$$
 
-### Part III. Model-based analytical exercises
+So the $\Pi_i$ values define a proper probability distribution over existing vertices.
 
-#### Exercise 8. Configuration model versus BA model
+**Part 2.** At each time step, one vertex is added and $m$ edges are created. Starting from a small seed graph of $m_0$ vertices and $L_0$ edges, after $t$ steps the network has $N = m_0 + t$ vertices and $L = L_0 + mt$ edges. For large $t$, $L \approx mt$ and $N \approx t$, so
 
-*(Instructor: add solution.)*
+$$
+\langle k \rangle = \frac{2L}{N} \approx \frac{2mt}{t} = 2m.
+$$
 
-#### Exercise 9. Early vertices and cumulative advantage
+**Part 3.** The derivation of $\gamma = 3$ in the BA model relies on the mean-field equation for degree growth,
 
-*(Instructor: add solution.)*
+$$
+\frac{\partial k_i}{\partial t} = m \cdot \frac{k_i}{2mt} = \frac{k_i}{2t},
+$$
 
-#### Exercise 10. Limits of the BA model
+which is independent of $m$. The parameter $m$ appears in both the numerator (one new link to vertex $i$ with probability $\propto k_i$) and the denominator ($\sum_j k_j = 2mt$), and it cancels. Therefore $m$ sets the average degree but does not change the tail exponent.
 
-*(Instructor: add solution.)*
+**Part 4.** The normalization $\sum_j k_j(t) = 2L(t)$ means that each edge contributes one unit of degree to each of its endpoints, so the total degree equals twice the number of edges. Probabilistically, a vertex's share of the total degree is $k_i / 2L$, which is exactly its share of all edge endpoints. The "rich get richer" intuition follows: a vertex that already has a large fraction of the total degree captures new edges at a proportionally higher rate, amplifying its existing advantage.
 
-### Part IV. Simulation and coding exercises
+## Exercise 3. Ultra-small distances and the role of hubs
 
-#### Exercise 11. Ordinary versus log-log plots
+**Part 1.** In a heterogeneous network, a small number of hubs have very high degree and act as long-range connectors. A path between two arbitrary vertices can often route through a hub, avoiding the need to traverse many intermediate low-degree vertices. In contrast, a homogeneous network (like Erdős--Rényi) has no such high-degree shortcuts: all vertices contribute roughly equally to path routing. As a result, even when the average degree is the same, the presence of hubs can dramatically reduce typical path lengths.
 
-*(Instructor: add solution.)*
+**Part 2.** In an ER graph, the effective branching factor at each step of a breadth-first search is roughly constant at $\langle k \rangle$, giving distances of order $\ln N / \ln \langle k \rangle$. In a BA network with $\gamma = 3$, hubs have degrees far exceeding $\langle k \rangle$. When a breadth-first search reaches a hub early on, it can fan out to a very large fraction of the network in just one or two additional steps. The highest-degree hubs essentially connect distant parts of the network, making the effective branching factor grow with network size rather than remaining constant. This produces the $\ln N / \ln \ln N$ scaling — the logarithm is divided by a quantity that itself grows logarithmically, yielding distances that grow even more slowly.
 
-#### Exercise 12. Configuration-model experiment
+**Part 3.** The statement confuses distance efficiency with overall network performance. Ultra-small distances refer specifically to average shortest-path length, not to robustness, bandwidth, cost, or other measures of efficiency. Heavy-tailed networks are highly vulnerable to targeted removal of hubs, which can fragment the network quickly. They may also have uneven load distribution. Furthermore, "ultra-small" is an asymptotic statement about the scaling regime $2 < \gamma < 3$; not all heavy-tailed networks fall in this regime, and finite networks may not exhibit the asymptotic behavior.
 
-*(Instructor: add solution.)*
+## Exercise 4. Configuration model versus BA model
 
-#### Exercise 13. BA growth snapshots
+**Part 1.**
 
-*(Instructor: add solution.)*
+| Feature | Configuration model | BA model |
+|---|---|---|
+| **(a) What is fixed** | The degree sequence is prescribed as input | The growth rule (preferential attachment) and parameter $m$ |
+| **(b) Static or growing** | Static: all vertices exist simultaneously, edges are assigned by random pairing of half-edges | Growing: vertices arrive one at a time |
+| **(c) Heavy tail** | Imposed: the analyst chooses a heavy-tailed degree sequence | Generated: the power-law tail emerges from the growth dynamics |
+| **(d) Beyond degree sequence** | No temporal structure, no vertex ages, clustering is minimal (determined only by degree sequence) | Vertices have birth times; early vertices are statistically advantaged; temporal correlations exist |
 
-#### Exercise 14. Degree dynamics
+**Part 2.** The configuration model allows one to ask: "If I observe a particular degree distribution in a real network, which structural properties can be explained by that degree distribution alone?" By comparing a real network to a configuration-model null with the same degree sequence, one can identify features (such as high clustering, community structure, or degree-degree correlations) that go beyond what degree heterogeneity alone produces. The BA model, by contrast, bundles degree generation and network formation into one mechanism, making it harder to disentangle the role of the degree distribution from the role of the growth process.
 
-*(Instructor: add solution.)*
+**Part 3.** Three key limitations of the BA model:
 
-#### Exercise 15. Measuring preferential attachment
+1. **Fixed exponent $\gamma = 3$.** Many empirical networks have exponents that differ from 3. The basic BA model cannot produce a different exponent without modifying the attachment rule.
+2. **Low clustering.** The BA model produces networks with clustering coefficient that decreases with network size, roughly as $(\ln N)^2 / N$. Many real networks (especially social networks) have much higher clustering.
+3. **No community structure.** The model generates a single connected component without any modular organization, whereas real networks often exhibit strong community structure.
 
-*(Instructor: add solution.)*
+Despite these limitations, the BA model is valuable because it provides a minimal, analytically tractable demonstration that growth plus preferential attachment can produce heavy-tailed degree distributions. It isolates one fundamental mechanism — cumulative advantage — and shows that this alone is sufficient to generate hub-dominated structure.
 
-#### Exercise 16. BA versus Erdős--Rényi properties
+## Exercise 5. Degree dynamics and cumulative advantage
 
-*(Instructor: add solution.)*
+**Part 1.** In the BA model, the mean-field equation for vertex $i$'s degree is $dk_i/dt = k_i/(2t)$, with solution $k_i(t) = m\sqrt{t/t_i}$, where $t_i$ is the birth time. This shows that earlier vertices (smaller $t_i$) have systematically larger expected degrees at any given time. However, early arrival does *not* guarantee hub status. The actual attachment process is stochastic: at each step, each existing vertex has only a probability (not certainty) of receiving a new link. Fluctuations can cause an early vertex to fall behind a later one. The mean-field solution describes the *expected* trajectory, but individual realizations exhibit substantial variance, especially for vertices with moderate initial degree.
+
+**Part 2.** This observation is partially consistent with the BA model: the model predicts that early vertices have a *statistical* advantage, not a deterministic one. Some old papers may fail to attract citations due to stochastic fluctuation or because they are in less active fields. However, some recent papers having many citations is harder to explain by pure preferential attachment with age-dependent advantage. This suggests that factors beyond simple preferential attachment — such as intrinsic quality, fitness, topic relevance, or external visibility — play a role. Models that incorporate vertex fitness (e.g., the Bianconi–Barabási model) address this by allowing heterogeneous attractiveness.
+
+**Part 3.** The BA model is *explanatory* in the sense that it identifies a minimal mechanism — growth plus degree-proportional attachment — that suffices to produce heavy-tailed degree distributions and hub formation from first principles. It is *incomplete* because: (i) it produces only $\gamma = 3$; (ii) it neglects clustering, community structure, and spatial effects; (iii) it assumes all vertices have equal intrinsic attractiveness; (iv) it does not account for edge deletion, rewiring, or vertex removal, all of which occur in real networks.
+
+## Exercise 6. Degree distributions: ordinary, log-log, and cumulative
+
+```{r}
+#| label: ex6-helpers
+#| include: false
+
+emp_degree_table <- function(g) {
+  tibble(k = igraph::degree(g)) |>
+    dplyr::count(k, name = "count") |>
+    dplyr::filter(k > 0) |>
+    dplyr::arrange(k) |>
+    dplyr::mutate(prob = count / sum(count))
+}
+
+emp_ccdf_table <- function(g) {
+  emp_degree_table(g) |>
+    dplyr::arrange(dplyr::desc(k)) |>
+    dplyr::mutate(ccdf = cumsum(prob)) |>
+    dplyr::arrange(k)
+}
+
+sample_powerlaw_degrees <- function(n, gamma, k_min = 2, k_max = 80) {
+  ks <- k_min:k_max
+  probs <- ks^(-gamma)
+  probs <- probs / sum(probs)
+  deg <- sample(ks, size = n, replace = TRUE, prob = probs)
+  if (sum(deg) %% 2 == 1) {
+    i <- sample(seq_len(n), 1)
+    deg[i] <- deg[i] + 1
+  }
+  deg
+}
+```
+
+**Part 1.**
+
+```{r}
+#| label: ex6-ba-plots
+#| echo: true
+
+set.seed(2060)
+g_ba <- igraph::sample_pa(n = 2000, power = 1, m = 2, directed = FALSE)
+ba_tbl <- emp_degree_table(g_ba)
+
+p_ordinary <- ggplot(ba_tbl, aes(x = k, y = prob)) +
+  geom_point(color = course_cols$teal, size = 1.5, alpha = 0.8) +
+  labs(title = "BA degree distribution — ordinary axes",
+       x = "Degree k", y = "P(k)")
+
+p_loglog <- ggplot(ba_tbl, aes(x = k, y = prob)) +
+  geom_point(color = course_cols$teal, size = 1.5, alpha = 0.8) +
+  scale_x_log10() + scale_y_log10() +
+  labs(title = "BA degree distribution — log-log axes",
+       x = "Degree k", y = "P(k)")
+
+gridExtra::grid.arrange(p_ordinary, p_loglog, ncol = 2)
+```
+
+On ordinary axes, the distribution is dominated by the mass at small degrees; the heavy tail is nearly invisible. On log-log axes, the broad, approximately linear decay in the tail becomes clear, revealing the power-law structure. The log-log transformation stretches the high-degree region and compresses the low-degree region, making the tail behavior interpretable.
+
+**Part 2.**
+
+```{r}
+#| label: ex6-ccdf-plot
+#| echo: true
+
+ba_ccdf <- emp_ccdf_table(g_ba)
+
+ggplot(ba_ccdf, aes(x = k, y = ccdf)) +
+  geom_point(color = course_cols$gold, size = 1.5, alpha = 0.8) +
+  scale_x_log10() + scale_y_log10() +
+  labs(title = "BA network — CCDF on log-log axes",
+       x = "Degree k", y = "P(K >= k)")
+```
+
+The CCDF is visually smoother than the raw distribution because each point aggregates all observations with degree at or above $k$. The far tail, which was noisy in the raw $P(k)$ plot, appears as a cleaner declining curve in the CCDF.
+
+**Part 3.**
+
+```{r}
+#| label: ex6-cfg-comparison
+#| echo: true
+
+deg_cfg <- sample_powerlaw_degrees(2000, gamma = 2.5, k_min = 2, k_max = 80)
+g_cfg <- igraph::sample_degseq(deg_cfg, method = "vl")
+g_cfg <- igraph::simplify(g_cfg)
+cfg_tbl <- emp_degree_table(g_cfg) |> dplyr::mutate(model = "Configuration model")
+ba_tbl2 <- ba_tbl |> dplyr::mutate(model = "BA model")
+
+combined <- dplyr::bind_rows(ba_tbl2, cfg_tbl)
+
+ggplot(combined, aes(x = k, y = prob, color = model)) +
+  geom_point(size = 1.5, alpha = 0.8) +
+  scale_x_log10() + scale_y_log10() +
+  scale_color_manual(values = c("BA model" = course_cols$teal,
+                                "Configuration model" = course_cols$gold)) +
+  labs(title = "Degree distribution comparison: BA vs. configuration model",
+       x = "Degree k", y = "P(k)", color = NULL)
+```
+
+Both distributions show heavy tails on log-log axes. The configuration model was given $\gamma = 2.5$, so its tail decays more slowly than the BA model's $\gamma = 3$. However, from degree distributions alone, one cannot tell whether the graph was generated by growth (BA) or by static random pairing (configuration model). Degree distributions characterize a structural signature but do not uniquely identify the generative mechanism.
+
+## Exercise 7. BA versus Erdős--Rényi: a structural comparison
+
+**Part 1.**
+
+```{r}
+#| label: ex7-comparison-table
+#| echo: true
+
+set.seed(2060)
+N <- 500
+m <- 2
+reps <- 5
+
+results <- purrr::map_dfr(seq_len(reps), function(r) {
+  g_ba <- igraph::sample_pa(n = N, power = 1, m = m, directed = FALSE)
+  p_er <- (2 * m) / (N - 1)
+  repeat {
+    g_er <- igraph::sample_gnp(n = N, p = p_er, directed = FALSE, loops = FALSE)
+    if (igraph::components(g_er)$no == 1) break
+  }
+
+  tibble::tibble(
+    model = c("BA", "ER"),
+    avg_path_length = c(
+      igraph::mean_distance(g_ba, directed = FALSE),
+      igraph::mean_distance(g_er, directed = FALSE)
+    ),
+    clustering = c(
+      igraph::transitivity(g_ba, type = "global"),
+      igraph::transitivity(g_er, type = "global")
+    ),
+    max_degree = c(max(igraph::degree(g_ba)), max(igraph::degree(g_er)))
+  )
+})
+
+summary_tbl <- results |>
+  dplyr::group_by(model) |>
+  dplyr::summarise(
+    avg_path = round(mean(avg_path_length), 3),
+    avg_clustering = round(mean(clustering), 4),
+    avg_max_degree = round(mean(max_degree), 1),
+    .groups = "drop"
+  )
+
+knitr::kable(summary_tbl,
+             col.names = c("Model", "Avg. path length", "Clustering", "Max degree"),
+             caption = "Structural comparison of BA and ER networks (N=500, mean degree ~4)")
+```
+
+The BA model produces shorter average path lengths (due to hub shortcuts), lower clustering, and much higher maximum degree than the ER model. The ER model has roughly uniform degree, so its maximum degree is modest.
+
+**Part 2.**
+
+```{r}
+#| label: ex7-degree-dynamics
+#| echo: true
+
+track_ba_degree_dynamics <- function(n = 300, m = 2, tracked = c(1, 2, 5, 10, 30, 80)) {
+  tracked <- sort(unique(tracked))
+  tracked <- tracked[tracked <= n]
+  deg <- rep(0L, n)
+  adj <- vector("list", n)
+  for (i in seq_len(n)) adj[[i]] <- integer(0)
+
+  active <- seq_len(m + 1)
+  for (i in active) {
+    for (j in active) {
+      if (i < j) {
+        adj[[i]] <- c(adj[[i]], j)
+        adj[[j]] <- c(adj[[j]], i)
+        deg[i] <- deg[i] + 1L
+        deg[j] <- deg[j] + 1L
+      }
+    }
+  }
+
+  record_step <- function(t) tibble::tibble(time = t, vertex = tracked, degree = deg[tracked])
+  out <- list(record_step(m + 1))
+
+  for (t in (m + 2):n) {
+    probs <- deg[1:(t - 1)] / sum(deg[1:(t - 1)])
+    targets <- sample(1:(t - 1), size = m, replace = FALSE, prob = probs)
+    for (tgt in targets) {
+      deg[tgt] <- deg[tgt] + 1L
+      deg[t] <- deg[t] + 1L
+    }
+    out[[length(out) + 1]] <- record_step(t)
+  }
+
+  dplyr::bind_rows(out)
+}
+
+set.seed(2060)
+dyn_tbl <- track_ba_degree_dynamics(n = 500, m = 2, tracked = c(1, 2, 5, 10, 30, 80)) |>
+  dplyr::mutate(vertex = paste0("v", vertex))
+
+ggplot(dyn_tbl, aes(x = time, y = degree, color = vertex)) +
+  geom_line(linewidth = 0.9) +
+  labs(title = "Degree trajectories in the BA model",
+       subtitle = "Early vertices grow faster due to cumulative advantage",
+       x = "Time", y = "Degree", color = "Vertex")
+```
+
+Early vertices (v1, v2) accumulate degree much faster because they have been present longer and had higher degree when subsequent vertices arrived. Later vertices (v30, v80) start with degree $m = 2$ and grow more slowly. The trajectories illustrate the cumulative-advantage principle: existing degree amplifies future growth.
+
+**Part 3.**
+
+```{r}
+#| label: ex7-attachment-kernel
+#| echo: true
+
+estimate_attachment_kernel <- function(n = 800, m = 2) {
+  deg <- rep(0L, n)
+  active <- seq_len(m + 1)
+  for (i in active) for (j in active) if (i < j) {
+    deg[i] <- deg[i] + 1L; deg[j] <- deg[j] + 1L
+  }
+
+  records <- list()
+  for (t in (m + 2):n) {
+    existing_deg <- deg[1:(t - 1)]
+    probs <- existing_deg / sum(existing_deg)
+    targets <- sample(1:(t - 1), size = m, replace = FALSE, prob = probs)
+    hit <- integer(t - 1)
+    hit[targets] <- 1L
+    records[[length(records) + 1]] <- tibble::tibble(k = existing_deg, received = hit)
+    deg[targets] <- deg[targets] + 1L
+    deg[t] <- as.integer(m)
+  }
+
+  dplyr::bind_rows(records) |>
+    dplyr::group_by(k) |>
+    dplyr::summarise(rate = mean(received), count = dplyr::n(), .groups = "drop") |>
+    dplyr::filter(count >= 20)
+}
+
+set.seed(2060)
+attach_tbl <- estimate_attachment_kernel(n = 1000, m = 2)
+
+ggplot(attach_tbl, aes(x = k, y = rate)) +
+  geom_point(color = course_cols$coral, size = 1.8, alpha = 0.85) +
+  geom_smooth(method = "lm", se = FALSE, color = course_cols$ink, linewidth = 0.8) +
+  labs(title = "Empirical attachment rate vs. current degree",
+       subtitle = "Approximate linearity confirms preferential attachment",
+       x = "Current degree k",
+       y = "Mean probability of receiving a new link")
+```
+
+The approximately linear relationship between current degree and the rate of receiving new links confirms that the BA simulation correctly implements degree-proportional attachment. Deviations at high degree are due to small sample sizes.
+
+**Part 4.** The key structural differences between BA and ER that arise from hub structure:
+
+- **Shorter paths in BA:** Hubs act as global connectors, reducing the number of steps needed to traverse the network. In ER, no vertices play this special routing role.
+- **Higher maximum degree in BA:** The preferential-attachment mechanism concentrates edges on a few vertices, creating hubs with degree far exceeding the average. In ER, degrees are concentrated near $\langle k \rangle$ with exponentially small probability of extreme values.
+- **Lower clustering in BA:** New vertices attach to high-degree hubs rather than to neighbors of existing contacts, so triangles form less frequently. ER clustering is also low ($\sim p$), but for a different reason (purely random wiring).
+- **Degree heterogeneity in BA:** The broad degree distribution means the network is structurally dominated by a small number of vertices, whereas ER is structurally egalitarian.

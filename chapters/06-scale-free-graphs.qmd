@@ -1,4 +1,4 @@
----
+﻿---
 title: "Scale-Free Networks"
 subtitle: "Power Laws, Hubs, and Generative Mechanisms"
 ---
@@ -865,174 +865,75 @@ For scale-free structure and the BA model, the most important formulas in this c
 5.  Why do early vertices often have an advantage in the BA model?
 6.  In what sense is the BA model explanatory, and in what sense is it incomplete?
 
-## End-of-chapter exercises
+## Exercises
 
-The exercises below are divided into four groups:
+The seven exercises below cover the full content of this chapter. They require derivation, interpretation, and computation — not reproduction of results already in the text. The first three are mathematical and analytical, the next two are conceptual and model-based, and the final two are simulation and coding exercises.
 
-1.  conceptual and structural exercises,
-2.  mathematical exercises,
-3.  model-based analytical exercises,
-4.  simulation and coding exercises.
+---
 
-### Part I. Conceptual and structural exercises
+#### Exercise 1. Scale-free structure: definition and scaling
 
-#### Exercise 1. Hubs and heterogeneity
+Assume that $P(k) \sim Ck^{-\gamma}$ with $\gamma > 1$.
 
-Explain why average degree is not enough to describe a network with strong degree heterogeneity. In your answer, discuss the role of hubs and the limitations of using only a “typical” degree.
+1.  Show that $P(ak) \sim a^{-\gamma}P(k)$ for every fixed $a > 0$. Explain why this motivates the term *scale-free*.
+2.  Show heuristically that the complementary cumulative distribution satisfies $P(K \geq k) \sim C'k^{-(\gamma - 1)}$. *(Hint: approximate the tail sum by an integral.)*
+3.  Explain why the CCDF is often easier to interpret numerically than the raw degree distribution.
+4.  Discuss why finite real networks should not be expected to follow a perfect power law at all degrees. In your answer, mention finite-size truncation and the difference between a structural signature and a rigorous statistical fit.
 
-------------------------------------------------------------------------
+---
 
-#### Exercise 2. What “scale-free” means
+#### Exercise 2. Preferential attachment and average degree in the BA model
 
-Assume that $P(k) \sim Ck^{-\gamma}$.
+In the Barabási--Albert model, one new vertex and $m$ new edges are added at each time step. Each new edge connects to an existing vertex $i$ with probability proportional to $k_i(t)$.
 
-1.  Show that $$P(ak) \sim a^{-\gamma}P(k)$$ for every fixed $a > 0$.
-2.  Explain why this motivates the term *scale-free*.
-3.  Discuss why finite real networks should not be expected to follow a perfect power law at all degrees.
+1.  Write down the preferential-attachment probability $\Pi_i(t)$ and show that $\sum_i \Pi_i(t) = 1$.
+2.  Show that for a network of size $N$, the total number of edges is approximately $L(t) \approx mt$, so that the average degree satisfies $\langle k \rangle \approx 2m$.
+3.  The BA model produces an asymptotic degree distribution $P(k) \sim Ck^{-3}$. Explain why $m$ controls the network density but does not affect the tail exponent $\gamma = 3$.
+4.  Give a probabilistic interpretation of the normalization $\sum_j k_j(t) = 2L(t)$. How does this relate to the "rich get richer" intuition?
 
-------------------------------------------------------------------------
+---
 
-#### Exercise 3. Universality
+#### Exercise 3. Ultra-small distances and the role of hubs
 
-Write a short analytical note explaining what is meant by universality in the context of scale-free networks. Why does the appearance of heavy tails in many different systems attract theoretical interest?
+1.  Explain why a network with strong degree heterogeneity may have shorter typical path length than a homogeneous random graph with comparable average degree. Use the language of hubs and shortcuts.
+2.  In the BA model, the classical average path length scales roughly as $\ln N / \ln \ln N$ for $\gamma = 3$, which is shorter than the $\ln N / \ln \langle k \rangle$ scaling in Erdős--Rényi graphs. Explain intuitively why hubs compress distances so effectively.
+3.  A student says: *"Ultra-small distances prove that heavy-tailed networks are always more efficient than homogeneous networks."* Identify what is wrong with this reasoning.
 
-------------------------------------------------------------------------
+---
 
-#### Exercise 4. Ultra-small distances
+#### Exercise 4. Configuration model versus BA model
 
-Explain why a network with strong degree heterogeneity may have shorter typical path length than a homogeneous random graph with comparable average degree. What is the qualitative meaning of the phrase *ultra-small*?
+1.  Write a careful comparison between the configuration model and the BA model. Your answer should address: (a) what each model keeps fixed; (b) whether the model is static or growing; (c) whether the heavy tail is imposed or generated; (d) what structural information is not captured by degree sequence alone.
+2.  Explain why separating these two perspectives (prescribed degree sequence vs. generative mechanism) is conceptually important. What scientific question does the configuration model help answer that the BA model alone cannot?
+3.  Discuss at least three limitations of the BA model as a model of real networks. Why is it useful despite those limitations?
 
-### Part II. Mathematical exercises
+---
 
-#### Exercise 5. Cumulative power-law tail
+#### Exercise 5. Degree dynamics and cumulative advantage
 
-Assume that
+1.  Using the idea of degree trajectories, explain why early vertices often maintain an advantage in the BA model. Does early arrival *guarantee* that a vertex becomes a hub? Explain carefully, distinguishing deterministic advantage from stochastic fluctuation.
+2.  A network analyst observes a citation network in which some old papers have few citations while some recent papers already have many. Is this observation consistent with the BA model? What does it say about the limitations of pure preferential attachment?
+3.  Explain in what sense the BA model is explanatory and in what sense it is incomplete.
 
-$$
-P(k) \sim Ck^{-\gamma}
-$$
+---
 
-with $\gamma > 1$.
+#### Exercise 6. Degree distributions: ordinary, log-log, and cumulative
 
-Show heuristically that
+Fix $N = 2000$ and $m = 2$.
 
-$$
-P(K \geq k) \sim C'k^{-(\gamma - 1)}.
-$$
+1.  Generate a Barabási--Albert network using `sample_pa()`. Plot the empirical degree distribution $P(k)$ on (a) ordinary axes and (b) log-log axes. Explain which aspects of the tail become visible only after rescaling.
+2.  Plot the empirical CCDF $P(K \geq k)$ on log-log axes. Compare the visual clarity of the CCDF with the raw distribution from part 1.
+3.  Generate a power-law-like degree sequence with exponent $\gamma = 2.5$ and use the configuration model to build a graph. Plot its degree distribution on log-log axes alongside the BA distribution. What differences do you observe? Explain why degree distributions alone cannot distinguish growth from static generation.
 
-Explain why the CCDF is often easier to interpret numerically than the raw degree distribution.
+---
 
-------------------------------------------------------------------------
+#### Exercise 7. BA versus Erdős--Rényi: a structural comparison
 
-#### Exercise 6. Preferential-attachment probability
+Generate a BA network and a connected Erdős--Rényi network of the same size ($N = 500$) and approximately the same average degree ($\langle k \rangle \approx 4$, so $m = 2$ and $p = 4/(N-1)$).
 
-Suppose vertex $i$ has degree $k_i(t)$ at time $t$.
-
-1.  Explain why the preferential-attachment rule has the form $$\Pi_i(t) = \frac{k_i(t)}{\sum_j k_j(t)}.$$
-2.  Show that $$\sum_i \Pi_i(t) = 1.$$
-3.  Give a probabilistic interpretation of this normalization.
-
-------------------------------------------------------------------------
-
-#### Exercise 7. Average degree in the BA model
-
-In the BA model, one new vertex and $m$ new edges are added at each time step.
-
-1.  Show that for large network size, the number of edges grows approximately linearly in $N$.
-2.  Deduce that $$\langle k \rangle \approx 2m.$$
-3.  Explain why $m$ controls density but not the tail exponent.
-
-### Part III. Model-based analytical exercises
-
-#### Exercise 8. Configuration model versus BA model
-
-Write a careful comparison between the configuration model and the BA model. Your answer should address:
-
--   what each model keeps fixed,
--   whether the model is static or growing,
--   whether the heavy tail is imposed or generated,
--   what structural information is not captured by degree sequence alone.
-
-------------------------------------------------------------------------
-
-#### Exercise 9. Early vertices and cumulative advantage
-
-Use the idea of degree trajectories to explain why early vertices often maintain an advantage in the BA model. Does early arrival guarantee that a vertex becomes a hub? Explain carefully.
-
-------------------------------------------------------------------------
-
-#### Exercise 10. Limits of the BA model
-
-Discuss at least three limitations of the BA model as a model of real networks. Why is it useful despite those limitations?
-
-### Part IV. Simulation and coding exercises
-
-#### Exercise 11. Ordinary versus log-log plots
-
-Generate a heavy-tailed degree sequence and compare its empirical distribution on ordinary axes and on log-log axes. Explain which aspects of the tail become visible only after rescaling the axes.
-
-------------------------------------------------------------------------
-
-#### Exercise 12. Configuration-model experiment
-
-Generate a power-law-like degree sequence and use the configuration model to build a graph.
-
-1.  Plot its degree distribution on log-log axes.
-2.  Compute its average degree and maximum degree.
-3.  Compare the result with an Erdős--Rényi graph of similar mean degree.
-
-------------------------------------------------------------------------
-
-#### Exercise 13. BA growth snapshots
-
-Write a short `R` script that generates snapshots of a BA network at several sizes. Use the figure to explain how hubs emerge over time.
-
-------------------------------------------------------------------------
-
-#### Exercise 14. Degree dynamics
-
-Simulate the BA model while tracking the degree of several vertices introduced at different times.
-
-1.  Plot degree versus time.
-2.  Compare early and late vertices.
-3.  Discuss how the figure illustrates cumulative advantage.
-
-------------------------------------------------------------------------
-
-#### Exercise 15. Measuring preferential attachment
-
-In a BA simulation, record the current degree of a vertex and whether it receives a new link at the next step.
-
-1.  Estimate the empirical attachment rate as a function of current degree.
-2.  Plot the result.
-3.  Explain why approximate linearity supports the preferential-attachment hypothesis.
-
-------------------------------------------------------------------------
-
-#### Exercise 16. BA versus Erdős--Rényi properties
-
-Generate BA and Erdős--Rényi networks with approximately the same average degree and compare:
-
--   average path length,
--   clustering,
--   maximum degree,
--   the visual appearance of the network.
-
-Write a short discussion explaining which differences arise mainly because of hub structure.
-
-### Suggested mini-project
-
-A strong mini-project for this chapter is the following:
-
-> Compare three ways of thinking about heavy-tailed degree structure: descriptive power-law analysis, the configuration model, and the Barabási--Albert growth model.
-
-A complete submission should contain:
-
--   precise mathematical definitions,
--   at least three figures,
--   one configuration-model simulation,
--   one BA growth simulation,
--   one comparison with a homogeneous random graph,
--   a concluding discussion separating structural signature from generative mechanism.
+1.  For each model, compute: average path length, global clustering, and maximum degree. Average over at least 5 realisations and organise the results in a table.
+2.  Simulate the BA model while tracking the degree of several vertices introduced at different times ($t = 1, 2, 5, 10, 30, 80$). Plot degree versus time. Explain how the figure illustrates cumulative advantage.
+3.  Estimate the empirical attachment rate as a function of current degree in the BA simulation. Plot the result and explain why approximate linearity supports the preferential-attachment hypothesis.
+4.  Write a short discussion: which structural differences between BA and ER arise mainly because of hub structure?
 
 ## References

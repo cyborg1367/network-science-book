@@ -965,209 +965,117 @@ For small-world networks and the Watts--Strogatz model:
 7.  What does the Watts--Strogatz model explain successfully, and what does it fail to explain?
 8.  What is the purpose of the small-worldness index $\sigma$?
 
-## End-of-chapter exercises
+## Exercises
 
-The exercises are divided into three groups:
+The seven exercises below cover the full content of this chapter. They require derivation, interpretation, and computation — not reproduction of results already in the text. The first three are mathematical, the next two analytical, and the final two computational.
 
-1.  mathematical exercises,
-2.  conceptual and analytical exercises,
-3.  simulation and coding exercises.
+---
 
-### Part I. Mathematical exercises
+#### Exercise 1. From branching to logarithmic distance
 
-#### Exercise 1. Geometric-series derivation
-
-Starting from the branching approximation
+The branching approximation estimates the number of vertices reachable within distance $d$ by
 
 $$
-N(d)\approx 1+\langle k \rangle+\langle k \rangle^2+\cdots+\langle k \rangle^d,
+N(d)\approx 1+\langle k \rangle+\langle k \rangle^2+\cdots+\langle k \rangle^d.
 $$
 
-derive the closed-form expression
-
-$$
-N(d)\approx \frac{\langle k \rangle^{d+1}-1}{\langle k \rangle-1}.
-$$
-
-State clearly the assumption under which this approximation is meaningful.
-
-------------------------------------------------------------------------
-
-#### Exercise 2. Logarithmic distance estimate
-
-Starting from
-
-$$
-N(d_{\max})\approx N,
-$$
-
-derive the estimate
-
-$$
-d_{\max}\approx \frac{\ln N}{\ln \langle k \rangle}.
-$$
-
-Explain each algebraic step carefully.
-
-------------------------------------------------------------------------
-
-#### Exercise 3. Why the estimate is not exact
-
-The relation
-
-$$
-L(G)\approx \frac{\ln N}{\ln \langle k \rangle}
-$$
-
-is only an approximation. Explain why it is not exact. Your answer should discuss:
-
--   overlap between neighborhoods,
--   loops and finite-size effects,
--   the difference between average distance and diameter.
-
-------------------------------------------------------------------------
-
-#### Exercise 4. Lattice scaling laws
-
-Show that in a $d$-dimensional regular lattice with $N$ vertices, the characteristic linear size is of order
-
-$$
-N^{1/d}.
-$$
-
-Explain why this leads to the scaling
-
-$$
-L(G)\sim D(G)\sim N^{1/d}.
-$$
-
-------------------------------------------------------------------------
-
-#### Exercise 5. Average degree in the ring lattice
-
-Let $G$ be the regular ring lattice with parameters $(N,K)$.
-
-1.  Prove that every vertex has degree $K$.
-2.  Deduce that
+1.  Derive the closed-form expression
     $$
-    |E|=\frac{NK}{2}.
+    N(d)\approx \frac{\langle k \rangle^{d+1}-1}{\langle k \rangle-1}
     $$
-3.  Compute the average degree.
-
-------------------------------------------------------------------------
-
-#### Exercise 6. Normalized observables
-
-Let $C(\beta)$ and $L(\beta)$ be the clustering coefficient and average path length in the Watts--Strogatz model.
-
-1.  Define the normalized quantities
+    for $\langle k \rangle \neq 1$. State clearly the modeling assumption under which this approximation is meaningful.
+2.  Starting from $N(d_{\max})\approx N$ and the large-$N$ dominance of the final term, derive
     $$
-    \frac{C(\beta)}{C(0)},
-    \qquad
-    \frac{L(\beta)}{L(0)}.
+    d_{\max}\approx \frac{\ln N}{\ln \langle k \rangle}.
     $$
-2.  Explain why these ratios are useful when studying the transition from order to randomness.
-3.  State the behavior expected in the small-world regime.
+    Explain each algebraic step carefully.
+3.  The relation $L(G)\approx \ln N / \ln \langle k \rangle$ is only an approximation. Explain why it is not exact. Your answer should discuss neighborhood overlap, loops and finite-size effects, and the difference between average distance and diameter.
+4.  A popular slogan says that "everyone is only a few steps apart." Explain why this statement should not be read as a fixed constant independent of system size. Distinguish carefully between a constant bound and logarithmic growth.
 
-------------------------------------------------------------------------
+---
 
-#### Exercise 7. Ring-lattice path length
+#### Exercise 2. Lattice scaling and the surprise of small worlds
 
-Give a heuristic derivation of the estimate
+1.  Show that in a $d$-dimensional regular lattice with $N$ vertices, the characteristic linear size is of order $N^{1/d}$. Explain why this leads to
+    $$
+    L(G)\sim D(G)\sim N^{1/d}.
+    $$
+2.  Write a short mathematical comparison of the growth laws
+    $$
+    \ln N, \qquad N^{1/3}, \qquad N^{1/2}, \qquad N.
+    $$
+    For $N = 10^6$, compute numerical values of each expression (use natural logarithms for $\ln N$) and comment on the gaps.
+3.  Explain why the small-world effect is surprising from the viewpoint of low-dimensional lattice geometry. What changes conceptually when distances grow logarithmically rather than polynomially?
 
-$$
-L_{\text{lattice}} \approx \frac{N}{2K}
-$$
+---
 
-for the regular ring lattice.
+#### Exercise 3. The regular ring lattice: degree, distance, and clustering
 
-------------------------------------------------------------------------
+Let $G$ be the regular ring lattice with parameters $(N,K)$, where $K$ is even and each vertex is joined to its $K/2$ nearest neighbors on each side.
 
-#### Exercise 8. Ring-lattice clustering
+1.  Prove that every vertex has degree $K$. Deduce that $|E| = NK/2$ and that the average degree is $\langle k \rangle = K$.
+2.  Give a heuristic derivation of the estimate
+    $$
+    L(0)\approx \frac{N}{2K}.
+    $$
+3.  Derive the clustering formula
+    $$
+    C(0)=\frac{3(K-2)}{4(K-1)}.
+    $$
+    *(Hint: fix a vertex $0$, write $m = K/2$, and count the edges among its $K$ neighbors on the ring. Then divide by $\binom{K}{2}$.)*
+4.  Evaluate $C(0)$ for $K \in \{4,6,10\}$. What value does $C(0)$ approach as $K \to \infty$? Interpret this limit.
 
-Using the ring lattice with parameter $K$, derive the formula
+---
 
-$$
-C(0)=\frac{3(K-2)}{4(K-1)}.
-$$
+#### Exercise 4. Shortcuts, clustering, and normalized observables
 
-### Part II. Conceptual and analytical exercises
+Let $C(\beta)$ and $L(\beta)$ be the clustering coefficient and average path length in the Watts--Strogatz model with parameters $(N,K,\beta)$.
 
-#### Exercise 9. Six degrees and logarithmic scaling
+1.  Define the normalized quantities $C(\beta)/C(0)$ and $L(\beta)/L(0)$. Explain why these ratios are useful when studying the transition from order to randomness.
+2.  Explain why a small number of long-range shortcuts can drastically reduce average path length while leaving clustering comparatively intact. Use the language of local versus long-range edges and graph distance.
+3.  State the behavior expected for the two normalized quantities in the small-world regime, and relate your statement to @def-small-world-regime.
+4.  A student claims: *"Since both an Erdős--Rényi graph and a Watts--Strogatz graph can have short paths, they are essentially the same model."* Identify what is wrong with this claim. Address clustering, local order, and global reachability.
 
-Explain why the statement "all vertices are separated by only a few steps" should not be interpreted as a fixed constant independent of system size. Your answer should distinguish carefully between a constant bound and logarithmic growth.
+---
 
-------------------------------------------------------------------------
+#### Exercise 5. Interpreting small-worldness and the limits of Watts--Strogatz
 
-#### Exercise 10. Why small worlds are surprising
+1.  Recall the small-worldness index
+    $$
+    \sigma = \frac{C/C_{\mathrm{rand}}}{L/L_{\mathrm{rand}}}.
+    $$
+    Explain what $\sigma > 1$ means structurally. Why is it not enough to examine clustering alone?
+2.  Discuss why the Watts--Strogatz model does not naturally explain hub-dominated degree distributions or strong degree-dependent clustering. Which modeling ingredient is missing?
+3.  A network analyst reports $\sigma = 4.2$ for a social network with $N = 500$ and $\langle k \rangle = 8$. Another analyst replies that this "proves" the network was generated by Watts--Strogatz rewiring. Critically assess that reply.
 
-Write a short mathematical discussion comparing the growth laws
+---
 
-$$
-\ln N, \qquad N^{1/3}, \qquad N^{1/2}, \qquad N.
-$$
+#### Exercise 6. Distance scaling in random networks
 
-Explain why the logarithmic law is fundamentally different from polynomial lattice scaling.
+Fix an average degree $\langle k \rangle = 6$. For several values of $N$ in $\{50, 100, 200, 400, 800\}$:
 
-------------------------------------------------------------------------
+1.  Generate connected realisations of $G(N,p)$ with $p = \langle k \rangle/(N-1)$ (reject disconnected samples). For each $N$, average the mean path length over at least $10$ independent connected realisations.
+2.  Plot the empirical average path length against $N$, and overlay the theoretical curve
+    $$
+    L(G)\approx \frac{\ln N}{\ln \langle k \rangle}.
+    $$
+3.  Comment on the agreement. Where is the approximation better, and why might it deviate at small $N$?
 
-#### Exercise 11. Random graph versus small-world network
+---
 
-A random graph and a Watts--Strogatz network can both have short average path lengths. Explain why they should still be considered structurally different models. Your answer should address clustering, local order, and global reachability.
+#### Exercise 7. Identifying and quantifying the small-world regime
 
-------------------------------------------------------------------------
+Use $N = 400$ and $K = 8$ throughout.
 
-#### Exercise 12. Why shortcuts are powerful
-
-Explain why a small number of long-range edges can drastically reduce average path length. Use the language of graph distance and distinguish between local and long-range edges.
-
-------------------------------------------------------------------------
-
-#### Exercise 13. Limitations of the Watts--Strogatz model
-
-Discuss why the Watts--Strogatz model does not naturally explain hub-dominated degree distributions or strong degree-dependent clustering.
-
-------------------------------------------------------------------------
-
-#### Exercise 14. Interpreting the small-worldness index
-
-Explain what it means if a graph has $\sigma > 1$. Why is it not enough to examine clustering alone?
-
-### Part III. Simulation and coding exercises
-
-#### Exercise 15. Distance scaling in random networks
-
-For several values of $N$ and fixed average degree, simulate random graphs and estimate the average path length. Compare the empirical results with the prediction
-
-$$
-L(G)\approx \frac{\ln N}{\ln \langle k \rangle}.
-$$
-
-------------------------------------------------------------------------
-
-#### Exercise 16. Visualizing the Watts--Strogatz interpolation
-
-Produce your own sequence of Watts--Strogatz graphs for several values of $\beta$. Use a fixed circular layout so that the effect of rewiring can be seen clearly.
-
-------------------------------------------------------------------------
-
-#### Exercise 17. Detecting the small-world regime numerically
-
-Simulate the Watts--Strogatz model for a grid of rewiring probabilities. Plot both
-
-$$
-\frac{L(\beta)}{L(0)}
-\qquad \text{and} \qquad
-\frac{C(\beta)}{C(0)}
-$$
-
-on the same graph, and identify the regime in which the network is small-world.
-
-------------------------------------------------------------------------
-
-#### Exercise 18. Comparing ring lattice, Watts--Strogatz, and random graph
-
-Construct three graphs of comparable size and average degree: a ring lattice, a Watts--Strogatz graph, and an Erdős--Rényi graph. Compute clustering, average path length, and $\sigma$ for each one. Interpret the results.
+1.  Simulate the Watts--Strogatz model on a grid of rewiring probabilities spanning several orders of magnitude (include $\beta = 0$). For each $\beta$, average $C(\beta)$ and $L(\beta)$ over several connected realisations. Plot
+    $$
+    \frac{L(\beta)}{L(0)}
+    \qquad\text{and}\qquad
+    \frac{C(\beta)}{C(0)}
+    $$
+    on the same axes (log scale in $\beta$ is recommended). Identify the small-world regime visually.
+2.  Construct three graphs of comparable size and average degree: a ring lattice ($\beta = 0$), a Watts--Strogatz graph with small $\beta$ in the small-world regime, and a connected Erdős--Rényi graph with $p = K/(N-1)$. Compute clustering, average path length, and $\sigma$ for each. Organise the results in a table.
+3.  Interpret the table: which model combines high clustering with short paths? What does $\sigma$ add beyond looking at $C$ or $L$ separately?
 
 
 ## References

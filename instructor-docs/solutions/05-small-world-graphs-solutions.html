@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -23,7 +26,62 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -41,10 +99,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-07314a9cf6582ab18f4f031a2d4fd43d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-18ce4314b9cdc075e59f6149f353d1f9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-d4aa30a0361d4615301e0f27ccb5b562.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-d89624afff2836424092a199db3769dc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -74,6 +132,49 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -169,9 +270,13 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#part-i.-mathematical-exercises" id="toc-part-i.-mathematical-exercises" class="nav-link active" data-scroll-target="#part-i.-mathematical-exercises">Part I. Mathematical exercises</a></li>
-  <li><a href="#part-ii.-conceptual-and-analytical-exercises" id="toc-part-ii.-conceptual-and-analytical-exercises" class="nav-link" data-scroll-target="#part-ii.-conceptual-and-analytical-exercises">Part II. Conceptual and analytical exercises</a></li>
-  <li><a href="#part-iii.-simulation-and-coding-exercises" id="toc-part-iii.-simulation-and-coding-exercises" class="nav-link" data-scroll-target="#part-iii.-simulation-and-coding-exercises">Part III. Simulation and coding exercises</a></li>
+  <li><a href="#exercise-1.-from-branching-to-logarithmic-distance" id="toc-exercise-1.-from-branching-to-logarithmic-distance" class="nav-link active" data-scroll-target="#exercise-1.-from-branching-to-logarithmic-distance"><span class="header-section-number">5.1</span> Exercise 1. From branching to logarithmic distance</a></li>
+  <li><a href="#exercise-2.-lattice-scaling-and-the-surprise-of-small-worlds" id="toc-exercise-2.-lattice-scaling-and-the-surprise-of-small-worlds" class="nav-link" data-scroll-target="#exercise-2.-lattice-scaling-and-the-surprise-of-small-worlds"><span class="header-section-number">5.2</span> Exercise 2. Lattice scaling and the surprise of small worlds</a></li>
+  <li><a href="#exercise-3.-the-regular-ring-lattice-degree-distance-and-clustering" id="toc-exercise-3.-the-regular-ring-lattice-degree-distance-and-clustering" class="nav-link" data-scroll-target="#exercise-3.-the-regular-ring-lattice-degree-distance-and-clustering"><span class="header-section-number">5.3</span> Exercise 3. The regular ring lattice: degree, distance, and clustering</a></li>
+  <li><a href="#exercise-4.-shortcuts-clustering-and-normalized-observables" id="toc-exercise-4.-shortcuts-clustering-and-normalized-observables" class="nav-link" data-scroll-target="#exercise-4.-shortcuts-clustering-and-normalized-observables"><span class="header-section-number">5.4</span> Exercise 4. Shortcuts, clustering, and normalized observables</a></li>
+  <li><a href="#exercise-5.-interpreting-small-worldness-and-the-limits-of-wattsstrogatz" id="toc-exercise-5.-interpreting-small-worldness-and-the-limits-of-wattsstrogatz" class="nav-link" data-scroll-target="#exercise-5.-interpreting-small-worldness-and-the-limits-of-wattsstrogatz"><span class="header-section-number">5.5</span> Exercise 5. Interpreting small-worldness and the limits of Watts–Strogatz</a></li>
+  <li><a href="#exercise-6.-distance-scaling-in-random-networks" id="toc-exercise-6.-distance-scaling-in-random-networks" class="nav-link" data-scroll-target="#exercise-6.-distance-scaling-in-random-networks"><span class="header-section-number">5.6</span> Exercise 6. Distance scaling in random networks</a></li>
+  <li><a href="#exercise-7.-identifying-and-quantifying-the-small-world-regime" id="toc-exercise-7.-identifying-and-quantifying-the-small-world-regime" class="nav-link" data-scroll-target="#exercise-7.-identifying-and-quantifying-the-small-world-regime"><span class="header-section-number">5.7</span> Exercise 7. Identifying and quantifying the small-world regime</a></li>
   </ul>
 </nav>
     </div>
@@ -198,88 +303,486 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="part-i.-mathematical-exercises" class="level3">
-<h3 class="anchored" data-anchor-id="part-i.-mathematical-exercises">Part I. Mathematical exercises</h3>
-<section id="exercise-1.-geometric-series-derivation" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-1.-geometric-series-derivation">Exercise 1. Geometric-series derivation</h4>
-<p><em>(Instructor: add solution.)</em></p>
+<section id="exercise-1.-from-branching-to-logarithmic-distance" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="exercise-1.-from-branching-to-logarithmic-distance"><span class="header-section-number">5.1</span> Exercise 1. From branching to logarithmic distance</h2>
+<p><strong>Part 1.</strong> The sum is a finite geometric series with first term <span class="math inline">1</span> and ratio <span class="math inline">\langle k \rangle \neq 1</span>:</p>
+<p><span class="math display">
+N(d)
+=
+\sum_{j=0}^{d}\langle k \rangle^{j}
+=
+\frac{\langle k \rangle^{d+1}-1}{\langle k \rangle-1}.
+</span></p>
+<p>The modeling assumption is a <strong>tree-like branching approximation</strong>: each new neighborhood layer multiplies the previous layer by <span class="math inline">\langle k \rangle</span>, with no overlap between neighborhoods, no loops, and no boundary effects from the finite vertex set. Equivalently, the local exploration is treated as a branching process on an infinite tree with offspring mean <span class="math inline">\langle k \rangle</span>.</p>
+<p><strong>Part 2.</strong> Set <span class="math inline">N(d_{\max})\approx N</span>. For large <span class="math inline">N</span> and <span class="math inline">\langle k \rangle &gt; 1</span>, the last term dominates the geometric sum, so</p>
+<p><span class="math display">
+\langle k \rangle^{d_{\max}}\approx N.
+</span></p>
+<p>Taking natural logarithms of both sides,</p>
+<p><span class="math display">
+d_{\max}\ln\langle k \rangle \approx \ln N,
+</span></p>
+<p>and dividing by <span class="math inline">\ln\langle k \rangle &gt; 0</span> yields</p>
+<p><span class="math display">
+d_{\max}\approx\frac{\ln N}{\ln\langle k \rangle}.
+</span></p>
+<p>The same scaling is then used as a heuristic for the average path length <span class="math inline">L(G)</span> in random-like networks <span class="citation" data-cites="newman2010 strogatz2001">(<a href="#ref-newman2010" role="doc-biblioref">Newman, 2010</a>; <a href="#ref-strogatz2001" role="doc-biblioref">Strogatz, 2001</a>)</span>.</p>
+<p><strong>Part 3.</strong> The estimate is not exact for three related reasons.</p>
+<ul>
+<li><strong>Neighborhood overlap.</strong> In a real graph, two vertices at distance <span class="math inline">d</span> from a source may share neighbors. The branching count therefore overcounts reachable vertices once balls start to collide.</li>
+<li><strong>Loops and finite size.</strong> Cycles return the walk to previously visited vertices, and the exploration must stop when the ball saturates the finite set <span class="math inline">V</span>. Both effects cut off pure exponential growth.</li>
+<li><strong>Average versus diameter.</strong> The derivation targets a covering scale <span class="math inline">d_{\max}</span> closer to a diameter than to the mean pairwise distance. Even when <span class="math inline">D(G)</span> scales like <span class="math inline">\ln N / \ln\langle k \rangle</span>, the average <span class="math inline">L(G)</span> can differ by a slowly varying factor; the logarithmic law is a scaling statement, not an identity.</li>
+</ul>
+<p><strong>Part 4.</strong> A constant bound such as “exactly six steps for every pair” would mean <span class="math inline">L(G)=O(1)</span> as <span class="math inline">N\to\infty</span>. Logarithmic growth <span class="math inline">L(G)\sim c\ln N</span> still grows, but extremely slowly: doubling <span class="math inline">N</span> only adds a constant <span class="math inline">c\ln 2</span>. So “a few steps” in a huge system is consistent with logarithmic scaling, not with a universal fixed integer independent of size.</p>
+<hr>
 </section>
-<section id="exercise-2.-logarithmic-distance-estimate" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-2.-logarithmic-distance-estimate">Exercise 2. Logarithmic distance estimate</h4>
-<p><em>(Instructor: add solution.)</em></p>
+<section id="exercise-2.-lattice-scaling-and-the-surprise-of-small-worlds" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="exercise-2.-lattice-scaling-and-the-surprise-of-small-worlds"><span class="header-section-number">5.2</span> Exercise 2. Lattice scaling and the surprise of small worlds</h2>
+<p><strong>Part 1.</strong> Pack <span class="math inline">N</span> vertices into a <span class="math inline">d</span>-dimensional cube (or torus) of side length <span class="math inline">\ell</span>. Then <span class="math inline">N\sim \ell^d</span>, so <span class="math inline">\ell\sim N^{1/d}</span>. Graph distance on a regular lattice is proportional to Euclidean (or <span class="math inline">\ell_1</span>) separation measured in lattice spacings. Typical and maximal separations are both of order <span class="math inline">\ell</span>, hence</p>
+<p><span class="math display">
+L(G)\sim D(G)\sim N^{1/d}.
+</span></p>
+<p><strong>Part 2.</strong> For <span class="math inline">N=10^6</span>:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Expression</th>
+<th style="text-align: right;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\ln N</span></td>
+<td style="text-align: right;"><span class="math inline">\ln(10^6)\approx 13.8</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">N^{1/3}</span></td>
+<td style="text-align: right;"><span class="math inline">100</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">N^{1/2}</span></td>
+<td style="text-align: right;"><span class="math inline">1000</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">N</span></td>
+<td style="text-align: right;"><span class="math inline">10^6</span></td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="fl">1e6</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">law =</span> <span class="fu">c</span>(<span class="st">"ln N"</span>, <span class="st">"N^(1/3)"</span>, <span class="st">"N^(1/2)"</span>, <span class="st">"N"</span>),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="fu">log</span>(N), N<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>), N<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>), N)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 2
+  law         value
+  &lt;chr&gt;       &lt;dbl&gt;
+1 ln N         13.8
+2 N^(1/3)     100  
+3 N^(1/2)    1000  
+4 N       1000000  </code></pre>
+</div>
+</div>
+<p>The logarithmic value is an order of magnitude smaller than the three-dimensional lattice scale, two orders smaller than the two-dimensional scale, and many orders smaller than the one-dimensional scale. Polynomial lattice laws and the logarithmic random-graph law are therefore qualitatively different families.</p>
+<p><strong>Part 3.</strong> Lattice intuition says that covering a large geometric system requires a path whose length tracks the linear size <span class="math inline">N^{1/d}</span>. Logarithmic distances mean that the number of reachable vertices grows roughly exponentially with radius, so the same <span class="math inline">N</span> is covered in far fewer steps. The surprise of the small-world effect is not that paths are finite, but that they are dramatically shorter than low-dimensional geometry would suggest <span class="citation" data-cites="watts1998 strogatz2001">(<a href="#ref-strogatz2001" role="doc-biblioref">Strogatz, 2001</a>; <a href="#ref-watts1998" role="doc-biblioref">Watts &amp; Strogatz, 1998</a>)</span>.</p>
+<hr>
 </section>
-<section id="exercise-3.-why-the-estimate-is-not-exact" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-3.-why-the-estimate-is-not-exact">Exercise 3. Why the estimate is not exact</h4>
-<p><em>(Instructor: add solution.)</em></p>
+<section id="exercise-3.-the-regular-ring-lattice-degree-distance-and-clustering" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="exercise-3.-the-regular-ring-lattice-degree-distance-and-clustering"><span class="header-section-number">5.3</span> Exercise 3. The regular ring lattice: degree, distance, and clustering</h2>
+<p><strong>Part 1.</strong> By definition, vertex <span class="math inline">i</span> is joined to <span class="math inline">\{i\pm 1,\ldots,i\pm K/2\}</span> (indices mod <span class="math inline">N</span>). These are <span class="math inline">K</span> distinct neighbors whenever <span class="math inline">N &gt; K</span>, so every degree equals <span class="math inline">K</span>. The handshaking lemma then gives</p>
+<p><span class="math display">
+2|E|=\sum_v k_v = NK \implies |E|=\frac{NK}{2},
+</span></p>
+<p>and the average degree is <span class="math inline">\langle k \rangle = 2|E|/N = K</span>.</p>
+<p><strong>Part 2.</strong> On the ring, the farthest vertices from a given source lie roughly opposite on the circle, at cyclic distance about <span class="math inline">N/2</span>. Each step along the lattice can advance by at most <span class="math inline">K/2</span> positions (the farthest clockwise neighbor). The number of steps needed is therefore about</p>
+<p><span class="math display">
+\frac{N/2}{K/2}=\frac{N}{K}.
+</span></p>
+<p>Averaging over pairs rather than only antipodal pairs replaces <span class="math inline">N/K</span> by a constant factor of the same order, conventionally written</p>
+<p><span class="math display">
+L(0)\approx\frac{N}{2K}.
+</span></p>
+<p>This is a heuristic scaling estimate, not an exact diameter formula.</p>
+<p><strong>Part 3.</strong> Fix vertex <span class="math inline">0</span> and write <span class="math inline">m=K/2</span>. Its neighborhood is</p>
+<p><span class="math display">
+\Gamma(0)=\{-m,\ldots,-1,1,\ldots,m\}.
+</span></p>
+<p>Assume <span class="math inline">N</span> is large enough that cyclic distances among these neighbors coincide with ordinary absolute differences. Two neighbors <span class="math inline">j&lt;k</span> are adjacent iff <span class="math inline">k-j\le m</span>.</p>
+<ul>
+<li>Both positive: number of pairs <span class="math inline">=\binom{m}{2}</span>.</li>
+<li>Both negative: likewise <span class="math inline">\binom{m}{2}</span>.</li>
+<li>Opposite signs: for each <span class="math inline">a=1,\ldots,m</span>, the negative neighbor <span class="math inline">-a</span> connects to positive neighbors <span class="math inline">k</span> with <span class="math inline">k\le m-a</span>, giving <span class="math inline">\sum_{a=1}^{m-1}(m-a)=m(m-1)/2</span> edges.</li>
+</ul>
+<p>Total edges among neighbors:</p>
+<p><span class="math display">
+2\binom{m}{2}+\frac{m(m-1)}{2}
+=
+m(m-1)+\frac{m(m-1)}{2}
+=
+\frac{3}{2}m(m-1)
+=
+\frac{3K(K-2)}{8}.
+</span></p>
+<p>The local clustering coefficient is this count divided by <span class="math inline">\binom{K}{2}</span>:</p>
+<p><span class="math display">
+C(0)
+=
+\frac{3K(K-2)/8}{K(K-1)/2}
+=
+\frac{3(K-2)}{4(K-1)}.
+</span></p>
+<p>Because the lattice is vertex-transitive, every vertex has the same <span class="math inline">C_i</span>, so the global clustering equals this value.</p>
+<p><strong>Part 4.</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>C0 <span class="ot">&lt;-</span> <span class="cf">function</span>(K) <span class="dv">3</span> <span class="sc">*</span> (K <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">/</span> (<span class="dv">4</span> <span class="sc">*</span> (K <span class="sc">-</span> <span class="dv">1</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">K =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">10</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">C0 =</span> <span class="fu">C0</span>(<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">10</span>))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+      K    C0
+  &lt;dbl&gt; &lt;dbl&gt;
+1     4 0.5  
+2     6 0.6  
+3    10 0.667</code></pre>
+</div>
+</div>
+<p>As <span class="math inline">K\to\infty</span>, <span class="math inline">C(0)\to 3/4</span>. Even a very wide local neighborhood on the ring remains far from a clique: many pairs of neighbors are still too far apart (on the ring metric) to be linked, so clustering saturates below <span class="math inline">1</span>.</p>
+<hr>
 </section>
-<section id="exercise-4.-lattice-scaling-laws" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-4.-lattice-scaling-laws">Exercise 4. Lattice scaling laws</h4>
-<p><em>(Instructor: add solution.)</em></p>
+<section id="exercise-4.-shortcuts-clustering-and-normalized-observables" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="exercise-4.-shortcuts-clustering-and-normalized-observables"><span class="header-section-number">5.4</span> Exercise 4. Shortcuts, clustering, and normalized observables</h2>
+<p><strong>Part 1.</strong> Define</p>
+<p><span class="math display">
+\frac{C(\beta)}{C(0)},
+\qquad
+\frac{L(\beta)}{L(0)}.
+</span></p>
+<p>Absolute values of <span class="math inline">C</span> and <span class="math inline">L</span> depend on <span class="math inline">N</span> and <span class="math inline">K</span>. Normalizing by the lattice baselines removes that dependence and makes the <em>shape</em> of the order-to-randomness transition comparable across parameter choices: one sees how quickly each quantity leaves its ordered starting point as <span class="math inline">\beta</span> grows.</p>
+<p><strong>Part 2.</strong> In the ring lattice, traveling between distant arcs requires many local hops. A single rewired long-range edge connects two previously remote regions and collapses many shortest paths that used to traverse the long arc — so <span class="math inline">L</span> drops sharply. Clustering, by contrast, is a local triangle count. If only a small fraction of edges is rewired, most neighborhoods still look like lattice neighborhoods, so most triangles survive and <span class="math inline">C</span> decreases slowly. This is the core asymmetry of the Watts–Strogatz mechanism <span class="citation" data-cites="watts1998">(<a href="#ref-watts1998" role="doc-biblioref">Watts &amp; Strogatz, 1998</a>)</span>.</p>
+<p><strong>Part 3.</strong> In the small-world regime one expects</p>
+<p><span class="math display">
+\frac{L(\beta)}{L(0)}\ \text{substantially smaller than }1,
+\qquad
+\frac{C(\beta)}{C(0)}\ \text{still close to }1,
+</span></p>
+<p>while clustering remains much larger than in a comparable random graph. That is exactly <a href="#def-small-world-regime" class="quarto-xref">Definition&nbsp;<span class="quarto-unresolved-ref">def-small-world-regime</span></a>: short global distances coexisting with retained local order.</p>
+<p><strong>Part 4.</strong> Short paths alone do not identify the model. An Erdős–Rényi graph achieves small <span class="math inline">L</span> by making edges globally random, which destroys local order and yields <span class="math inline">C\approx p</span> (typically tiny in the sparse regime). A Watts–Strogatz graph in the small-world window keeps most lattice neighborhoods intact, so clustering stays high while shortcuts restore global reachability. The models agree on one metric property and disagree on mesoscale structure.</p>
+<hr>
 </section>
-<section id="exercise-5.-average-degree-in-the-ring-lattice" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-5.-average-degree-in-the-ring-lattice">Exercise 5. Average degree in the ring lattice</h4>
-<p><em>(Instructor: add solution.)</em></p>
+<section id="exercise-5.-interpreting-small-worldness-and-the-limits-of-wattsstrogatz" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="exercise-5.-interpreting-small-worldness-and-the-limits-of-wattsstrogatz"><span class="header-section-number">5.5</span> Exercise 5. Interpreting small-worldness and the limits of Watts–Strogatz</h2>
+<p><strong>Part 1.</strong> Write</p>
+<p><span class="math display">
+\sigma=\frac{C/C_{\mathrm{rand}}}{L/L_{\mathrm{rand}}}.
+</span></p>
+<p>The inequality <span class="math inline">\sigma&gt;1</span> means that, relative to a random null model with similar size and mean degree, clustering is elevated <em>more</em> than path length is inflated. Equivalently: the network is much more clustered than random, while distances remain comparable to random. Clustering alone is insufficient because a pure lattice also has very high <span class="math inline">C</span>, yet fails the small-world test through large <span class="math inline">L</span> (which drives <span class="math inline">\sigma</span> down via a large <span class="math inline">L/L_{\mathrm{rand}}</span>).</p>
+<p><strong>Part 2.</strong> Watts–Strogatz rewiring preserves the number of edges and only mildly perturbs degrees: most vertices stay near degree <span class="math inline">K</span>. The model therefore cannot generate hubs or heavy-tailed degree distributions. Degree-dependent clustering (e.g., low-degree vertices in dense cores, hubs bridging communities) likewise requires heterogeneity or hierarchical growth mechanisms absent from homogeneous rewiring. The missing ingredients are growth and preferential attachment — the subject of the next chapter <span class="citation" data-cites="albert2002 barabasi2016">(<a href="#ref-albert2002" role="doc-biblioref">Albert &amp; Barabási, 2002</a>; <a href="#ref-barabasi2016" role="doc-biblioref">Barabási &amp; Pósfai, 2016</a>)</span>.</p>
+<p><strong>Part 3.</strong> A large <span class="math inline">\sigma</span> is evidence of the <em>phenomenology</em> high-<span class="math inline">C</span>/low-<span class="math inline">L</span> relative to an ER null model. It does not identify a generative mechanism. Many processes (community structure, geographic networks with occasional long ties, hierarchical models, etc.) can produce <span class="math inline">\sigma&gt;1</span>. Claiming that <span class="math inline">\sigma=4.2</span> “proves” Watts–Strogatz rewiring confuses a diagnostic index with a unique causal model.</p>
+<hr>
 </section>
-<section id="exercise-6.-normalized-observables" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-6.-normalized-observables">Exercise 6. Normalized observables</h4>
-<p><em>(Instructor: add solution.)</em></p>
+<section id="exercise-6.-distance-scaling-in-random-networks" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="exercise-6.-distance-scaling-in-random-networks"><span class="header-section-number">5.6</span> Exercise 6. Distance scaling in random networks</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2056</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>mean_k <span class="ot">&lt;-</span> <span class="dv">6</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>N_grid <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">400</span>, <span class="dv">800</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>reps <span class="ot">&lt;-</span> <span class="dv">12</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>sample_connected_gnp <span class="ot">&lt;-</span> <span class="cf">function</span>(n, p, <span class="at">max_iter =</span> <span class="dv">200</span>) {</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_len</span>(max_iter)) {</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    g <span class="ot">&lt;-</span> igraph<span class="sc">::</span><span class="fu">sample_gnp</span>(n, p, <span class="at">directed =</span> <span class="cn">FALSE</span>, <span class="at">loops =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (igraph<span class="sc">::</span><span class="fu">components</span>(g)<span class="sc">$</span>no <span class="sc">==</span> <span class="dv">1</span>) <span class="fu">return</span>(g)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"Could not sample a connected G(N,p)."</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>scaling_tbl <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dfr</span>(N_grid, <span class="cf">function</span>(n) {</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> mean_k <span class="sc">/</span> (n <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  vals <span class="ot">&lt;-</span> <span class="fu">replicate</span>(reps, {</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    g <span class="ot">&lt;-</span> <span class="fu">sample_connected_gnp</span>(n, p)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    igraph<span class="sc">::</span><span class="fu">mean_distance</span>(g, <span class="at">directed =</span> <span class="cn">FALSE</span>, <span class="at">unconnected =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">N =</span> n,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">L_emp =</span> <span class="fu">mean</span>(vals),</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">L_sd =</span> <span class="fu">sd</span>(vals),</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">L_theory =</span> <span class="fu">log</span>(n) <span class="sc">/</span> <span class="fu">log</span>(mean_k)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>scaling_tbl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 4
+      N L_emp   L_sd L_theory
+  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+1    50  2.29 0.0462     2.18
+2   100  2.73 0.0620     2.57
+3   200  3.12 0.0514     2.96
+4   400  3.54 0.0559     3.34
+5   800  3.92 0.0411     3.73</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(scaling_tbl, <span class="fu">aes</span>(<span class="at">x =</span> N)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> L_emp, <span class="at">color =</span> <span class="st">"Empirical"</span>), <span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> L_emp, <span class="at">color =</span> <span class="st">"Empirical"</span>), <span class="at">size =</span> <span class="fl">2.2</span>) <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> L_emp <span class="sc">-</span> L_sd, <span class="at">ymax =</span> L_emp <span class="sc">+</span> L_sd, <span class="at">color =</span> <span class="st">"Empirical"</span>),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">width =</span> <span class="dv">12</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> L_theory, <span class="at">color =</span> <span class="st">"ln N / ln &lt;k&gt;"</span>),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">linewidth =</span> <span class="fl">1.1</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Empirical"</span> <span class="ot">=</span> course_cols<span class="sc">$</span>blue,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ln N / ln &lt;k&gt;"</span> <span class="ot">=</span> course_cols<span class="sc">$</span>gold</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distance scaling in random graphs"</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">sprintf</span>(<span class="st">"Connected G(N, p) with &lt;k&gt; = %d; %d replicates per N"</span>, mean_k, reps),</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"N"</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Average path length"</span>,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="cn">NULL</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05-small-world-graphs-solutions_files/figure-html/ex6-distance-scaling-plot-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Empirical average path length in connected ER graphs with mean degree 6, compared with ln N / ln 6.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Interpretation.</strong> The empirical curve tracks the logarithmic prediction and grows slowly with <span class="math inline">N</span>. Agreement typically improves as <span class="math inline">N</span> increases, because the branching heuristic becomes more accurate in large sparse graphs and finite-size boundary effects weaken. At small <span class="math inline">N</span>, neighborhood overlap sets in quickly, connectivity conditioning biases the sample toward slightly more cohesive graphs, and the prefactor hidden in “<span class="math inline">\approx</span>” matters more — so modest vertical offsets are expected.</p>
+<hr>
 </section>
-<section id="exercise-7.-ring-lattice-path-length" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-7.-ring-lattice-path-length">Exercise 7. Ring-lattice path length</h4>
-<p><em>(Instructor: add solution.)</em></p>
-</section>
-<section id="exercise-8.-ring-lattice-clustering" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-8.-ring-lattice-clustering">Exercise 8. Ring-lattice clustering</h4>
-<p><em>(Instructor: add solution.)</em></p>
-</section>
-</section>
-<section id="part-ii.-conceptual-and-analytical-exercises" class="level3">
-<h3 class="anchored" data-anchor-id="part-ii.-conceptual-and-analytical-exercises">Part II. Conceptual and analytical exercises</h3>
-<section id="exercise-9.-six-degrees-and-logarithmic-scaling" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-9.-six-degrees-and-logarithmic-scaling">Exercise 9. Six degrees and logarithmic scaling</h4>
-<p><em>(Instructor: add solution.)</em></p>
-</section>
-<section id="exercise-10.-why-small-worlds-are-surprising" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-10.-why-small-worlds-are-surprising">Exercise 10. Why small worlds are surprising</h4>
-<p><em>(Instructor: add solution.)</em></p>
-</section>
-<section id="exercise-11.-random-graph-versus-small-world-network" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-11.-random-graph-versus-small-world-network">Exercise 11. Random graph versus small-world network</h4>
-<p><em>(Instructor: add solution.)</em></p>
-</section>
-<section id="exercise-12.-why-shortcuts-are-powerful" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-12.-why-shortcuts-are-powerful">Exercise 12. Why shortcuts are powerful</h4>
-<p><em>(Instructor: add solution.)</em></p>
-</section>
-<section id="exercise-13.-limitations-of-the-wattsstrogatz-model" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-13.-limitations-of-the-wattsstrogatz-model">Exercise 13. Limitations of the Watts–Strogatz model</h4>
-<p><em>(Instructor: add solution.)</em></p>
-</section>
-<section id="exercise-14.-interpreting-the-small-worldness-index" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-14.-interpreting-the-small-worldness-index">Exercise 14. Interpreting the small-worldness index</h4>
-<p><em>(Instructor: add solution.)</em></p>
-</section>
-</section>
-<section id="part-iii.-simulation-and-coding-exercises" class="level3">
-<h3 class="anchored" data-anchor-id="part-iii.-simulation-and-coding-exercises">Part III. Simulation and coding exercises</h3>
-<section id="exercise-15.-distance-scaling-in-random-networks" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-15.-distance-scaling-in-random-networks">Exercise 15. Distance scaling in random networks</h4>
-<p><em>(Instructor: add solution.)</em></p>
-</section>
-<section id="exercise-16.-visualizing-the-wattsstrogatz-interpolation" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-16.-visualizing-the-wattsstrogatz-interpolation">Exercise 16. Visualizing the Watts–Strogatz interpolation</h4>
-<p><em>(Instructor: add solution.)</em></p>
-</section>
-<section id="exercise-17.-detecting-the-small-world-regime-numerically" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-17.-detecting-the-small-world-regime-numerically">Exercise 17. Detecting the small-world regime numerically</h4>
-<p><em>(Instructor: add solution.)</em></p>
-</section>
-<section id="exercise-18.-comparing-ring-lattice-wattsstrogatz-and-random-graph" class="level4">
-<h4 class="anchored" data-anchor-id="exercise-18.-comparing-ring-lattice-wattsstrogatz-and-random-graph">Exercise 18. Comparing ring lattice, Watts–Strogatz, and random graph</h4>
-<p><em>(Instructor: add solution.)</em></p>
+<section id="exercise-7.-identifying-and-quantifying-the-small-world-regime" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="exercise-7.-identifying-and-quantifying-the-small-world-regime"><span class="header-section-number">5.7</span> Exercise 7. Identifying and quantifying the small-world regime</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sample_connected_ws <span class="ot">&lt;-</span> <span class="cf">function</span>(size, K, beta, <span class="at">max_iter =</span> <span class="dv">100</span>) {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(K <span class="sc">%%</span> <span class="dv">2</span> <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_len</span>(max_iter)) {</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    g <span class="ot">&lt;-</span> igraph<span class="sc">::</span><span class="fu">sample_smallworld</span>(<span class="at">dim =</span> <span class="dv">1</span>, <span class="at">size =</span> size, <span class="at">nei =</span> K <span class="sc">/</span> <span class="dv">2</span>, <span class="at">p =</span> beta)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (igraph<span class="sc">::</span><span class="fu">components</span>(g)<span class="sc">$</span>no <span class="sc">==</span> <span class="dv">1</span>) <span class="fu">return</span>(g)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"Could not generate a connected Watts--Strogatz graph."</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>Part 1.</strong> Normalized transition scan.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2057</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>n_ws <span class="ot">&lt;-</span> <span class="dv">400</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>K_ws <span class="ot">&lt;-</span> <span class="dv">8</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>beta_grid <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span><span class="sc">^</span><span class="fu">seq</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">0</span>, <span class="at">length.out =</span> <span class="dv">16</span>)))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>reps <span class="ot">&lt;-</span> <span class="dv">6</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>ws_tbl <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dfr</span>(beta_grid, <span class="cf">function</span>(beta) {</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map_dfr</span>(<span class="fu">seq_len</span>(reps), <span class="cf">function</span>(rep_id) {</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    g <span class="ot">&lt;-</span> <span class="fu">sample_connected_ws</span>(<span class="at">size =</span> n_ws, <span class="at">K =</span> K_ws, <span class="at">beta =</span> beta)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">beta =</span> beta,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">rep =</span> rep_id,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">clustering =</span> igraph<span class="sc">::</span><span class="fu">transitivity</span>(g, <span class="at">type =</span> <span class="st">"average"</span>),</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">avg_distance =</span> igraph<span class="sc">::</span><span class="fu">mean_distance</span>(g, <span class="at">directed =</span> <span class="cn">FALSE</span>, <span class="at">unconnected =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>ws_summary <span class="ot">&lt;-</span> ws_tbl <span class="sc">|&gt;</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(beta) <span class="sc">|&gt;</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">clustering =</span> <span class="fu">mean</span>(clustering),</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_distance =</span> <span class="fu">mean</span>(avg_distance),</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>C0 <span class="ot">&lt;-</span> ws_summary<span class="sc">$</span>clustering[ws_summary<span class="sc">$</span>beta <span class="sc">==</span> <span class="dv">0</span>]</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>L0 <span class="ot">&lt;-</span> ws_summary<span class="sc">$</span>avg_distance[ws_summary<span class="sc">$</span>beta <span class="sc">==</span> <span class="dv">0</span>]</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>ws_long <span class="ot">&lt;-</span> ws_summary <span class="sc">|&gt;</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">clustering_norm =</span> clustering <span class="sc">/</span> C0,</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">distance_norm =</span> avg_distance <span class="sc">/</span> L0</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(clustering_norm, distance_norm),</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"quantity"</span>,</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"value"</span></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantity =</span> dplyr<span class="sc">::</span><span class="fu">recode</span>(</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>      quantity,</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>      <span class="at">clustering_norm =</span> <span class="st">"C(beta) / C(0)"</span>,</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">distance_norm =</span> <span class="st">"L(beta) / L(0)"</span></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ws_long, <span class="fu">aes</span>(<span class="at">x =</span> beta, <span class="at">y =</span> value, <span class="at">color =</span> quantity)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.15</span>) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.8</span>) <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"C(beta) / C(0)"</span> <span class="ot">=</span> course_cols<span class="sc">$</span>teal,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"L(beta) / L(0)"</span> <span class="ot">=</span> course_cols<span class="sc">$</span>gold</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Detecting the small-world regime"</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">sprintf</span>(<span class="st">"N = %d, K = %d; averages over %d connected replicates"</span>, n_ws, K_ws, reps),</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Rewiring probability, beta"</span>,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Normalized quantity"</span>,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="cn">NULL</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05-small-world-graphs-solutions_files/figure-html/ex7-ws-normalized-plot-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Normalized path length drops quickly with beta while normalized clustering remains high over a wider interval — the small-world window.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The small-world regime is the interval of <span class="math inline">\beta</span> in which <span class="math inline">L(\beta)/L(0)</span> has already fallen substantially while <span class="math inline">C(\beta)/C(0)</span> remains comparatively close to one. In a typical scan this appears at small but positive <span class="math inline">\beta</span> (often roughly <span class="math inline">10^{-3}</span> to a few <span class="math inline">10^{-2}</span>, depending on <span class="math inline">N</span> and <span class="math inline">K</span>).</p>
+<p><strong>Part 2.</strong> Three-model comparison.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2058</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>n_cmp <span class="ot">&lt;-</span> <span class="dv">400</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>K_cmp <span class="ot">&lt;-</span> <span class="dv">8</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>p_cmp <span class="ot">&lt;-</span> K_cmp <span class="sc">/</span> (n_cmp <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>beta_sw <span class="ot">&lt;-</span> <span class="fl">0.02</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="cf">repeat</span> {</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  g_er <span class="ot">&lt;-</span> igraph<span class="sc">::</span><span class="fu">sample_gnp</span>(n_cmp, p_cmp, <span class="at">directed =</span> <span class="cn">FALSE</span>, <span class="at">loops =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (igraph<span class="sc">::</span><span class="fu">components</span>(g_er)<span class="sc">$</span>no <span class="sc">==</span> <span class="dv">1</span>) <span class="cf">break</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>g_ring <span class="ot">&lt;-</span> igraph<span class="sc">::</span><span class="fu">make_lattice</span>(<span class="at">dimvector =</span> n_cmp, <span class="at">nei =</span> K_cmp <span class="sc">/</span> <span class="dv">2</span>, <span class="at">circular =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>g_ws <span class="ot">&lt;-</span> <span class="fu">sample_connected_ws</span>(<span class="at">size =</span> n_cmp, <span class="at">K =</span> K_cmp, <span class="at">beta =</span> beta_sw)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>network_stats <span class="ot">&lt;-</span> <span class="cf">function</span>(g, label, g_rand) {</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  C <span class="ot">&lt;-</span> igraph<span class="sc">::</span><span class="fu">transitivity</span>(g, <span class="at">type =</span> <span class="st">"average"</span>)</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  L <span class="ot">&lt;-</span> igraph<span class="sc">::</span><span class="fu">mean_distance</span>(g, <span class="at">directed =</span> <span class="cn">FALSE</span>, <span class="at">unconnected =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  C_rand <span class="ot">&lt;-</span> igraph<span class="sc">::</span><span class="fu">transitivity</span>(g_rand, <span class="at">type =</span> <span class="st">"average"</span>)</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  L_rand <span class="ot">&lt;-</span> igraph<span class="sc">::</span><span class="fu">mean_distance</span>(g_rand, <span class="at">directed =</span> <span class="cn">FALSE</span>, <span class="at">unconnected =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">model =</span> label,</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">clustering =</span> C,</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_distance =</span> L,</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">sigma =</span> (C <span class="sc">/</span> C_rand) <span class="sc">/</span> (L <span class="sc">/</span> L_rand)</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>comparison_tbl <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">network_stats</span>(g_ring, <span class="st">"Ring lattice"</span>, g_er),</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">network_stats</span>(g_ws, <span class="st">"Watts--Strogatz"</span>, g_er),</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">network_stats</span>(g_er, <span class="st">"Random graph"</span>, g_er)</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">model =</span> <span class="fu">factor</span>(model, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Ring lattice"</span>, <span class="st">"Watts--Strogatz"</span>, <span class="st">"Random graph"</span>))</span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>comparison_tbl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  model           clustering avg_distance sigma
+  &lt;fct&gt;                &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt;
+1 Ring lattice        0.643         25.4   3.63
+2 Watts--Strogatz     0.567          5.36 15.2 
+3 Random graph        0.0216         3.10  1   </code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>comparison_long <span class="ot">&lt;-</span> comparison_tbl <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(clustering, avg_distance, sigma),</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"measure"</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"value"</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">measure =</span> <span class="fu">factor</span>(</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>      measure,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"clustering"</span>, <span class="st">"avg_distance"</span>, <span class="st">"sigma"</span>),</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Clustering"</span>, <span class="st">"Average path length"</span>, <span class="st">"Small-worldness sigma"</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(comparison_long, <span class="fu">aes</span>(<span class="at">x =</span> model, <span class="at">y =</span> value, <span class="at">fill =</span> model)) <span class="sc">+</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.7</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>measure, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Ring lattice"</span> <span class="ot">=</span> course_cols<span class="sc">$</span>teal,</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Watts--Strogatz"</span> <span class="ot">=</span> course_cols<span class="sc">$</span>gold,</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Random graph"</span> <span class="ot">=</span> course_cols<span class="sc">$</span>blue</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Three structural regimes at comparable scale"</span>,</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>,</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="cn">NULL</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">15</span>, <span class="at">hjust =</span> <span class="dv">1</span>)</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05-small-world-graphs-solutions_files/figure-html/ex7-comparison-plot-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Clustering, average path length, and small-worldness index for ring lattice, Watts–Strogatz, and ER graphs of comparable size and mean degree.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Part 3.</strong> The ring lattice has high clustering but large distances. The ER graph has short distances but weak clustering; its <span class="math inline">\sigma</span> is identically <span class="math inline">1</span> by construction when the null model is itself. The Watts–Strogatz graph in the small-<span class="math inline">\beta</span> window inherits much of the lattice clustering while its path length approaches the random-graph scale, producing <span class="math inline">\sigma &gt; 1</span>. The index <span class="math inline">\sigma</span> therefore summarizes the joint pattern (elevated <span class="math inline">C</span> relative to random, without a matching inflation of <span class="math inline">L</span>) that neither <span class="math inline">C</span> nor <span class="math inline">L</span> alone identifies.</p>
 
 
-</section>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-albert2002" class="csl-entry" role="listitem">
+Albert, R., &amp; Barabási, A.-L. (2002). Statistical mechanics of complex networks. <em>Reviews of Modern Physics</em>, <em>74</em>(1), 47–97. <a href="https://doi.org/10.1103/RevModPhys.74.47">https://doi.org/10.1103/RevModPhys.74.47</a>
+</div>
+<div id="ref-barabasi2016" class="csl-entry" role="listitem">
+Barabási, A.-L., &amp; Pósfai, M. (2016). <em>Network science</em>. Cambridge University Press.
+</div>
+<div id="ref-newman2010" class="csl-entry" role="listitem">
+Newman, M. E. J. (2010). <em>Networks: An introduction</em>. Oxford University Press.
+</div>
+<div id="ref-strogatz2001" class="csl-entry" role="listitem">
+Strogatz, S. H. (2001). Exploring complex networks. <em>Nature</em>, <em>410</em>(6825), 268–276. <a href="https://doi.org/10.1038/35065725">https://doi.org/10.1038/35065725</a>
+</div>
+<div id="ref-watts1998" class="csl-entry" role="listitem">
+Watts, D. J., &amp; Strogatz, S. H. (1998). Collective dynamics of ’small-world’ networks. <em>Nature</em>, <em>393</em>(6684), 440–442. <a href="https://doi.org/10.1038/30918">https://doi.org/10.1038/30918</a>
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

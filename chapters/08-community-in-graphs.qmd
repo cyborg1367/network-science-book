@@ -1,10 +1,11 @@
----
+﻿---
 title: "Community Structure in Graphs"
 subtitle: "Mesoscopic Organization, Graph Cuts, Spectral Methods, Modularity, and Statistical Inference"
 bibliography: ../references.bib
 ---
 
 ```{r}
+#| label: chapter-setup-community
 #| include: false
 
 setup_candidates <- c("R/book-setup.R", "../R/book-setup.R")
@@ -1165,65 +1166,68 @@ The Kesten--Stigum threshold places fundamental limits on what any method can ac
 
 ## Exercises
 
-### Part I. Computational and derivation exercises
+The seven exercises below cover the full content of this chapter. They require derivation, interpretation, and computation — not reproduction of results already in the text. The first three are mathematical and derivation exercises, the next two are conceptual and analytical, and the final two are simulation and coding exercises.
 
-**Exercise 8.1. Internal density, cut size, and conductance.**  
-Construct a graph with two candidate subsets $S_1$ and $S_2$. Compute $\rho_{\mathrm{in}}(S)$, $\operatorname{cut}(S,V\setminus S)$, and $\phi(S)$ for both subsets. Explain why these three quantities do not always rank the subsets in the same order.
+---
 
-**Exercise 8.2. Edge betweenness and bridge identification.**  
-For a small graph of your choice, compute the edge-betweenness score of every edge. Identify the edges that act as bridges between dense regions, and explain why their shortest-path usage is large.
+#### Exercise 1. Internal density, cut size, conductance, and the modularity formula
 
-**Exercise 8.3. Interpreting the modularity formula.**  
-Starting from
+Consider a graph $G$ on 10 vertices with two candidate subsets $S_1 = \{1,2,3,4,5\}$ and $S_2 = \{1,2,3\}$.
+
+1.  Define internal density $\rho_{\mathrm{in}}(S)$, cut size $\operatorname{cut}(S, V \setminus S)$, and conductance $\phi(S)$. Explain why these three quantities do not always rank subsets in the same order.
+2.  Starting from the modularity formula
 $$
-Q = \frac{1}{2m}\sum_{i,j}\left(A_{ij}-\frac{k_i k_j}{2m}\right)\delta(c_i,c_j),
+Q = \frac{1}{2m}\sum_{i,j}\left(A_{ij} - \frac{k_i k_j}{2m}\right)\delta(c_i, c_j),
 $$
-derive the community-level form
-$$
-Q = \sum_r (e_{rr}-a_r^2).
-$$
-State clearly what $e_{rr}$ and $a_r$ mean.
+derive the community-level form $Q = \sum_r (e_{rr} - a_r^2)$. State clearly what $e_{rr}$ and $a_r$ represent.
+3.  Explain why the null-model term $k_i k_j / 2m$ is the expected number of edges between $i$ and $j$ in the configuration model. Why is this the right baseline for modularity?
 
-### Part II. Conceptual and analytical exercises
+---
 
-**Exercise 8.4. Clustering versus community structure.**  
-Give one example of a graph with high clustering coefficient but weak global community structure, and one example of a graph with modest clustering but a clear block partition. Explain why local triangles and mesoscopic communities are different notions.
+#### Exercise 2. Spectral clustering and the graph Laplacian
 
-**Exercise 8.5. Modularity versus SBM.**  
-Write a short comparison between modularity-based community detection and SBM-based inference. Your answer should discuss the following points: objective function versus generative model, degree effects, interpretability, and sensitivity to weak signal.
+1.  Define the unnormalized graph Laplacian $L = D - A$ and explain why its smallest eigenvalue is always zero. What is the corresponding eigenvector?
+2.  State Cheeger's inequality relating the second-smallest eigenvalue $\lambda_2$ and the conductance $\phi^*$ of the graph. Explain its qualitative meaning: what does a small $\lambda_2$ say about community structure?
+3.  The Fiedler vector (eigenvector corresponding to $\lambda_2$) is used for bisection: vertices with positive entries go to one group, vertices with negative entries to the other. Explain why this produces a partition with low conductance.
 
-**Exercise 8.6. Detectability threshold.**  
-In the sparse two-block SBM, explain in words the meaning of the inequality
-$$
-(a-b)^2 > 2(a+b).
-$$
-Why does failure of this condition represent an information-theoretic limitation rather than merely a weakness of one algorithm?
+---
 
-**Exercise 8.7. Resolution limit and interpretation.**  
-Explain why a globally normalized objective such as modularity can merge small but meaningful communities inside a much larger graph. Relate your answer to the idea of scale in mesoscale structure [@fortunato2007resolution].
+#### Exercise 3. Detectability and the Kesten--Stigum threshold
 
-### Part III. Simulation and coding exercises
+In the sparse two-block planted partition model with within-block probability $p_{\mathrm{in}} = a/n$ and between-block probability $p_{\mathrm{out}} = b/n$ (with $a > b$), define $c = (a + b)/2$ and $\mu = (a - b)/2$.
 
-**Exercise 8.8. Failure of Girvan--Newman under weak separation.**  
-Use the planted-partition generator in this chapter. Keep $p_{\mathrm{in}}$ fixed and gradually increase $p_{\mathrm{out}}$. At what point does the Girvan--Newman partition cease to align well with the planted blocks?
+1.  Show that the signal-to-noise ratio is $\mathrm{SNR} = \mu^2 / c = (a - b)^2 / [2(a + b)]$.
+2.  Explain in words why $\mathrm{SNR} < 1$ means no algorithm can detect communities better than chance. Why is this an information-theoretic limitation rather than a computational one?
+3.  Given $a = 10$ and $b = 2$, compute $\mathrm{SNR}$ and determine whether the communities are detectable. Repeat for $a = 5$ and $b = 3$.
 
-**Exercise 8.9. Comparing algorithms on the same benchmark.**  
-Generate one benchmark graph with known planted communities and compare `cluster_edge_betweenness()`, `cluster_walktrap()`, and `cluster_louvain()`. Compare their modularity values, the number of detected groups, and their qualitative agreement with the planted partition.
+---
 
-**Exercise 8.10. SBM recovery and confusion matrices.**  
-Generate SBM graphs with fixed group sizes but progressively weaker block separation. For each graph, compute a confusion matrix between planted and detected communities. Describe how recoverability degrades as the diagonal and off-diagonal probabilities become closer.
+#### Exercise 4. Modularity versus SBM and the resolution limit
 
-**Exercise 8.11. Degree correction experiment.**  
-Create a benchmark in which one block contains several high-degree hubs. Compare the behavior of a modularity-based method to the qualitative expectations of a degree-corrected SBM. What kinds of mistakes arise when degree heterogeneity is confused with community structure?
+1.  Write a comparison between modularity-based community detection and SBM-based inference. Address: objective function vs. generative model, treatment of degree heterogeneity, interpretability, and sensitivity to weak signal.
+2.  Explain the resolution limit of modularity: why can maximizing $Q$ merge small but genuine communities in a large graph? Relate your answer to the $\sqrt{m}$ threshold of Fortunato and Barthélemy.
+3.  Explain how the degree-corrected SBM addresses the problem of degree heterogeneity being confused with community structure. Why does the standard SBM sometimes split a community simply because it contains a hub?
 
-### Mini-project
+---
 
-**Mini-project 8.1. A full community-detection workflow on a benchmark network.**  
-Build a complete analysis pipeline for a synthetic network with planted communities. Your report should include:
-1. visualization of the graph and its reordered adjacency matrix,
-2. at least two community-detection methods,
-3. one quality function or external comparison metric,
-4. a discussion of whether the recovered partition is structurally meaningful,
-5. a reflection on which limitations from this chapter are visible in your experiment.
+#### Exercise 5. Clustering, communities, and practical interpretation
 
-Your final report should distinguish carefully between *detecting a partition*, *justifying a partition mathematically*, and *interpreting a partition scientifically*.
+1.  Give one example of a graph with high clustering coefficient but weak global community structure, and one example with modest clustering but clear block structure. Explain why local triangles and mesoscopic communities are different notions.
+2.  State three principles for honest interpretation of community detection results in empirical work. Your answer should address stability under perturbation, comparison of multiple methods, and validation against metadata.
+3.  A colleague runs Louvain on a large social network and obtains a partition with $Q = 0.45$. They declare: *"The communities are real because modularity is high."* Identify at least two problems with this reasoning.
+
+---
+
+#### Exercise 6. Planted partition recovery and algorithm comparison
+
+1.  Use the planted partition model with 3 blocks of size 25 each, $p_{\mathrm{in}} = 0.25$, and $p_{\mathrm{out}} = 0.03$. Generate the graph and apply `cluster_edge_betweenness()`, `cluster_walktrap()`, and `cluster_louvain()`. For each method, report: modularity $Q$, number of detected communities, and NMI with the planted partition. Present the results in a table and discuss which method performs best.
+2.  Now gradually increase $p_{\mathrm{out}}$ from $0.03$ to $0.20$ in steps. For each value, compute the NMI of the Louvain partition against the planted blocks. Plot NMI versus $p_{\mathrm{out}}/p_{\mathrm{in}}$. At what mixing ratio does recovery become poor?
+3.  For the case $p_{\mathrm{out}} = 0.03$, produce a confusion matrix between the planted and Louvain-detected communities. Explain why label permutation must be accounted for when reading the confusion matrix.
+
+---
+
+#### Exercise 7. SBM recovery, degree correction, and finite-size detectability
+
+1.  Generate a two-block SBM with 30 vertices per block, $p_{\mathrm{in}} = 0.30$, and varying $p_{\mathrm{out}} \in \{0.02, 0.05, 0.10, 0.15, 0.20, 0.25\}$. For each value, compute: (a) the theoretical SNR, (b) the NMI of the Louvain partition against the planted blocks, and (c) the ARI. Plot NMI and ARI versus SNR and mark the Kesten--Stigum threshold ($\mathrm{SNR} = 1$).
+2.  Create a three-block network where one block contains several high-degree hubs (e.g. using a heterogeneous degree sequence within that block). Apply Louvain to this graph and examine whether the hub block is correctly identified or erroneously split. Discuss how degree heterogeneity can be confused with community structure.
+3.  Compare the partition from Louvain with the output of `cluster_walktrap()` on the same hub-containing graph. Compute NMI between the two partitions and against the planted truth. Discuss whether the methods agree and which is more sensitive to degree heterogeneity.

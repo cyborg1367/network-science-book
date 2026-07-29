@@ -14,76 +14,427 @@ if (is.na(setup_file)) {
   stop("Could not locate R/book-setup.R", call. = FALSE)
 }
 
-source(setup_file, local = TRUE)
-ns_book_setup(preset = "advanced")
+source(setup_file, local = knitr::knit_global())
+ns_book_setup(
+  preset = "advanced",
+  packages = c(ns_package_profile("core"), "tibble", "scales"),
+  seed = 2077
+)
 ```
 
-### Part I. Computational and derivation exercises
+## Exercise 1. Molloy--Reed criterion and critical thresholds
 
-#### Exercise 1. Molloy--Reed criterion
+**Part 1.** With $p_1 = 0.3$, $p_2 = 0.4$, $p_3 = 0.2$, $p_4 = 0.1$:
 
-*(Instructor: add solution.)*
+$$
+\langle k \rangle = 1(0.3) + 2(0.4) + 3(0.2) + 4(0.1) = 0.3 + 0.8 + 0.6 + 0.4 = 2.1.
+$$
 
-#### Exercise 2. Erdős--Rényi threshold derivation
+$$
+\langle k^2 \rangle = 1(0.3) + 4(0.4) + 9(0.2) + 16(0.1) = 0.3 + 1.6 + 1.8 + 1.6 = 5.3.
+$$
 
-*(Instructor: add solution.)*
+**Part 2.**
 
-#### Exercise 3. Effect of degree distribution on $f_c$
+$$
+\kappa_0 = \frac{\langle k^2 \rangle}{\langle k \rangle} = \frac{5.3}{2.1} \approx 2.524.
+$$
 
-*(Instructor: add solution.)*
+Since $\kappa_0 > 2$, the Molloy--Reed criterion is satisfied and the network has a giant component.
 
-#### Exercise 4. Bond percolation
+**Part 3.**
 
-*(Instructor: add solution.)*
+$$
+f_c = 1 - \frac{1}{\kappa_0 - 1} = 1 - \frac{1}{2.524 - 1} = 1 - \frac{1}{1.524} \approx 1 - 0.656 = 0.344.
+$$
 
-#### Exercise 5. Betweenness centrality by hand
+About $34.4\%$ of nodes must be removed randomly to destroy the giant component.
 
-*(Instructor: add solution.)*
+**Part 4.** For the second network with $p_1 = 0.4$, $p_2 = 0.3$, $p_7 = 0.3$:
 
-#### Exercise 6. Robustness index
+$$
+\langle k \rangle = 0.4(1) + 0.3(2) + 0.3(7) = 0.4 + 0.6 + 2.1 = 3.1.
+$$
 
-*(Instructor: add solution.)*
+$$
+\langle k^2 \rangle = 0.4(1) + 0.3(4) + 0.3(49) = 0.4 + 1.2 + 14.7 = 16.3.
+$$
 
-### Part II. Conceptual and analytical exercises
+$$
+\kappa_0 = \frac{16.3}{3.1} \approx 5.258.
+$$
 
-#### Exercise 7. Why scale-free networks are robust to random failure
+$$
+f_c = 1 - \frac{1}{5.258 - 1} = 1 - \frac{1}{4.258} \approx 0.765.
+$$
 
-*(Instructor: add solution.)*
+The second network has $f_c \approx 0.77$ compared to $f_c \approx 0.34$ for the first. Part of this difference comes from the higher mean degree ($3.1$ vs $2.1$), but the dominant effect is the much larger $\langle k^2 \rangle$ ($16.3$ vs $5.3$), driven by the presence of degree-7 vertices. These high-degree vertices are unlikely to be hit by random removal but contribute disproportionately to $\kappa_0$ through the $k^2$ term. The key insight: degree heterogeneity amplifies $\kappa_0$ and therefore raises $f_c$ under random failure.
 
-#### Exercise 8. The Achilles heel of scale-free networks
+```{r}
+#| label: ex1-verification
+#| echo: true
 
-*(Instructor: add solution.)*
+pk_A <- c(`1` = 0.3, `2` = 0.4, `3` = 0.2, `4` = 0.1)
+pk_B <- c(`1` = 0.4, `2` = 0.3, `7` = 0.3)
 
-#### Exercise 9. Cascading failures
+compute_threshold <- function(pk) {
+  k <- as.numeric(names(pk))
+  mean_k  <- sum(k * pk)
+  mean_k2 <- sum(k^2 * pk)
+  kappa0  <- mean_k2 / mean_k
+  fc      <- 1 - 1 / (kappa0 - 1)
+  tibble::tibble(mean_k = mean_k, mean_k2 = mean_k2, kappa0 = kappa0, fc = fc)
+}
 
-*(Instructor: add solution.)*
+dplyr::bind_rows(
+  compute_threshold(pk_A) |> dplyr::mutate(network = "A"),
+  compute_threshold(pk_B) |> dplyr::mutate(network = "B")
+)
+```
 
-#### Exercise 10. Comparing robustness of graph families
+## Exercise 2. Erdős--Rényi threshold derivation and bond percolation
 
-*(Instructor: add solution.)*
+**Part 1.** For the Poisson distribution with parameter $\lambda = \langle k \rangle$:
 
-### Part III. Simulation and coding exercises
+$$
+\langle k \rangle = \lambda, \qquad \text{Var}(k) = \lambda, \qquad \langle k^2 \rangle = \text{Var}(k) + \langle k \rangle^2 = \lambda + \lambda^2.
+$$
 
-#### Exercise 11. Robustness curve for ER networks
+Therefore:
 
-*(Instructor: add solution.)*
+$$
+\kappa_0 = \frac{\langle k^2 \rangle}{\langle k \rangle} = \frac{\lambda + \lambda^2}{\lambda} = 1 + \lambda = \langle k \rangle + 1.
+$$
 
-#### Exercise 12. Targeted attack on BA networks
+**Part 2.** Substituting into the general threshold formula:
 
-*(Instructor: add solution.)*
+$$
+f_c = 1 - \frac{1}{\kappa_0 - 1} = 1 - \frac{1}{\langle k \rangle + 1 - 1} = 1 - \frac{1}{\langle k \rangle}.
+$$
 
-#### Exercise 13. Betweenness centrality attack
+**Part 3.** In bond percolation, each edge is retained with probability $1 - q$. For a vertex of degree $k$, its residual degree is $\text{Binomial}(k, 1-q)$. The effective moments become $\langle k \rangle' = (1-q)\langle k \rangle$ and, for the ER case, the effective $\kappa_0' = (1-q)\langle k \rangle + 1$. Setting $\kappa_0' = 2$:
 
-*(Instructor: add solution.)*
+$$
+(1 - q_c)\langle k \rangle + 1 = 2 \implies q_c = 1 - \frac{1}{\langle k \rangle}.
+$$
 
-#### Exercise 14. Robustness index comparison
+This is identical to $f_c^{\text{ER}}$. The coincidence occurs because the ER degree distribution is Poisson, and thinning a Poisson random variable by factor $(1-q)$ yields another Poisson with parameter $(1-q)\lambda$. The mathematical structure of site and bond percolation becomes identical for this distribution family.
 
-*(Instructor: add solution.)*
+**Part 4.**
 
-#### Exercise 15. Bond percolation simulation
+```{r}
+#| label: ex2-thresholds
+#| echo: true
 
-*(Instructor: add solution.)*
+avg_ks <- c(2, 3, 5, 10)
+tibble::tibble(
+  mean_k = avg_ks,
+  fc = 1 - 1 / avg_ks
+)
+```
 
-#### Exercise 16. Finite-size effects
+As $\langle k \rangle$ increases, $f_c$ approaches 1 — denser ER networks can withstand more random damage before losing the giant component.
 
-*(Instructor: add solution.)*
+## Exercise 3. Robustness index
+
+**Part 1.** For $S(f) = (1 - f/f_c)_+$:
+
+$$
+R = \int_0^1 S(f)\,df = \int_0^{f_c} \left(1 - \frac{f}{f_c}\right) df = \left[f - \frac{f^2}{2f_c}\right]_0^{f_c} = f_c - \frac{f_c}{2} = \frac{f_c}{2}.
+$$
+
+**Part 2.** For $S(f) = (1-f)^2$:
+
+$$
+R = \int_0^1 (1-f)^2\,df = \left[-\frac{(1-f)^3}{3}\right]_0^1 = 0 - \left(-\frac{1}{3}\right) = \frac{1}{3}.
+$$
+
+For the piecewise-linear model, $R = f_c/2$, which equals $1/2$ only when $f_c = 1$. The quadratic model gives $R = 1/3$, representing a network whose giant component shrinks continuously (no sharp transition) but with concave decay — it loses connectivity faster initially.
+
+**Part 3.** $R$ is a single scalar that compresses the entire robustness curve into one number. Two networks can have the same $R$ but very different curve shapes: one might degrade slowly until a sharp collapse, while another degrades steadily throughout. The full curve $S(f)$ reveals the location of the critical threshold (where collapse occurs), the sharpness of the transition (gradual vs. abrupt), and the shape of degradation (convex, concave, linear). For practical purposes, knowing *when* the network breaks is often more important than the area under the curve.
+
+## Exercise 4. Scale-free robustness and the Achilles heel
+
+**Part 1.** For a power-law distribution $P(k) \sim Ck^{-\gamma}$ with $2 < \gamma \leq 3$, the second moment $\langle k^2 \rangle$ diverges as $N \to \infty$ because:
+
+$$
+\langle k^2 \rangle = \sum_k k^2 P(k) \sim C \sum_{k=k_{\min}}^{k_{\max}} k^{2-\gamma}.
+$$
+
+When $\gamma \leq 3$, the exponent $2 - \gamma \geq -1$, so the sum diverges as $k_{\max} \to \infty$ (or grows with $N$ for finite networks where $k_{\max} \sim N^{1/(\gamma-1)}$). Since $\kappa_0 = \langle k^2 \rangle / \langle k \rangle \to \infty$, the critical threshold becomes:
+
+$$
+f_c = 1 - \frac{1}{\kappa_0 - 1} \to 1.
+$$
+
+Physically, random removal picks vertices uniformly. Most vertices have small degree, so random removal almost always hits low-degree vertices. The hubs that maintain connectivity are very unlikely to be chosen. The giant component therefore survives until nearly all vertices have been removed.
+
+**Part 2.** Under targeted attack, the highest-degree hubs are removed first. These hubs contribute the dominant terms to $\langle k^2 \rangle$. Once removed, $\langle k^2 \rangle$ drops dramatically, causing $\kappa_0$ to fall below 2 after removing only a small fraction of vertices. The network fragments because the remaining vertices are predominantly low-degree and cannot maintain global connectivity alone. The critical threshold under targeted attack is very small — often just a few percent of vertices.
+
+**Part 3.** The engineer's reasoning is flawed because it considers only one failure mode. A scale-free network is indeed highly robust to random failures, but it is simultaneously extremely vulnerable to targeted attacks. If an adversary can identify and remove the highest-degree hubs, the network collapses rapidly. This is the "Achilles heel" of scale-free networks. The design tension is fundamental: the very feature that provides error tolerance (hub concentration) creates attack vulnerability. A robust design must consider the threat model. For adversarial environments, a more homogeneous topology or redundancy mechanisms may be preferable despite lower random-failure tolerance.
+
+## Exercise 5. Cascading failures and beyond the giant component
+
+**Part 1.** In simple percolation, removed nodes are chosen in advance and the remaining network is analyzed statically. A cascading failure is dynamic: when a node fails, its load is redistributed to neighbors, which may become overloaded and fail in turn, triggering further failures.
+
+(a) Cascades are triggered by overload or threshold dynamics: each node has a capacity, and when redistributed load exceeds capacity, the node fails.
+
+(b) Networks near the percolation threshold are most vulnerable because they are already close to fragmentation. A small additional perturbation can push the system past the critical point, causing a large cascade that would not have occurred if the network had more connectivity margin.
+
+(c) The 2003 Northeast blackout in North America: a few initial transmission line failures caused load redistribution that overloaded other lines, cascading into a massive blackout affecting 55 million people.
+
+**Part 2.** Two additional observables:
+
+- **Average path length** in the giant component: even if $S(f)$ remains large, the average path length may increase dramatically, indicating that the surviving network is less efficient for communication.
+- **Size of the second-largest component**: near the percolation transition, the second-largest component peaks as the giant component fragments into comparable pieces. A large second-largest component signals that the network is near criticality — one more perturbation could split it.
+
+**Part 3.**
+
+| Network | Degree distribution | Random failure $f_c$ | Targeted attack $f_c$ | Transition sharpness |
+|---|---|---|---|---|
+| ER | Poisson (narrow) | Moderate: $1 - 1/\langle k \rangle$ | Similar to random | Sharp in large $N$ |
+| WS | Narrow (near-regular) | Similar to ER (narrow degrees) | Similar to random (no hubs) | Moderately sharp |
+| BA | Power law (broad) | Very high ($\to 1$ for $\gamma \leq 3$) | Very low (few percent) | Gradual under random, sharp under targeted |
+
+## Exercise 6. Robustness curves: ER versus BA
+
+```{r}
+#| label: ex6-helpers
+#| include: false
+
+simulate_robustness <- function(g, strategy = c("random", "targeted"), steps = 50) {
+  strategy <- match.arg(strategy)
+  n0 <- igraph::vcount(g)
+  f_vals <- seq(0, 0.98, length.out = steps)
+
+  purrr::map_dfr(f_vals, function(f) {
+    g_tmp <- g
+    n_remove <- floor(f * n0)
+    if (n_remove > 0) {
+      removable <- min(n_remove, igraph::vcount(g_tmp))
+      if (strategy == "random") {
+        remove_v <- sample(igraph::V(g_tmp), removable)
+      } else {
+        deg_order <- order(igraph::degree(g_tmp), decreasing = TRUE)
+        remove_v <- igraph::V(g_tmp)[deg_order[seq_len(removable)]]
+      }
+      g_tmp <- igraph::delete_vertices(g_tmp, remove_v)
+    }
+    S <- if (igraph::vcount(g_tmp) == 0) 0 else max(igraph::components(g_tmp)$csize) / n0
+    data.frame(f = f, S = S)
+  })
+}
+```
+
+**Part 1.**
+
+```{r}
+#| label: ex6-random-failure
+#| echo: true
+
+set.seed(2077)
+N <- 400
+avg_k <- 4
+reps <- 5
+
+random_curves <- purrr::map_dfr(seq_len(reps), function(r) {
+  g_er <- igraph::sample_gnp(N, p = avg_k / (N - 1))
+  g_ba <- igraph::sample_pa(N, m = 2, directed = FALSE)
+
+  dplyr::bind_rows(
+    simulate_robustness(g_er, "random") |> dplyr::mutate(model = "ER"),
+    simulate_robustness(g_ba, "random") |> dplyr::mutate(model = "BA")
+  ) |> dplyr::mutate(rep = r)
+})
+
+random_avg <- random_curves |>
+  dplyr::group_by(model, f) |>
+  dplyr::summarise(S = mean(S), .groups = "drop")
+
+fc_er <- 1 - 1 / avg_k
+
+ggplot(random_avg, aes(x = f, y = S, color = model)) +
+  geom_line(linewidth = 1.0) +
+  geom_vline(xintercept = fc_er, linetype = "dashed", color = "grey40") +
+  annotate("text", x = fc_er + 0.02, y = 0.9, label = paste0("f[c]^ER == ", fc_er),
+           parse = TRUE, size = 3.5, hjust = 0) +
+  scale_color_manual(values = c("ER" = course_cols$teal, "BA" = course_cols$gold)) +
+  labs(title = "Random failure: ER vs. BA",
+       x = "Fraction removed (f)", y = "Giant component S(f)", color = NULL) +
+  scale_y_continuous(limits = c(0, 1))
+```
+
+**Part 2.**
+
+```{r}
+#| label: ex6-targeted-attack
+#| echo: true
+
+set.seed(2077)
+targeted_curves <- purrr::map_dfr(seq_len(reps), function(r) {
+  g_er <- igraph::sample_gnp(N, p = avg_k / (N - 1))
+  g_ba <- igraph::sample_pa(N, m = 2, directed = FALSE)
+
+  dplyr::bind_rows(
+    simulate_robustness(g_er, "targeted") |> dplyr::mutate(model = "ER"),
+    simulate_robustness(g_ba, "targeted") |> dplyr::mutate(model = "BA")
+  ) |> dplyr::mutate(rep = r)
+})
+
+targeted_avg <- targeted_curves |>
+  dplyr::group_by(model, f) |>
+  dplyr::summarise(S = mean(S), .groups = "drop")
+
+ggplot(targeted_avg, aes(x = f, y = S, color = model)) +
+  geom_line(linewidth = 1.0) +
+  scale_color_manual(values = c("ER" = course_cols$teal, "BA" = course_cols$gold)) +
+  labs(title = "Targeted attack: ER vs. BA",
+       x = "Fraction removed (f)", y = "Giant component S(f)", color = NULL) +
+  scale_y_continuous(limits = c(0, 1))
+```
+
+**Part 3.**
+
+```{r}
+#| label: ex6-robustness-index
+#| echo: true
+
+compute_R <- function(S_vec) mean(S_vec)
+
+R_table <- dplyr::bind_rows(
+  random_avg |> dplyr::group_by(model) |>
+    dplyr::summarise(R = compute_R(S), .groups = "drop") |>
+    dplyr::mutate(strategy = "Random"),
+  targeted_avg |> dplyr::group_by(model) |>
+    dplyr::summarise(R = compute_R(S), .groups = "drop") |>
+    dplyr::mutate(strategy = "Targeted")
+) |>
+  tidyr::pivot_wider(names_from = strategy, values_from = R)
+
+knitr::kable(R_table, digits = 3,
+             caption = "Robustness index R for ER and BA under random and targeted failure")
+```
+
+The BA network has higher $R$ under random failure (hubs protect connectivity) but much lower $R$ under targeted attack (hubs are removed first and the network collapses). The ER network shows moderate $R$ under both strategies, reflecting its homogeneous structure.
+
+## Exercise 7. Betweenness attack and finite-size effects
+
+**Part 1.**
+
+```{r}
+#| label: ex7-betweenness-attack
+#| echo: true
+
+simulate_robustness_betweenness <- function(g, steps = 40) {
+  n0 <- igraph::vcount(g)
+  f_vals <- seq(0, 0.98, length.out = steps)
+
+  purrr::map_dfr(f_vals, function(f) {
+    g_tmp <- g
+    n_remove <- floor(f * n0)
+    if (n_remove > 0) {
+      removable <- min(n_remove, igraph::vcount(g_tmp))
+      btw <- igraph::betweenness(g_tmp, directed = FALSE)
+      btw_order <- order(btw, decreasing = TRUE)
+      remove_v <- igraph::V(g_tmp)[btw_order[seq_len(removable)]]
+      g_tmp <- igraph::delete_vertices(g_tmp, remove_v)
+    }
+    S <- if (igraph::vcount(g_tmp) == 0) 0 else max(igraph::components(g_tmp)$csize) / n0
+    data.frame(f = f, S = S)
+  })
+}
+
+set.seed(2077)
+g_ba_btw <- igraph::sample_pa(n = 300, m = 2, directed = FALSE)
+
+btw_degree <- simulate_robustness(g_ba_btw, "targeted") |>
+  dplyr::mutate(strategy = "Degree")
+btw_between <- simulate_robustness_betweenness(g_ba_btw) |>
+  dplyr::mutate(strategy = "Betweenness")
+
+btw_combined <- dplyr::bind_rows(btw_degree, btw_between)
+
+ggplot(btw_combined, aes(x = f, y = S, color = strategy)) +
+  geom_line(linewidth = 1.0) +
+  scale_color_manual(values = c("Degree" = course_cols$teal, "Betweenness" = course_cols$coral)) +
+  labs(title = "Targeted attack on BA network: degree vs. betweenness",
+       x = "Fraction removed (f)", y = "Giant component S(f)", color = "Strategy") +
+  scale_y_continuous(limits = c(0, 1))
+```
+
+Betweenness-based attack is often slightly more destructive than degree-based attack because betweenness identifies vertices that are critical for shortest-path routing, which may include bridge-like vertices that degree alone does not prioritize.
+
+**Part 2.**
+
+```{r}
+#| label: ex7-finite-size
+#| echo: true
+
+set.seed(2077)
+sizes <- c(200, 500, 1000)
+avg_k_fs <- 4
+
+fs_curves <- purrr::map_dfr(sizes, function(n) {
+  reps_fs <- 5
+  purrr::map_dfr(seq_len(reps_fs), function(r) {
+    g <- igraph::sample_gnp(n, p = avg_k_fs / (n - 1))
+    simulate_robustness(g, "random") |>
+      dplyr::mutate(N = paste0("N = ", n), rep = r)
+  })
+}) |>
+  dplyr::group_by(N, f) |>
+  dplyr::summarise(S = mean(S), .groups = "drop")
+
+ggplot(fs_curves, aes(x = f, y = S, color = N)) +
+  geom_line(linewidth = 1.0) +
+  geom_vline(xintercept = 1 - 1/avg_k_fs, linetype = "dashed", color = "grey40") +
+  scale_color_manual(values = c("N = 200" = course_cols$teal,
+                                "N = 500" = course_cols$gold,
+                                "N = 1000" = course_cols$coral)) +
+  labs(title = "Finite-size effects in ER random failure",
+       subtitle = "The transition sharpens as N increases",
+       x = "Fraction removed (f)", y = "Giant component S(f)", color = NULL) +
+  scale_y_continuous(limits = c(0, 1))
+```
+
+As $N$ increases, the percolation transition becomes sharper: the drop from large $S$ to small $S$ occurs over a narrower range of $f$ values, approaching the theoretical step function at $f_c$ in the $N \to \infty$ limit. This is a standard finite-size scaling effect in percolation theory.
+
+**Part 3.**
+
+```{r}
+#| label: ex7-second-largest
+#| echo: true
+
+set.seed(2077)
+N_sl <- 500
+g_er_sl <- igraph::sample_gnp(N_sl, p = avg_k_fs / (N_sl - 1))
+f_vals_sl <- seq(0, 0.98, length.out = 50)
+
+sl_tbl <- purrr::map_dfr(f_vals_sl, function(f) {
+  g_tmp <- g_er_sl
+  n_remove <- floor(f * N_sl)
+  if (n_remove > 0) {
+    remove_v <- sample(igraph::V(g_tmp), min(n_remove, igraph::vcount(g_tmp)))
+    g_tmp <- igraph::delete_vertices(g_tmp, remove_v)
+  }
+  csizes <- sort(igraph::components(g_tmp)$csize, decreasing = TRUE)
+  S1 <- csizes[1] / N_sl
+  S2 <- if (length(csizes) >= 2) csizes[2] / N_sl else 0
+  data.frame(f = f, giant = S1, second_largest = S2)
+})
+
+sl_long <- tidyr::pivot_longer(sl_tbl, cols = c(giant, second_largest),
+                                names_to = "component", values_to = "size")
+
+ggplot(sl_long, aes(x = f, y = size, color = component)) +
+  geom_line(linewidth = 1.0) +
+  geom_vline(xintercept = 1 - 1/avg_k_fs, linetype = "dashed", color = "grey40") +
+  scale_color_manual(values = c("giant" = course_cols$teal,
+                                "second_largest" = course_cols$coral),
+                     labels = c("Giant component", "2nd largest")) +
+  labs(title = "Giant and second-largest component under random failure",
+       x = "Fraction removed (f)", y = "Component size / N", color = NULL) +
+  scale_y_continuous(limits = c(0, 1))
+```
+
+The second-largest component peaks near $f_c \approx 0.75$. This peak is a hallmark of the percolation transition: just before the giant component fragments, it breaks into several comparably-sized pieces, causing the second-largest component to temporarily grow. After the transition, all components are small and the second-largest shrinks again. This peak can be used as an empirical indicator of the critical threshold.
